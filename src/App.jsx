@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import GetStarted from "./GetStarted.jsx";
+import SiteNav from "./SiteNav.jsx";
+import WaysToSell from "./WaysToSell.jsx";
 
 /* ────────────────────────────────────────────────────────────────
    Blurb — Merchant Experience prototypes
@@ -164,37 +167,13 @@ function Placeholder({ title, blurb, notes }) {
 }
 
 const SCREENS = {
-  getstarted: (
-    <Placeholder
-      title="Get started"
-      blurb="Already intent-first — Blurb's own markup calls it an intention dropdown. The redesign gives the answer somewhere to go."
-      notes={[
-        'Keep the mad-lib: "Start Your [format] [intention]".',
-        'Intentions today: to Sell · as a Keepsake · to Display · to Gift, defaulting to keepsake.',
-        'Do not flip the default — most traffic is makers, and a maker who never opens the dropdown never meets a price that is not theirs.',
-        'What changes is the result panel, not the headline.',
-        'The page already carries live price bindings, so it can compute a second value structurally.',
-      ]}
-    />
-  ),
-  waystosell: (
-    <Placeholder
-      title="The ways to sell"
-      blurb="One card per route to market. Ana owns the value proposition on each; the card set and architecture are ours."
-      notes={[
-        'Candidate set: Blurb Bookstore · Amazon · Ingram · Checkout links · plus API or Large Order Services.',
-        'Which of those two is the fifth is an open question — it overlaps how white-glove gets classified.',
-        'Each card needs: who it suits, what the buyer pays, what you earn.',
-        'Checkout links is the only route that uses the fulfilment price.',
-      ]}
-    />
-  ),
+  waystosell: <WaysToSell />,
   estimator: (
     <Placeholder
       title="Intent-first estimator"
       blurb="Public and anonymous. It educates and converts; it cannot create anything."
       notes={[
-        'Two maker intents, four seller intents.',
+        'Overlaps the pricing agent in Stacey\'s flow — agree where each lives.',
         'Margin is destination-free, so it can show anywhere. Buyer totals need a ship-to and wait for later.',
         'The ladder is two rungs: your cost → your price → your profit.',
         'Comparison lives here, not on the link screen.',
@@ -204,12 +183,13 @@ const SCREENS = {
   link: (
     <Placeholder
       title="Checkout link setup"
-      blurb="Per book, in the dashboard, after joining. One book, one number, one decision."
+      blurb="Per project, in the dashboard. Stacey's Checkout Link file specifies this flow — read it before designing here."
       notes={[
-        'Quiet and committal — no comparison strip.',
-        'Link states: Draft · Coming soon · Live · Closed.',
-        'The URL is minted at draft and never changes.',
-        'Re-confirm the ladder at publish.',
+        'Agent-led: Setup → Drafting → Confirmation → Ongoing.',
+        'VARIANTS are the unit, not the book — priced or options-only, mapped to a project.',
+        'The quality gate blocks buying, not publishing. Until a proof exists the PDP hides price, quantity and Add to cart.',
+        'PayPal for payout. QR code ships with the link.',
+        'Highest-intent entry point is receiving the proof.',
       ]}
     />
   ),
@@ -221,10 +201,16 @@ export default function App() {
     return STAGES.some(s => s.id === q) ? q : "getstarted";
   });
 
+  const [navVariant, setNavVariant] = useState("proposed");
+  const [signedIn, setSignedIn] = useState(false);
+
   return (
     <div style={{ minHeight: "100vh", background: T.bg }}>
       <DemoBar stage={stage} onJump={setStage} />
-      {SCREENS[stage]}
+      <SiteNav variant={navVariant} onVariant={setNavVariant} signedIn={signedIn} onSignedIn={setSignedIn} />
+      {stage === "getstarted"
+        ? <GetStarted signedIn={signedIn} onSignIn={() => setSignedIn(true)} />
+        : SCREENS[stage]}
     </div>
   );
 }

@@ -15,7 +15,17 @@ Jira: [DES-469](https://blurb-books.atlassian.net/browse/DES-469) (the discovery
 1. **`getstarted`** — the redesign of `/getting-started`. It is *already* intent-first: the live page has an intention dropdown (`to Sell · as a Keepsake · to Display · to Gift`, defaulting to keepsake). The redesign gives "to Sell" somewhere to go; it does **not** add a new intent question and does **not** flip the default.
 2. **`waystosell`** — one card per route to market. The card set is ours; the value proposition on each card is Ana's.
 3. **`estimator`** — public, anonymous, intent-first. Educates and converts, creates nothing.
-4. **`link`** — per-book checkout link setup, in the dashboard, after joining. Quiet and committal.
+4. **`link`** — checkout link setup, in the dashboard. Specified in Stacey's **Checkout Link** file: agent-led, and **variants** are the unit rather than the book. Read it before designing here.
+
+## Decisions already made
+
+- **A PDF cannot be sold through a checkout link** *(2026-08-18)*. It can still be **ordered for yourself** — PDFs stay in the product types for keepsake, display and gift, and disappear only under "to Sell". Modelled as `sellChannels` per format in `catalog.js`, not as an intention rule, because the decision was specific to checkout links. Whether other channels sell PDFs is unconfirmed.
+- **The gate is a QUALITY GATE, not a commitment fee** *(confirmed 2026-08-18)*. Blurb has always required an author to order and review a copy before a book goes on sale — a longstanding platform rule (HLP-81), not new to checkout links, with friction kept in deliberately to keep quality up. Specified in Stacey's **Proof Requirement** file.
+  - **It gates buying, not publishing.** Setup is never blocked. A seller can go live with no proof; the PDP then hides price, quantity and Add to cart and shows *"This product is coming soon"* until a proof exists.
+  - **A PDF proof satisfies it**, as does a discounted or free physical copy. Either one alone.
+  - It clears automatically, even while a buyer has the PDP open. Banners are non-dismissible.
+- **The seller's price floors at their cost**, so the ladder can never show negative profit. A real minimum-price rule is still an open product question.
+- **The buyer pays shipping**, so it never enters the seller's margin — only "what your buyer pays".
 
 ## Rules the screens have to hold
 
