@@ -6,9 +6,14 @@ import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.
 
    The card set and its structure are ours; the value proposition on
    each card is Ana's (meeting item 1). So every card here carries the
-   same four facts in the same order, and a clearly marked slot where
-   her line goes — the point is to give her a shape to write into, not
-   to pre-empt the copy.
+   same four facts in the same order, and one line at the top that is
+   hers to write.
+
+   Those lines are now DRAFTED rather than left blank — second person,
+   plain words, one idea each, no exclamation marks, the voice the rest
+   of blurb.com uses. Reacting to a sentence is faster than starting at
+   an empty slot, and a draft shows how long the line can run before the
+   card breaks. Every one of them is Ana's to overwrite.
 
    The four facts are the ones a seller actually decides on:
      · who it suits
@@ -32,7 +37,7 @@ const CHANNELS = [
     id: "link",
     name: "Checkout links",
     isNew: true,
-    prop: "[Ana] The one-line pitch for selling direct from a link.",
+    prop: "One link, one book — share it anywhere you can paste a link.",
     suits: "Anyone with an audience and no shop — a newsletter, a talk, a stall, a bio link.",
     basis: "fulfilment",
     buyerPays: "Your price, plus Blurb shipping",
@@ -44,7 +49,7 @@ const CHANNELS = [
   {
     id: "bookstore",
     name: "Blurb Bookstore",
-    prop: "[Ana] The one-line pitch for listing in Blurb's own store.",
+    prop: "Put your book somewhere readers are already browsing.",
     suits: "Sellers who want a listing without running anything themselves.",
     basis: "list",
     buyerPays: "Your list price, plus shipping",
@@ -56,7 +61,7 @@ const CHANNELS = [
   {
     id: "amazon",
     name: "Amazon",
-    prop: "[Ana] The one-line pitch for Amazon distribution.",
+    prop: "Reach the readers who would never think to look for you.",
     suits: "Reach over margin — buyers who would never come to Blurb.",
     basis: "list",
     buyerPays: "Your list price. Shipping depends on the buyer's Prime status.",
@@ -68,7 +73,7 @@ const CHANNELS = [
   {
     id: "ingram",
     name: "Ingram",
-    prop: "[Ana] The one-line pitch for trade distribution.",
+    prop: "Get your book onto the shelves of bookshops and libraries.",
     suits: "Getting into bookshops and libraries, where a trade discount is expected.",
     basis: "list",
     buyerPays: "Whatever the retailer decides. Not set by you.",
@@ -80,15 +85,19 @@ const CHANNELS = [
   {
     id: "api",
     name: "API printing",
-    prop: "[Ana] The one-line pitch for printing through your own system.",
-    suits: "Sellers who already have a storefront and want Blurb to print behind it.",
+    prop: "Your storefront, your brand — our presses behind it.",
+    /* SETTLED 2026-08-18: API printing is a way to sell, not a candidate
+       for one. It is how a business connects its own store to Blurb's
+       print service. Large Order Services is a separate route — you buy
+       the stock and distribute it — and the two were never alternatives
+       for the same slot. */
+    suits: "Businesses with their own store, connecting it to our print service.",
     basis: "quoted",
     buyerPays: "Whatever your own store charges",
     youEarn: "Your price minus what you pay Blurb. No setup fees, no minimums.",
     paid: "Through your own store",
     setup: "Engineering — an API integration",
     sourced: true,
-    contested: true,
   },
 ];
 
@@ -154,12 +163,6 @@ function Card({ c }) {
         <Fact label="Setup">{c.setup}</Fact>
       </div>
 
-      {c.contested && (
-        <div style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5, borderTop: `1px solid ${T.border}`, paddingTop: 12 }}>
-          ⚠️ This is the contested fifth card. Large Order Services is the other candidate, and which one
-          it is overlaps how white-glove gets classified.
-        </div>
-      )}
     </div>
   );
 }

@@ -3,8 +3,10 @@ import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import Configurator, { StepHeading } from "./Configurator.jsx";
 import ProductTypes from "./ProductTypes.jsx";
 import Handoff from "./Handoff.jsx";
-import YourProjects from "./YourProjects.jsx";
-import { CATALOG, formatsFor, defaultSelection, minSellPrice } from "./catalog.js";
+import {
+  CATALOG, formatsFor, defaultSelection, minSellPrice, sellerCost,
+  PROJECT_KINDS, seedFor, BULK_MIN,
+} from "./catalog.js";
 
 /* ────────────────────────────────────────────────────────────────
    /getting-started — redesign
@@ -20,25 +22,48 @@ import { CATALOG, formatsFor, defaultSelection, minSellPrice } from "./catalog.j
         of personal use is not a parallel set.
      3. Choosing "to Sell" opens a guided path instead of dropping you
         into the maker funnel with a star on two cards.
+     4. Nothing asks who you are until the end. Whoever arrives here is
+        starting something new, so the page's job is prices and product
+        options; an existing project and the log-in that reaches it are
+        a decision AFTER that, in the handoff — not a gate before it.
 
    The default stays keepsake on purpose. Most traffic is makers, and a
    maker who never opens the dropdown never meets a price that isn't
    theirs — the guardrail comes free.
    ──────────────────────────────────────────────────────────────── */
 
-const INTENTIONS = [
-  { id: "sell",     label: "to Sell",       group: "business" },
-  { id: "keepsake", label: "as a Keepsake", group: "personal" },
-  { id: "display",  label: "to Display",    group: "personal" },
-  { id: "gift",     label: "to Gift",       group: "personal" },
+/* ── The three routes ──
+   One question — where do the copies end up, and who pays? — asked once.
+   Three parallel infinitives, each of which changes what the page DOES:
+   which products are offered, what the calculator computes, and what the
+   foot of the page hands off to.
+
+   "to Distribute" is the one that is not self-evident, and it is easily
+   misread as a distribution service like Ingram — which is the opposite,
+   and lives under Sell. Hence the gloss. */
+const ROUTES = [
+  { id: "sell",       label: "to Sell",       hint: "People buy it from you, one copy at a time" },
+  { id: "keep",       label: "to Keep",       hint: "For yourself — to hold on to, display or give" },
+  { id: "distribute", label: "to Distribute", hint: "Buy in bulk, then sell or hand them out yourself" },
 ];
 
-/* "Project" is the unset state — what the live page shows until a product
-   type is chosen. Headline and cards drive the same state, and both offer
-   only what is available for the current intention. */
-const formatOptions = intention => [
+/* ── And, under "to Keep" only, what it is for ──
+   These change what we RECOMMEND — cover, paper — and nothing else, so
+   they sit a level down as chips rather than competing with the routes.
+   Keepsake stays the default, as it is on the live page. */
+const USES = [
+  { id: "keepsake", label: "for a keepsake" },
+  { id: "display",  label: "to display" },
+  { id: "gift",     label: "to give as a gift" },
+];
+
+/* "Project" is the unset state, exactly as the live page shows it. What
+   follows is what you are MAKING, not what we print — see PROJECT_KINDS.
+   Sixteen kinds is a long list, so it is grouped; the live one runs flat
+   and scrolls past the fold. */
+const kindOptions = () => [
   { id: null, label: "Project" },
-  ...formatsFor(intention).map(id => ({ id, label: CATALOG[id].short })),
+  ...PROJECT_KINDS.map(k => ({ id: k.id, label: k.label, group: k.group })),
 ];
 
 function InlineSelect({ value, options, onChange }) {
@@ -69,7 +94,7 @@ function InlineSelect({ value, options, onChange }) {
         }}
       >
         {current?.label}
-        <span className="ms" style={{ fontSize: "0.5em", color: T.bgBrand, transform: open ? "rotate(180deg)" : "none" }}>
+        <span className="ms turn" style={{ fontSize: "0.5em", color: T.bgBrand, transform: open ? "rotate(180deg)" : "none" }}>
           expand_more
         </span>
       </button>
@@ -77,22 +102,44 @@ function InlineSelect({ value, options, onChange }) {
       {open && (
         <ul
           role="listbox"
+          className="pop-in"
           style={{
             position: "absolute", top: "calc(100% + 12px)", left: 0, zIndex: 30,
-            margin: 0, padding: 8, listStyle: "none", minWidth: 260,
+            margin: 0, padding: "0 8px 8px", listStyle: "none", minWidth: 260,
             background: T.bgNeutral, border: `1px solid ${T.border}`,
             borderRadius: R.lg, boxShadow: "0 12px 32px rgba(0,0,0,0.12)",
             fontFamily: FONT_BODY, fontSize: TYPE.lg, fontWeight: 400,
+            /* Sixteen kinds is taller than most screens. Scroll inside the
+               menu rather than off the bottom of the page. */
+            maxHeight: "min(62vh, 520px)", overflowY: "auto", overscrollBehavior: "contain",
           }}
         >
           {options.map((o, i) => {
             const selected = o.id === value;
-            const startsPersonal = grouped && o.group === "personal" && options[i - 1]?.group === "business";
+            /* A heading whenever the group changes. "business" is the first
+               intention and needs no heading — the list starts there. */
+            const changed = grouped && o.group && o.group !== options[i - 1]?.group;
+            const heading = o.group === "business" ? null : o.group === "personal" ? "For yourself" : o.group;
             return (
               <React.Fragment key={String(o.id)}>
-                {startsPersonal && (
-                  <li aria-hidden style={{ padding: "10px 12px 6px", fontSize: TYPE.sm, color: T.textSubtle, fontWeight: 600, letterSpacing: 0.3 }}>
-                    For yourself
+                {changed && heading && (
+                  /* A label, not an option — so it is set apart rather than
+                     merely smaller: left to the same inset as the items,
+                     uppercase, ruled off above, and stuck to the top of the
+                     menu while its own group scrolls past. */
+                  <li
+                    aria-hidden
+                    style={{
+                      position: "sticky", top: 0, zIndex: 1,
+                      background: T.bgNeutral,
+                      margin: "6px 0 2px",
+                      padding: "10px 12px 6px",
+                      borderTop: i > 0 ? `1px solid ${T.border}` : 0,
+                      fontSize: TYPE.sm, color: T.textSubtle,
+                      fontWeight: 700, letterSpacing: 0.8, textTransform: "uppercase",
+                    }}
+                  >
+                    {heading}
                   </li>
                 )}
                 <li role="option" aria-selected={selected}>
@@ -101,14 +148,26 @@ function InlineSelect({ value, options, onChange }) {
                     style={{
                       width: "100%", textAlign: "left", border: 0, borderRadius: R.md,
                       padding: "10px 12px", font: "inherit",
+                      /* The menu has no top padding, so the sticky headings
+                         can pin flush. The first row supplies its own. */
+                      marginTop: i === 0 ? 8 : 0,
                       background: selected ? T.bgAccentSubtle : "transparent",
                       color: selected ? T.textBrand : T.textNeutral,
                       fontWeight: selected ? 600 : 400,
                       display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
                     }}
                   >
-                    {o.label}
-                    {selected && <span className="ms" style={{ fontSize: 18 }}>check</span>}
+                    <span style={{ display: "grid", gap: 2, minWidth: 0 }}>
+                      {o.label}
+                      {/* A route that is not self-evident says what it means
+                          here, rather than being discovered by choosing it. */}
+                      {o.hint && (
+                        <span style={{ fontSize: TYPE.sm, color: T.textSubtle, fontWeight: 400, lineHeight: 1.45 }}>
+                          {o.hint}
+                        </span>
+                      )}
+                    </span>
+                    {selected && <span className="ms" style={{ fontSize: 18, flex: "0 0 auto" }}>check</span>}
                   </button>
                 </li>
               </React.Fragment>
@@ -125,46 +184,73 @@ export default function GetStarted({ signedIn, onSignIn }) {
   /* Defaults to Project + to Sell. Note this is a prototype default, chosen so
      reviewers land on the selling path — not a recommendation for production,
      where keepsake is the live default and most traffic is makers. */
-  const [intention, setIntention] = useState("sell");
+  const [route, setRoute] = useState("sell");
+  const [use, setUse] = useState("keepsake");
   const [state, setState] = useState(null);
   const [sellPrice, setSellPrice] = useState(24);
-  const [projectId, setProjectId] = useState(null);
+  /* What they said they are making. It survives changing the product type,
+     because the recommendation is still worth showing after it is refused. */
+  const [kind, setKind] = useState(null);
+  const [why, setWhy] = useState(null);
+  const [recommended, setRecommended] = useState(null);
 
-  const selling = intention === "sell";
+  const selling = route === "sell";
+  const bulk = route === "distribute";
 
-  /* Picking an existing project skips the product-type step entirely — it
-     already knows its size, paper and cover. */
-  const pickProject = p => {
-    setProjectId(p.id);
-    setFormat(p.formatId);
-    setState(p.sel);
-    const floor = minSellPrice(p.formatId, p.sel);
+  const priceFrom = (id, sel) => {
+    /* Anchor the asking price above cost so the ladder never opens negative. */
+    const floor = minSellPrice(id, sel);
     setSellPrice(Math.max(floor, Math.round(floor * 2.4 * 2) / 2));
   };
 
+  /* Choosing a kind seeds a whole specification, not just a format, so the
+     calculator shows a real number straight away. Nothing is locked — every
+     step below can still be changed. */
+  const changeKind = (id, forRoute = route, forUse = use) => {
+    setKind(id);
+    if (!id) { setFormat(null); setState(null); setWhy(null); setRecommended(null); return; }
+    const seed = seedFor(id, forRoute, forUse);
+    setFormat(seed.formatId);
+    setRecommended(seed.formatId);
+    setState({ ...seed.sel, qty: forRoute === "distribute" ? BULK_MIN : seed.sel.qty });
+    setWhy([seed.why, seed.note].filter(Boolean).join(" "));
+    priceFrom(seed.formatId, seed.sel);
+  };
+
+  /* Refusing the recommendation is allowed and expected. The kind and its
+     reasoning stay put; only the product changes. */
   const changeFormat = id => {
-    setProjectId(null);
     setFormat(id);
     if (!id) { setState(null); return; }
     const next = defaultSelection(id);
-    setState(next);
-    /* Anchor the asking price above cost so the ladder never opens negative. */
-    const floor = minSellPrice(id, next);
-    setSellPrice(Math.max(floor, Math.round(floor * 2.4 * 2) / 2));
+    setState({ ...next, qty: bulk ? BULK_MIN : next.qty });
+    priceFrom(id, next);
   };
 
-  /* Switching intention can withdraw the chosen product — PDFs are not
-     offered for selling — so drop a selection that is no longer on offer
-     rather than configuring something we do not sell. */
-  const changeIntention = id => {
-    setIntention(id);
-    if (format && !formatsFor(id).includes(format)) changeFormat(null);
+  /* The recommendation depends on the route as much as the kind — a wedding
+     album to sell is not the wedding album you keep — so switching either
+     re-seeds from the kind. That discards hand-made changes, which is the
+     right trade here: seeing the answer move IS the argument.
+
+     Without a kind, the old rule still applies: switching can withdraw the
+     chosen product, since PDFs are not sold through a link and cannot be
+     handed out in a box. */
+  const changeRoute = id => {
+    setRoute(id);
+    if (kind) { changeKind(kind, id, use); return; }
+    if (format && !formatsFor(id, use).includes(format)) changeFormat(null);
+  };
+
+  const changeUse = id => {
+    setUse(id);
+    if (kind) { changeKind(kind, route, id); return; }
+    if (format && !formatsFor(route, id).includes(format)) changeFormat(null);
   };
 
   return (
     <div style={{ fontFamily: FONT_BODY, color: T.textNeutral }}>
       {/* ── Hero ── */}
-      <section style={{ padding: "64px 24px 36px", maxWidth: 1180, margin: "0 auto", textAlign: "center" }}>
+      <section style={{ padding: "clamp(32px, 6vw, 64px) 20px 32px", maxWidth: 1180, margin: "0 auto", textAlign: "center" }}>
         <h1
           style={{
             fontFamily: FONT_DISPLAY, fontWeight: 400,
@@ -173,9 +259,40 @@ export default function GetStarted({ signedIn, onSignIn }) {
           }}
         >
           Start Your{" "}
-          <InlineSelect value={format} options={formatOptions(intention)} onChange={changeFormat} />{" "}
-          <InlineSelect value={intention} options={INTENTIONS} onChange={changeIntention} />
+          <InlineSelect value={kind} options={kindOptions()} onChange={changeKind} />{" "}
+          <InlineSelect value={route} options={ROUTES} onChange={changeRoute} />
         </h1>
+
+        {/* One level down, one branch only. Chips rather than a second
+            dropdown: this refines the recommendation, it does not change
+            the page, and it should not look like it might. */}
+        {route === "keep" && (
+          <div className="fade-in" style={{
+            display: "flex", justifyContent: "center", alignItems: "center",
+            gap: 8, flexWrap: "wrap", marginTop: 22,
+          }}>
+            <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>What for?</span>
+            {USES.map(u => {
+              const on = use === u.id;
+              return (
+                <button
+                  key={u.id}
+                  onClick={() => changeUse(u.id)}
+                  aria-pressed={on}
+                  style={{
+                    padding: "7px 16px", borderRadius: 999, fontFamily: FONT_BODY, fontSize: TYPE.base,
+                    background: on ? T.bgAccentSubtle : T.bgNeutral,
+                    color: on ? T.textBrand : T.textSubtle,
+                    border: on ? `1px solid ${T.borderBrand}` : `1px solid ${T.border}`,
+                    fontWeight: on ? 700 : 400,
+                  }}
+                >
+                  {u.label}
+                </button>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       {/* ── The steps, with the calculator pinned alongside ── */}
@@ -183,49 +300,47 @@ export default function GetStarted({ signedIn, onSignIn }) {
         style={{
           background: T.bgSubtle,
           borderTop: `1px solid ${T.border}`,
-          padding: "44px 24px 80px",
+          padding: "clamp(28px, 4vw, 44px) 16px 72px",
         }}
       >
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           {format ? (
+            /* Keyed on the format so the steps arrive rather than appear. */
             <Configurator
+              key={format}
               formatId={format}
               state={state}
               onChange={setState}
-              selling={selling}
+              mode={route}
               sellPrice={sellPrice}
               onSellPrice={setSellPrice}
               stepOffset={1}
               leading={
                 <section>
-                  <StepHeading n={1}>Choose your project</StepHeading>
-                  {selling && (
-                    <YourProjects
-                      signedIn={signedIn} onSignIn={onSignIn}
-                      selectedId={projectId} onSelect={pickProject}
-                      onStartNew={() => setProjectId(null)}
-                    />
-                  )}
-                  <ProductTypes format={format} intention={intention} onSelect={changeFormat} />
+                  <StepHeading n={1}>{kind ? "Your product" : "Choose your project"}</StepHeading>
+                  <ProductTypes
+                    format={format} route={route} use={use} onSelect={changeFormat}
+                    recommended={recommended} why={why}
+                    kindLabel={PROJECT_KINDS.find(k => k.id === kind)?.label}
+                  />
                 </section>
               }
-              trailing={<Handoff selling={selling} />}
+              trailing={
+                <Handoff
+                  route={route} signedIn={signedIn} onSignIn={onSignIn}
+                  formatId={format} use={use}
+                  price={sellPrice} cost={sellerCost(format, state)} sel={state}
+                />
+              }
             />
           ) : (
             <div style={{ maxWidth: 1000, margin: "0 auto" }}>
               <StepHeading n={1}>Choose your project</StepHeading>
-              {selling && (
-                <YourProjects
-                  signedIn={signedIn} onSignIn={onSignIn}
-                  selectedId={projectId} onSelect={pickProject}
-                  onStartNew={() => setProjectId(null)}
-                />
-              )}
-              <ProductTypes format={format} intention={intention} onSelect={changeFormat} />
-              <p style={{ fontSize: TYPE.xl, color: T.textSubtle, textAlign: "center", margin: "40px 0 0" }}>
+              <ProductTypes format={format} route={route} use={use} onSelect={changeFormat} />
+              <p style={{ fontSize: TYPE.xl, color: T.textSubtle, textAlign: "center", margin: "40px 0 0", lineHeight: 1.6 }}>
                 {selling
-                  ? "Pick a project to see what it costs you and what you'd earn. The starred ones suit selling."
-                  : "Pick a project to see sizes, papers and prices."}
+                  ? "Tell us what you're making at the top and we'll recommend a product, a size and a paper — with what it costs you and what you'd earn. Or pick one yourself."
+                  : "Tell us what you're making at the top and we'll recommend a product, a size and a paper. Or pick one yourself."}
               </p>
             </div>
           )}

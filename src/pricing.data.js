@@ -258,6 +258,69 @@ export const PRICING = {
   "economy": 5.0,
   "premium": 7.0
  },
+ "wallArt": {
+  "metal_gloss": {
+   "portrait_8x10": 65.0,
+   "landscape_10x8": 65.0,
+   "square_12x12": 89.0,
+   "portrait_11x14": 89.0,
+   "landscape_14x11": 89.0,
+   "portrait_16x20": 129.0,
+   "landscape_20x16": 129.0,
+   "portrait_20x30": 209.0,
+   "landscape_30x20": 209.0
+  },
+  "canvas_matte": {
+   "portrait_8x10": 69.0,
+   "landscape_10x8": 69.0,
+   "square_12x12": 89.0,
+   "portrait_11x14": 89.0,
+   "landscape_14x11": 89.0,
+   "portrait_16x20": 99.0,
+   "landscape_20x16": 99.0,
+   "portrait_20x24": 129.0,
+   "landscape_24x20": 129.0,
+   "portrait_20x30": 149.0,
+   "landscape_30x20": 149.0
+  },
+  "acrylic_gloss": {
+   "portrait_8x10": 79.0,
+   "landscape_10x8": 79.0,
+   "square_12x12": 109.0,
+   "portrait_11x14": 109.0,
+   "landscape_14x11": 109.0,
+   "portrait_16x20": 139.0,
+   "landscape_20x16": 139.0,
+   "square_20x20": 189.0,
+   "portrait_20x30": 229.0,
+   "landscape_30x20": 229.0
+  },
+  "block_matte": {
+   "portrait_8x10": 40.11,
+   "landscape_10x8": 40.11,
+   "square_12x12": 45.11,
+   "portrait_11x14": 50.11,
+   "landscape_14x11": 50.11,
+   "portrait_16x20": 70.11,
+   "landscape_20x16": 70.11,
+   "portrait_20x30": 90.11,
+   "landscape_30x20": 90.11
+  },
+  "poster_matte": {
+   "portrait_8x10": 10.11,
+   "landscape_10x8": 10.11,
+   "square_12x12": 12.11,
+   "portrait_11x14": 14.11,
+   "landscape_14x11": 14.11,
+   "portrait_16x20": 16.11,
+   "landscape_20x16": 16.11,
+   "square_20x20": 20.11,
+   "portrait_20x24": 24.11,
+   "landscape_24x20": 24.11,
+   "portrait_20x30": 30.11,
+   "landscape_30x20": 30.11
+  }
+ },
  "productOptions": {
   "pro_charcoal_linen_covering": 6.0,
   "pro_white_endsheet": 3.0

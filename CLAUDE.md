@@ -8,14 +8,16 @@ Companion to the FigJam board [Merchant Pricing and Experience](https://www.figm
 
 Jira: [DES-469](https://blurb-books.atlassian.net/browse/DES-469) (the discovery audit this grew out of).
 
-## The four screens
+## The three screens
 
 `STAGES` in `src/App.jsx` drives one linear journey, switchable from the demo bar and openable directly via `?stage=<id>`:
 
-1. **`getstarted`** — the redesign of `/getting-started`. It is *already* intent-first: the live page has an intention dropdown (`to Sell · as a Keepsake · to Display · to Gift`, defaulting to keepsake). The redesign gives "to Sell" somewhere to go; it does **not** add a new intent question and does **not** flip the default.
-2. **`waystosell`** — one card per route to market. The card set is ours; the value proposition on each card is Ana's.
-3. **`estimator`** — public, anonymous, intent-first. Educates and converts, creates nothing.
-4. **`link`** — checkout link setup, in the dashboard. Specified in Stacey's **Checkout Link** file: agent-led, and **variants** are the unit rather than the book. Read it before designing here.
+1. **`getstarted`** — the redesign of `/getting-started`. It is *already* intent-first: the live page has an intention dropdown, defaulting to keepsake. The redesign asks the question once, in the user's words — see the route decision below — and gives selling somewhere to go.
+2. **`waystosell`** — one card per route to market. The card set is ours; the value proposition on each card is Ana's, now **drafted rather than blank** so she has a sentence to react to.
+3. **`estimator`** — public, anonymous, and **two calculators, not one** *(2026-08-18)*. `?mode=make` is the pricing calculator (per copy, copies, no margin anywhere); `?mode=sell` is the margin estimator (cost → price → profit, plus the channel comparison). Each names the other and hands over carrying the specification, because landing in the wrong one is expected. Both **create nothing**, which is why they can be anonymous: margin is destination-free, so neither needs an address.
+   **Product options come first in both.** Formats, sizes, covers and papers are the opening controls — a maker who already knows they want an 8×10 hardback must not be asked what kind of book they are writing before seeing a price. The project-kind list is behind **"Not sure which product?"**, offered rather than imposed, and seeds the spec through the same `seedFor` the get-started page uses.
+
+**Checkout link setup is deliberately NOT prototyped here** *(2026-08-18)*. It is Stacey's design, specified in her **Checkout Link** file — agent-led, with **variants** as the unit rather than the book. Read it before making any claim about how links behave; do not rebuild it.
 
 ## Decisions already made
 
@@ -24,6 +26,15 @@ Jira: [DES-469](https://blurb-books.atlassian.net/browse/DES-469) (the discovery
   - **It gates buying, not publishing.** Setup is never blocked. A seller can go live with no proof; the PDP then hides price, quantity and Add to cart and shows *"This product is coming soon"* until a proof exists.
   - **A PDF proof satisfies it**, as does a discounted or free physical copy. Either one alone.
   - It clears automatically, even while a buyer has the PDP open. Banners are non-dismissible.
+- **`/getting-started` assumes you are starting something new** *(2026-08-18)*. Its job is prices and product options, so nothing asks who you are until the end. Step 1 is product types only; the "Ready to sell it?" handoff is the decision point and forks two ways — create the project, or go and sell one you already created (log in when signed out, the project list when signed in).
+- **The nav shows the proposal only** *(2026-08-18)*. The Today/Proposed toggle is gone — the "today" nav was a reconstruction that didn't match the live header closely enough to compare against, so it confused rather than explained. `NEW` and `CHANGED` marks carry what the proposal adds; anyone wanting today's nav opens blurb.com. Don't rebuild the comparison.
+- **The nav recommendations are Anain's,** written into Deb's nav work (meeting item 6) rather than waiting on it. Both states are covered: signed out, Sell & Self-Publish regroups by *how* you sell and seller pricing stays off the public Pricing menu; signed in, Settings/Help/Log Out collapse into an account menu, the cart survives log-in, the flag becomes a labelled locale control, and Start Project is the primary button in both states.
+- **The headline asks what you're MAKING, not what we print** *(2026-08-18)*. The live `/getting-started` dropdown already lists project kinds — Cookbook, Novel, Portfolio, Wedding Album… — and an earlier pass of this prototype wrongly replaced them with product types. The kind is the question; the product type is the answer. `PROJECT_KINDS` in `catalog.js` maps each kind to a whole seeded specification, and `seedFor(kind, intention)` reconciles it against the real matrix so a recommendation can never quote a spec that doesn't exist. Step 1 then leads with the recommended card, starred, with the reason stated.
+- **The intention tunes the finish, never the size** *(2026-08-18)*. All four intentions now change the recommendation (`INTENT_TUNING`), not just "to Sell" — but only cover and paper. Size belongs to the kind: an Instagram Book reprinted at 13×11 "to display" is not an Instagram Book. A preference is applied only when it changes nothing else, and the explanatory note is suppressed when the upgrade wasn't available, so the page never claims a change it didn't make.
+- **A magazine has nothing to choose** *(2026-08-18)*. `/pricing` lists one magazine — Premium, 8.5×11, one paper, softcover — under "1 size". So its steps keep a book's shape and headings but never say "choose": one card, already selected, with the reason underneath. `PRICING.magazines.economy` is left in the data but not offered. A step with no choice must not look like a control.
+- **Products are filtered by intention, two different ways** *(2026-08-18)*. Selling narrows by **channel** (`sellChannels`) — a PDF is orderable for yourself but not sellable through a checkout link. The other intentions narrow by what the product **is** (`intentions`): Wall Art is display and gift only, Notebooks & Journals keepsake and gift only. Both are real products with real prices lifted from the same `/pricing` matrix as everything else — wall art is priced **material × size**, a shape nothing else uses, so it carries its own availability, lookup and repair order.
+- **A hundred copies means Large Order Services** *(2026-08-18)*. Past `BULK_AT` in `Configurator.jsx`, the calculator offers a bulk quote beside the copies stepper. Someone ordering at that quantity is buying stock to sell or distribute outside Blurb's channels, and the self-serve volume tiers stop at fifty — so the page would otherwise quote worse terms than the company would actually give. It sits alongside, never replacing: a better door, not a closed one.
+- **The footer is the one from the Single-page Checkout file** *(2026-08-18)*, node `13277:21743` — one 50px bar, five legal links, secure-payment mark, `#292929`. A sitemap footer was built first and deliberately dropped. Worth remembering what that costs: a footer link appears on every page, so the seller pages lose the cheapest site-wide SEO there is, and the header nav now has to carry it alone.
 - **The seller's price floors at their cost**, so the ladder can never show negative profit. A real minimum-price rule is still an open product question.
 - **The buyer pays shipping**, so it never enters the seller's margin — only "what your buyer pays".
 
@@ -31,11 +42,19 @@ Jira: [DES-469](https://blurb-books.atlassian.net/browse/DES-469) (the discovery
 
 These came out of the audit and they are the reason the design looks the way it does:
 
+- **The margin is payment for work the seller did** *(2026-08-19)*. The official explanation of why a seller pays less than a retail buyer; use it everywhere. A retail price covers more than printing — it pays for **running the shop**: marketing, the site, the traffic. A seller doing their own promotion carries that cost themselves, so the margin it would have paid for is handed to them. Not a discount off a price; payment for part of the work. It explains the difference without quoting Blurb's margin, and it says who a checkout link is for. **State it generally, never as a per-sale condition** — "when we find the buyer / when you find the buyer" implies the split could flip case by case, and on a link it never does.
+- **Never put retail and fulfilment side by side** *(2026-08-19)*. A seller sees their own cost; that is the product working. What no surface may do is show the retail price next to it and explain the difference — that publishes Blurb's margin, with the arithmetic done for the reader. Answer "why is this less than a copy costs?" with the change of role (*you're the customer* → *we're your printer*), never with the two numbers.
 - **The fulfilment price is a line in a calculation, never a price tag.** The ladder is two rungs — *your cost → your price → your profit*. No shipping (the buyer pays it) and no fulfilment fee (nothing says Blurb charges one).
 - **Pricing follows the order, not the user.** Ask what someone is doing, never who they are. No identity gate, no account-level price mode.
 - **Bind prices only where a binding exists.** Most Blurb marketing pages carry hand-typed prices; only `/getting-started` and `/pdf-to-book` compute from a product spec. Those are the surfaces that can carry a second value structurally.
 - **Comparison before commitment.** The channel comparison belongs on the estimator, not the link screen.
 - **Second person everywhere** — *your cost, your price, your profit*. Keep "list price" for the customer-facing number. Never "wholesale": `/ingram` already uses it for the retailer trade discount.
+
+## Sources
+
+**ProductList 2025.xlsx** (Stacey's OneDrive, read via the Microsoft 365 connector) is the current **product × creation-tool** matrix — which products each tool can make, plus sizes, papers, cover and endsheet colours and page ceilings. It is the only source that answers the tools question.
+
+**It does not apply to checkout links** *(Anain, 2026-08-18)*. The list was written before checkout links existed as a product, so its "Sell and Distribute" row is empty and its silence proves nothing. Never derive a checkout-link rule from it; that belongs to Stacey's Checkout Link file.
 
 ## Figures
 

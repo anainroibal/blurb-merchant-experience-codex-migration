@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from "react";
 import GetStarted from "./GetStarted.jsx";
 import SiteNav from "./SiteNav.jsx";
+import SiteFooter from "./SiteFooter.jsx";
 import WaysToSell from "./WaysToSell.jsx";
+import Estimator from "./Estimator.jsx";
 
 /* ────────────────────────────────────────────────────────────────
    Blurb — Merchant Experience prototypes
 
    Companion to the "Merchant Pricing and Experience" FigJam board.
    Scope: the seller journey — get started, the five ways to sell,
-   the intent-first estimator, and the checkout-link setup screen.
+   and the intent-first estimator. The checkout-link setup screen is
+   Stacey's design and is deliberately NOT prototyped here.
 
    Conventions match Blurb Checkout Prototypes on purpose: design
    tokens in `T`, inline style objects, no CSS framework, all state
@@ -31,8 +34,6 @@ const T = {
   bgSubtle:   "#f9f9f9",
   radius:     8,
 };
-
-const FONT_HEADING = "Inter, -apple-system, BlinkMacSystemFont, sans-serif";
 
 /* Branch name comes from a build-time define — Vercel's VERCEL_GIT_COMMIT_REF,
    falling back to the local git branch. See vite.config.js. */
@@ -79,8 +80,11 @@ function WipChip() {
 const STAGES = [
   { id: "getstarted", short: "Get started",  label: "Get started — the intent router" },
   { id: "waystosell", short: "Ways to sell", label: "The ways to sell" },
-  { id: "estimator",  short: "Estimator",    label: "Intent-first estimator" },
-  { id: "link",       short: "Link setup",   label: "Checkout link setup" },
+  /* Two pages, not two tabs. The maker's price sits under Pricing; the
+     seller's margin sits under Sell & Self-Publish, which is what keeps
+     the public pricing pages retail-only. */
+  { id: "pricing",    short: "Pricing",      label: "Pricing calculator — under Pricing" },
+  { id: "margin",     short: "Margin",       label: "Margin estimator — under Sell & Self-Publish" },
 ];
 
 function StageStepper({ stage, onJump }) {
@@ -125,6 +129,7 @@ function StageStepper({ stage, onJump }) {
 function DemoBar({ stage, onJump }) {
   return (
     <div
+      className="demo-bar"
       style={{
         display: "flex", alignItems: "center", justifyContent: "space-between",
         gap: 16, flexWrap: "wrap",
@@ -136,64 +141,12 @@ function DemoBar({ stage, onJump }) {
         <WipChip />
       </div>
       <StageStepper stage={stage} onJump={onJump} />
-      <div style={{ fontSize: 12, color: T.textSubtle }}>Merchant Experience</div>
+      <div className="hide-sm" style={{ fontSize: 12, color: T.textSubtle }}>Merchant Experience</div>
     </div>
   );
 }
 
-/* ── Placeholder screen. Replace one at a time as each is designed. ── */
-function Placeholder({ title, blurb, notes }) {
-  return (
-    <div style={{ maxWidth: 880, margin: "0 auto", padding: "56px 24px 96px" }}>
-      <h1 style={{ fontFamily: FONT_HEADING, fontSize: 40, fontWeight: 600, lineHeight: 1.15, margin: 0, color: T.textBold }}>
-        {title}
-      </h1>
-      <p style={{ fontSize: 18, lineHeight: 1.55, color: T.textSubtle, marginTop: 12 }}>{blurb}</p>
-      <div
-        style={{
-          marginTop: 32, padding: 24, borderRadius: T.radius,
-          background: T.panel, border: `1px solid #d8e9f2`,
-        }}
-      >
-        <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: 0.4, color: T.textSubtle, textTransform: "uppercase" }}>
-          From the board
-        </div>
-        <ul style={{ margin: "12px 0 0", paddingLeft: 20, fontSize: 16, lineHeight: 1.7 }}>
-          {notes.map((n, i) => <li key={i}>{n}</li>)}
-        </ul>
-      </div>
-    </div>
-  );
-}
 
-const SCREENS = {
-  waystosell: <WaysToSell />,
-  estimator: (
-    <Placeholder
-      title="Intent-first estimator"
-      blurb="Public and anonymous. It educates and converts; it cannot create anything."
-      notes={[
-        'Overlaps the pricing agent in Stacey\'s flow — agree where each lives.',
-        'Margin is destination-free, so it can show anywhere. Buyer totals need a ship-to and wait for later.',
-        'The ladder is two rungs: your cost → your price → your profit.',
-        'Comparison lives here, not on the link screen.',
-      ]}
-    />
-  ),
-  link: (
-    <Placeholder
-      title="Checkout link setup"
-      blurb="Per project, in the dashboard. Stacey's Checkout Link file specifies this flow — read it before designing here."
-      notes={[
-        'Agent-led: Setup → Drafting → Confirmation → Ongoing.',
-        'VARIANTS are the unit, not the book — priced or options-only, mapped to a project.',
-        'The quality gate blocks buying, not publishing. Until a proof exists the PDP hides price, quantity and Add to cart.',
-        'PayPal for payout. QR code ships with the link.',
-        'Highest-intent entry point is receiving the proof.',
-      ]}
-    />
-  ),
-};
 
 export default function App() {
   const [stage, setStage] = useState(() => {
@@ -201,16 +154,31 @@ export default function App() {
     return STAGES.some(s => s.id === q) ? q : "getstarted";
   });
 
-  const [navVariant, setNavVariant] = useState("proposed");
   const [signedIn, setSignedIn] = useState(false);
 
+  /* Changing screen is a page change, so it starts at the top. Without
+     this you keep the scroll position of the page you left — follow a
+     link from the foot of one page and you land halfway down the next.
+     Instant, not smooth: a long smooth scroll on navigation is slower and
+     more disorienting than simply being there. */
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [stage]);
+
+  /* Column layout, so the footer sits on the bottom of the viewport when a
+     screen is short and after the content when it is not. */
   return (
-    <div style={{ minHeight: "100vh", background: T.bg }}>
+    <div style={{ minHeight: "100vh", background: T.bg, display: "flex", flexDirection: "column" }}>
       <DemoBar stage={stage} onJump={setStage} />
-      <SiteNav variant={navVariant} onVariant={setNavVariant} signedIn={signedIn} onSignedIn={setSignedIn} />
-      {stage === "getstarted"
-        ? <GetStarted signedIn={signedIn} onSignIn={() => setSignedIn(true)} />
-        : SCREENS[stage]}
+      <SiteNav signedIn={signedIn} onSignedIn={setSignedIn} />
+      {/* Keyed on the stage so switching screens fades rather than cuts. */}
+      <div key={stage} className="fade-in" style={{ flex: 1, minWidth: 0 }}>
+        {stage === "getstarted" && <GetStarted signedIn={signedIn} onSignIn={() => setSignedIn(true)} />}
+        {stage === "waystosell" && <WaysToSell />}
+        {stage === "pricing"    && <Estimator mode="make" onGo={setStage} />}
+        {stage === "margin"     && <Estimator mode="sell" onGo={setStage} />}
+      </div>
+      <SiteFooter />
     </div>
   );
 }

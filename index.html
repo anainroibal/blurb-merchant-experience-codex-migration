@@ -24,6 +24,127 @@
       }
       button { font-family: inherit; cursor: pointer; }
       input, select { font-family: inherit; }
+
+      /* The steppers supply their own controls — the browser's native
+         spinners would sit inside the Codex selector and duplicate them. */
+      input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
+      input[type="number"]::-webkit-outer-spin-button,
+      input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+      /* ── Motion ──
+         One easing and two durations for the whole prototype, so nothing
+         snaps. Colour, border and shadow are safe to transition everywhere;
+         layout properties are not, so they are left out deliberately.
+
+         --ease is a gentle deceleration: quick to start, settling at the
+         end, which reads as responsive rather than sluggish. */
+      :root {
+        --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+        --fast: 140ms;   /* hover, focus — must not lag the pointer */
+        --slow: 260ms;   /* menus, panels, anything that appears */
+      }
+
+      a, button, input, select, summary {
+        transition:
+          background-color var(--fast) var(--ease),
+          border-color     var(--fast) var(--ease),
+          color            var(--fast) var(--ease),
+          box-shadow       var(--fast) var(--ease),
+          opacity          var(--fast) var(--ease),
+          transform        var(--fast) var(--ease);
+      }
+
+      /* Selecting a card is a bigger visual move than a hover, so it gets
+         the slower duration and carries its ring and lift with it. */
+      .card-move {
+        transition:
+          background-color var(--slow) var(--ease),
+          border-color     var(--slow) var(--ease),
+          color            var(--slow) var(--ease),
+          box-shadow       var(--slow) var(--ease),
+          transform        var(--slow) var(--ease);
+      }
+
+      /* Menus and popovers: fade up from just below their trigger. */
+      .pop-in {
+        animation: pop-in var(--slow) var(--ease) both;
+        transform-origin: top center;
+      }
+      @keyframes pop-in {
+        from { opacity: 0; transform: translateY(-6px) scale(0.985); }
+        to   { opacity: 1; transform: none; }
+      }
+
+      /* Switching screen, and any section that arrives after a choice. */
+      .fade-in { animation: fade-in var(--slow) var(--ease) both; }
+      @keyframes fade-in {
+        from { opacity: 0; transform: translateY(8px); }
+        to   { opacity: 1; transform: none; }
+      }
+
+      /* The rotating chevrons on every disclosure. */
+      .turn { transition: transform var(--slow) var(--ease); }
+
+      /* ── Responsive ──
+         Everything in this prototype is styled with inline style objects,
+         and an inline style beats any stylesheet rule. So every override
+         below carries !important. That is confined to this block on
+         purpose — it is the seam between the two systems, not a habit.
+
+         Three sizes: desk (default), tablet at 1024, phone at 640. The
+         nav collapses at 900 because that is where six top-level items
+         plus the right-hand cluster stop fitting, not at a round number. */
+
+      .nav-toggle, .nav-mobile { display: none; }
+
+      @media (max-width: 1024px) {
+        /* Steps and calculator stop being side by side. The calculator
+           moves ABOVE the steps and pins to the top, so the price still
+           moves while you choose — which is the whole reason it is not a
+           block at the bottom of the page. */
+        .cfg-grid { grid-template-columns: 1fr !important; gap: 24px !important; }
+        .cfg-aside {
+          order: -1;
+          top: 8px !important;
+          max-height: 40vh; overflow-y: auto;
+          box-shadow: 0 8px 22px rgba(0, 0, 0, .09);
+        }
+        .cfg-steps { gap: 40px !important; }
+      }
+
+      @media (max-width: 900px) {
+        .nav-desktop { display: none !important; }
+        .nav-toggle { display: inline-flex; }
+        .nav-mobile { display: block; }
+        /* Panels that put copy beside a button: button drops below. */
+        .stack-md { grid-template-columns: 1fr !important; }
+      }
+
+      @media (max-width: 640px) {
+        /* The type scale in tokens.js is in rem, so it hangs off the root
+           font size. Shrinking that once takes the whole scale down
+           together and keeps every ratio in the design intact — far safer
+           than overriding sizes one component at a time. */
+        html { font-size: 15px; }
+        .hide-sm { display: none !important; }
+        .pop-wide {
+          min-width: 0 !important;
+          width: calc(100vw - 24px) !important;
+          max-width: calc(100vw - 24px) !important;
+        }
+        .pop-cols { grid-template-columns: 1fr !important; }
+        .cfg-aside { max-height: 34vh; padding: 16px !important; }
+        .demo-bar { justify-content: center !important; }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after {
+          animation-duration: 1ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 1ms !important;
+          scroll-behavior: auto !important;
+        }
+      }
       .ms {
         font-family: "Material Symbols Outlined";
         font-weight: normal;

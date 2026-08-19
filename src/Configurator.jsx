@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.js";
 import WhiteLabelTip from "./WhiteLabelTip.jsx";
+import CostExplainer from "./CostExplainer.jsx";
+import MarginLadder from "./MarginLadder.jsx";
 import {
   CATALOG, ADDONS, SHIPPING, PRINT_DAYS,
   priceFor, selectedOption, pageLimit, shippingFor, money,
-  availableFor, reconcile, sellerCost, minSellPrice,
+  availableFor, reconcile, sellerCost, minSellPrice, derivedSteps, BULK_MIN, speedDays,
 } from "./catalog.js";
 
 /* ────────────────────────────────────────────────────────────────
@@ -42,6 +44,7 @@ function OptionCard({ title, sub, spec, note, selected, onClick, disabled }) {
       onClick={onClick}
       disabled={disabled}
       aria-pressed={selected}
+      className="card-move"
       title={disabled ? "Not available with the rest of your selection" : undefined}
       style={{
         textAlign: "center", background: T.bgNeutral, borderRadius: R.md,
@@ -75,36 +78,104 @@ function OptionCard({ title, sub, spec, note, selected, onClick, disabled }) {
   );
 }
 
-/* Compact controls for the calculator panel — everything that moves the
-   price sits next to the price itself. */
+/* ── Codex, Quantity Selector (Single-page Checkout 12442:88383) ──
+   Three segments joined into one control rather than three loose boxes:
+   40px tall, 48px wide each, borders collapsed with a −1px margin,
+   #989898 (which T.borderStrong already is), 4px on the outer corners
+   only, and the value at 18px REGULAR — not bold, which is what our
+   version had wrong.
+
+   Two departures, both to keep it usable here rather than to restyle it:
+   the value stays an input so a long page count can be typed instead of
+   clicked to, and the label sits in our panel's uppercase style so it
+   matches Pages, Copies and Your price rather than introducing a second
+   label voice inside one panel. */
+const SEG = {
+  width: 48, height: 40, flex: "0 0 auto",
+  background: T.bgNeutral, border: `1px solid ${T.borderStrong}`,
+  display: "grid", placeItems: "center", color: T.textNeutral,
+};
+
 function MiniStepper({ label, hint, value, min, max, step = 1, onChange }) {
-  const btn = {
-    width: 30, height: 30, borderRadius: R.sm, border: `1px solid ${T.border}`,
-    background: T.bgNeutral, display: "grid", placeItems: "center",
-  };
   return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-      <span style={{ display: "grid", gap: 1, minWidth: 0 }}>
+    <div style={{ display: "grid", gap: 8 }}>
+      <span style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
         <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>{label}</span>
-        {hint && <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>{hint}</span>}
+        {hint && <span style={{ fontSize: TYPE.sm, color: T.textSubtle, textAlign: "right" }}>{hint}</span>}
       </span>
-      <span style={{ display: "inline-flex", alignItems: "center", gap: 6, flex: "0 0 auto" }}>
-        <button style={btn} onClick={() => onChange(Math.max(min, value - step))} aria-label={`Fewer ${label}`}>
-          <span className="ms" style={{ fontSize: 16 }}>remove</span>
+
+      <span style={{ display: "flex", alignItems: "stretch" }}>
+        <button
+          style={{ ...SEG, borderRadius: `4px 0 0 4px`, marginRight: -1 }}
+          onClick={() => onChange(Math.max(min, value - step))}
+          aria-label={`Fewer ${label}`}
+        >
+          <span className="ms" style={{ fontSize: 24 }}>remove</span>
         </button>
+
         <input
           type="number" value={value} min={min} max={max}
+          aria-label={label}
           onChange={e => onChange(Math.min(max, Math.max(min, Number(e.target.value) || min)))}
           style={{
-            width: 54, border: `1px solid ${T.border}`, borderRadius: R.sm, outline: "none",
-            textAlign: "center", padding: "5px 2px",
-            fontFamily: FONT_BODY, fontSize: TYPE.lg, fontWeight: 700, color: T.textNeutral,
+            ...SEG, marginRight: -1, borderRadius: 0, outline: "none",
+            textAlign: "center", padding: "0 4px",
+            fontFamily: FONT_BODY, fontSize: TYPE.lg, fontWeight: 400, color: T.textNeutral,
           }}
         />
-        <button style={btn} onClick={() => onChange(Math.min(max, value + step))} aria-label={`More ${label}`}>
-          <span className="ms" style={{ fontSize: 16 }}>add</span>
+
+        <button
+          style={{ ...SEG, borderRadius: `0 4px 4px 0` }}
+          onClick={() => onChange(Math.min(max, value + step))}
+          aria-label={`More ${label}`}
+        >
+          <span className="ms" style={{ fontSize: 24 }}>add</span>
         </button>
       </span>
+    </div>
+  );
+}
+
+/* ── Past a hundred copies, this is not the right page ──
+   Someone ordering a hundred books is not making a keepsake. They are
+   buying stock — to sell in person, to hand out at an event, to
+   distribute somewhere Blurb's own channels do not reach. Large Order
+   Services exists for exactly that, and the self-serve volume tiers stop
+   at fifty, so past this point the page is quoting worse terms than the
+   company would actually offer.
+
+   The threshold is not a guess: ProductList 2025's quantity ladder ends
+   "100+ Books – blurb.com", which is this handoff written down.
+
+   It appears beside the copies stepper rather than replacing anything:
+   this is a better door, not a closed one. */
+const BULK_AT = BULK_MIN;
+
+function BulkHandoff({ qty }) {
+  return (
+    <div style={{
+      background: C.blue50, border: `1px solid ${C.blue100}`, borderRadius: R.md,
+      padding: 14, display: "grid", gap: 8,
+    }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <span className="ms" style={{ fontSize: 20, color: C.blue600 }}>local_shipping</span>
+        <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase", color: C.blue950 }}>
+          {qty} copies is a large order
+        </span>
+      </div>
+      <p style={{ margin: 0, fontSize: TYPE.sm, lineHeight: 1.55, color: T.textNeutral }}>
+        At this quantity you are buying stock — to sell in person, to hand out at an event, or to
+        distribute somewhere our own channels do not reach. Large Order Services quotes better than this
+        calculator can, and handles delivery in bulk.
+      </p>
+      <button style={{
+        justifySelf: "start", height: 36, padding: "0 16px", borderRadius: R.sm,
+        background: C.blue950, color: T.textInverse, border: "1px solid transparent",
+        fontFamily: FONT_BODY, fontSize: TYPE.sm, fontWeight: 700,
+        letterSpacing: 0.5, textTransform: "uppercase",
+      }}>
+        Get a bulk quote
+      </button>
     </div>
   );
 }
@@ -164,14 +235,47 @@ function PriceInput({ value, floor, onChange }) {
     onChange(next);
   };
 
+  /* Typing is the precise way in, but a bare field does not look adjustable
+     — and this is the one number on the page the seller is meant to move.
+     The steppers say so, and match the pages and copies controls above. */
+  const step = dir => {
+    const from = Number.isFinite(parsed) ? parsed : value;
+    const next = Math.max(floor, Math.round((from + dir) * 100) / 100);
+    setEditing(false);
+    setRaw(next.toFixed(2));
+    onChange(next);
+  };
+
+  /* Stacked chevrons rather than a minus and a plus at opposite ends of the
+     field: adjusting a price is a hunt for the right number, so up and down
+     get used one after the other. Splitting them across the control makes
+     every change of direction a journey. Together, the pointer stays put. */
+  /* Codex defines Stepper Set — separate rounded boxes, 1px border, white
+     fill, bold dark glyph — so the buttons take that look rather than a
+     new one. What Codex does NOT define is a spinner: its stepper puts
+     minus and plus either side of the value. Stacking them is a departure,
+     and a deliberate one, because a price is hunted for rather than nudged
+     once. If strict conformance matters more, this should go back to − /
+     + and the spinner be proposed to Codex instead. */
+  const atFloor = value <= floor;
+  /* Same border, same fill, same 4px corners as the Codex selector, and
+     the pair stacks to exactly its 40px height. */
+  const chevron = {
+    width: 34, height: 19, padding: 0,
+    border: `1px solid ${T.borderStrong}`, background: T.bgNeutral,
+    display: "grid", placeItems: "center", color: T.textNeutral,
+  };
+
   return (
     <span style={{ display: "grid", gap: 4 }}>
+      <span style={{ display: "flex", alignItems: "stretch", gap: 8 }}>
       <span style={{
-        display: "flex", alignItems: "center", gap: 8, padding: "8px 12px",
+        flex: 1, minWidth: 0, minHeight: 40,
+        display: "flex", alignItems: "center", gap: 8, padding: "0 12px",
         border: `2px solid ${below ? "#b3261e" : T.borderBrand}`, borderRadius: R.md,
         background: T.bgNeutral,
       }}>
-        <span style={{ fontSize: TYPE.lg, color: T.textSubtle }}>US $</span>
+        <span style={{ fontSize: TYPE.lg, color: T.textSubtle, whiteSpace: "nowrap", flex: "0 0 auto" }}>US $</span>
         <input
           type="text" inputMode="decimal" value={raw}
           aria-label="Your price"
@@ -191,6 +295,29 @@ function PriceInput({ value, floor, onChange }) {
           }}
         />
       </span>
+
+      <span style={{ flex: "0 0 auto", display: "grid", gap: 2, alignSelf: "center" }}>
+        <button
+          style={{ ...chevron, borderRadius: "4px 4px 0 0", marginBottom: -1 }}
+          onClick={() => step(1)}
+          aria-label="Raise your price by one dollar"
+        >
+          <span className="ms" style={{ fontSize: 18 }}>keyboard_arrow_up</span>
+        </button>
+        <button
+          style={{
+            ...chevron, borderRadius: "0 0 4px 4px",
+            opacity: atFloor ? 0.35 : 1, cursor: atFloor ? "not-allowed" : "pointer",
+          }}
+          onClick={() => step(-1)}
+          disabled={atFloor}
+          aria-label="Lower your price by one dollar"
+          title={atFloor ? `${money(floor)} is your cost — you cannot price below it` : undefined}
+        >
+          <span className="ms" style={{ fontSize: 18 }}>keyboard_arrow_down</span>
+        </button>
+      </span>
+      </span>
       {below && (
         <span style={{ fontSize: TYPE.sm, color: "#b3261e" }}>
           Below your cost. This will lift to {money(floor)} when you finish.
@@ -200,54 +327,45 @@ function PriceInput({ value, floor, onChange }) {
   );
 }
 
-/* Fixed attributes — shown, not chosen. BookWright presents magazine paper and
-   cover this way: a labelled value you can read but not change, with the detail
-   underneath. Better than a one-option picker, which implies a decision. */
-function FixedSpecs({ items, note }) {
+/* A step with nothing to pick — a magazine's paper and cover, which come with
+   the magazine itself. Same heading, same card, already chosen: the page keeps
+   its shape and the spec is read where every other spec is read. */
+/* "Choose your book size" → "BOOK SIZE", "Your paper" → "PAPER". */
+const summaryLabel = label => label.replace(/^(choose your|your)\s+/i, "").toUpperCase();
+
+/* One card should not stretch the width of the column the way six do. */
+const stepGrid = count => ({
+  display: "grid", gap: 14,
+  gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
+  ...(count === 1 ? { maxWidth: 260, margin: "0 auto" } : null),
+});
+
+function StepNote({ children }) {
   return (
-    <div style={{
-      background: T.bgNeutral, border: `1px solid ${T.border}`, borderRadius: R.md,
-      padding: 20, display: "grid", gap: 16, maxWidth: 560, margin: "0 auto",
+    <p style={{
+      fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5,
+      textAlign: "center", margin: "14px auto 0", maxWidth: 560,
     }}>
-      {items.map(f => (
-        <div key={f.label} style={{ display: "grid", gap: 6 }}>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 14 }}>
-            <span style={{
-              fontSize: TYPE.base, fontWeight: 700, color: T.textNeutral,
-              minWidth: 74, flex: "0 0 auto",
-            }}>{f.label}:</span>
-            <span style={{
-              flex: 1, minWidth: 0, padding: "7px 12px", borderRadius: R.sm,
-              border: `1px solid ${T.border}`, background: C.gray50,
-              fontSize: TYPE.base, color: T.textNeutral,
-            }}>{f.value}</span>
-          </div>
-          {f.detail && (
-            <div style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.55, paddingLeft: 88 }}>
-              {f.detail}
-            </div>
-          )}
-        </div>
-      ))}
-      {note && (
-        <div style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>{note}</div>
-      )}
-    </div>
+      {children}
+    </p>
   );
 }
 
-function Line({ label, value, strong, muted }) {
+/* `accent` is for the one number the page exists to produce — the seller's
+   profit. Brand blue rather than the near-black used for a plain total, so
+   it reads as the answer and not just the last row. */
+function Line({ label, value, strong, muted, accent }) {
   return (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 16 }}>
       <span style={{
         fontSize: strong ? TYPE.base : TYPE.sm,
-        color: muted ? T.textSubtle : T.textNeutral,
+        color: accent ? C.blue600 : muted ? T.textSubtle : T.textNeutral,
         fontWeight: strong ? 700 : 400,
         letterSpacing: strong ? 0.4 : 0, textTransform: strong ? "uppercase" : "none",
       }}>{label}</span>
       <span style={{
         fontSize: strong ? TYPE["4xl"] : TYPE.base, fontWeight: strong ? 700 : 600,
-        color: strong ? C.blue950 : T.textNeutral, whiteSpace: "nowrap",
+        color: accent ? C.blue600 : strong ? C.blue950 : T.textNeutral, whiteSpace: "nowrap",
         fontFamily: strong ? FONT_DISPLAY : FONT_BODY,
       }}>{value}</span>
     </div>
@@ -285,7 +403,7 @@ function ShippingBlock({ ship, setShip, qty, selling, cost }) {
       </button>
 
       {ship.open && (
-        <div style={{ display: "grid", gap: 10 }}>
+        <div className="fade-in" style={{ display: "grid", gap: 10 }}>
           <div style={{ display: "grid", gap: 8, gridTemplateColumns: "1fr 1fr" }}>
             <select
               value={ship.country}
@@ -327,7 +445,7 @@ function ShippingBlock({ ship, setShip, qty, selling, cost }) {
                 >
                   <span style={{ display: "grid", gap: 1, minWidth: 0 }}>
                     <span style={{ fontSize: TYPE.sm, fontWeight: on ? 700 : 500 }}>{s.label}</span>
-                    <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>{s.days}</span>
+                    <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>{speedDays(s)}</span>
                   </span>
                   <span style={{ fontSize: TYPE.sm, fontWeight: 700, color: on ? C.blue600 : T.textSubtle, whiteSpace: "nowrap" }}>
                     {q ? money(q.cost) : "—"}
@@ -359,14 +477,17 @@ function ShippingBlock({ ship, setShip, qty, selling, cost }) {
 }
 
 export default function Configurator({
-  formatId, state, onChange, selling, sellPrice, onSellPrice,
+  formatId, state, onChange, mode, sellPrice, onSellPrice,
   stepOffset = 1, leading, trailing,
 }) {
+  const selling = mode === "sell";
+  const bulk = mode === "distribute";
   const f = CATALOG[formatId];
   const p = priceFor(formatId, state);
   const limit = pageLimit(formatId, state);
   const cost = sellerCost(formatId, state);
   const floor = minSellPrice(formatId, state);
+  const derived = derivedSteps(formatId, state);
   const profit = Math.max(0, sellPrice - cost);
 
   /* A pricier paper can push cost above the asking price — lift it rather
@@ -392,10 +513,10 @@ export default function Configurator({
   const addons = (f.addons || []).map(id => ADDONS.find(a => a.id === id)).filter(Boolean);
 
   return (
-    <div style={{ display: "grid", gap: 40, gridTemplateColumns: "minmax(340px, 1.55fr) minmax(310px, 0.85fr)", alignItems: "start" }}>
+    <div className="fade-in cfg-grid" style={{ display: "grid", gap: 40, gridTemplateColumns: "minmax(340px, 1.55fr) minmax(310px, 0.85fr)", alignItems: "start" }}>
 
       {/* ── Steps ── */}
-      <div style={{ minWidth: 0, display: "grid", gap: 48 }}>
+      <div className="cfg-steps" style={{ minWidth: 0, display: "grid", gap: 48 }}>
         {leading}
 
         {f.digital && (
@@ -405,7 +526,7 @@ export default function Configurator({
         {f.groups.map((g, i) => (
           <section key={g.id}>
             <StepHeading n={stepOffset + i + 1}>{g.label}</StepHeading>
-            <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))" }}>
+            <div style={stepGrid(g.options.length)}>
               {g.options.map(o => {
                 const ok = availableFor(formatId, state, g.id).has(o.id);
                 return (
@@ -423,14 +544,18 @@ export default function Configurator({
               })}
             </div>
 
-            {(() => {
-              const chosen = selectedOption(formatId, g.id, state);
-              return chosen?.fixed ? (
-                <div style={{ marginTop: 20 }}>
-                  <FixedSpecs items={chosen.fixed} note={g.note} />
-                </div>
-              ) : null;
-            })()}
+            {g.note && <StepNote>{g.note}</StepNote>}
+          </section>
+        ))}
+
+        {/* Steps that follow from a choice rather than offering one. */}
+        {derived.map((d, i) => (
+          <section key={d.id}>
+            <StepHeading n={stepOffset + f.groups.length + i + 1}>{d.label}</StepHeading>
+            <div style={stepGrid(1)}>
+              <OptionCard title={d.option.label} spec={d.option.spec} selected onClick={() => {}} />
+            </div>
+            {d.note && <StepNote>{d.note}</StepNote>}
           </section>
         ))}
 
@@ -439,6 +564,7 @@ export default function Configurator({
 
       {/* ── Calculator, alongside. Every variable lives here. ── */}
       <aside
+        className="cfg-aside"
         style={{
           position: "sticky", top: 88, background: T.bgNeutral,
           border: `1px solid ${T.border}`, borderRadius: R.lg,
@@ -449,31 +575,41 @@ export default function Configurator({
           fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 700,
           letterSpacing: 0.8, textTransform: "uppercase",
         }}>
-          {selling ? "What you'd earn" : "Pricing summary"}
+          {selling ? "What you'd earn" : bulk ? "What the run costs" : "Pricing summary"}
         </div>
 
         {/* what you've chosen */}
         <div style={{ display: "grid", gap: 3, fontSize: TYPE.sm, color: T.textSubtle }}>
           {f.groups.map(g => {
             const o = selectedOption(formatId, g.id, state);
-            return <span key={g.id}><strong style={{ color: T.textNeutral }}>{g.label.replace("Choose your ", "").toUpperCase()}:</strong> {o?.label}</span>;
+            return <span key={g.id}><strong style={{ color: T.textNeutral }}>{summaryLabel(g.label)}:</strong> {o?.label}</span>;
           })}
+          {derived.map(d => (
+            <span key={d.id}><strong style={{ color: T.textNeutral }}>{summaryLabel(d.label)}:</strong> {d.option.label}</span>
+          ))}
         </div>
 
         {!f.digital && (
           <>
             <Divider />
-            <MiniStepper
-              label="Pages" hint={`${f.basePages}–${limit} · ${money(p.perPage)} each`}
-              value={state.pages} min={f.basePages} max={limit} step={2}
-              onChange={pages => onChange({ ...state, pages })}
-            />
-            {!selling && (
+            {!f.pageless && (
               <MiniStepper
-                label="Copies" hint="Discount from 10"
-                value={state.qty} min={1} max={999}
-                onChange={qty => onChange({ ...state, qty })}
+                label="Pages" hint={`${f.basePages}–${limit} · ${money(p.perPage)} each`}
+                value={state.pages} min={f.basePages} max={limit} step={2}
+                onChange={pages => onChange({ ...state, pages })}
               />
+            )}
+            {!selling && (
+              <>
+                <MiniStepper
+                  label="Copies"
+                  hint={bulk ? `From ${BULK_MIN}` : "Discount from 10"}
+                  value={state.qty} min={bulk ? BULK_MIN : 1} max={9999}
+                  step={bulk ? 25 : 1}
+                  onChange={qty => onChange({ ...state, qty })}
+                />
+                {state.qty >= BULK_AT && <BulkHandoff qty={state.qty} />}
+              </>
             )}
             {addons.length > 0 && (
               <>
@@ -503,18 +639,11 @@ export default function Configurator({
 
         {selling ? (
           <>
-            <div style={{ display: "grid", gap: 12 }}>
-              <Line label="Your cost" value={money(cost)} />
-              <label style={{ display: "grid", gap: 6 }}>
-                <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>Your price — minimum {money(floor)}</span>
-                <PriceInput value={sellPrice} floor={floor} onChange={onSellPrice} />
-              </label>
-              <div style={{ borderTop: `1px solid ${C.gray400}` }} />
-              <Line label="Your profit" value={money(profit)} strong />
-            </div>
+            <MarginLadder cost={cost} price={sellPrice} onPrice={onSellPrice} floor={floor} compact />
             <p style={{ fontSize: TYPE.sm, color: T.textSubtle, margin: 0, lineHeight: 1.5 }}>
               Your buyer pays shipping, so your margin is the same wherever they live.
             </p>
+            <CostExplainer compact />
           </>
         ) : (
           <>
@@ -525,6 +654,11 @@ export default function Configurator({
               {p.tier && <Line label={`Volume discount ${Math.round(p.tier.pct * 100)}%`} value={`− ${money(p.subtotal - p.total)}`} muted />}
               {quote && <Line label={`Shipping — ${quote.speed.label}`} value={money(quote.cost)} muted />}
               <Line label="Total" value={money(p.total + (quote?.cost ?? 0))} strong />
+              {/* A bulk buyer prices the run by the copy — it is the number
+                  they will set their own price against. */}
+              {bulk && state.qty > 0 && (
+                <Line label="Cost per copy" value={money(p.total / state.qty)} accent />
+              )}
             </div>
             <p style={{ fontSize: TYPE.sm, color: T.textSubtle, margin: 0, lineHeight: 1.5 }}>
               {quote ? "Excludes taxes." : "Excludes taxes and shipping."}

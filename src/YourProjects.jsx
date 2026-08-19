@@ -5,15 +5,19 @@ import { PROJECTS } from "./projects.js";
 /* ────────────────────────────────────────────────────────────────
    Sell something you have already made.
 
-   Stacey's setup flow forks on whether the seller has projects. Most
-   returning sellers do, and making them re-pick a product type and
-   re-configure a book they have already built is work they should not
-   have to repeat — the project already knows its size, paper and cover.
+   This is a DESTINATION, not an input. Whoever lands on
+   /getting-started is starting something new — that is what the page
+   is for, and what its steps assume. So an existing project is not a
+   shortcut through the configurator; it is one of the two things you
+   can do once the page has done its job.
 
-   Three states:
-     · signed out          — offer the shortcut, do not assume it applies
-     · signed in, projects — pick one, or start something new
-     · signed in, none     — nothing to show, fall through to the types
+   That puts it at the end, in the handoff, beside the routes to
+   making a book. And it puts the log-in there too: no reason to ask
+   who someone is before they have seen a price.
+
+   Two states:
+     · signed out — offer it, do not claim they have projects
+     · signed in  — their projects, with proof status, each a way in
    ──────────────────────────────────────────────────────────────── */
 
 function ProofChip({ hasProof }) {
@@ -34,30 +38,28 @@ function ProofChip({ hasProof }) {
   );
 }
 
-function ProjectCard({ p, selected, onSelect }) {
+function ProjectCard({ p }) {
   return (
     <button
-      onClick={() => onSelect(p)}
-      aria-pressed={selected}
+      className="card-move"
       style={{
         textAlign: "left", background: T.bgNeutral, borderRadius: R.lg, padding: 16,
-        border: selected ? `2px solid ${T.borderBrand}` : `1px solid ${T.border}`,
-        margin: selected ? 0 : 1,
-        display: "grid", gridTemplateColumns: "72px 1fr", gap: 14, alignItems: "center",
+        border: `1px solid ${T.border}`,
+        display: "grid", gridTemplateColumns: "72px 1fr auto", gap: 14, alignItems: "center",
         fontFamily: FONT_BODY, minWidth: 0,
       }}
     >
       <span style={{
         width: 72, height: 72, borderRadius: R.md, display: "grid", placeItems: "center",
-        background: selected ? C.blue50 : C.gray100,
+        background: C.gray100,
       }}>
-        <span className="ms" style={{ fontSize: 32, color: selected ? C.blue600 : C.gray400 }}>{p.icon}</span>
+        <span className="ms" style={{ fontSize: 32, color: C.gray400 }}>{p.icon}</span>
       </span>
 
       <span style={{ display: "grid", gap: 5, minWidth: 0 }}>
         <span style={{
           fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 500, lineHeight: 1.2,
-          color: selected ? C.blue950 : T.textNeutral,
+          color: T.textNeutral,
           overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
         }}>
           {p.title}
@@ -78,28 +80,38 @@ function ProjectCard({ p, selected, onSelect }) {
           )}
         </span>
       </span>
+
+      <span style={{
+        display: "inline-flex", alignItems: "center", gap: 4, flex: "0 0 auto",
+        fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase",
+        color: T.textBrand,
+      }}>
+        {p.selling ? "Manage" : "Set up"}
+        <span className="ms" style={{ fontSize: 18 }}>chevron_right</span>
+      </span>
     </button>
   );
 }
 
-export default function YourProjects({ signedIn, onSignIn, selectedId, onSelect, onStartNew }) {
+export default function YourProjects({ signedIn, onSignIn }) {
   /* Signed out — offer it, but do not claim they have projects. */
   if (!signedIn) {
     return (
       <div
         style={{
           background: T.bgNeutral, border: `1px solid ${T.border}`, borderRadius: R.lg,
-          padding: 24, marginBottom: 28, fontFamily: FONT_BODY,
+          padding: 24, fontFamily: FONT_BODY,
           display: "grid", gap: 16, gridTemplateColumns: "1fr auto", alignItems: "center",
         }}
+        className="stack-md"
       >
         <div style={{ minWidth: 0 }}>
           <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["4xl"], fontWeight: 500, lineHeight: 1.2 }}>
-            Already made a book with us?
+            Already made your book?
           </div>
-          <p style={{ fontSize: TYPE.base, lineHeight: 1.65, color: T.textSubtle, margin: "8px 0 0", maxWidth: 620 }}>
-            Log in and sell one you have already finished — it keeps the size, paper and cover you chose,
-            so there is nothing to set up again.
+          <p style={{ fontSize: TYPE.base, lineHeight: 1.65, color: T.textSubtle, margin: "8px 0 0", maxWidth: 660 }}>
+            Log in to sell one you have already finished. It keeps the size, paper and cover you chose,
+            so there is nothing to set up again — just the price, the link and your payout.
           </p>
         </div>
         <button
@@ -117,30 +129,17 @@ export default function YourProjects({ signedIn, onSignIn, selectedId, onSelect,
     );
   }
 
-  /* Signed in with nothing to show — say nothing, fall through to the types. */
+  /* Signed in with nothing to show — say nothing rather than an empty shelf. */
   if (!PROJECTS.length) return null;
 
   return (
-    <div style={{ marginBottom: 32, fontFamily: FONT_BODY }}>
-      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 16, flexWrap: "wrap", marginBottom: 14 }}>
-        <div style={{ fontSize: TYPE.base, fontWeight: 700, letterSpacing: 0.8, textTransform: "uppercase" }}>
-          Sell one you have already made
-        </div>
-        <button
-          onClick={onStartNew}
-          style={{
-            background: "transparent", border: 0, padding: 0, fontFamily: FONT_BODY,
-            fontSize: TYPE.base, fontWeight: 700, color: C.blue600,
-          }}
-        >
-          Or start something new ↓
-        </button>
+    <div style={{ fontFamily: FONT_BODY }}>
+      <div style={{ fontSize: TYPE.base, fontWeight: 700, letterSpacing: 0.8, textTransform: "uppercase", marginBottom: 14 }}>
+        Or sell one you have already made
       </div>
 
-      <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))" }}>
-        {PROJECTS.map(p => (
-          <ProjectCard key={p.id} p={p} selected={selectedId === p.id} onSelect={onSelect} />
-        ))}
+      <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(340px, 1fr))" }}>
+        {PROJECTS.map(p => <ProjectCard key={p.id} p={p} />)}
       </div>
 
       <p style={{ fontSize: TYPE.sm, color: T.textSubtle, marginTop: 12, lineHeight: 1.55 }}>
