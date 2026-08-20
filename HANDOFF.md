@@ -19,6 +19,22 @@ Prototypes for the **seller side of blurb.com** — how someone discovers sellin
 | Board | [Merchant Pricing and Experience](https://www.figma.com/board/yh0flPHiAUhrALmaT1H8Xk/Merchant-Pricing-and-Experience) — journeys, page audit, tickets, questions, provenance |
 | Audit note | Obsidian → `03 Resources/Dual Pricing Surface Audit — DES-469` |
 
+**Not part of this work:** an AI listing-assist prototype lives at `~/Documents/Claude/Projects/AI Listing Assist (side project)` — a side quest reviewing Stacey's checkout-link AI iterations. Deliberately outside this repo so it can never be built or deployed with it. Separate thread, don't merge it in.
+
+---
+
+## Sharing it for review
+
+**Comments only work on PREVIEW deployments**, not production — on production the Vercel Toolbar isn't injected, so reviewers would need a browser extension first. Point people at a preview.
+
+To let people outside the RPI Print team comment:
+
+1. Vercel dashboard → the deployment → **Share** (or **Share** in the toolbar on the preview itself)
+2. Set permissions to **"Anyone with the link"** — this appears because deployment protection is on, and the link it creates bypasses SSO
+3. Use **Copy Link**. That URL is not the one in the address bar, and only the copied one bypasses protection
+
+They are not added to the team and take no seat. **They do need a free Vercel account to comment** — viewing is anonymous, commenting never is. If that is too much friction for a particular reviewer, put screenshots on the FigJam board instead and let them comment there.
+
 ---
 
 ## The four screens
