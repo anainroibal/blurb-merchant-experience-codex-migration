@@ -120,12 +120,21 @@ export default function CreateActions({ formatId, sel, onGo, showLearnMore = tru
         </div>
       )}
 
-      <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+      {/* Side by side while they fit, and only stacking when the column is
+          too narrow for both — which is flex-wrap's job rather than a
+          breakpoint's. Each button grows to share the row, keeps its label
+          on one line, and the row breaks as a whole.
+
+          Sizes come down from 18px to 16px and the padding with them: these
+          live in a 310px sticky panel now, not across the width of a
+          product page. */}
+      <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
         <button
           onClick={build}
           style={{
-            font: "inherit", fontSize: TYPE.lg, fontWeight: 600, minHeight: 48, padding: "0 26px",
+            font: "inherit", fontSize: TYPE.base, fontWeight: 600, minHeight: 44, padding: "0 18px",
             borderRadius: R.md, background: T.bgBrand, color: T.textInverse, border: 0, cursor: "pointer",
+            flex: "1 1 auto", whiteSpace: "nowrap",
           }}
         >
           {primary.label}
@@ -134,13 +143,14 @@ export default function CreateActions({ formatId, sel, onGo, showLearnMore = tru
           onClick={() => setToolsOpen(o => !o)}
           aria-expanded={toolsOpen}
           style={{
-            font: "inherit", fontSize: TYPE.lg, fontWeight: 600, minHeight: 48, padding: "0 20px",
+            font: "inherit", fontSize: TYPE.base, fontWeight: 600, minHeight: 44, padding: "0 14px",
             borderRadius: R.md, background: "transparent", color: T.textBrand,
             border: `1px solid ${T.borderBrand}`, cursor: "pointer",
-            display: "inline-flex", alignItems: "center", gap: 6,
+            flex: "1 1 auto", whiteSpace: "nowrap",
+            display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 4,
           }}
         >
-          See other tools
+          Other tools
           <span className="ms turn" style={{ fontSize: 20, transform: toolsOpen ? "rotate(180deg)" : "none" }}>
             expand_more
           </span>

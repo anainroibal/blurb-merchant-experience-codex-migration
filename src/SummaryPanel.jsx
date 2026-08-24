@@ -255,7 +255,7 @@ export const exactPdpName = (formatId, sel) => PDP_NAME[formatId]?.[sel?.cover] 
 
 export default function SummaryPanel({
   formatId, state, onChange, mode, sellPrice, onSellPrice, onProductPage,
-  sticky = true, ship: shipProp, setShip: setShipProp,
+  sticky = true, ship: shipProp, setShip: setShipProp, actions,
 }) {
   const selling = mode === "sell";
   const bulk = mode === "distribute";
@@ -317,10 +317,11 @@ export default function SummaryPanel({
   const addons = (f.addons || []).map(id => ADDONS.find(a => a.id === id)).filter(Boolean);
 
   return (
+    <div style={{ ...(sticky ? { position: "sticky", top: 88 } : null), display: "grid", gap: 12, minWidth: 0 }}>
       <aside
         className="cfg-aside"
         style={{
-          ...(sticky ? { position: "sticky", top: 88 } : null), background: T.bgNeutral,
+          background: T.bgNeutral,
           border: `1px solid ${T.border}`, borderRadius: R.lg,
           padding: 22, display: "grid", gap: 14, minWidth: 0,
         }}
@@ -458,15 +459,31 @@ export default function SummaryPanel({
           </>
         )}
 
-        <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 10 }}>
-          <p style={{ fontSize: TYPE.sm, color: T.textSubtle, margin: 0, lineHeight: 1.5 }}>
-            {selling
-              ? "Cost and margin are placeholders — Blurb publishes no fulfilment pricing."
-              : p.anyGuess
-                ? "Some option prices are placeholders. Sizes, per-page rate, paper specs and tiers are real."
-                : "Sizes, per-page rate, paper specs and volume tiers are real."}
-          </p>
-        </div>
+        {/* ── The panel ends on the action, not on a footnote ──
+            Someone reading a total is deciding whether to make the thing,
+            so the way to make it belongs where the number is — and the
+            panel is sticky, which means the action stays in reach while the
+            options are changed.
+
+            The provenance note that used to close the panel has moved
+            OUTSIDE the card, below. It is a caveat about the figures rather
+            than part of the calculation, and every price in this prototype
+            is a placeholder: dropping it to make room for a button would
+            have been the wrong trade. */}
+        {actions && (
+          <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 16 }}>
+            {actions}
+          </div>
+        )}
       </aside>
+
+      <p style={{ fontSize: TYPE.sm, color: T.textSubtle, margin: 0, lineHeight: 1.5 }}>
+        {selling
+          ? "Cost and margin are placeholders — Blurb publishes no fulfilment pricing."
+          : p.anyGuess
+            ? "Some option prices are placeholders. Sizes, per-page rate, paper specs and tiers are real."
+            : "Sizes, per-page rate, paper specs and volume tiers are real."}
+      </p>
+    </div>
   );
 }

@@ -624,22 +624,6 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
             )}
           </div>
 
-          {/* ── Once a product is priced, the next step is to make it ──
-              The same component the product page uses. It sits at the foot
-              of the choices column rather than in the panel: the panel is
-              the arithmetic, and an action is not a number. */}
-          <div style={{
-            background: T.bgNeutral, border: `1px solid ${T.border}`, borderRadius: R.lg,
-            padding: 24,
-          }}>
-            <CreateActions
-              formatId={formatId}
-              sel={state}
-              onGo={onGo}
-              heading={selling ? "Ready to make the book you would sell?" : "Ready to make it?"}
-            />
-          </div>
-
           {/* The channel comparison used to sit here. It belongs on the
               seller landing page and only there — that page's one goal is
               "which route is mine?", and answering the same question in
@@ -655,6 +639,10 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
                 The same panel /getting-started uses. The estimator had its
                 own doing the same job with different parts, which is two
                 places to fix a rule and two chances to disagree about it. */}
+            {/* ── The panel, with the way out at the bottom of it ──
+                Once someone has a total, the next step is to make the book,
+                and the action belongs where the number is. The panel is
+                sticky, so it stays in reach while the options change. */}
             <SummaryPanel
               formatId={formatId}
               state={state}
@@ -664,6 +652,14 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
               onSellPrice={setPrice}
               ship={ship}
               setShip={setShip}
+              actions={
+                <CreateActions
+                  formatId={formatId}
+                  sel={state}
+                  onGo={onGo}
+                  heading={selling ? "Ready to make it?" : "Ready to make it?"}
+                />
+              }
             />
           </div>
 
