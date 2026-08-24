@@ -248,25 +248,34 @@ const chunk = (arr, size) =>
     return cols;
   }, []);
 
+/* A row, not a word: the highlight is a block that spans the column and
+   bleeds into the panel's padding, so the target is the whole line rather
+   than the label's own width. Grey ground, brand-blue label — the live
+   site's treatment. */
 function MenuLink({ item, onClose }) {
+  const [hot, setHot] = useState(false);
   const [label, , tag] = item;
   return (
     <a
       href="#"
       onClick={e => { e.preventDefault(); onClose(); }}
+      onMouseEnter={() => setHot(true)}
+      onMouseLeave={() => setHot(false)}
+      onFocus={() => setHot(true)}
+      onBlur={() => setHot(false)}
       style={{
-        display: "block", padding: "13px 0", textDecoration: "none",
-        color: T.textNeutral, fontSize: TYPE.base, minWidth: 170,
+        display: "block", textDecoration: "none", fontSize: TYPE.base,
+        padding: "13px 16px", margin: "0 -16px", borderRadius: 2, minWidth: 170,
+        color: hot ? C.blue600 : T.textNeutral,
+        background: hot ? C.gray50 : "transparent",
       }}
-      onMouseEnter={e => (e.currentTarget.style.color = C.blue600)}
-      onMouseLeave={e => (e.currentTarget.style.color = T.textNeutral)}
     >
       {label}<Tag>{tag}</Tag>
     </a>
   );
 }
 
-function MegaMenu({ group, onClose }) {
+function MegaMenu({ group, isOpen, onClose }) {
   /* Headings only when the menu holds more than one KIND of thing. The live
      Products menu is seven products and needs no label; ours also holds ten
      project kinds, and without a heading "Hardcover" sits beside "Zines"
@@ -275,8 +284,13 @@ function MegaMenu({ group, onClose }) {
   const headed = group.columns.length > 1;
 
   return (
+    /* Mounted whether or not it is open, so the exit is animated too — a
+       menu that fades in and then vanishes on a hard cut feels broken.
+       Hidden panels are inert: visibility hidden keeps them out of the
+       accessibility tree, and pointer-events none stops them swallowing
+       clicks meant for the page underneath. */
     <div
-      className="pop-in"
+      aria-hidden={!isOpen}
       style={{
         position: "absolute", top: "100%", left: 0, zIndex: 50,
         background: "#fff", border: `1px solid ${T.border}`, borderRadius: 2,
@@ -284,6 +298,15 @@ function MegaMenu({ group, onClose }) {
         padding: "20px 28px 24px",
         display: "flex", gap: 56, alignItems: "flex-start",
         fontFamily: FONT_BODY, whiteSpace: "nowrap",
+        opacity: isOpen ? 1 : 0,
+        visibility: isOpen ? "visible" : "hidden",
+        pointerEvents: isOpen ? "auto" : "none",
+        transform: isOpen ? "none" : "translateY(-6px) scale(0.985)",
+        transformOrigin: "top center",
+        transition:
+          isOpen
+            ? "opacity var(--slow) var(--ease), transform var(--slow) var(--ease)"
+            : "opacity var(--slow) var(--ease), transform var(--slow) var(--ease), visibility 0s var(--slow)",
       }}
     >
       {group.columns.map(col => (
@@ -547,13 +570,47 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
 
   useEffect(() => {
     const onDoc = e => { if (ref.current && !ref.current.contains(e.target)) setOpen(null); };
+    const onKey = e => e.key === "Escape" && setOpen(null);
     document.addEventListener("mousedown", onDoc);
-    return () => document.removeEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDoc);
+      document.removeEventListener("keydown", onKey);
+    };
   }, []);
 
-  /* One place to decide whether a mega menu is open, so the two rows can
-     both close each other's popovers. */
+  /* One place to decide whether a mega menu is open, so the row and the
+     account and locale popovers can all close each other. */
   const toggle = key => setOpen(open === key ? null : key);
+
+  /* ── Hover, with the two delays that make hover menus usable ──
+     Opening waits ~90ms, so sweeping the pointer across the row on the way
+     to something else does not fire five menus. Closing waits ~180ms, so
+     the diagonal from a trigger to the far side of its own panel is
+     forgiving — the classic reason hover menus feel broken is a 0ms close.
+
+     Switching between triggers while a menu is already open is instant:
+     the intent has been established, and waiting again reads as lag.
+
+     The panel is a child of its trigger's wrapper, so moving from one to
+     the other never leaves the element and never schedules a close. */
+  const openTimer = useRef(null);
+  const closeTimer = useRef(null);
+  const clearTimers = () => {
+    clearTimeout(openTimer.current);
+    clearTimeout(closeTimer.current);
+  };
+  useEffect(() => clearTimers, []);
+
+  const hoverOpen = label => {
+    clearTimers();
+    if (open && !String(open).startsWith("__")) { setOpen(label); return; }
+    openTimer.current = setTimeout(() => setOpen(label), 90);
+  };
+  const hoverClose = () => {
+    clearTimers();
+    closeTimer.current = setTimeout(() => setOpen(null), 180);
+  };
 
   /* The trigger only — the panel is full width and rendered once below the
      row rather than inside each item.
@@ -565,10 +622,15 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
   const NavItem = ({ group }) => (
     /* The panel is anchored to its own trigger now, so it lives inside the
        item rather than being rendered once for the whole row. */
-    <span style={{ position: "relative" }}>
+    <span
+      style={{ position: "relative" }}
+      onMouseEnter={() => hoverOpen(group.label)}
+      onMouseLeave={hoverClose}
+    >
       <button
-        onClick={() => toggle(group.label)}
-        onMouseEnter={() => open && !open.startsWith("__") && setOpen(group.label)}
+        onClick={() => { clearTimers(); toggle(group.label); }}
+        /* Keyboard users get the same menu without a pointer. */
+        onFocus={() => { clearTimers(); setOpen(group.label); }}
         aria-expanded={open === group.label}
         style={{
           background: "transparent", border: 0, padding: "22px 12px",
@@ -579,7 +641,7 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
       >
         {group.label}
       </button>
-      {open === group.label && <MegaMenu group={group} onClose={() => setOpen(null)} />}
+      <MegaMenu group={group} isOpen={open === group.label} onClose={() => setOpen(null)} />
     </span>
   );
 
