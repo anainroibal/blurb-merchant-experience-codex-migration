@@ -93,7 +93,7 @@ const NAV = [
        carries in the sample. Split 4 / 3 across two columns under a single
        heading, as drawn. */
     { heading: "Product catalog", chunkAt: 4, items: [
-      ["Shop All", "Every format Blurb prints."],
+      ["Shop All", "Every format Blurb prints.", null, "catalog"],
       ["Photo Books", "Best for travel, fine-art photography, and books built to last on a shelf.", null, "product"],
       ["Layflat Books", "Best for wedding albums, panoramic landscapes, and portfolio work."],
       ["Paperback and Hardcover Books", "Best for novels, cookbooks, children's books, and prototyping."],
@@ -131,7 +131,7 @@ const NAV = [
 
   { label: "Sell", href: "/self-publish", columns: [
     { heading: "Blurb seller hub", items: [
-      ["Instant Store", "Share a link or embed a button. We print and ship each order."],
+      ["Instant Store", "Share a link or embed a button. We print and ship each order.", null, "instantstore"],
       ["Sell on Blurb's Bookstore", "List in Blurb's own storefront."],
       ["Sell on Amazon", "Reach the largest book audience."],
       ["Ingram Distribution", "Distribute to bookstores and libraries."],

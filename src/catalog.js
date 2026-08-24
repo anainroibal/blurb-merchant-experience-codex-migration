@@ -996,6 +996,33 @@ export function fromPrice(formatId) {
   return prices.length ? Math.min(...prices) : null;
 }
 
+/* The same minimum, for ONE cover — what a catalogue page needs, because it
+   lists a product per cover rather than per family: "Softcover Photo Book,
+   starting at …" is fromPrice with the cover held fixed. Layflat is a PAPER
+   in this model rather than a cover, so it is addressed the same way, by
+   passing a paper predicate instead. Returns null when nothing in the matrix
+   matches, which is the honest answer for a product we do not price. */
+export function variantFromPrice(formatId, { cover, paperTest } = {}) {
+  const f = CATALOG[formatId];
+  if (!f || f.flat || f.fam === "wall_art") return fromPrice(formatId);
+
+  const sizes  = f.groups.find(g => g.id === "size").options;
+  const covers = f.groups.find(g => g.id === "cover").options;
+  const papers = f.groups.find(g => g.id === "paper").options;
+  const prices = [];
+  for (const c of covers) {
+    if (cover && c.id !== cover) continue;
+    for (const s of sizes) for (const p of papers) {
+      if (paperTest && !paperTest(p.id)) continue;
+      const sel = { size: s.id, cover: c.id, paper: p.id };
+      if (!isAvailable(formatId, sel)) continue;
+      const price = unitPrice(formatId, sel);
+      if (price != null) prices.push(price);
+    }
+  }
+  return prices.length ? Math.min(...prices) : null;
+}
+
 /* How many sizes a family offers, for the "6 sizes — from US $12.00" line
    on the format cards. Wall art is counted the way /pricing counts it:
    8×10 and 10×8 are one size in two orientations, not two, which is how a

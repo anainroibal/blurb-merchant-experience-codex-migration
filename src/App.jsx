@@ -6,6 +6,8 @@ import SiteNav from "./SiteNav.jsx";
 import SiteFooter from "./SiteFooter.jsx";
 import Estimator from "./Estimator.jsx";
 import Home from "./Home.jsx";
+import ProductCatalog from "./ProductCatalog.jsx";
+import InstantStorePage from "./InstantStorePage.jsx";
 
 /* ────────────────────────────────────────────────────────────────
    Blurb — Merchant Experience prototypes
@@ -87,6 +89,10 @@ const STAGES = [
   /* The product page comes next: it is where someone meets a price before
      they have decided anything, and it is the doorway page — retail-only,
      one quiet line for a seller. */
+  /* The catalogue sits between home and a product page, as it does on the
+     site: home → /formats → a PDP. Its selling lane is the one thing on it
+     that is ours. */
+  { id: "catalog",    short: "Shop all",     label: "/formats — the product catalogue, with a selling lane" },
   { id: "product",    short: "Photo book",   label: "/photo-books/imagewrap-hardcover-photo-book — the doorway" },
   { id: "getstarted", short: "Get started",  label: "Get started — the intent router" },
   /* Ways to sell, renamed and given one goal: which route is mine? It is
@@ -97,6 +103,8 @@ const STAGES = [
      the public pricing pages retail-only. */
   { id: "pricing",    short: "Pricing",      label: "Pricing calculator — under Pricing" },
   { id: "margin",     short: "Margin",       label: "Margin estimator — under Sell & Self-Publish" },
+  /* Crometrics' page. A placeholder so the links into it can be reviewed. */
+  { id: "instantstore", short: "Instant Store", label: "The Instant Store page — placeholder, built by Crometrics" },
 ];
 
 function StageStepper({ stage, onJump }) {
@@ -258,6 +266,8 @@ export default function App() {
       {/* Keyed on the stage so switching screens fades rather than cuts. */}
       <div key={stage} className="fade-in" style={{ flex: 1, minWidth: 0 }}>
         {stage === "home"       && <Home onGo={go} />}
+        {stage === "catalog"    && <ProductCatalog onGo={go} />}
+        {stage === "instantstore" && <InstantStorePage onGo={go} />}
         {stage === "product"    && <ProductPage onGo={go} seed={entry?.seed} />}
         {stage === "getstarted" && (
           <GetStarted
