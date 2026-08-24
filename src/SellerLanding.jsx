@@ -137,6 +137,17 @@ const ROWS = [
   { key: "paid",      label: "When you are paid" },
 ];
 
+/* Each route's own page. Three of them exist on blurb.com and open there;
+   the fourth does not exist at all, which is worth showing rather than
+   hiding — checkout links are the one route with no landing page, and
+   whoever writes it will need to know that. */
+const ROUTE_PAGE = {
+  link: null,
+  bookstore: "https://www.blurb.com/sell-through-blurb",
+  amazon: "https://www.blurb.com/amazon",
+  ingram: "https://www.blurb.com/ingram",
+};
+
 /* Which products each route takes, read off the catalogue rather than
    typed — so this can never claim a channel a product does not have.
    Family level on purpose: the exceptions are per configuration (Amazon
@@ -237,6 +248,47 @@ export default function SellerLanding({ onGo }) {
                   </tr>
                 ))}
               </tbody>
+
+              {/* ── Each column ends in its own way out ──
+                  A table that compares four things should let you leave by
+                  any of the four. The link sits in a footer row so it lands
+                  at the bottom of its own column rather than floating
+                  beside the heading, where it would compete with the route
+                  name for the first read. */}
+              <tfoot>
+                <tr>
+                  <th style={{ borderTop: `1px solid ${T.border}` }} />
+                  {routes.map(r => {
+                    const href = ROUTE_PAGE[r.id];
+                    return (
+                      <td key={r.id} style={{
+                        padding: "14px 16px 18px", verticalAlign: "top",
+                        borderTop: `1px solid ${T.border}`, borderLeft: `1px solid ${T.border}`,
+                      }}>
+                        {href ? (
+                          <a
+                            href={href}
+                            target="_blank"
+                            rel="noreferrer"
+                            style={{
+                              fontSize: TYPE.sm, fontWeight: 700, color: T.textBrand,
+                              textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 5,
+                            }}
+                          >
+                            How this route works
+                            <span className="ms" style={{ fontSize: 16 }}>open_in_new</span>
+                          </a>
+                        ) : (
+                          <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>
+                            No page for this route yet — it is the newest one, and the only one without a
+                            page of its own.
+                          </span>
+                        )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              </tfoot>
             </table>
           </div>
 

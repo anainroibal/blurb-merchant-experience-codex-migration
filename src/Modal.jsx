@@ -1,4 +1,5 @@
 import React from "react";
+import { createPortal } from "react-dom";
 import { T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 
 /* ── A modal, for the things that are not part of the decision ──
@@ -28,7 +29,19 @@ export default function Modal({ open, title, onClose, children, variant = "cente
   if (!open) return null;
 
   const side = variant === "side";
-  return (
+
+  /* ── Rendered into <body>, not where it is called ──
+     `position: fixed` is only fixed to the viewport if no ancestor has a
+     transform, and .fade-in leaves an identity transform behind after it
+     finishes (animation-fill-mode: both). That silently turned every
+     ancestor of the calculator grid into a containing block, so the tray
+     covered its own section instead of the page — 1180×878 inside a
+     1440×900 window.
+
+     A portal is the fix rather than removing the animation: any future
+     transform anywhere up the tree would break it again the same way, and
+     this is exactly what portals are for. */
+  return createPortal(
     <div
       onClick={onClose}
       style={{
@@ -85,7 +98,8 @@ export default function Modal({ open, title, onClose, children, variant = "cente
         </div>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
