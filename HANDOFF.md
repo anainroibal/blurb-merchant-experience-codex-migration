@@ -1,142 +1,119 @@
 # Handoff — Blurb Merchant Experience
 
-Updated 2026-08-19. Start here, then read `CLAUDE.md` for conventions and decisions.
+Updated **2026-08-24**, end of session. Start here, then read `CLAUDE.md` for conventions and the decision log.
 
 ---
 
-## What this is
-
-Prototypes for the **seller side of blurb.com** — how someone discovers selling, prices a book, and reaches a checkout link. Grew out of **[DES-469](https://blurb-books.atlassian.net/browse/DES-469)**, the dual-pricing surface audit.
-
-**Anain owns wireframes and architecture** (agreed 2026-08-17), plus item 7 — assembling everything into one proposal for Tom. Ana owns copy and value propositions (items 1–3); Deb owns segmentation, white-glove classification and the nav proposal (items 4–6).
+## Where things are
 
 | Where | What |
 |---|---|
-| This repo | `~/Documents/Claude/Projects/Blurb Merchant Experience` |
+| Repo | `~/Documents/Claude/Projects/Blurb Merchant Experience` — **local only, no remote** |
+| Branch | **`v2`** ← you are here. `v1-home-pdp` is the frozen fallback (tag `snapshot-2026-08-24-home-pdp`); `main` still holds the 8/24 morning state |
+| Live | **https://blurb-merchant-experience.vercel.app** — production, deployed 2026-08-24 from `v2` |
 | Vercel | project `blurb-merchant-experience`, **RPI Print** team (`rpi-print-daf707f9`). CLI deploys only — no push-to-deploy |
-| Live | **https://blurb-merchant-experience.vercel.app** — production, stable URL. Behind RPI SSO, so sharing outside the team needs a Vercel share link |
-| Local | `npm run dev` |
-| Board | [Merchant Pricing and Experience](https://www.figma.com/board/yh0flPHiAUhrALmaT1H8Xk/Merchant-Pricing-and-Experience) — journeys, page audit, tickets, questions, provenance |
-| Audit note | Obsidian → `03 Resources/Dual Pricing Surface Audit — DES-469` |
+| Local | `npm run dev` (port 5173/5174) |
+| Board | [Merchant Pricing and Experience](https://www.figma.com/board/yh0flPHiAUhrALmaT1H8Xk/Merchant-Pricing-and-Experience) |
+| Jira | [DES-469](https://blurb-books.atlassian.net/browse/DES-469) (audit) · DES-482 (dual pricing) |
 
-**Not part of this work:** an AI listing-assist prototype lives at `~/Documents/Claude/Projects/AI Listing Assist (side project)` — a side quest reviewing Stacey's checkout-link AI iterations. Deliberately outside this repo so it can never be built or deployed with it. Separate thread, don't merge it in.
-
----
-
-## Sharing it for review
-
-**Comments only work on PREVIEW deployments**, not production — on production the Vercel Toolbar isn't injected, so reviewers would need a browser extension first. Point people at a preview.
-
-To let people outside the RPI Print team comment:
-
-1. Vercel dashboard → the deployment → **Share** (or **Share** in the toolbar on the preview itself)
-2. Set permissions to **"Anyone with the link"** — this appears because deployment protection is on, and the link it creates bypasses SSO
-3. Use **Copy Link**. That URL is not the one in the address bar, and only the copied one bypasses protection
-
-They are not added to the team and take no seat. **They do need a free Vercel account to comment** — viewing is anonymous, commenting never is. If that is too much friction for a particular reviewer, put screenshots on the FigJam board instead and let them comment there.
+**Not part of this work:** the AI listing-assist prototype at `~/Documents/Claude/Projects/AI Listing Assist (side project)`. Separate thread; never merge it in.
 
 ---
 
-## The four screens
+## The two scopes — new, and the first thing to show anyone
 
-Switchable from the demo bar, or directly via `?stage=<id>`.
+The demo bar carries a **Scope** dropdown. It is not two designs; the screens are the same screens. It changes **which are claimed**, and where the surfaces in the lean set point, because half their destinations are pages that version never builds. `?version=lean` opens it directly.
+
+| | **Recommended** | **Minimum effort** |
+|---|---|---|
+| Home | ✅ | ✅ |
+| `/formats` catalogue + selling lane | ✅ | ✅ |
+| Photo-book PDP + doorway line | ✅ *"See your price"* → estimator | ✅ *"Open an Instant Store"* → the page |
+| Sell page (`/self-publish`) | ✅ | ✅ |
+| Instant Store page | ✅ placeholder | ✅ placeholder |
+| Nav changes | ✅ | ✅ |
+| `/getting-started` redesign | ✅ | ❌ untouched today |
+| Pricing calculator | ✅ redesigned | ❌ stays as blurb.com has it |
+| Margin estimator | ✅ | ❌ does not exist, so nothing is lost |
+
+In lean, nav items pointing at unbuilt screens go inert rather than lying, the catalogue lane drops the estimator button and promotes the page, and "Price up a print run" leaves for blurb.com/pricing.
+
+---
+
+## The screens
+
+Switchable from the demo bar, or via `?stage=<id>`.
 
 | Stage | State |
 |---|---|
-| **`getstarted`** | ✅ The redesign of `/getting-started`. Three routes, project kinds, recommended product, channel comparison, handoff. |
-| **`waystosell`** | ✅ Five channel cards. Value propositions **drafted** for Ana to overwrite. |
-| **`pricing`** | ✅ Pricing calculator — what it costs to make. Lives under **Pricing** in the nav. |
-| **`margin`** | ✅ Margin estimator — what you'd keep. Lives under **Sell & Self-Publish**. |
-
-**Checkout link setup is deliberately not prototyped.** It is Stacey's design; her Checkout Link file is the spec.
-
-### getstarted
-
-`Start Your [Cookbook] [to Sell]` — one question, asked once.
-
-- **Three routes**: to Sell · to Keep · to Distribute. Each changes what the page offers, what the calculator computes, and where it hands off. Under *to Keep* only, chips refine the recommendation: keepsake · display · gift.
-- **Project kinds, not product types.** Fifteen kinds, as the live page has. The kind seeds a whole specification through `seedFor`; the recommended product then leads step 1, starred, with the reason stated.
-- **The calculator is pinned alongside** and holds everything that moves the price. Under *to Sell* it is the margin ladder; under *to Distribute* it opens at 100 copies and shows cost per copy.
-- **The handoff ends the page** — make it here, or bring one you already made. Log-in lives here and nowhere earlier.
-
-### pricing and margin
-
-Two pages, not two tabs, because the seller's numbers belong behind the seller section. Product options lead in both; the project-kind picker is behind *"Not sure which product?"*. Each names the other and links across, since a wrong turn is the likeliest mistake either page invites.
-
-**The margin ladder** is the piece to look at: cost → price → profit, where **clicking a number takes control of it**. Profit-driven by default, which is how Blurb's own Bookstore works. The difference shows on a spec change — profit-driven holds your earnings and moves the buyer's price; price-driven does the reverse.
+| `home` | ✅ Rebuild of the live blurb.com home, measured at 1440. Instant Store lives in the **Selling tab**, not a band of its own |
+| `catalog` | ✅ `/formats` rebuilt. Prices **computed per cover** by `variantFromPrice`. Selling lane after the grid |
+| `product` | ✅ The ImageWrap photo-book PDP, with the doorway line |
+| `getstarted` | ✅ Product first, then the options; the product is **not a numbered step** |
+| `seller` | ✅ **The Sell page** — copies → routes + comparison → film → why Blurb → FAQ → closing lane |
+| `pricing` / `margin` | ✅ Two calculators. The margin estimator is **Instant Store only**, said above the controls |
+| `instantstore` | ⛔ **Placeholder — Crometrics is building this.** Do not design it |
 
 ---
 
-## Decisions
+## What changed this session
 
-All recorded in `CLAUDE.md`. The ones most likely to be re-litigated:
-
-1. **The gate is a quality gate, not a commitment fee.** A proof is required before a link can sell. It gates **buying, not publishing** — the link goes live, the page shows "coming soon" until a proof exists. A PDF proof satisfies it. Amazon and the Global Retail Network require it too; the Blurb Bookstore only recommends it.
-2. **A PDF cannot be sold through a checkout link.** Orderable for yourself. Modelled by channel, not intention.
-3. **The margin is payment for work the seller did** — a retail price covers running the shop, and a seller doing their own promotion carries that cost. Stated generally, never as a per-sale condition, and **never with retail and fulfilment side by side**.
-4. **Ask what someone is doing, never who they are.** No identity gate; log-in only at the handoff.
-5. **The buyer pays shipping**, so it never enters the seller's margin.
+- **Checkout links → Instant Store** (copy only; ids and `sellChannels: ["checkout_link"]` unchanged). **The FigJam board still says "checkout links" everywhere and needs sweeping.**
+- **The margin estimator prices one route.** A note above the controls says so, with a way out to the comparison.
+- **One product card everywhere** (`FormatCards.jsx`) — photo flush to the edges, no frame until selected. The option cards inside the steps use the same geometry.
+- **PDFs are off the product row** (`offered: false`) — no photograph exists for one. This supersedes half the 8/18 decision.
+- **The Sell page was rebuilt**: gradient hero, Blurb's own illustrations, roughly half the copy, comparison table in the site's `/bookmaking-tools` pattern, framed on grey.
+- **The site's real curves and logo**: `hero-clip` / `cta-clip-*` SVG clip paths copied verbatim into `index.html`; logo at 50px in 40px gutters.
+- **Sticky panels clear the nav** via a measured `--nav-h`.
 
 ---
 
-## What the site actually does — established 2026-08-19
+## Rules that keep getting re-litigated
 
-Walked page by page with screenshots; every card is on the board under **Pages to touch**.
-
-- **Two routes to Amazon.** Photo books go **direct** (five sizes; not Layflat, not Mini Square) for $1.35 + 15%. Trade books go via the **Global Retail Network**, which is Ingram, for the wholesale discount you set — 55% for widest reach. Magazines have no Amazon route. No page distinguishes the two.
-- **Per-channel formats**: Bookstore takes photo, trade, magazines and notebooks; Amazon photo only; Ingram paperback and hardcover only. Modelled in `sellChannels`, with the layflat and Mini Square rules in `CHANNEL_RULES` because they depend on the configuration.
-- **Nine pages compute price from a product spec**, not two — `/getting-started`, `/pdf-to-book` and seven verticals carry `.book_price` spans filled in the browser. Two verticals hand-type prices, and those are already adrift.
-- **"Sell from your own website" is already promised** on `/childrens-books` and `/comic-books`, with no mechanism behind it. `/comic-books` and `/amazon` both mention an **embeddable book preview** — so checkout links are the buy button that widget lacks.
-- **The ladder already ships.** `/amazon` and `/sell-through-blurb` both send sellers to a **Sales Channel & Profit** tab showing base cost, fees and profit per sale. Checkout links are a fourth row in something that exists.
+1. **The margin is payment for work the seller did.** Stated generally, never per-sale, and **never with retail and fulfilment side by side**.
+2. **Ask what someone is doing, never who they are.** No identity gate; log-in at the handoff only.
+3. **The buyer pays shipping**, so it never enters the seller's margin.
+4. **The proof gate is a quality gate**, and it gates **buying, not publishing**.
+5. **A PDF cannot be sold through an Instant Store.** Modelled by channel, not intention.
+6. **Comparison before commitment** — the channel comparison lives on the Sell page, not the estimator.
 
 ---
 
 ## Corrections — please don't reintroduce these
 
-- **Prices are a LOOKUP on cover + size + paper**, not a base plus deltas. `pricing.data.js` is generated from the real matrix embedded in `/pricing`.
-- **Empty price spans are not missing prices.** `.book_price` spans are filled by JavaScript, so a `curl` or a markdown reader sees a label and no number. Load the page in a browser before concluding a price is absent.
-- **Anything resting on a WebFetch summary is unconfirmed until `curl`'d** — and anything resting on `curl` is unconfirmed until it has been seen in a browser.
-- **"Hardcover" is a group**, ImageWrap and Dust Jacket both. Blurb says hardcover when speaking of them together, and a from-price resolves to the cheapest member — Dust Jacket, which is cheaper than ImageWrap.
-- **Magazines have no paper choice.** One magazine, one size, one paper. Its steps keep a book's shape but never say "choose".
-
----
-
-## Open questions
-
-Nineteen on the board, grouped by who can answer. The ones that block prototype work:
-
-1. **Where does pricing guidance live** — Stacey's agent or our estimator?
-2. **Variants vs our per-book model** — which should the estimator speak?
-3. **What do we call the seller's cost?** `/amazon` says *base cost*, `/sell-through-blurb` says *base printing cost*, we say *your cost*. Blurb's dashboard also uses *wholesale discount* for the retailer's cut, so that word is spoken for.
-4. **Who owns `/getting-started`?** In nobody's list, and the most central page in the flow.
-5. **Is MagCloud deliberately not a selling channel?** Live, sells, and appears on no channel list anywhere.
-
-Seven live-site defects are logged separately under **Tickets to raise** — none belong to this project.
+- **Prices are a lookup on cover + size + paper**, not a base plus deltas.
+- **Empty `.book_price` spans are not missing prices** — they are filled in the browser. Load the page before concluding anything.
+- **A build that only bundles is not a test.** `npm run build` passes with a page that throws on render; drive the browser.
+- **`SELL_CHANNELS` uses `link`; `sellChannels` uses `checkout_link`.** Comparing them directly reports every channel as unavailable. `CATALOG_ID` maps them.
+- **Anything from a WebFetch summary is unconfirmed until `curl`'d, and anything from `curl` is unconfirmed until seen in a browser.**
 
 ---
 
 ## Every figure is a placeholder unless it says otherwise
 
-- **Real**: all product prices, per-page rates, paper specs, page ceilings, volume tiers, the 67 shipping destinations, Amazon's $1.35 + 15%, Ingram's 55% wholesale discount, the $25 payout minimum.
-- **Invented**: every **fulfilment price, seller cost and margin** — one constant, `FULFILMENT_FACTOR` in `catalog.js`, drives all of it. Also every **shipping rate**; `/shipping` publishes none.
+- **Real**: product prices, per-page rates, paper specs, page ceilings, volume tiers, shipping destinations, Amazon's $1.35 + 15%, Ingram's 55%, the $25 payout minimum.
+- **Invented**: every fulfilment price, seller cost and margin — one constant, `FULFILMENT_FACTOR` in `catalog.js`. Also every shipping rate.
+- **Four live-site gaps are visible on the catalogue** (ticket T7): paperback $2.99 vs the site's $3.99, ImageWrap hardcover $12.99 vs $13.99, linen hardcover $14.99 vs $15.99, layflat $58 vs $60.
 
 ---
 
 ## Gotchas
 
-- **Node is via nvm** and not on `PATH` non-interactively: `export NVM_DIR="$HOME/.nvm"; . "$NVM_DIR/nvm.sh"`
-- npm blocks install scripts, so `esbuild` and `fsevents` warn on install. The build works; that is expected.
-- **No push-to-deploy.** `vercel` for a preview, `vercel deploy --prod` to promote.
-- The **WIP chip** reads `local` because there is no git integration. It still says "not approved", which is the part that matters.
-- Typekit (futura-pt, proxima-nova) is domain-locked and may not resolve off blurb.com — the fallbacks in `tokens.js` are load-bearing.
-- **Screenshots**: `puppeteer-core` drives the installed Chrome. The script scrolls a page before capturing, because lazy images otherwise come out blank.
+- **Node is via nvm**, not on `PATH` non-interactively: `export NVM_DIR="$HOME/.nvm"; . "$NVM_DIR/nvm.sh"`
+- npm blocks install scripts, so `esbuild` and `fsevents` warn. The build works; expected.
+- **No push-to-deploy.** `vercel` for a preview, `vercel --prod --yes` to promote.
+- The **WIP chip** reads the branch from a build-time define; anything not `main` shows "not approved".
+- Typekit (futura-pt, proxima-nova) is domain-locked; the fallbacks in `tokens.js` are load-bearing.
+- **Screenshots**: `playwright-core` drives the cached Chromium at `~/Library/Caches/ms-playwright/chromium-1234/...`, falling back to Chrome. Scroll before capturing — lazy images come out blank.
+- **Sharing for review**: comments only work on **preview** deployments. Dashboard → deployment → Share → "Anyone with the link" → Copy Link. Reviewers need a free Vercel account to comment, not a seat.
 
 ---
 
-## Suggested next moves
+## Next moves
 
-1. **Settle the estimator/agent overlap with Stacey.** Still the largest duplicated-effort risk.
-2. **Adopt margin % as a third handle on the ladder.** Stacey's Pricing strategy has cost, price, margin % and profit all linked; ours drives from price or profit only.
-3. **Finish the page walk** — nine verticals plus `/ingram`, `/print-api-software`, `/large-order-services`, `/pricing`, `/pdf-to-book`.
-4. **Do the signed-in audit pass.** Six gaps in the DES-469 inventory; one screen-record from upload to order closes four.
-5. **Assemble the proposal for Tom** (meeting item 7). The board is most of it; it needs a narrative pass rather than more zones.
+1. **Sweep the FigJam board for "checkout links" → Instant Store**, and add the estimator-scope rule. Correct the board, don't annotate it.
+2. **Pod items 2 and 3** — option cards into a modal on `/getting-started`, and "Ready to sell?" into the right panel, staying skippable. Both unblocked, never started.
+3. **Get Ana's copy** onto the route cards and the Instant Store lane; ours is drafted, not hers.
+4. **Confirm the Instant Store name** with whoever owns it, and whether `/self-publish` redirects to `/sell`.
+5. **Settle the estimator/agent overlap with Stacey** — still the largest duplicated-effort risk.
+6. **Data check**: `TOOLS` grants InDesign to wall art only, while `/pdf-to-book` advertises an InDesign plug-in for photo books. One of the two is wrong.
