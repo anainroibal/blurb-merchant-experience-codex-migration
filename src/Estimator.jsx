@@ -391,10 +391,15 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
 
           {/* ── Which route these figures are for (2026-08-24) ──
               The ladder is your cost → your price → your profit, and that
-              shape is only true where YOU set the price and nothing is taken
-              off it: an Instant Store. Through the Bookstore, Amazon or
-              Ingram the buyer's price is not yours to set and the channel
-              takes a cut, so the same three numbers would be wrong.
+              shape holds only where the whole difference is yours: an
+              Instant Store. Amazon takes a share of the list price, Ingram
+              a trade discount, and the Bookstore has terms of its own, so
+              the same three numbers would be wrong on all three.
+
+              Said in the second person and without the abstraction it
+              opened with — "nothing is taken off it" describes a mechanism;
+              "what is left after your cost is yours" describes what the
+              seller gets, which is the thing they are here to find out.
 
               Said before the controls rather than under them. Someone who
               reads this after setting a price has already been misled, and
@@ -408,9 +413,9 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
             }}>
               <span className="ms" style={{ fontSize: 22, color: C.blue600, flex: "0 0 auto" }}>info</span>
               <span style={{ minWidth: 240, flex: "1 1 420px", fontSize: TYPE.base, lineHeight: 1.6 }}>
-                <strong>These figures are for an Instant Store sale</strong> — the route where you set the
-                price and nothing is taken off it. The Blurb Bookstore, Amazon and Ingram each change what
-                your buyer pays and what the channel keeps, so they are compared, not calculated.
+                <strong>These numbers are for an Instant Store sale</strong> — you set the price, and what
+                is left after your cost is yours. The Bookstore, Amazon and Ingram each work on different
+                terms, so those are compared on the Sell page rather than priced here.
               </span>
               <button
                 onClick={() => onGo?.("seller")}
