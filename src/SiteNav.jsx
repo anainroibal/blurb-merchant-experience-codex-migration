@@ -76,7 +76,18 @@ const BLURB_LOGO = "/assets/blurb-logo.png";
    unowned thing is how /apple-books-store happened. Tagged here, and
    raised with Deb. */
 const NAV = [
-  { label: "Make", href: "/formats", columns: [
+  /* PRODUCTS, not "Make". Draft D put a verb at the head of this menu and
+     folded the products inside it. The verb costs more than it earns:
+     "Products" is the word a returning customer scans for, and it leads to
+     the highest-traffic pages on the site. What D got right is what the
+     menu HOLDS — products, project kinds and tools in one place — so this
+     keeps D's menu and takes the live site's label for it.
+
+     It also absorbs Design Tools, which was a department rather than a job:
+     tools serve making, they are not a reason to visit. That is what keeps
+     this row at six items, the same as today, while still finding room for
+     Services. */
+  { label: "Products", href: "/formats", columns: [
     { heading: "Products", items: [
       ["Shop All", "Every format Blurb prints."],
       ["Hardcover", "Ideal for photo books, portfolios and anything meant to last."],
@@ -110,8 +121,13 @@ const NAV = [
       ["Ingram Distribution", "Distribute to bookstores and libraries."],
       ["Store integrations", "Connect Shopify, Etsy and more.", "Coming soon"],
     ]},
-    { heading: "Pricing", items: [
+    { heading: "Pricing and products", items: [
       ["Margin estimator", "Set a price and see what you keep per copy."],
+      /* The crossover. A seller whose question is "what can I sell?" is
+         asking about products, and the Products menu answers what we print
+         rather than what is sellable. One link, to the seller page where
+         the two axes meet. */
+      ["What you can sell", "Which formats sell through which route, and what each one asks of you."],
     ]},
   ], promo: {
     heading: "Switch to Blurb",
@@ -151,7 +167,10 @@ const NAV = [
 
 /* Shopping is not one of the five jobs, so the Bookstore sits apart from
    them — its own item to the right of the nav row, as in the sketch. */
-const BOOKSTORE = { label: "Blurb Bookstore", href: "/bookstore", icon: "storefront", columns: [
+/* No icon, and no "Blurb" in front of it. It was the only pictogram in the
+   row, which made the Bookstore look like a different kind of thing rather
+   than another destination — and the label already says what it is. */
+const BOOKSTORE = { label: "Bookstore", href: "/bookstore", columns: [
   { heading: "The Bookstore", items: [
     ["Browse the Bookstore", "Read what other makers are selling."],
     ["All Categories", "Photography, portfolios, cookbooks, travel, memoir and more."],
@@ -528,26 +547,26 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
      both close each other's popovers. */
   const toggle = key => setOpen(open === key ? null : key);
 
-  /* The trigger only. The panel is full width, so it is rendered once
-     below the row rather than inside each item. */
+  /* The trigger only — the panel is full width and rendered once below the
+     row rather than inside each item.
+
+     No chevron. Every item in this row opens a menu, so a caret on each one
+     says nothing an interaction does not already say, and six of them turn
+     a row of words into a row of controls. The open item takes the brand
+     colour, which is how the live header marks it. */
   const NavItem = ({ group }) => (
     <button
       onClick={() => toggle(group.label)}
       onMouseEnter={() => open && !open.startsWith("__") && setOpen(group.label)}
       aria-expanded={open === group.label}
       style={{
-        background: "transparent", border: 0, padding: "14px 10px",
-        fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: open === group.label ? 700 : 500,
-        color: T.textNeutral,
-        borderBottom: open === group.label ? `2px solid ${T.textNeutral}` : "2px solid transparent",
-        whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 6, cursor: "pointer",
+        background: "transparent", border: 0, padding: "22px 12px",
+        fontFamily: FONT_BODY, fontSize: TYPE.sm, fontWeight: 500,
+        color: open === group.label ? C.blue600 : T.textNeutral,
+        whiteSpace: "nowrap", cursor: "pointer",
       }}
     >
-      {group.icon && <span className="ms" style={{ fontSize: 20 }}>{group.icon}</span>}
       {group.label}
-      <span className="ms turn" style={{ fontSize: 18, transform: open === group.label ? "rotate(180deg)" : "none" }}>
-        expand_more
-      </span>
     </button>
   );
 
@@ -556,12 +575,14 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
   return (
     <div ref={ref} style={{ borderBottom: `1px solid ${T.border}`, background: "#fff", position: "relative", zIndex: 40 }}>
 
-      {/* ── Utility row ──
-          Draft D moves the logo, account, locale and cart up here, which
-          leaves the row below for the five jobs and nothing else. Search and
-          "Shop with AI" are deliberately absent — see the file header. */}
+      {/* ── One row ──
+          Draft D stacked the header into two, which buys room for a search
+          box and costs vertical space on every page. Without search there is
+          nothing to put in the second row, so it goes back to one: logo,
+          the six destinations, then the account actions and Start Project.
+          Same height as the live header, and the menus below are unaffected. */}
       <div style={{
-        maxWidth: 1400, margin: "0 auto", padding: "0 16px", minHeight: 56,
+        maxWidth: 1400, margin: "0 auto", padding: "0 16px", minHeight: 66,
         display: "flex", alignItems: "center", gap: 16, fontFamily: FONT_BODY,
       }}>
         <a
@@ -586,7 +607,15 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
           <span className="ms" style={{ fontSize: 26 }}>{mobileOpen ? "close" : "menu"}</span>
         </button>
 
-        <div className="hide-sm" style={{ display: "flex", alignItems: "center", gap: 16, marginLeft: "auto", flex: "0 0 auto" }}>
+        <nav
+          className="nav-desktop"
+          style={{ display: "flex", alignItems: "center", gap: 0, flex: 1, minWidth: 0 }}
+        >
+          {NAV.map(group => <NavItem key={group.label} group={group} />)}
+          <NavItem group={BOOKSTORE} />
+        </nav>
+
+        <div className="hide-sm" style={{ display: "flex", alignItems: "center", gap: 16, flex: "0 0 auto" }}>
           {signedIn ? (
             <AccountMenu
               open={open === "__account"}
@@ -628,25 +657,7 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
         </div>
       </div>
 
-      {/* ── Nav row ── the five jobs, and the Bookstore apart from them. */}
-      <div style={{ position: "relative", borderTop: `1px solid ${T.border}` }}>
-        <nav
-          className="nav-desktop"
-          style={{
-            maxWidth: 1400, margin: "0 auto", padding: "0 16px",
-            display: "flex", alignItems: "center", gap: 4, fontFamily: FONT_BODY,
-          }}
-        >
-          {NAV.map(group => <NavItem key={group.label} group={group} />)}
-
-          <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
-            <span aria-hidden style={{ width: 1, height: 22, background: T.border, margin: "0 12px" }} />
-            <NavItem group={BOOKSTORE} />
-          </span>
-        </nav>
-
-        {openGroup && <MegaMenu group={openGroup} onClose={() => setOpen(null)} />}
-      </div>
+      {openGroup && <MegaMenu group={openGroup} onClose={() => setOpen(null)} />}
 
       <MobileNav
         open={mobileOpen}
