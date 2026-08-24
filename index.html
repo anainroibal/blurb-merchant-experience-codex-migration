@@ -42,9 +42,22 @@
         --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
         --fast: 140ms;   /* hover, focus — must not lag the pointer */
         --slow: 260ms;   /* menus, panels, anything that appears */
-        /* The nav panels are large and open on hover, which makes 260ms
-           read as a snap. They get their own, longer duration — the only
-           place in the prototype that needs one. */
+        /* ── The nav's own motion, from blurb.com ──
+           assets.blurb.com/_astro/index.CV0oYoXR.css:
+             .nav__link-desktop   transition-duration .2s
+             site-wide default    .15s
+             timing function      cubic-bezier(.4, 0, .2, 1)
+
+           So --nav-ease and --nav-hover below ARE the site's numbers.
+
+           --menu is NOT. The live panel has no transition at all — it is
+           display:none when collapsed, so it snaps in and out, and there
+           is nothing there to copy. 420ms is ours, chosen because a panel
+           this size opening on hover needs to read as a reveal; 260ms was
+           the snap you saw. It uses the site's easing so it still feels
+           like the site. */
+        --nav-ease: cubic-bezier(0.4, 0, 0.2, 1);
+        --nav-hover: 200ms;
         --menu: 420ms;
       }
 

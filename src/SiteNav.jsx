@@ -274,6 +274,8 @@ function MenuLink({ item, onClose }) {
         padding: 16, borderRadius: 6, minWidth: 220,
         color: hot ? C.blue600 : C.gray950,
         background: hot ? C.gray50 : "transparent",
+        /* .nav__link-desktop: 200ms, cubic-bezier(.4, 0, .2, 1). */
+        transition: "color var(--nav-hover) var(--nav-ease), background-color var(--nav-hover) var(--nav-ease)",
       }}
     >
       {label}<Tag>{tag}</Tag>
@@ -327,8 +329,8 @@ function MegaMenu({ group, isOpen, onClose }) {
         transformOrigin: "top center",
         transition:
           isOpen
-            ? "opacity var(--menu) var(--ease), transform var(--menu) var(--ease)"
-            : "opacity var(--menu) var(--ease), transform var(--menu) var(--ease), visibility 0s var(--menu)",
+            ? "opacity var(--menu) var(--nav-ease), transform var(--menu) var(--nav-ease)"
+            : "opacity var(--menu) var(--nav-ease), transform var(--menu) var(--nav-ease), visibility 0s var(--menu)",
       }}
     >
       {group.columns.map(col => (
@@ -659,6 +661,7 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
           fontFamily: FONT_BODY, fontSize: TYPE.sm, fontWeight: 500,
           color: open === group.label ? C.blue600 : T.textNeutral,
           whiteSpace: "nowrap", cursor: "pointer",
+          transition: "color var(--nav-hover) var(--nav-ease)",
         }}
       >
         {group.label}
