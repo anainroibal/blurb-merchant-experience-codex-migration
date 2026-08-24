@@ -202,6 +202,44 @@ const NAV = [
    No icon and no "Blurb" either: it was the only pictogram in the row,
    which made it look like a different kind of thing, and the logo already
    says whose site this is. */
+/* ── The signed-in account menu ──
+   RESTORED 2026-08-24. It was deleted with the old NAV data when the menus
+   were rebuilt to draft D, while both consumers — this menu and the mobile
+   nav — kept referencing it, so clicking your own name threw a
+   ReferenceError and took the page down with it. A constant with two live
+   call sites is not dead code, whatever the shape of the object around it.
+
+   Five destinations, judged against today's dashboard sidebar (eleven
+   items in two groups, all at the same weight):
+
+     · BOOKWRIGHT ONLINE PROJECTS is a second projects list split by the
+       tool that made it — Blurb's division, not the seller's. One
+       Projects, with a filter.
+     · SALES OVERVIEW and MONTHLY PROFIT REPORTS are two doors to one room,
+       one named after a date range. Earnings, with the period inside it.
+     · ADDRESS BOOK, MY PROFILE, ACCOUNT SETTINGS and PAYMENT SETTINGS are
+       four settings pages. Settings.
+     · PUBLISHING RESOURCES is reading material, not a destination. Help.
+     · MY ORDERS earns its place: it is where a buyer goes, and where a
+       seller's proof copy lives — the thing that unlocks selling.
+
+   Your Instant Stores is the entry the live sidebar has no equivalent for,
+   and it is the gap this project exists to close.
+
+   Naming: the live sidebar mixes MY PROJECTS with SALES OVERVIEW. Pick
+   one — second person throughout, as everywhere else here. */
+const ACCOUNT_MENU = [
+  [
+    { label: "Dashboard" },
+    { label: "Your projects" },
+    { label: "Your Instant Stores", hint: "Every store, and what each has earned" },
+    { label: "Your earnings", hint: "Sales overview and profit reports, in one place" },
+    { label: "Your orders", hint: "Including the proof copy that unlocks selling" },
+  ],
+  [{ label: "Settings" }, { label: "Help" }],
+  [{ label: "Log out", quiet: true }],
+];
+
 const BOOKSTORE = { label: "Bookstore", href: "/bookstore", direct: true };
 
 /* The same navigation, flattened into footer columns. Exported so a footer
