@@ -371,7 +371,10 @@ export default function SellerLanding({ onGo }) {
           whether the routes are even the right page. Same card as the route
           cards — tile, band, one line, a link — so the two rows read as one
           sequence rather than two designs. */}
-      <section style={{ padding: "clamp(56px, 7vw, 80px) 24px 0" }}>
+      {/* Padded on all four sides. It used to close at zero, which was fine
+          when the next section was white and invisible — with the grey band
+          under it, the last link sat a few pixels off the rule. */}
+      <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 48 }}>
           <div style={{ textAlign: "center", display: "grid", gap: 12, justifyItems: "center" }}>
             <h2 style={{
