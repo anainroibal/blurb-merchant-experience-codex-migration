@@ -41,8 +41,9 @@ const MODES = {
     id: "make",
     tab: "Pricing calculator",
     sub: "What it costs to make",
-    h1: "What will your book cost?",
-    lede: "Pick a product and a size and see the price, including however many copies you need.",
+    h1: "Compare products & pricing",
+    lede: "Whatever your vision or budget, we have a format that fits.",
+    cta: "Estimate cost",
     other: "sell",
     swap: "Looking to sell, and want to see what it would earn you?",
     swapBody: "The margin estimator shows what a copy costs you, what to charge, and what you keep through each route to market.",
@@ -51,8 +52,9 @@ const MODES = {
     id: "sell",
     tab: "Margin estimator",
     sub: "What you'd earn selling it",
-    h1: "What would you keep on every copy?",
-    lede: "Set a price against what a copy costs you, and see what's left through each route to market.",
+    h1: "Compare what you would keep",
+    lede: "Whatever you charge, see what a copy costs you and what is left after each route to market.",
+    cta: "Estimate your margin",
     other: "make",
     swap: "Just making it for yourself?",
     swapBody: "The pricing calculator gives you the price, your copies, and when it would arrive — no margin, nothing to set up.",
@@ -60,94 +62,123 @@ const MODES = {
 };
 
 /* ── The format cards, as /pricing opens with them ──
-   "Select a format to see size and paper options" — the products first,
-   then the controls that price one. It is the same principle the whole
-   prototype runs on: a maker who already knows they want an 8×10 hardback
-   must not be asked what kind of book they are writing first.
+   "Select a format to see size and paper options" — products first, then
+   the controls that price one. Same principle the rest of the prototype
+   runs on: a maker who already knows they want an 8×10 hardback must not
+   be asked what kind of book they are writing first.
 
-   Descriptions and badges are the live page's. The size counts and the
-   from-prices are computed — sizeCount() and fromPrice() — so a card can
-   never advertise a size the matrix does not hold. Expect the trade,
-   notebook and wall-art figures to differ from the live page: it types
-   $3.99, $12.00 and $65.00 where the matrix says $2.99, $14.67 and
-   $10.11. That gap is ticket T7, and showing the computed number is the
-   point rather than an oversight.
+   Everything here except the numbers is the live page's, read out of the
+   PricingTableSection island's own props rather than retyped: the heading,
+   the subheading, the descriptions, the badge text, the alt text, and the
+   product photographs themselves, served from assets.blurb.com.
 
-   PDFs are not here, because /pricing does not offer one. They are still
-   in the catalogue, and still priced, for the pages that do. */
+   THE NUMBERS ARE STILL COMPUTED. sizeCount() and fromPrice() keep the
+   "3 sizes — from US $2.99" line honest against the matrix, where the live
+   page types $3.99 for the same book, $12.00 for notebooks the matrix
+   prices at $14.67, and $65.00 for wall art that starts at $10.11. Same
+   sentence shape, same position, real figures — the gap is ticket T7 and
+   showing it is the point. Swap `fromPrice(id)` for `card.price` if the
+   live strings are ever wanted verbatim.
+
+   PDFs are absent because /pricing does not offer one. They are still in
+   the catalogue, and still priced, for the pages that do. */
+const IMG = "https://assets.blurb.com/_astro/";
+
 const FORMAT_CARDS = [
-  ["photo",    "Photo Book",             "Premium books made for visual storytelling.", "Most Popular"],
-  ["trade",    "Paperback & Hardcover Books", "Ideal for projects that pair text and imagery.", "Budget-friendly"],
-  ["magazine", "Magazine",               "Great for serial content or volume printing. Think lookbooks and zines."],
-  ["notebook", "Notebooks & Journals",   "Blank, lined, dotted or grid pages made for sketching, planning, and day-dreaming."],
-  ["wallart",  "Wall Art",               "Gallery-quality wall décor, featuring your favorite photos or custom designs."],
+  { id: "photo", title: "Photo Book", badge: "Most Popular",
+    desc: "Premium books made for visual storytelling.",
+    img: IMG + "photo-book.GsE6vVn8.png",
+    alt: "Stack of two ImageWrap hardcover photo books with a scene of Paris on the front cover." },
+  { id: "trade", title: "Paperback & Hardcover Books", badge: "Budget-friendly",
+    desc: "Ideal for projects that pair text and imagery.",
+    img: IMG + "trade-book.XYVh8a5K.png",
+    alt: "Imagewrap hardcover book with colorful fruit and vegetable photography on dark background cover." },
+  { id: "magazine", title: "Magazine",
+    desc: "Great for serial content or volume printing. Think lookbooks and zines.",
+    img: IMG + "magazines.DBPIwly6.png",
+    alt: "Stack of pink design magazines titled ‘Tonal’ featuring colorful ceramic bowls and pottery on cover." },
+  { id: "notebook", title: "Notebooks & Journals",
+    desc: "Blank, lined, dotted or grid pages made for sketching, planning, and day-dreaming.",
+    img: IMG + "notebooks-and-journals.BGE8TXbz.png",
+    alt: "Dark green ImageWrap hardcover notebook with yellow 'Today is the Day' text on cover." },
+  { id: "wallart", title: "Wall Art",
+    desc: "Gallery-quality wall décor, featuring your favorite photos or custom designs.",
+    img: IMG + "wall-art.BcVC7rDx.png",
+    alt: "Three examples of wall art featuring landscape imagery of mountains, and waterways" },
 ];
 
 function FormatCards({ formatId, onPick }) {
   return (
-    <div style={{ display: "grid", gap: 18 }}>
+    <div style={{ display: "grid", gap: 28 }}>
       <div style={{ textAlign: "center" }}>
         <h2 style={{
-          fontFamily: FONT_DISPLAY, fontWeight: 500, letterSpacing: "-0.01em",
-          fontSize: "clamp(1.5rem, 3.2vw, 2.125rem)", lineHeight: 1.2, margin: 0,
+          fontFamily: FONT_DISPLAY, fontWeight: 600, letterSpacing: "-0.01em",
+          fontSize: "clamp(1.5rem, 3.2vw, 2rem)", lineHeight: 1.25, margin: 0,
         }}>
           Select a format to see size and paper options
         </h2>
-        <p style={{ margin: "10px 0 0", fontSize: TYPE.base, color: T.textSubtle }}>
+        <p style={{ margin: "12px 0 0", fontSize: TYPE.base, color: T.textNeutral }}>
           Save more when you print in bulk. Learn about{" "}
-          <span style={{ color: T.textBrand, fontWeight: 600, textDecoration: "underline" }}>
-            volume discounts
-          </span>.
+          <span style={{ color: T.textBrand, textDecoration: "underline" }}>volume discounts</span>.
         </p>
       </div>
 
-      <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))" }}>
-        {FORMAT_CARDS.map(([id, title, blurb, badge]) => {
-          const on = id === formatId;
-          const from = fromPrice(id);
+      <div style={{ display: "grid", gap: 24, gridTemplateColumns: "repeat(auto-fit, minmax(185px, 1fr))" }}>
+        {FORMAT_CARDS.map(card => {
+          const on = card.id === formatId;
+          const from = fromPrice(card.id);
+          const count = sizeCount(card.id);
           return (
             <button
-              key={id}
-              onClick={() => onPick(id)}
+              key={card.id}
+              onClick={() => onPick(card.id)}
               aria-pressed={on}
-              className="card-move"
               style={{
                 textAlign: "left", font: "inherit", cursor: "pointer", minWidth: 0,
-                background: T.bgNeutral, borderRadius: R.lg, padding: 12,
-                border: on ? `2px solid ${T.borderBrand}` : `1px solid ${T.border}`,
+                background: "#fff", borderRadius: 8, padding: 12,
+                border: on ? `2px solid ${C.gray950}` : `1px solid ${T.border}`,
                 margin: on ? 0 : 1,
-                display: "grid", gap: 10, alignContent: "start",
+                display: "grid", gap: 0, alignContent: "start",
+                transition: "border-color var(--nav-hover) var(--nav-ease)",
               }}
             >
-              {/* The live cards photograph the product; this is the placeholder
-                  for that, with the badge sitting on it as it does there. */}
-              <span style={{
-                position: "relative", display: "block", background: C.gray50,
-                borderRadius: R.md, aspectRatio: "1 / 1",
-              }}>
-                {badge && (
+              <span style={{ position: "relative", display: "block" }}>
+                <img
+                  src={card.img}
+                  alt={card.alt}
+                  width={700}
+                  height={700}
+                  loading="lazy"
+                  style={{ display: "block", width: "100%", height: "auto", borderRadius: 4 }}
+                />
+                {card.badge && (
                   <span style={{
-                    position: "absolute", top: 8, left: 8, background: "#fff",
-                    border: `1px solid ${T.border}`, borderRadius: R.sm,
-                    padding: "2px 8px", fontSize: TYPE.sm, fontWeight: 600,
+                    position: "absolute", top: 10, left: 10, background: "#fff",
+                    borderRadius: 4, padding: "3px 9px",
+                    fontSize: TYPE.sm, fontWeight: 600, color: C.gray950,
+                    boxShadow: "0 1px 2px rgba(0,0,0,0.08)",
                   }}>
-                    {badge}
+                    {card.badge}
                   </span>
                 )}
               </span>
 
               <span style={{
-                display: "block", fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"],
-                fontWeight: 600, lineHeight: 1.2, color: T.textNeutral,
+                display: "block", marginTop: 16, fontFamily: FONT_DISPLAY,
+                fontSize: TYPE["3xl"], fontWeight: 600, lineHeight: 1.2, color: C.gray950,
               }}>
-                {title}
+                {card.title}
               </span>
-              <span style={{ display: "block", fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>
-                {blurb}
+              <span style={{
+                display: "block", marginTop: 8, fontSize: TYPE.sm,
+                color: T.textSubtle, lineHeight: 1.5,
+              }}>
+                {card.desc}
               </span>
-              <span style={{ display: "block", fontSize: TYPE.sm, fontWeight: 700 }}>
-                {sizeCount(id)} {sizeCount(id) === 1 ? "size" : "sizes"} —{" "}
-                {from == null ? "price on request" : `from ${money(from)}`}
+              <span style={{
+                display: "block", marginTop: 12, fontSize: TYPE.sm, fontWeight: 700, color: C.gray950,
+              }}>
+                {count} {count === 1 ? "size" : "sizes"} - {from == null ? "price on request" : `From ${money(from)}`}
               </span>
             </button>
           );
@@ -480,18 +511,39 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
   return (
     <div style={{ fontFamily: FONT_BODY, color: T.textNeutral }}>
 
-      {/* ── Which calculator you are in, said before anything else ── */}
-      <section style={{ padding: "clamp(28px, 5vw, 52px) 20px 0", maxWidth: 900, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", padding: "36px 0 4px" }}>
+      {/* ── The hero, as /pricing has it ──
+          A banded intro over a soft gradient: heading, one line, and a
+          single filled button. Both calculators use it — the pattern is the
+          page's, the words are the mode's. The button jumps to the
+          calculator rather than opening a modal, because here the
+          calculator is the page rather than something layered over it. */}
+      <section style={{
+        background: "linear-gradient(100deg, #e9ecef 0%, #f6f3ef 45%, #ebebeb 100%)",
+        borderBottom: `1px solid ${T.border}`,
+      }}>
+        <div style={{
+          maxWidth: 900, margin: "0 auto", padding: "clamp(48px, 7vw, 88px) 20px",
+          textAlign: "center",
+        }}>
           <h1 style={{
-            fontFamily: FONT_DISPLAY, fontWeight: 400,
-            fontSize: "clamp(2rem, 5vw, 3.25rem)", lineHeight: 1.14, margin: 0, letterSpacing: "-0.01em",
+            fontFamily: FONT_DISPLAY, fontWeight: 500, letterSpacing: "-0.01em",
+            fontSize: "clamp(2rem, 4.6vw, 2.75rem)", lineHeight: 1.16, margin: 0, color: C.gray950,
           }}>
             {m.h1}
           </h1>
-          <p style={{ fontSize: TYPE.xl, color: T.textSubtle, lineHeight: 1.6, margin: "14px auto 0", maxWidth: 640 }}>
+          <p style={{ fontSize: TYPE.base, color: C.gray950, lineHeight: 1.6, margin: "14px auto 0", maxWidth: 640 }}>
             {m.lede}
           </p>
+          <button
+            onClick={() => document.getElementById("calculator")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+            style={{
+              marginTop: 28, height: 44, padding: "0 22px", borderRadius: R.md, border: 0,
+              background: C.blue600, color: "#fff", cursor: "pointer",
+              fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 600,
+            }}
+          >
+            {m.cta}
+          </button>
         </div>
       </section>
 
@@ -499,6 +551,7 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
         <div style={{ maxWidth: 1180, margin: "0 auto", display: "grid", gap: 18 }}>
 
           {/* ── Formats first, then the controls that price one ── */}
+          <span id="calculator" aria-hidden style={{ display: "block", scrollMarginTop: 90 }} />
           <FormatCards formatId={formatId} onPick={changeFormat} />
 
           {/* ── The get-started layout: choices on one side, the running
