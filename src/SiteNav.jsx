@@ -709,6 +709,8 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
   const [open, setOpen] = useState(null);
   const [locale, setLocale] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
+  /* Bookstore has no panel to open, so it carries its own hover state. */
+  const [shopHot, setShopHot] = useState(false);
   const ref = useRef(null);
 
   useEffect(() => {
@@ -835,11 +837,18 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
           <a
             href="#"
             onClick={e => { e.preventDefault(); setOpen(null); }}
-            onMouseEnter={hoverClose}
+            /* The others go blue when their panel opens, which is what hover
+               does to them. This one has no panel, so it was the only item in
+               the row that stayed black under the pointer — the same gesture
+               with no answer. Hover and focus colour it themselves. */
+            onMouseEnter={() => { hoverClose(); setShopHot(true); }}
+            onMouseLeave={() => setShopHot(false)}
+            onFocus={() => setShopHot(true)}
+            onBlur={() => setShopHot(false)}
             style={{
               padding: "22px 12px", textDecoration: "none",
               fontFamily: FONT_BODY, fontSize: TYPE.sm, fontWeight: 500,
-              color: T.textNeutral, whiteSpace: "nowrap",
+              color: shopHot ? C.blue600 : T.textNeutral, whiteSpace: "nowrap",
               transition: "color var(--nav-hover) var(--nav-ease)",
             }}
           >
