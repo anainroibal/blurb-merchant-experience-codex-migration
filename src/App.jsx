@@ -133,7 +133,42 @@ function StageStepper({ stage, onJump }) {
   );
 }
 
-function DemoBar({ stage, onJump }) {
+/* The session switch lives here rather than under the nav.
+   It is a prototype control — there is no signing in — so it belongs with
+   the other prototype chrome, beside the work-in-progress chip. Under the
+   header it read as part of the design, which is exactly what a control
+   like this must not do. */
+function SessionSwitch({ signedIn, onSignedIn }) {
+  if (!onSignedIn) return null;
+  return (
+    <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+      <span style={{
+        fontSize: 11, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase",
+        color: T.textSubtle,
+      }}>
+        Session
+      </span>
+      {[["Signed out", false], ["Signed in", true]].map(([label, v]) => (
+        <button
+          key={label}
+          onClick={() => onSignedIn(v)}
+          aria-pressed={signedIn === v}
+          style={{
+            border: signedIn === v ? `1px solid ${T.brand}` : `1px solid ${T.border}`,
+            background: signedIn === v ? T.panel : T.bg,
+            color: signedIn === v ? T.brandDark : T.textSubtle,
+            borderRadius: 999, padding: "3px 12px", fontSize: 12,
+            fontWeight: signedIn === v ? 700 : 500, whiteSpace: "nowrap", cursor: "pointer",
+          }}
+        >
+          {label}
+        </button>
+      ))}
+    </span>
+  );
+}
+
+function DemoBar({ stage, onJump, signedIn, onSignedIn }) {
   return (
     <div
       className="demo-bar"
@@ -144,8 +179,9 @@ function DemoBar({ stage, onJump }) {
         background: T.bgSubtle,
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
         <WipChip />
+        <SessionSwitch signedIn={signedIn} onSignedIn={onSignedIn} />
       </div>
       <StageStepper stage={stage} onJump={onJump} />
       <div className="hide-sm" style={{ fontSize: 12, color: T.textSubtle }}>Merchant Experience</div>
@@ -193,7 +229,7 @@ export default function App() {
           holds them together at any width. The nav keeps its own relative
           position inside, so the mega-menus still hang off it. */}
       <div style={{ position: "sticky", top: 0, zIndex: 40 }}>
-        <DemoBar stage={stage} onJump={jump} />
+        <DemoBar stage={stage} onJump={jump} signedIn={signedIn} onSignedIn={setSignedIn} />
         <SiteNav signedIn={signedIn} onSignedIn={setSignedIn} onGo={jump} />
       </div>
       {/* Keyed on the stage so switching screens fades rather than cuts. */}

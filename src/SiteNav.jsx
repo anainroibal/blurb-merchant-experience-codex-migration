@@ -65,7 +65,7 @@ const NAV = [
      can I print", the kinds answer "what am I making", and the tools are
      how. Three columns because they are three different questions, and a
      maker arrives holding one of them. */
-  { label: "Make", href: "/formats", mark: CHANGED, items: [
+  { label: "Make", href: "/formats", items: [
     ["Products", ["Shop All", "Photo Books", "Layflat Books", "Paperback and Hardcover Books", "Magazines", "Notebooks & Journals", "Wall Art"]],
     ["What are you making?", [
       ["Photo books", null, "Travel, family, weddings"],
@@ -76,7 +76,7 @@ const NAV = [
       ["Yearbooks", null, "A run of the same book"],
     ]],
     ["Tools", [
-      ["Online editor", CHANGED, "Design in your browser. Nothing to download"],
+      ["Online editor", null, "Design in your browser. Nothing to download"],
       "BookWright for desktop",
       "Adobe plug-ins",
       "PDF to Book",
@@ -87,14 +87,14 @@ const NAV = [
   /* SELL — routes to market only. API printing and Large Order Services
      have moved to Services; what is left is the set of ways a copy
      reaches a buyer, grouped by who finds that buyer. */
-  { label: "Sell", href: "/self-publish", mark: CHANGED, items: [
+  { label: "Sell", href: "/self-publish", items: [
     ["Start selling", [
-      ["Sell with Blurb", NEW, "The seller hub — join free, then sell how you like"],
-      ["Margin estimator", NEW, "What a copy costs you, what to charge, what you keep"],
+      ["Sell with Blurb", null, "The seller hub — join free, then sell how you like"],
+      ["Margin estimator", null, "What a copy costs you, what to charge, what you keep"],
     ]],
     ["Sell direct", [
-      ["Checkout Links", NEW, "One link per book. Share it anywhere"],
-      ["Store integrations", NEW, "⚠️ In Deb's draft A. No source yet — needs an owner before it ships"],
+      ["Checkout Links", null, "One link per book. Share it anywhere"],
+      ["Store integrations", null, "⚠️ In Deb's draft A. No source yet — needs an owner before it ships"],
     ]],
     ["Sell through retailers", ["Blurb Bookstore", "Amazon", "Ingram"]],
   ]},
@@ -103,9 +103,9 @@ const NAV = [
      is a way to sell: one prints a run you distribute yourself, the other
      prints behind someone else's storefront. /print-api-software already
      groups them exactly this way. */
-  { label: "Services", href: "/large-order-services", mark: NEW, items: [
+  { label: "Services", href: "/large-order-services", items: [
     ["Print in volume", [
-      ["Volume orders", CHANGED, "Was Large Order Services. Discounts start at 100+ copies"],
+      ["Volume orders", null, "Was Large Order Services. Discounts start at 100+ copies"],
       ["Get a bulk quote", null, "Our team prices the run and handles the logistics"],
     ]],
     ["Print as infrastructure", [
@@ -117,9 +117,9 @@ const NAV = [
     ]],
   ]},
 
-  { label: "Pricing", href: "/pricing", mark: CHANGED, items: [
+  { label: "Pricing", href: "/pricing", items: [
     [null, [
-      ["Pricing calculator", CHANGED, "What your book costs to make, and when it arrives"],
+      ["Pricing calculator", null, "What your book costs to make, and when it arrives"],
       "Shipping calculator",
       ["Volume discounts", null, "Retail only — they never apply to fulfilment pricing"],
     ]],
@@ -173,8 +173,8 @@ const ACCOUNT_MENU = [
   [
     { label: "Dashboard" },
     { label: "Your projects" },
-    { label: "Your checkout links", mark: NEW, hint: "Every link, and what each has earned" },
-    { label: "Your earnings", mark: CHANGED, hint: "Sales overview and profit reports, in one place" },
+    { label: "Your checkout links", hint: "Every link, and what each has earned" },
+    { label: "Your earnings", hint: "Sales overview and profit reports, in one place" },
     { label: "Your orders", hint: "Including the proof copy that unlocks selling" },
   ],
   [{ label: "Settings" }, { label: "Help" }],
@@ -192,6 +192,11 @@ export const NAV_COLUMNS = [...NAV, BOOKSTORE].map(g => ({
   items: g.items.flatMap(([, items]) => items.map(norm)),
 }));
 
+/* No longer used in the nav — the New and Changed badges came off on
+   2026-08-24, because a header full of badges reads as a changelog rather
+   than as navigation, and the marks were there to explain a proposal to
+   reviewers rather than to help anyone get anywhere. Still exported and
+   still used: the PDP's seller doorway carries one. */
 export function Mark({ kind }) {
   if (!kind) return null;
   const isNew = kind === NEW;
@@ -246,7 +251,7 @@ function MegaMenu({ group }) {
                 onMouseEnter={e => (e.currentTarget.style.background = C.gray50)}
                 onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
               >
-                <span>{it.label}<Mark kind={it.mark} /></span>
+                <span>{it.label}</span>
                 {it.hint && <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>{it.hint}</span>}
               </a>
             );
@@ -378,7 +383,7 @@ function MobileNav({ open, signedIn, onClose, onSignedIn }) {
       {[...NAV, BOOKSTORE].map(group => (
         <div key={group.label} style={{ padding: "10px 0", borderBottom: `1px solid ${T.border}` }}>
           <div style={{ fontSize: TYPE.lg, fontWeight: 700, color: T.textNeutral, padding: "4px 0 6px" }}>
-            {group.label}{group.mark && <Mark kind={group.mark} />}
+            {group.label}
           </div>
           {group.items.map(([heading, items], gi) => (
             <div key={gi} style={{ display: "grid", gap: 1, paddingBottom: heading ? 8 : 0 }}>
@@ -400,7 +405,7 @@ function MobileNav({ open, signedIn, onClose, onSignedIn }) {
                       color: T.textSubtle, fontSize: TYPE.base,
                     }}
                   >
-                    {it.label}<Mark kind={it.mark} />
+                    {it.label}
                   </a>
                 );
               })}
@@ -425,7 +430,7 @@ function MobileNav({ open, signedIn, onClose, onSignedIn }) {
                   color: it.quiet ? T.textSubtle : T.textNeutral,
                 }}
               >
-                {it.label}<Mark kind={it.mark} />
+                {it.label}
               </a>
             ))
           : (
@@ -493,7 +498,7 @@ function AccountMenu({ open, onToggle, onSignOut }) {
                   onMouseEnter={e => (e.currentTarget.style.background = C.gray50)}
                   onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
                 >
-                  <span>{it.label}<Mark kind={it.mark} /></span>
+                  <span>{it.label}</span>
                   {it.hint && <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>{it.hint}</span>}
                 </a>
               ))}
@@ -537,7 +542,6 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
       >
         {group.icon && <span className="ms" style={{ fontSize: 20 }}>{group.icon}</span>}
         {group.label}
-        {group.mark && <Mark kind={group.mark} />}
         <span className="ms turn" style={{ fontSize: 18, transform: open === group.label ? "rotate(180deg)" : "none" }}>
           expand_more
         </span>
@@ -668,52 +672,6 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
         onSignedIn={v => onSignedIn && onSignedIn(v)}
       />
 
-      {/* prototype control — not part of the design */}
-      {onSignedIn && (
-        <div style={{
-          borderTop: `1px dashed ${T.border}`, background: C.gray50,
-          padding: "6px 24px", display: "flex", alignItems: "center", gap: 10,
-          fontFamily: FONT_BODY, fontSize: TYPE.sm, color: T.textSubtle,
-        }}>
-          {/* The recommendation, said where it is being looked at. Each state
-              proposes different things, so the line follows the state. */}
-          <span style={{ minWidth: 0 }}>
-            {signedIn ? (
-              <>
-                <strong style={{ color: T.textNeutral }}>Proposed header.</strong>{" "}
-                Settings, Help and Log Out move into your account menu; the cart survives log-in; the bare
-                flag names the region and the currency it sets; Start Project stays the primary action in
-                both states.
-              </>
-            ) : (
-              <>
-                <strong style={{ color: T.textNeutral }}>Proposed nav — Deb's option D.</strong>{" "}
-                Five jobs, not six departments: <em>Make</em> · <em>Sell</em> · <em>Services</em> ·{" "}
-                <em>Pricing</em> · <em>Resources</em>, with the Bookstore apart. Volume orders and API
-                printing move to <em>Services</em>, because neither is a way to sell. Seller pricing stays
-                off the Pricing menu. Search is drawn, not built; no AI.
-              </>
-            )}
-          </span>
-
-          <span style={{ marginLeft: "auto", fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase", fontSize: 11 }}>Session</span>
-          {[["Signed out", false], ["Signed in", true]].map(([label, v]) => (
-            <button
-              key={label}
-              onClick={() => onSignedIn(v)}
-              style={{
-                border: signedIn === v ? `1px solid ${C.blue600}` : `1px solid ${T.border}`,
-                background: signedIn === v ? C.blue50 : "#fff",
-                color: signedIn === v ? C.blue950 : T.textSubtle,
-                borderRadius: 999, padding: "3px 12px", fontSize: TYPE.sm,
-                fontWeight: signedIn === v ? 700 : 500, fontFamily: FONT_BODY,
-              }}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   );
 }
