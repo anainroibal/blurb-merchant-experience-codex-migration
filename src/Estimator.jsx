@@ -404,7 +404,25 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
       </section>
 
       <section style={{ padding: "24px 16px 72px" }}>
-        <div style={{ maxWidth: 900, margin: "0 auto", display: "grid", gap: 18 }}>
+        <div style={{ maxWidth: 1180, margin: "0 auto", display: "grid", gap: 18 }}>
+
+          {/* ── The get-started layout: choices on one side, the running
+                 total on the other ──
+                 Same grid and the same two classes, so the responsive rules
+                 written for that screen apply here without a second set:
+                 cfg-grid collapses to one column on a narrow viewport, and
+                 cfg-aside stops being sticky and caps its height so it
+                 cannot swallow the page. The panel is sticky again, which is
+                 the point of it — the number stays on screen while the
+                 options are changed rather than being scrolled back to. ── */}
+          <div
+            className="fade-in cfg-grid"
+            style={{
+              display: "grid", gap: 40, alignItems: "start",
+              gridTemplateColumns: "minmax(340px, 1.55fr) minmax(310px, 0.85fr)",
+            }}
+          >
+            <div className="cfg-steps" style={{ minWidth: 0, display: "grid", gap: 18 }}>
 
           {/* ── Product options first. Always. ── */}
           <div style={{
@@ -422,24 +440,6 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
               kindId={kindId} onKind={changeKind} why={why}
             />
           </div>
-
-          {/* ── The answer ──
-              The same panel /getting-started uses. It was a different
-              component doing the same job: a row of big figures, its own
-              shipping block, its own footnotes. Two panels answering "what
-              does this cost and what would I keep" is two places to fix a
-              rule and two chances to disagree about it. */}
-          <SummaryPanel
-            formatId={formatId}
-            state={state}
-            onChange={setState}
-            mode={mode}
-            sellPrice={shown}
-            onSellPrice={setPrice}
-            sticky={false}
-            ship={ship}
-            setShip={setShip}
-          />
 
           {/* Arrival dates stay here rather than moving into the panel: they
               are the maker's question, they need the width, and the panel is
@@ -461,6 +461,24 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
           )}
 
           {selling && <SellChannels price={shown} cost={cost} formatId={formatId} sel={state} />}
+
+            </div>
+
+            {/* ── The answer, sticky beside the choices ──
+                The same panel /getting-started uses. The estimator had its
+                own doing the same job with different parts, which is two
+                places to fix a rule and two chances to disagree about it. */}
+            <SummaryPanel
+              formatId={formatId}
+              state={state}
+              onChange={setState}
+              mode={mode}
+              sellPrice={shown}
+              onSellPrice={setPrice}
+              ship={ship}
+              setShip={setShip}
+            />
+          </div>
 
 
 
