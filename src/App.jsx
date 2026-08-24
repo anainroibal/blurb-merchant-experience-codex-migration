@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ProductPage from "./ProductPage.jsx";
+import SellerLanding from "./SellerLanding.jsx";
 import GetStarted from "./GetStarted.jsx";
 import SiteNav from "./SiteNav.jsx";
 import SiteFooter from "./SiteFooter.jsx";
@@ -83,6 +84,9 @@ const STAGES = [
      one quiet line for a seller. */
   { id: "product",    short: "Photo book",   label: "/photo-books/imagewrap-hardcover-photo-book — the doorway" },
   { id: "getstarted", short: "Get started",  label: "Get started — the intent router" },
+  /* Ways to sell, renamed and given one goal: which route is mine? It is
+     where a seller lands, and it ends in the single step that follows. */
+  { id: "seller",     short: "Seller page",  label: "The seller landing page — five ways to sell" },
   /* Two pages, not two tabs. The maker's price sits under Pricing; the
      seller's margin sits under Sell & Self-Publish, which is what keeps
      the public pricing pages retail-only. */
@@ -204,6 +208,7 @@ export default function App() {
             onGo={go}
           />
         )}
+        {stage === "seller"     && <SellerLanding onGo={go} />}
         {stage === "pricing"    && <Estimator mode="make" onGo={go} seed={entry?.seed} />}
         {stage === "margin"     && <Estimator mode="sell" onGo={go} seed={entry?.seed} />}
       </div>
