@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { OptionCard, Divider } from "./Configurator.jsx";
 import { Field, OptionGroup } from "./ProductOptions.jsx";
+import CreateActions from "./CreateActions.jsx";
 import {
   CATALOG, availableFor, reconcile, hasTool,
   unitPrice, perPagePrice, pageLimit, money,
@@ -79,75 +80,19 @@ const FINISHES = [
   { id: "glossy", label: "Glossy", spec: "High shine, stronger contrast" },
 ];
 
-/* The creation tools, named as /getting-started's handoff names them so the
-   two screens cannot describe the same tool differently. Which of them apply
-   is decided by TOOLS in the catalog, not here — see hasTool.
-
-   The online editor is called exactly that, here and in the handoff — it is
-   the same tool as BookWright Online, and the product name earns nothing on
-   a page where the alternative is called BookWright too.
-
-   Every row is clickable, and where each one goes is the honest part. Two
-   of them are prototyped here and start the build; the other two are pages
-   on blurb.com, so they open there rather than pretending to be screens we
-   have. `external` is what makes that visible before the click. */
-const TOOL_PATHS = [
-  /* No online-editor row. Create online IS the online editor, so listing it
-     here would be the same door twice — and the second one, sitting under
-     "other tools", reads as though it were something else. What the catalog
-     still decides is whether that primary CTA is honest at all: hasTool
-     (formatId, "online") is false for trade books and magazines, so a
-     generalised version of this page has to relabel the button, not just
-     filter this list. */
-  { id: "bookwright", icon: "download", label: "BookWright for desktop",
-    body: "Our free desktop app, for longer books and more control over layout.",
-    external: "https://www.blurb.com/bookwright" },
-  { id: "lightroom", icon: "photo_library", label: "Adobe Lightroom plug-in",
-    body: "Already editing in Lightroom? Send a gallery straight into a book layout.",
-    external: "https://www.blurb.com/lightroom" },
-  { id: "indesign", icon: "article", label: "Adobe InDesign plug-in",
-    body: "Lay it out in InDesign and export a Blurb-ready file.",
-    external: "https://www.blurb.com/indesign-plugin" },
-  { id: "pdf", icon: "upload_file", label: "Upload a print-ready PDF",
-    body: "Finished it elsewhere? Bring the PDF and it is ready to order.",
-    action: "build" },
-];
-
-/* One row of the tools list. A button when it starts something here, a link
-   when it leaves for blurb.com — same shape either way, so the list reads as
-   one set of choices rather than two. */
-function ToolRow({ tool, onBuild }) {
-  const inner = (
-    <>
-      <span className="ms" style={{ fontSize: 22, color: T.bgBrand, flex: "0 0 auto" }}>{tool.icon}</span>
-      <span style={{ minWidth: 0, display: "grid", gap: 2 }}>
-        <span style={{ fontSize: TYPE.base, fontWeight: 600, color: T.textBrand, display: "inline-flex", alignItems: "center", gap: 5 }}>
-          {tool.label}
-          <span className="ms" style={{ fontSize: 16 }}>
-            {tool.external ? "open_in_new" : "arrow_forward"}
-          </span>
-        </span>
-        <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.55 }}>{tool.body}</span>
-      </span>
-    </>
-  );
-
-  const style = {
-    font: "inherit", textAlign: "left", textDecoration: "none", cursor: "pointer",
-    background: T.bgNeutral, border: `1px solid ${T.border}`, borderRadius: R.md,
-    padding: "12px 14px", display: "flex", gap: 12, alignItems: "flex-start", width: "100%",
-  };
-
-  return tool.external
-    ? <a href={tool.external} target="_blank" rel="noreferrer" style={style}>{inner}</a>
-    : <button onClick={onBuild} style={style}>{inner}</button>;
-}
-
 /* `seed` is a configuration arriving from somewhere else — the pricing
    summary sending someone here to read about the book they just priced.
    Opening on a different size than the one they were looking at would make
    the link feel like a reset rather than an explanation. */
 export default function ProductPage({ onGo, seed = null }) {
+  /* A specification can arrive from a screen that was not looking at an
+     ImageWrap — the calculators offer "learn more about photo books" for any
+     photo book. So the seed is repaired against this page's cover before it
+     is used, rather than trusted into a combination the matrix cannot build
+     and rendering "Not available" at someone. */
+  const seeded = seed?.sel
+    ? reconcile("photo", { ...seed.sel, cover: "imagewrap" }, "cover")
+    : null;
   const formatId = "photo";
   const f = CATALOG[formatId];
   /* Options carry their own label, dims and spec — mk() copies them out of
@@ -155,10 +100,10 @@ export default function ProductPage({ onGo, seed = null }) {
      the catalog for a name. */
   const cover = "imagewrap";           /* the page IS the cover */
 
-  const [size, setSize] = useState(seed?.sel?.size ?? "square");
-  const [paper, setPaper] = useState(seed?.sel?.paper ?? "standard_paper");
+  const [size, setSize] = useState(seeded?.size ?? "square");
+  const [paper, setPaper] = useState(seeded?.paper ?? "standard_paper");
   const [finish, setFinish] = useState("matte");
-  const [pages, setPages] = useState(seed?.sel?.pages ?? 20);
+  const [pages, setPages] = useState(seeded?.pages ?? 20);
   const [tab, setTab] = useState("description");
   const [toolsOpen, setToolsOpen] = useState(false);
   /* Which groups have their Details open. A set, because more than one can
@@ -391,66 +336,16 @@ export default function ProductPage({ onGo, seed = null }) {
             <div style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
               {pages}-page minimum, +{money(perPage)} for each additional page
             </div>
-            {/* ── The two calls to action ──
-                The live page offers Create now, Download BookWright and
-                Explore design tools, which is one decision wearing three
-                buttons. It is really a fork: start in the browser now, or
-                find out what else can make this book.
-
-                So: one primary that begins the thing, and one that opens the
-                tools rather than sending anyone off to read about them. The
-                list comes from TOOLS in the catalog, filtered to this product
-                — which is the only source that knows a photo book can be made
-                online and a trade book cannot. Nothing here is invented per
-                page, so it cannot drift from the matrix. */}
-            <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 10 }}>
-              <button
-                onClick={() => onGo("getstarted", { seed: { formatId, sel: { cover, size, paper, pages } } })}
-                style={{
-                  font: "inherit", fontSize: TYPE.lg, fontWeight: 600, minHeight: 48, padding: "0 26px",
-                  borderRadius: R.md, background: T.bgBrand, color: T.textInverse, border: 0, cursor: "pointer",
-                }}
-              >
-                Create online
-              </button>
-              <button
-                onClick={() => setToolsOpen(o => !o)}
-                aria-expanded={toolsOpen}
-                style={{
-                  font: "inherit", fontSize: TYPE.lg, fontWeight: 600, minHeight: 48, padding: "0 20px",
-                  borderRadius: R.md, background: "transparent", color: T.textBrand,
-                  border: `1px solid ${T.borderBrand}`, cursor: "pointer",
-                  display: "inline-flex", alignItems: "center", gap: 6,
-                }}
-              >
-                See other tools
-                <span className="ms turn" style={{ fontSize: 20, transform: toolsOpen ? "rotate(180deg)" : "none" }}>
-                  expand_more
-                </span>
-              </button>
-            </div>
-
-            {toolsOpen && (
-              <div
-                className="pop-in"
-                style={{
-                  marginTop: 4, border: `1px solid ${T.border}`, borderRadius: R.lg,
-                  padding: 16, display: "grid", gap: 14, background: T.bgSubtle,
-                }}
-              >
-                {TOOL_PATHS.filter(t => hasTool(formatId, t.id)).map(t => (
-                  <ToolRow
-                    key={t.id}
-                    tool={t}
-                    onBuild={() => onGo("getstarted", { seed: { formatId, sel: { cover, size, paper, pages } } })}
-                  />
-                ))}
-                <div style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
-                  Every one of these makes the book on this page, and the price above does not change with the
-                  tool you pick.
-                </div>
-              </div>
-            )}
+            {/* The shared create actions — same component the calculators
+                use, so "Create online" cannot mean one thing here and
+                another there. showLearnMore is off: this IS the product
+                page. */}
+            <CreateActions
+              formatId={formatId}
+              sel={{ cover, size, paper, pages }}
+              onGo={onGo}
+              showLearnMore={false}
+            />
 
             {/* THE DOORWAY.
                 Under the two real calls to action, deliberately quieter than

@@ -232,17 +232,27 @@ function Line({ label, value, strong, muted, accent }) {
 }
 
 /* ── Which configurations have a product page to read ──
-   blurb.com has a PDP per cover, not per family: /photo-books has
+   blurb.com has a PDP per cover, not per family: /photo-books holds
    /imagewrap-hardcover-photo-book, /layflat-photo-book and the rest. Only
-   the ImageWrap one is prototyped here, so this map has one entry — and it
-   is a map rather than an `if` because the second one costs a line, and
-   because a missing PDP has to mean "no link" instead of a broken one. */
+   the ImageWrap one is prototyped here.
+
+   Two levels, because two different links need this. The panel names the
+   exact page when the configuration matches it — "ImageWrap hardcover
+   photo books" — and the create actions fall back to the family, since
+   "learn more about photo books" is true of any photo book and the page it
+   opens is a photo-book page. A map rather than an `if`, so a missing PDP
+   means no link instead of a broken one. */
 const PDP_NAME = {
   photo: { imagewrap: "ImageWrap hardcover photo books" },
 };
-const pdpName = (formatId, sel) => PDP_NAME[formatId]?.[sel?.cover] ?? null;
+const PDP_FAMILY = { photo: "photo books" };
 
-/* One card should not stretch the width of the column the way six do. */
+export const pdpName = (formatId, sel) =>
+  PDP_NAME[formatId]?.[sel?.cover] ?? PDP_FAMILY[formatId] ?? null;
+
+/* The stricter one: only when the page IS this configuration. */
+export const exactPdpName = (formatId, sel) => PDP_NAME[formatId]?.[sel?.cover] ?? null;
+
 export default function SummaryPanel({
   formatId, state, onChange, mode, sellPrice, onSellPrice, onProductPage,
   sticky = true, ship: shipProp, setShip: setShipProp,
@@ -256,7 +266,7 @@ export default function SummaryPanel({
   const floor = minSellPrice(formatId, state);
   const derived = derivedSteps(formatId, state);
   const profit = Math.max(0, sellPrice - cost);
-  const pdp = pdpName(formatId, state);
+  const pdp = exactPdpName(formatId, state);
 
   /* A pricier paper can push cost above the asking price — lift it rather
      than leaving the ladder showing zero profit. */

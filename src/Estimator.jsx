@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.js";
 import SummaryPanel from "./SummaryPanel.jsx";
 import ProductOptions from "./ProductOptions.jsx";
+import CreateActions from "./CreateActions.jsx";
 import {
   CATALOG, PROJECT_KINDS, fromPrice, sizeCount,
   seedFor, priceFor, sellerCost, minSellPrice, defaultSelection,
@@ -586,6 +587,22 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
                 />
               </div>
             )}
+          </div>
+
+          {/* ── Once a product is priced, the next step is to make it ──
+              The same component the product page uses. It sits at the foot
+              of the choices column rather than in the panel: the panel is
+              the arithmetic, and an action is not a number. */}
+          <div style={{
+            background: T.bgNeutral, border: `1px solid ${T.border}`, borderRadius: R.lg,
+            padding: 24,
+          }}>
+            <CreateActions
+              formatId={formatId}
+              sel={state}
+              onGo={onGo}
+              heading={selling ? "Ready to make the book you would sell?" : "Ready to make it?"}
+            />
           </div>
 
           {/* The channel comparison used to sit here. It belongs on the
