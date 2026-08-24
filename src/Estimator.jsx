@@ -323,6 +323,63 @@ function Rung({ label, value, loud }) {
   );
 }
 
+/* ── A modal, for the things that are not part of the decision ──
+   The 8/21 pod's read of "one page, one goal": what you dip into and come
+   back from belongs behind a layer, not in the column where the decision is
+   being made. First use is shipping on the selling side — the buyer pays it,
+   so it must never share space with the seller's margin.
+
+   Deliberately small: backdrop click and Escape close it, and it is not
+   focus-trapped. A prototype needs the separation to be legible, not a
+   production dialog. */
+function Modal({ open, title, onClose, children }) {
+  React.useEffect(() => {
+    if (!open) return;
+    const onKey = e => e.key === "Escape" && onClose();
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
+
+  if (!open) return null;
+  return (
+    <div
+      onClick={onClose}
+      style={{
+        position: "fixed", inset: 0, zIndex: 80, background: "rgba(0,0,0,0.4)",
+        display: "grid", placeItems: "center", padding: 20,
+      }}
+    >
+      <div
+        className="pop-in"
+        role="dialog"
+        aria-modal="true"
+        aria-label={title}
+        onClick={e => e.stopPropagation()}
+        style={{
+          background: T.bgNeutral, borderRadius: R.lg, maxWidth: 560, width: "100%",
+          maxHeight: "85vh", overflowY: "auto", padding: 24,
+          display: "grid", gap: 14, fontFamily: FONT_BODY,
+          boxShadow: "0 24px 60px rgba(0,0,0,0.24)",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16 }}>
+          <span style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["4xl"], fontWeight: 500, lineHeight: 1.2 }}>
+            {title}
+          </span>
+          <button
+            onClick={onClose}
+            aria-label="Close"
+            style={{ background: "transparent", border: 0, cursor: "pointer", color: T.textSubtle, padding: 0 }}
+          >
+            <span className="ms" style={{ fontSize: 24 }}>close</span>
+          </button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 /* `seed` is a specification handed over by another screen — a product page
    sending a seller here to see what this exact book leaves them. Arriving
    with the book already configured is the whole value of the handover: the
@@ -337,6 +394,9 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
   const [kindId, setKindId] = useState(null);
   const [why, setWhy] = useState(null);
   const [helpOpen, setHelpOpen] = useState(false);
+  /* Shipping lives in a modal on the selling side. See the note beside the
+     link that opens it. */
+  const [buyerOpen, setBuyerOpen] = useState(false);
   const [ship, setShip] = useState({ country: "US", postal: "", state: "California", speed: "economy", poBox: false });
 
   const m = MODES[mode];
@@ -457,32 +517,33 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
           }}>
             {selling ? (
               <>
-                <MarginLadder cost={cost} price={shown} onPrice={setPrice} floor={floor} />
+                {/* Plain rows, not display figures — 8/21 pod, item 5. */}
+                <MarginLadder cost={cost} price={shown} onPrice={setPrice} floor={floor} plain />
                 <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.6 }}>
                   Your profit is {margin}% of what your buyer pays for the book.
                 </p>
 
                 <CostExplainer />
 
-                {/* Shipping, shown but held outside the ladder above — the
-                    buyer pays it, so it must never look like a deduction. */}
-                <div style={{
-                  borderTop: `1px solid ${T.border}`, paddingTop: 14, display: "grid", gap: 6,
-                }}>
-                  <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>
-                    What your buyer pays
-                  </span>
-                  <span style={{ fontSize: TYPE.lg, lineHeight: 1.6 }}>
-                    A buyer in {ship.country === "US" ? ship.state : SHIPPING.countries.find(c => c.id === ship.country)?.label}{" "}
-                    pays <strong>{money(shown)}</strong> for the book and{" "}
-                    <strong>{money(buyerShip?.cost ?? 0)}</strong> to have it sent —{" "}
-                    <strong>{money(shown + (buyerShip?.cost ?? 0))}</strong> in all.
-                  </span>
-                  <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.6 }}>
-                    None of the shipping is yours to pay, so your {money(profit)} does not move wherever they
-                    live. Rates are placeholders and do not vary by state in this prototype; sales tax does,
-                    and is settled at checkout.
-                  </span>
+                {/* ── Shipping, demoted out of the panel — 8/21 pod, item 1 ──
+                    The rule already says shipping stays out of the calculation
+                    because the buyer pays it. It was still sitting in the same
+                    column as the margin, and anything in that column reads as
+                    part of the arithmetic whether it is labelled that way or
+                    not. So it moves behind a link: available to look up, never
+                    beside the seller's numbers. */}
+                <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 14 }}>
+                  <button
+                    onClick={() => setBuyerOpen(true)}
+                    style={{
+                      font: "inherit", fontSize: TYPE.sm, fontWeight: 600, color: T.textBrand,
+                      background: "transparent", border: 0, padding: 0, cursor: "pointer",
+                      display: "inline-flex", alignItems: "center", gap: 4,
+                    }}
+                  >
+                    <span className="ms" style={{ fontSize: 18 }}>local_shipping</span>
+                    What your buyer pays to have it sent
+                  </button>
                 </div>
               </>
             ) : (
@@ -522,6 +583,26 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
           </div>
 
           {selling && <SellChannels price={shown} cost={cost} formatId={formatId} sel={state} />}
+
+          <Modal open={buyerOpen} title="What your buyer pays" onClose={() => setBuyerOpen(false)}>
+            <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.65 }}>
+              A buyer in {ship.country === "US" ? ship.state : SHIPPING.countries.find(c => c.id === ship.country)?.label}{" "}
+              pays <strong>{money(shown)}</strong> for the book and{" "}
+              <strong>{money(buyerShip?.cost ?? 0)}</strong> to have it sent —{" "}
+              <strong>{money(shown + (buyerShip?.cost ?? 0))}</strong> in all.
+            </p>
+            <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.6 }}>
+              None of the shipping is yours to pay, so your {money(profit)} does not move wherever they live.
+              That is why it is in here rather than in your numbers.
+            </p>
+            <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.6 }}>
+              Rates are placeholders and do not vary by state in this prototype; sales tax does, and is settled
+              at checkout.
+            </p>
+            <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 14 }}>
+              <ShipTo selling shipping={false} ship={ship} setShip={setShip} />
+            </div>
+          </Modal>
 
           {/* ── The other page ──
               Two pages, not two tabs: the maker's price lives under

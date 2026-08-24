@@ -881,6 +881,21 @@ export const SELL_CHANNELS = [
   },
   {
     id: "api", name: "API printing", mode: "pod",
+    /* SETTLED 2026-08-18: API printing is a way to sell, not a candidate
+       for one. It is how a business connects its own store to Blurb's print
+       service. Large Order Services is a separate route — you buy the stock
+       and distribute it — and the two were never alternatives for the same
+       slot.
+
+       Kept here deliberately. This note used to live on the API card in
+       WaysToSell.jsx; that screen was removed on 2026-08-24, and the
+       feedback log warned that deleting it would silently delete the
+       decision. The 8/21 pod said "API printing is not included in the
+       selling tool", which either reverses this or means something narrower
+       than a way to sell — unresolved, so nothing here has changed. Whoever
+       settles it should answer the reasoning above rather than overwrite
+       it, and /print-api-software supports it: the page makes the same
+       only-pay-for-printing promise a checkout link does. */
     buyerPays: "Whatever your own store charges",
     takes: "Nothing — you pay Blurb to print",
     paid: "Through your own store",

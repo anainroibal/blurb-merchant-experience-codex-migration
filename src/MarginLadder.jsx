@@ -132,7 +132,37 @@ function Entry({ value, min, onChange, compact }) {
   );
 }
 
-export default function MarginLadder({ cost, price, onPrice, floor, compact }) {
+/* ── One row of the plain summary ──
+   8/21 pod: "the summary section for margin calculator — same thing without
+   the visuals." Two rules point the same way. Utilitarian is the obvious
+   one: a summary is read, and display type competes with the numbers it is
+   summarising. The sharper reason is the pricing rule — the fulfilment price
+   is a line in a calculation, never a price tag, and visual treatment is
+   exactly what turns a number into a price tag. Plain rows keep cost → price
+   → profit reading as arithmetic the seller is doing. */
+function Row({ label, sub, children, onClick, last }) {
+  return (
+    <div
+      onClick={onClick}
+      role={onClick ? "button" : undefined}
+      tabIndex={onClick ? 0 : undefined}
+      onKeyDown={onClick ? e => (e.key === "Enter" || e.key === " ") && onClick() : undefined}
+      style={{
+        display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16,
+        padding: "10px 0", borderBottom: last ? 0 : `1px solid ${T.border}`,
+        cursor: onClick ? "pointer" : "default", minWidth: 0,
+      }}
+    >
+      <span style={{ display: "grid", gap: 2, minWidth: 0 }}>
+        <span style={{ fontSize: TYPE.base, fontWeight: 600 }}>{label}</span>
+        {sub && <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>{sub}</span>}
+      </span>
+      <span style={{ flex: "0 0 auto" }}>{children}</span>
+    </div>
+  );
+}
+
+export default function MarginLadder({ cost, price, onPrice, floor, compact, plain }) {
   const [driver, setDriver] = useState("profit");
   const profit = Math.max(0, price - cost);
 
@@ -148,6 +178,46 @@ export default function MarginLadder({ cost, price, onPrice, floor, compact }) {
   useEffect(() => { if (price < floor) onPrice(floor); }, [floor, price]);
 
   const take = next => setDriver(next);
+
+  if (plain) {
+    const amount = v => (
+      <span style={{ fontFamily: FONT_BODY, fontSize: TYPE.xl, fontWeight: 700, color: T.textNeutral }}>
+        {money(v)}
+      </span>
+    );
+    return (
+      <div style={{ fontFamily: FONT_BODY, display: "grid" }}>
+        <Row label="Your cost" sub="What Blurb charges you to print it">{amount(cost)}</Row>
+
+        <Row
+          label="Your price"
+          sub={driver === "price" ? "You set this" : "Click to set it instead"}
+          onClick={driver === "price" ? undefined : () => take("price")}
+        >
+          {driver === "price"
+            ? <Entry value={price} min={floor} onChange={onPrice} compact />
+            : amount(price)}
+        </Row>
+
+        <Row
+          label="Your profit"
+          sub={driver === "profit" ? "You set this" : "Click to set it instead"}
+          onClick={driver === "profit" ? undefined : () => take("profit")}
+          last
+        >
+          {driver === "profit"
+            ? <Entry value={profit} min={0} onChange={p => onPrice(Math.round((cost + p) * 100) / 100)} compact />
+            : amount(profit)}
+        </Row>
+
+        <p style={{ margin: "12px 0 0", fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.55 }}>
+          {driver === "profit"
+            ? "Set what you need to earn and we work out the price. Change the paper and your earnings hold — your buyer pays the difference."
+            : "Set what your buyer pays and we work out the rest. Change the paper and the price holds — the difference comes out of your profit."}
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div style={{ display: "grid", gap: compact ? 12 : 16, fontFamily: FONT_BODY }}>
