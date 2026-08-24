@@ -323,10 +323,16 @@ function Rung({ label, value, loud }) {
   );
 }
 
-export default function Estimator({ mode = "make", onGo }) {
+/* `seed` is a specification handed over by another screen — a product page
+   sending a seller here to see what this exact book leaves them. Arriving
+   with the book already configured is the whole value of the handover: the
+   alternative is asking someone who was just looking at an 8×10 ImageWrap
+   to describe it again. */
+export default function Estimator({ mode = "make", onGo, seed = null }) {
 
-  const [formatId, setFormatId] = useState("photo");
-  const [state, setState] = useState(() => defaultSelection("photo"));
+  const [formatId, setFormatId] = useState(seed?.formatId ?? "photo");
+  const [state, setState] = useState(() =>
+    seed ? { ...defaultSelection(seed.formatId), ...seed.sel } : defaultSelection("photo"));
   const [price, setPrice] = useState(24);
   const [kindId, setKindId] = useState(null);
   const [why, setWhy] = useState(null);

@@ -139,10 +139,14 @@ export const CATALOG = {
       { id: "cover", label: "Choose your cover",     options: mk(COVERS, ["softcover", "imagewrap", "dustjacket", "softcover_wireo"]) },
       { id: "paper", label: "Choose your paper",     options: mk(TRADE_PAPERS, Object.keys(TRADE_PAPERS)) },
     ],
-    /* 10–19 is 20%, not 10% — corrected from ProductList 2025, whose
-       quantity ladder reads 1–9 base · 10–19 20% · 20–49 20% · 50–99 25%
-       · 100+ blurb.com. That last rung is the source for BULK_AT. */
-    tiers: [{ min: 50, pct: 0.25 }, { min: 20, pct: 0.20 }, { min: 10, pct: 0.20 }],
+    /* 10–19 is 10%, restored 2026-08-21 from the live /pricing page, which
+       publishes trade at 10/20/25 — photo, magazine and notebook all match
+       it. ProductList 2025 reads 10–19 20% and an earlier pass followed the
+       document; the page is what a seller reads, so the page wins and the
+       disagreement belongs to whoever owns the matrix. ProductList's top
+       rung, 100+ blurb.com, is still the source for BULK_AT — /pricing
+       publishes no band above 50+. */
+    tiers: [{ min: 50, pct: 0.25 }, { min: 20, pct: 0.20 }, { min: 10, pct: 0.10 }],
     addons: ["whitelabel"],
     /* /self-publish: Ingram takes "paperback and hardcover books" — this
        family and no other. Amazon does not list trade books at all. */
@@ -903,6 +907,55 @@ export const sellerCost = (formatId, sel) => priceFor(formatId, sel).unit * FULF
 export const minSellPrice = (formatId, sel) => Math.ceil(sellerCost(formatId, sel) * 100) / 100;
 
 export const money = n => `US $${n.toFixed(2)}`;
+
+/* ── "From" prices, computed rather than typed ──
+   The cheapest buildable configuration of a family, at its base page count.
+   Nothing else on blurb.com does this: /pricing types its from-prices, the
+   home page types different ones again, and the verticals render a third
+   set from a real binding. On 21 Aug a trade book was "from $3.99" on
+   /pricing, "from $4.99" on the home page, and $2.99 wherever the price
+   came from the matrix — which is ticket T7 on the board.
+
+   So this is the fix being demonstrated, not a new number: one definition
+   of "from", derived from the same matrix every other price here uses.
+   Expect it to read lower than the live marketing pages. That gap IS the
+   finding. */
+export function fromPrice(formatId) {
+  const f = CATALOG[formatId];
+  if (!f) return null;
+
+  if (f.flat) {
+    /* Magazines and PDFs are priced by grade. Only offered grades count —
+       PRICING carries an economy magazine that the page does not sell. */
+    const prices = f.groups[0].options
+      .map(o => unitPrice(formatId, { grade: o.id }))
+      .filter(n => n != null);
+    return prices.length ? Math.min(...prices) : null;
+  }
+
+  if (f.fam === "wall_art") {
+    const materials = f.groups.find(g => g.id === "material").options;
+    const sizes = f.groups.find(g => g.id === "size").options;
+    const prices = [];
+    for (const m of materials) for (const s of sizes) {
+      const p = unitPrice(formatId, { material: m.id, size: s.id });
+      if (p != null) prices.push(p);
+    }
+    return prices.length ? Math.min(...prices) : null;
+  }
+
+  const sizes  = f.groups.find(g => g.id === "size").options;
+  const covers = f.groups.find(g => g.id === "cover").options;
+  const papers = f.groups.find(g => g.id === "paper").options;
+  const prices = [];
+  for (const c of covers) for (const s of sizes) for (const p of papers) {
+    const sel = { size: s.id, cover: c.id, paper: p.id };
+    if (!isAvailable(formatId, sel)) continue;
+    const price = unitPrice(formatId, sel);
+    if (price != null) prices.push(price);
+  }
+  return prices.length ? Math.min(...prices) : null;
+}
 
 /* ── Shipping ──────────────────────────────────────────────────────
    /shipping publishes no rates — it takes a destination and shows

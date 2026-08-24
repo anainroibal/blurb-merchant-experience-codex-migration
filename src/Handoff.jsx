@@ -166,8 +166,8 @@ export default function Handoff({ route, signedIn, onSignIn, formatId, use, pric
           title="Create online"
           body={
             online
-              ? `Design your ${product ? product.short.toLowerCase() : "book"} in the browser with BookWright Online. Nothing to install.`
-              : `BookWright Online can't make ${product ? `${product.label.toLowerCase()}` : "this"} yet. It makes ${list(onlineProducts)}.`
+              ? `Design your ${product ? product.short.toLowerCase() : "book"} in the browser with our online editor. Nothing to install.`
+              : `The online editor can't make ${product ? `${product.label.toLowerCase()}` : "this"} yet. It makes ${list(onlineProducts)}.`
           }
           cta={
             online

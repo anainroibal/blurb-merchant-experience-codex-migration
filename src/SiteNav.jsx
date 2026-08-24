@@ -119,7 +119,7 @@ export const NAV_COLUMNS = NAV.map(g => ({
   items: g.items.flatMap(([, items]) => items.map(norm)),
 }));
 
-function Mark({ kind }) {
+export function Mark({ kind }) {
   if (!kind) return null;
   const isNew = kind === NEW;
   return (
@@ -430,7 +430,7 @@ function AccountMenu({ open, onToggle, onSignOut }) {
   );
 }
 
-export default function SiteNav({ signedIn, onSignedIn }) {
+export default function SiteNav({ signedIn, onSignedIn, onGo }) {
   const [open, setOpen] = useState(null);
   const [locale, setLocale] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -449,8 +449,14 @@ export default function SiteNav({ signedIn, onSignedIn }) {
         display: "flex", alignItems: "center", gap: 16, fontFamily: FONT_BODY,
       }}>
         {/* The real brand mark, carried over from Blurb Checkout Prototypes —
-            same asset, same proportions as the live header (52px square). */}
-        <a href="#" onClick={e => e.preventDefault()} style={{ display: "flex", alignItems: "center", flex: "0 0 auto" }}>
+            same asset, same proportions as the live header (52px square).
+            It goes home, which is the one thing every site's logo does. */}
+        <a
+          href="#"
+          aria-label="Blurb home"
+          onClick={e => { e.preventDefault(); onGo?.("home"); }}
+          style={{ display: "flex", alignItems: "center", flex: "0 0 auto" }}
+        >
           <img src={BLURB_LOGO} alt="Blurb" style={{ height: 42, width: "auto", display: "block" }} />
         </a>
 
@@ -518,12 +524,21 @@ export default function SiteNav({ signedIn, onSignedIn }) {
 
           {/* Kept when signed in. Today it disappears, which strands anyone mid-order. */}
           <span className="ms" style={{ fontSize: 20, color: T.textNeutral }}>shopping_cart</span>
-          <button style={{
-            height: BUTTON_HEIGHT, padding: "0 18px", borderRadius: R.md, border: 0,
-            background: C.blue600, color: "#fff",
-            fontFamily: FONT_BODY, fontSize: TYPE.sm, fontWeight: 700,
-            letterSpacing: 0.6, textTransform: "uppercase", whiteSpace: "nowrap",
-          }}>
+          {/* Start Project goes to /getting-started, not to registration.
+              On the live site this button is the header's most prominent
+              action and it opens /my/account/register — an account form
+              before a price, which is the identity gate the audit argues
+              against. The page it should open is the one that asks what you
+              are making and prices it. */}
+          <button
+            onClick={() => onGo?.("getstarted")}
+            style={{
+              height: BUTTON_HEIGHT, padding: "0 18px", borderRadius: R.md, border: 0,
+              background: C.blue600, color: "#fff", cursor: "pointer",
+              fontFamily: FONT_BODY, fontSize: TYPE.sm, fontWeight: 700,
+              letterSpacing: 0.6, textTransform: "uppercase", whiteSpace: "nowrap",
+            }}
+          >
             Start Project
           </button>
         </div>

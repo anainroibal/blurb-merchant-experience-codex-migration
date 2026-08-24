@@ -1,4 +1,7 @@
 import React, { useState, useEffect } from "react";
+import Home from "./Home.jsx";
+import ProductPage from "./ProductPage.jsx";
+import PdfToBook from "./PdfToBook.jsx";
 import GetStarted from "./GetStarted.jsx";
 import SiteNav from "./SiteNav.jsx";
 import SiteFooter from "./SiteFooter.jsx";
@@ -78,6 +81,17 @@ function WipChip() {
 
 /* ── Stages. One linear journey, same idea as the checkout stepper. ── */
 const STAGES = [
+  /* The home page comes first because that is where the journey actually
+     starts, and because the lane into get-started is the thing it adds. */
+  { id: "home",       short: "Home",         label: "blurb.com — the lane into get started" },
+  /* A product page, between the home page and get-started, because that is
+     where it sits on the live site: home → /photo-books/<cover> → build. It
+     is the doorway page — retail-only, one line for a seller. */
+  { id: "product",    short: "Photo book",   label: "/photo-books/imagewrap-hardcover-photo-book — the doorway" },
+  /* The other way in: a finished file. The home page's Print prompt lands
+     here, and it is one of only two marketing pages that compute a price
+     from a product spec. */
+  { id: "pdftobook",  short: "PDF to book",  label: "/pdf-to-book — print a file you already have" },
   { id: "getstarted", short: "Get started",  label: "Get started — the intent router" },
   { id: "waystosell", short: "Ways to sell", label: "The ways to sell" },
   /* Two pages, not two tabs. The maker's price sits under Pricing; the
@@ -134,7 +148,7 @@ function DemoBar({ stage, onJump }) {
         display: "flex", alignItems: "center", justifyContent: "space-between",
         gap: 16, flexWrap: "wrap",
         padding: "10px 16px", borderBottom: `1px solid ${T.border}`,
-        background: T.bgSubtle, position: "sticky", top: 0, zIndex: 20,
+        background: T.bgSubtle,
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -156,6 +170,18 @@ export default function App() {
 
   const [signedIn, setSignedIn] = useState(false);
 
+  /* What the previous screen said on its way here — a route, a product
+     type, or nothing. The home page's lanes are the only thing that sets
+     it, and it exists so a lane arrives as an answer rather than as a
+     link: choosing "I'm selling something" should land on get-started
+     with the question already answered, not ask it again.
+
+     Cleared whenever the stepper is used, because jumping stages from the
+     demo bar is not following a lane. */
+  const [entry, setEntry] = useState(null);
+  const go = (id, opts = null) => { setEntry(opts); setStage(id); };
+  const jump = id => { setEntry(null); setStage(id); };
+
   /* Changing screen is a page change, so it starts at the top. Without
      this you keep the scroll position of the page you left — follow a
      link from the foot of one page and you land halfway down the next.
@@ -169,14 +195,33 @@ export default function App() {
      screen is short and after the content when it is not. */
   return (
     <div style={{ minHeight: "100vh", background: T.bg, display: "flex", flexDirection: "column" }}>
-      <DemoBar stage={stage} onJump={setStage} />
-      <SiteNav signedIn={signedIn} onSignedIn={setSignedIn} />
+      {/* The demo bar and the site nav stick as one block. Sticking the nav
+          alone would need the demo bar's height as an offset, and that height
+          changes when the bar wraps on a narrow screen — one sticky wrapper
+          holds them together at any width. The nav keeps its own relative
+          position inside, so the mega-menus still hang off it. */}
+      <div style={{ position: "sticky", top: 0, zIndex: 40 }}>
+        <DemoBar stage={stage} onJump={jump} />
+        <SiteNav signedIn={signedIn} onSignedIn={setSignedIn} onGo={jump} />
+      </div>
       {/* Keyed on the stage so switching screens fades rather than cuts. */}
       <div key={stage} className="fade-in" style={{ flex: 1, minWidth: 0 }}>
-        {stage === "getstarted" && <GetStarted signedIn={signedIn} onSignIn={() => setSignedIn(true)} />}
-        {stage === "waystosell" && <WaysToSell />}
-        {stage === "pricing"    && <Estimator mode="make" onGo={setStage} />}
-        {stage === "margin"     && <Estimator mode="sell" onGo={setStage} />}
+        {stage === "home"       && <Home onGo={go} />}
+        {stage === "product"    && <ProductPage onGo={go} seed={entry?.seed} />}
+        {stage === "pdftobook"  && <PdfToBook onGo={go} />}
+        {stage === "getstarted" && (
+          <GetStarted
+            signedIn={signedIn}
+            onSignIn={() => setSignedIn(true)}
+            initialRoute={entry?.route}
+            initialFormat={entry?.format}
+            initialSeed={entry?.seed}
+            onGo={go}
+          />
+        )}
+        {stage === "waystosell" && <WaysToSell onGo={go} />}
+        {stage === "pricing"    && <Estimator mode="make" onGo={go} seed={entry?.seed} />}
+        {stage === "margin"     && <Estimator mode="sell" onGo={go} seed={entry?.seed} />}
       </div>
       <SiteFooter />
     </div>

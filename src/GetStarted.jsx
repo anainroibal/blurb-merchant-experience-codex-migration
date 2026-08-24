@@ -179,12 +179,16 @@ function InlineSelect({ value, options, onChange }) {
   );
 }
 
-export default function GetStarted({ signedIn, onSignIn }) {
+export default function GetStarted({ signedIn, onSignIn, initialRoute, initialFormat, initialSeed, onGo }) {
   const [format, setFormat] = useState(null);
   /* Defaults to Project + to Sell. Note this is a prototype default, chosen so
      reviewers land on the selling path — not a recommendation for production,
-     where keepsake is the live default and most traffic is makers. */
-  const [route, setRoute] = useState("sell");
+     where keepsake is the live default and most traffic is makers.
+
+     initialRoute is what a lane on the home page already answered. Arriving
+     from "I'm making something" must not re-ask the question in the headline
+     with a different answer showing. */
+  const [route, setRoute] = useState(initialRoute ?? "sell");
   const [use, setUse] = useState("keepsake");
   const [state, setState] = useState(null);
   const [sellPrice, setSellPrice] = useState(24);
@@ -246,6 +250,34 @@ export default function GetStarted({ signedIn, onSignIn }) {
     if (kind) { changeKind(kind, route, id); return; }
     if (format && !formatsFor(route, id).includes(format)) changeFormat(null);
   };
+
+  /* A product card on the home page names a product type, not a project
+     kind, so it seeds the format and leaves the headline's kind unset —
+     which is honest: nobody said what they were making, only what they
+     want to print it as. Runs once, on arrival; if the route rules out
+     that product (a PDF cannot be sold through a link) changeFormat is
+     skipped and step one asks the question normally. */
+  useEffect(() => {
+    if (!initialFormat) return;
+    if (!formatsFor(initialRoute ?? "sell", use).includes(initialFormat)) return;
+    changeFormat(initialFormat);
+  }, []);
+
+  /* A product page hands over the WHOLE configuration, not just the family.
+     Someone who chose 13×11 ImageWrap on Mohawk Pearl and pressed Create
+     must not arrive on a softcover Mini Square — and the summary could not
+     offer its way back to that product page either, because the cover it
+     names would be gone. So the seed wins over defaultSelection, and the
+     asking price is refloored to match. */
+  useEffect(() => {
+    if (!initialSeed?.formatId) return;
+    const id = initialSeed.formatId;
+    if (!formatsFor(initialRoute ?? "sell", use).includes(id)) return;
+    const next = { ...defaultSelection(id), ...initialSeed.sel };
+    setFormat(id);
+    setState({ ...next, qty: (initialRoute ?? "sell") === "distribute" ? BULK_MIN : next.qty });
+    priceFrom(id, next);
+  }, []);
 
   return (
     <div style={{ fontFamily: FONT_BODY, color: T.textNeutral }}>
@@ -314,6 +346,9 @@ export default function GetStarted({ signedIn, onSignIn }) {
               mode={route}
               sellPrice={sellPrice}
               onSellPrice={setSellPrice}
+              /* The summary's way out to the product page. Optional: without
+                 it the link simply does not appear. */
+              onProductPage={onGo ? (spec => onGo("product", { seed: spec })) : null}
               stepOffset={1}
               leading={
                 <section>

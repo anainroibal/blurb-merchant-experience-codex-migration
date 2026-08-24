@@ -167,7 +167,7 @@ function Card({ c }) {
   );
 }
 
-export default function WaysToSell() {
+export default function WaysToSell({ onGo }) {
   const [showProps, setShowProps] = useState(true);
   return (
     <div style={{ fontFamily: FONT_BODY, color: T.textNeutral }}>
@@ -220,6 +220,38 @@ export default function WaysToSell() {
               to fulfilment pricing. And every book needs a proof — order and review one copy before it goes on
               sale, whichever route you choose.
             </div>
+          </div>
+
+          {/* ── The way out ──
+              This page ended nowhere, which made the home page's Sell card
+              carry two actions to make up for it. Comparison before
+              commitment is the rule: the choice of route is made here, so
+              the step that acts on it belongs here too — once, at the end,
+              after the facts that justify it. */}
+          <div style={{
+            marginTop: 24, background: "#fff", border: `1px solid ${T.border}`,
+            borderRadius: R.lg, padding: 24, maxWidth: 900,
+            display: "flex", alignItems: "center", justifyContent: "space-between", gap: 20, flexWrap: "wrap",
+          }}>
+            <div style={{ minWidth: 0 }}>
+              <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["4xl"], fontWeight: 500, lineHeight: 1.2 }}>
+                Picked your route?
+              </div>
+              <p style={{ margin: "6px 0 0", fontSize: TYPE.base, color: T.textSubtle, lineHeight: 1.6 }}>
+                Every one of them starts with a book. Choose the product, set your price, and see what you keep
+                before you commit to any of this.
+              </p>
+            </div>
+            <button
+              onClick={() => onGo?.("getstarted", { route: "sell" })}
+              style={{
+                fontFamily: FONT_BODY, fontSize: TYPE.lg, fontWeight: 600, minHeight: 48, padding: "0 26px",
+                borderRadius: R.md, border: 0, cursor: "pointer",
+                background: T.bgBrand, color: T.textInverse, whiteSpace: "nowrap",
+              }}
+            >
+              Start a book to sell
+            </button>
           </div>
         </div>
       </section>

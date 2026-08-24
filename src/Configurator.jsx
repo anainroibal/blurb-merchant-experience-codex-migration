@@ -37,8 +37,22 @@ export function StepHeading({ n, children }) {
   );
 }
 
-/* Codex — Text Selector, PDP variant: white, 2px #0d2f44 ring when chosen. */
-function OptionCard({ title, sub, spec, note, selected, onClick, disabled }) {
+/* Codex — Text Selector, PDP variant: white, 2px #0d2f44 ring when chosen.
+   One component, three densities, because the ring, the disabled treatment
+   and the "not available with the rest of your selection" title have to
+   behave identically wherever an option is offered:
+
+     · default — the step cards on /getting-started. Image-led, 16/11.
+     · thumb   — the live PDP's size swatches: a 56px tile, label under it.
+     · text    — the live PDP's paper and finish buttons. No image at all,
+                 because a paper is a word; a picture of one is a grey box
+                 pretending to be information.
+
+   The live page is the source for all three: its size row is thumbnails and
+   its paper row is text, on the same screen. */
+export function OptionCard({ title, sub, spec, note, selected, onClick, disabled, variant = "default" }) {
+  const thumb = variant === "thumb";
+  const text = variant === "text";
   return (
     <button
       onClick={onClick}
@@ -48,21 +62,37 @@ function OptionCard({ title, sub, spec, note, selected, onClick, disabled }) {
       title={disabled ? "Not available with the rest of your selection" : undefined}
       style={{
         textAlign: "center", background: T.bgNeutral, borderRadius: R.md,
-        padding: 16, minWidth: 0, opacity: disabled ? 0.4 : 1,
+        padding: thumb ? 8 : text ? "10px 12px" : 16,
+        minWidth: 0, opacity: disabled ? 0.4 : 1,
         cursor: disabled ? "not-allowed" : "pointer",
         border: selected ? `2px solid ${T.borderBrand}` : `1px solid ${T.border}`,
         margin: selected ? 0 : 1,
-        fontFamily: FONT_BODY, display: "grid", gap: 8, alignContent: "start",
+        fontFamily: FONT_BODY, display: "grid", gap: thumb ? 6 : text ? 2 : 8, alignContent: "start",
       }}
     >
+      {!text && (
+        <div style={{
+          background: selected ? C.blue50 : C.gray100, borderRadius: R.sm,
+          /* A square swatch, as on the live PDP. A fixed height inside a
+             flexible card gave a squat rectangle that read as a cropped
+             image rather than a sample. */
+          aspectRatio: thumb ? "1 / 1" : "16 / 11",
+          display: "grid", placeItems: "center",
+        }}>
+          <span className="ms" style={{ fontSize: thumb ? 26 : 40, color: selected ? C.blue600 : C.gray400 }}>
+            menu_book
+          </span>
+        </div>
+      )}
       <div style={{
-        background: selected ? C.blue50 : C.gray100, borderRadius: R.sm,
-        aspectRatio: "16 / 11", display: "grid", placeItems: "center",
-      }}>
-        <span className="ms" style={{ fontSize: 40, color: selected ? C.blue600 : C.gray400 }}>menu_book</span>
-      </div>
-      <div style={{
-        fontSize: TYPE.base, fontWeight: 700, letterSpacing: 0.6, textTransform: "uppercase",
+        /* Only the default step card shouts. A thumbnail's caption and a text
+           button are read as words, and the live PDP sets both in sentence
+           case — uppercasing "Mohawk Superfine Eggshell" costs a line break
+           and buys nothing. */
+        fontSize: thumb ? TYPE.sm : TYPE.base,
+        fontWeight: thumb ? 600 : text ? 600 : 700,
+        letterSpacing: thumb || text ? 0 : 0.6,
+        textTransform: thumb || text ? "none" : "uppercase",
         color: selected ? C.blue950 : T.textNeutral, lineHeight: 1.3,
       }}>
         {title}
@@ -96,7 +126,7 @@ const SEG = {
   display: "grid", placeItems: "center", color: T.textNeutral,
 };
 
-function MiniStepper({ label, hint, value, min, max, step = 1, onChange }) {
+export function MiniStepper({ label, hint, value, min, max, step = 1, onChange }) {
   return (
     <div style={{ display: "grid", gap: 8 }}>
       <span style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
@@ -333,14 +363,25 @@ function PriceInput({ value, floor, onChange }) {
 /* "Choose your book size" → "BOOK SIZE", "Your paper" → "PAPER". */
 const summaryLabel = label => label.replace(/^(choose your|your)\s+/i, "").toUpperCase();
 
+/* ── Which configurations have a product page to read ──
+   blurb.com has a PDP per cover, not per family: /photo-books has
+   /imagewrap-hardcover-photo-book, /layflat-photo-book and the rest. Only
+   the ImageWrap one is prototyped here, so this map has one entry — and it
+   is a map rather than an `if` because the second one costs a line, and
+   because a missing PDP has to mean "no link" instead of a broken one. */
+const PDP_NAME = {
+  photo: { imagewrap: "ImageWrap hardcover photo books" },
+};
+const pdpName = (formatId, sel) => PDP_NAME[formatId]?.[sel?.cover] ?? null;
+
 /* One card should not stretch the width of the column the way six do. */
-const stepGrid = count => ({
+export const stepGrid = count => ({
   display: "grid", gap: 14,
   gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
   ...(count === 1 ? { maxWidth: 260, margin: "0 auto" } : null),
 });
 
-function StepNote({ children }) {
+export function StepNote({ children }) {
   return (
     <p style={{
       fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5,
@@ -372,7 +413,7 @@ function Line({ label, value, strong, muted, accent }) {
   );
 }
 
-function Divider() {
+export function Divider() {
   return <div style={{ borderTop: `1px solid ${T.border}` }} />;
 }
 
@@ -478,7 +519,7 @@ function ShippingBlock({ ship, setShip, qty, selling, cost }) {
 
 export default function Configurator({
   formatId, state, onChange, mode, sellPrice, onSellPrice,
-  stepOffset = 1, leading, trailing,
+  stepOffset = 1, leading, trailing, onProductPage,
 }) {
   const selling = mode === "sell";
   const bulk = mode === "distribute";
@@ -489,6 +530,7 @@ export default function Configurator({
   const floor = minSellPrice(formatId, state);
   const derived = derivedSteps(formatId, state);
   const profit = Math.max(0, sellPrice - cost);
+  const pdp = pdpName(formatId, state);
 
   /* A pricier paper can push cost above the asking price — lift it rather
      than leaving the ladder showing zero profit. */
@@ -588,6 +630,30 @@ export default function Configurator({
             <span key={d.id}><strong style={{ color: T.textNeutral }}>{summaryLabel(d.label)}:</strong> {d.option.label}</span>
           ))}
         </div>
+
+        {/* ── Out to the product page ──
+            The summary names a specific product — an ImageWrap hardcover
+            photo book, 8×10, Premium Lustre — and this page can price that
+            without ever describing it. Paper weights, cover finishes, end
+            sheets, what the binding is actually like: all of that lives on
+            the PDP, and someone deciding between two papers needs it.
+
+            So the summary offers the way out, worded as what it is — a page
+            to read, not a step in the flow. It carries the configuration, so
+            the PDP opens on the same book, and coming back loses nothing. */}
+        {pdp && onProductPage && (
+          <button
+            onClick={() => onProductPage({ formatId, sel: { ...state } })}
+            style={{
+              font: "inherit", fontSize: TYPE.sm, fontWeight: 600, color: T.textBrand,
+              background: "transparent", border: 0, padding: 0, cursor: "pointer",
+              justifySelf: "start", textAlign: "left", display: "inline-flex", alignItems: "center", gap: 4,
+            }}
+          >
+            Learn more about {pdp}
+            <span className="ms" style={{ fontSize: 18 }}>arrow_forward</span>
+          </button>
+        )}
 
         {!f.digital && (
           <>
