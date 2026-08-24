@@ -36,10 +36,13 @@ import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.
    Two departures from the sketch, both deliberate:
      · NO "Shop with AI". Out of scope, and it would dominate both the
        conversation and the estimate.
-     · Search is drawn but inert. It is a product — an index, a results
-       page, ranking — not a nav control, and pretending otherwise in a
-       prototype invites the wrong conversation. The placeholder is here
-       because D's utility row is shaped around it.
+     · NO SEARCH. Drawn out on 2026-08-24 to keep the scope honest: search
+       is a product — an index, a results page, ranking — not a nav
+       control, and a box that returns nothing invites a conversation
+       about results instead of about navigation. The utility row holds
+       what it holds without it. Worth revisiting on its own: the sitemap
+       sweep found 99 pages, dead URLs and redirect hops, and a five-link
+       footer that carries no navigation at all.
 
    Signed out, the proposal makes three moves:
      1. Five top-level groups by JOB, not by department: Make, Sell,
@@ -56,9 +59,6 @@ import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.
 /* Brand mark, copied from Blurb Checkout Prototypes so the two prototypes
    show the same logo. Served from public/assets. */
 const BLURB_LOGO = "/assets/blurb-logo.png";
-
-export const NEW = "new";
-export const CHANGED = "changed";
 
 const NAV = [
   /* MAKE — everything about producing the object. Products answer "what
@@ -181,7 +181,10 @@ const ACCOUNT_MENU = [
   [{ label: "Log out", quiet: true }],
 ];
 
-const norm = i => (Array.isArray(i) ? { label: i[0], mark: i[1], hint: i[2] } : { label: i });
+/* ["Label", null, "hint"] — the middle slot used to carry a New/Changed
+   badge. Kept as a hole rather than rewritten out of every entry, so the
+   tuples stay diffable against the version that had them. */
+const norm = i => (Array.isArray(i) ? { label: i[0], hint: i[2] } : { label: i });
 
 /* The same navigation, flattened into footer columns. Exported so the
    footer cannot drift from the header — one list, two renderings. Group
@@ -191,27 +194,6 @@ export const NAV_COLUMNS = [...NAV, BOOKSTORE].map(g => ({
   label: g.label,
   items: g.items.flatMap(([, items]) => items.map(norm)),
 }));
-
-/* No longer used in the nav — the New and Changed badges came off on
-   2026-08-24, because a header full of badges reads as a changelog rather
-   than as navigation, and the marks were there to explain a proposal to
-   reviewers rather than to help anyone get anywhere. Still exported and
-   still used: the PDP's seller doorway carries one. */
-export function Mark({ kind }) {
-  if (!kind) return null;
-  const isNew = kind === NEW;
-  return (
-    <span style={{
-      marginLeft: 8, padding: "1px 7px", borderRadius: 999, verticalAlign: "middle",
-      fontSize: 11, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase",
-      background: isNew ? C.blue600 : C.blue50,
-      color: isNew ? "#fff" : C.blue950,
-      border: isNew ? "1px solid transparent" : `1px solid ${C.blue100}`,
-    }}>
-      {isNew ? "New" : "Changed"}
-    </span>
-  );
-}
 
 function MegaMenu({ group }) {
   const grouped = group.items.length > 1 || group.items[0][0];
@@ -554,9 +536,9 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
     <div ref={ref} style={{ borderBottom: `1px solid ${T.border}`, background: "#fff", position: "relative", zIndex: 40 }}>
 
       {/* ── Utility row ──
-          Draft D moves the logo, search, account, locale and cart up here,
-          which leaves the row below for the five jobs and nothing else.
-          "Shop with AI" is deliberately absent — see the file header. */}
+          Draft D moves the logo, account, locale and cart up here, which
+          leaves the row below for the five jobs and nothing else. Search and
+          "Shop with AI" are deliberately absent — see the file header. */}
       <div style={{
         maxWidth: 1400, margin: "0 auto", padding: "0 16px", minHeight: 56,
         display: "flex", alignItems: "center", gap: 16, fontFamily: FONT_BODY,
@@ -569,29 +551,6 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
         >
           <img src={BLURB_LOGO} alt="Blurb" style={{ height: 36, width: "auto", display: "block" }} />
         </a>
-
-        {/* Search is drawn, not built. A prototype search box that returned
-            nothing would invite a conversation about results rather than
-            about navigation. */}
-        <label
-          className="hide-sm"
-          title="Search is not prototyped"
-          style={{
-            flex: "1 1 320px", maxWidth: 420, minWidth: 0, height: 40,
-            display: "flex", alignItems: "center", gap: 8, padding: "0 12px",
-            border: `1px solid ${T.border}`, borderRadius: 999, color: T.textSubtle,
-          }}
-        >
-          <span className="ms" style={{ fontSize: 20 }}>search</span>
-          <input
-            readOnly
-            placeholder="Search books, formats and tools"
-            style={{
-              border: 0, outline: "none", background: "transparent", minWidth: 0, width: "100%",
-              fontFamily: FONT_BODY, fontSize: TYPE.sm, color: T.textSubtle, cursor: "default",
-            }}
-          />
-        </label>
 
         <button
           className="nav-toggle"

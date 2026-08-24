@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { OptionCard, Divider } from "./Configurator.jsx";
-import { NEW, Mark } from "./SiteNav.jsx";
 import {
   CATALOG, availableFor, reconcile, hasTool,
   unitPrice, perPagePrice, pageLimit, money,
@@ -538,7 +537,6 @@ export default function ProductPage({ onGo, seed = null }) {
               >
                 See your price
               </button>
-              <Mark kind={NEW} />
             </div>
           </div>
         </div>
