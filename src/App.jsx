@@ -107,7 +107,117 @@ const STAGES = [
   { id: "instantstore", short: "Instant Store", label: "The Instant Store page — placeholder, built by Crometrics" },
 ];
 
-function StageStepper({ stage, onJump }) {
+/* ────────────────────────────────────────────────────────────────
+   TWO VERSIONS OF THE SAME PROPOSAL (2026-08-24)
+
+   RECOMMENDED is everything in this prototype: the intent-first
+   /getting-started, both calculators, the Sell page, the catalogue and
+   its lane, the nav, the Instant Store landing page.
+
+   MINIMUM EFFORT is the shippable subset — what the Instant Store needs
+   in order to exist at all, and nothing that asks engineering to rebuild
+   a page that already works:
+
+     · the Instant Store landing page (Crometrics is building it anyway)
+     · the nav changes
+     · the doorway line on the PDP
+     · the banner lanes and copy that point at it
+     · the Sell page's fourth card and its comparison
+
+   And what it drops: /getting-started (unchanged today), the pricing
+   calculator (stays exactly as blurb.com has it), and the margin
+   estimator (does not exist, so nothing is lost by not building it).
+
+   The switch is not a toggle between designs — the screens are the same
+   screens. It changes WHICH of them are claimed, and what the surfaces
+   in the lean set point at, because half their destinations are pages
+   the lean version never builds. A reviewer can see both scopes without
+   two prototypes to keep in sync.
+   ──────────────────────────────────────────────────────────────── */
+const VERSIONS = [
+  { id: "full", label: "Recommended", note: "Every screen in this proposal" },
+  { id: "lean", label: "Minimum effort", note: "Instant Store, nav, PDP line, banners, Sell page" },
+];
+
+/* The lean set, in journey order. Anything not listed here is a page the
+   minimum-effort version does not touch. */
+const LEAN_STAGES = ["home", "catalog", "product", "seller", "instantstore"];
+
+const stagesFor = version =>
+  version === "lean" ? STAGES.filter(s => LEAN_STAGES.includes(s.id)) : STAGES;
+
+function VersionSwitch({ version, onVersion }) {
+  const [open, setOpen] = useState(false);
+  const current = VERSIONS.find(v => v.id === version) ?? VERSIONS[0];
+
+  return (
+    <span style={{ position: "relative", display: "inline-flex", alignItems: "center", gap: 6 }}>
+      <span style={{
+        fontSize: 11, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase",
+        color: T.textSubtle,
+      }}>
+        Scope
+      </span>
+      <button
+        onClick={() => setOpen(o => !o)}
+        aria-expanded={open}
+        style={{
+          display: "inline-flex", alignItems: "center", gap: 4,
+          border: `1px solid ${T.brand}`, background: T.panel, color: T.brandDark,
+          borderRadius: 999, padding: "3px 10px 3px 12px", fontSize: 12, fontWeight: 700,
+          whiteSpace: "nowrap", cursor: "pointer",
+        }}
+      >
+        {current.label}
+        <span className="ms turn" style={{ fontSize: 16, transform: open ? "rotate(180deg)" : "none" }}>
+          expand_more
+        </span>
+      </button>
+
+      {open && (
+        <>
+          {/* Click-away, so the menu behaves like the ones in the nav. */}
+          <span
+            onClick={() => setOpen(false)}
+            style={{ position: "fixed", inset: 0, zIndex: 60 }}
+          />
+          <span
+            className="pop-in"
+            style={{
+              position: "absolute", top: "calc(100% + 8px)", left: 0, zIndex: 61,
+              background: "#fff", border: `1px solid ${T.border}`, borderRadius: 8,
+              boxShadow: "0 8px 24px rgba(0,0,0,0.12)", padding: 6, minWidth: 280,
+              display: "grid", gap: 2,
+            }}
+          >
+            {VERSIONS.map(v => {
+              const on = v.id === version;
+              return (
+                <button
+                  key={v.id}
+                  onClick={() => { onVersion(v.id); setOpen(false); }}
+                  aria-pressed={on}
+                  style={{
+                    display: "grid", gap: 2, textAlign: "left", cursor: "pointer",
+                    background: on ? T.panel : "transparent", border: 0, borderRadius: 6,
+                    padding: "8px 10px", font: "inherit",
+                  }}
+                >
+                  <span style={{ fontSize: 13, fontWeight: 700, color: on ? T.brandDark : T.textNeutral }}>
+                    {v.label}
+                  </span>
+                  <span style={{ fontSize: 12, color: T.textSubtle, lineHeight: 1.4 }}>{v.note}</span>
+                </button>
+              );
+            })}
+          </span>
+        </>
+      )}
+    </span>
+  );
+}
+
+function StageStepper({ stage, onJump, version }) {
   return (
     <div
       style={{
@@ -116,7 +226,7 @@ function StageStepper({ stage, onJump }) {
         padding: 3, background: T.bg, overflowX: "auto", maxWidth: "100%",
       }}
     >
-      {STAGES.map((s, i) => {
+      {stagesFor(version).map((s, i) => {
         const active = s.id === stage;
         return (
           <React.Fragment key={s.id}>
@@ -181,7 +291,7 @@ function SessionSwitch({ signedIn, onSignedIn }) {
   );
 }
 
-function DemoBar({ stage, onJump, signedIn, onSignedIn }) {
+function DemoBar({ stage, onJump, signedIn, onSignedIn, version, onVersion }) {
   return (
     <div
       className="demo-bar"
@@ -195,8 +305,9 @@ function DemoBar({ stage, onJump, signedIn, onSignedIn }) {
       <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
         <WipChip />
         <SessionSwitch signedIn={signedIn} onSignedIn={onSignedIn} />
+        <VersionSwitch version={version} onVersion={onVersion} />
       </div>
-      <StageStepper stage={stage} onJump={onJump} />
+      <StageStepper stage={stage} onJump={onJump} version={version} />
       <div className="hide-sm" style={{ fontSize: 12, color: T.textSubtle }}>Merchant Experience</div>
     </div>
   );
@@ -212,6 +323,20 @@ export default function App() {
 
   const [signedIn, setSignedIn] = useState(false);
 
+  /* Which scope is being shown. `?version=lean` so a link can open the
+     minimum-effort set directly — the two are reviewed by different people
+     and each will want their own URL. */
+  const [version, setVersion] = useState(() =>
+    new URLSearchParams(window.location.search).get("version") === "lean" ? "lean" : "full");
+
+  /* Switching to the lean set from a screen it does not include has to land
+     somewhere: the home page, which both versions have. */
+  const changeVersion = next => {
+    setVersion(next);
+    setEntry(null);
+    if (!stagesFor(next).some(s => s.id === stage)) setStage("home");
+  };
+
   /* What the previous screen said on its way here — a specification, a
      route, or nothing. It exists so a handover arrives as an answer rather
      than as a link: the product page sending someone to build the book they
@@ -222,6 +347,8 @@ export default function App() {
   const [entry, setEntry] = useState(null);
   const go = (id, opts = null) => { setEntry(opts); setStage(id); };
   const jump = id => { setEntry(null); setStage(id); };
+
+  const lean = version === "lean";
 
   /* Changing screen is a page change, so it starts at the top. Without
      this you keep the scroll position of the page you left — follow a
@@ -260,15 +387,24 @@ export default function App() {
           holds them together at any width. The nav keeps its own relative
           position inside, so the mega-menus still hang off it. */}
       <div ref={headerRef} style={{ position: "sticky", top: 0, zIndex: 40 }}>
-        <DemoBar stage={stage} onJump={jump} signedIn={signedIn} onSignedIn={setSignedIn} />
-        <SiteNav signedIn={signedIn} onSignedIn={setSignedIn} onGo={jump} />
+        <DemoBar
+          stage={stage}
+          onJump={jump}
+          signedIn={signedIn}
+          onSignedIn={setSignedIn}
+          version={version}
+          onVersion={changeVersion}
+        />
+        <SiteNav signedIn={signedIn} onSignedIn={setSignedIn} onGo={jump} lean={lean} />
       </div>
       {/* Keyed on the stage so switching screens fades rather than cuts. */}
       <div key={stage} className="fade-in" style={{ flex: 1, minWidth: 0 }}>
-        {stage === "home"       && <Home onGo={go} />}
-        {stage === "catalog"    && <ProductCatalog onGo={go} />}
-        {stage === "instantstore" && <InstantStorePage onGo={go} />}
-        {stage === "product"    && <ProductPage onGo={go} seed={entry?.seed} />}
+        {/* `lean` is passed rather than read from a store: it changes where
+            four surfaces point, and nothing else. See VERSIONS above. */}
+        {stage === "home"       && <Home onGo={go} lean={lean} />}
+        {stage === "catalog"    && <ProductCatalog onGo={go} lean={lean} />}
+        {stage === "instantstore" && <InstantStorePage onGo={go} lean={lean} />}
+        {stage === "product"    && <ProductPage onGo={go} seed={entry?.seed} lean={lean} />}
         {stage === "getstarted" && (
           <GetStarted
             signedIn={signedIn}
@@ -278,7 +414,7 @@ export default function App() {
             onGo={go}
           />
         )}
-        {stage === "seller"     && <SellerLanding onGo={go} />}
+        {stage === "seller"     && <SellerLanding onGo={go} lean={lean} />}
         {stage === "pricing"    && <Estimator mode="make" onGo={go} seed={entry?.seed} />}
         {stage === "margin"     && <Estimator mode="sell" onGo={go} seed={entry?.seed} />}
       </div>

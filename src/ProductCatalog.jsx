@@ -77,14 +77,20 @@ const PRODUCTS = [
 
 const SUBTLE = "#464646";
 
-function Card({ item, onGo }) {
+function Card({ item, onGo, lean }) {
   const price = item.format
     ? variantFromPrice(item.format, { cover: item.cover, paperTest: item.paperTest })
     : null;
 
   return (
     <button
-      onClick={() => onGo?.(item.stage ?? "getstarted", { seed: { formatId: item.format, sel: item.cover ? { cover: item.cover } : undefined } })}
+      /* A card opens its product page where we have one; otherwise it opens
+         /getting-started with the product seeded — and in the lean scope,
+         where that page is untouched, it stays on the catalogue. */
+      onClick={() => {
+        const to = item.stage ?? (lean ? null : "getstarted");
+        if (to) onGo?.(to, { seed: { formatId: item.format, sel: item.cover ? { cover: item.cover } : undefined } });
+      }}
       style={{
         display: "flex", flexDirection: "column", gap: 16, minWidth: 0, textAlign: "left",
         background: "transparent", border: 0, padding: 0, font: "inherit", cursor: "pointer",
@@ -142,7 +148,7 @@ function PromoTile({ item }) {
   );
 }
 
-export default function ProductCatalog({ onGo }) {
+export default function ProductCatalog({ onGo, lean }) {
   return (
     <div style={{ fontFamily: FONT_BODY, color: C.gray950 }}>
       <section style={{ padding: "0 24px 80px" }}>
@@ -198,7 +204,7 @@ export default function ProductCatalog({ onGo }) {
             {PRODUCTS.map(item =>
               item.promo
                 ? <PromoTile key={item.title} item={item} />
-                : <Card key={item.name} item={item} onGo={onGo} />
+                : <Card key={item.name} item={item} onGo={onGo} lean={lean} />
             )}
           </div>
         </div>
@@ -213,11 +219,13 @@ export default function ProductCatalog({ onGo }) {
           the book, and that arithmetic lives on the estimator, behind the
           door. The band is the closing gradient the rest of the site uses,
           so it reads as part of the page rather than an advert stuck on it. */}
-      <section style={{
-        background: "linear-gradient(71deg, #e2e8f0 -0.95%, #f5f0ea 45.34%, #e2e8f0 98.72%)",
-        borderRadius: "50% 50% 0 0 / 60px 60px 0 0",
-        padding: "clamp(64px, 8vw, 96px) 24px clamp(56px, 7vw, 80px)",
-      }}>
+      <section
+        className="curve-cta"
+        style={{
+          background: "linear-gradient(71deg, #e2e8f0 -0.95%, #f5f0ea 45.34%, #e2e8f0 98.72%)",
+          padding: "clamp(64px, 8vw, 96px) 24px clamp(56px, 7vw, 80px)",
+        }}
+      >
         <div style={{
           maxWidth: 1080, margin: "0 auto",
           display: "grid", gap: 32, gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))",
@@ -250,23 +258,30 @@ export default function ProductCatalog({ onGo }) {
               every order, and there is no shopfront to run.
             </p>
 
+            {/* Two doors in the recommended scope — the number, then the
+                page. In the lean one there is no estimator to send anybody
+                to, so the page is the only door and takes the primary. */}
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 4 }}>
-              <button
-                onClick={() => onGo?.("margin")}
-                style={{
-                  fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 600, minHeight: 44, padding: "0 20px",
-                  borderRadius: R.md, border: 0, cursor: "pointer",
-                  background: T.bgBrand, color: T.textInverse, whiteSpace: "nowrap",
-                }}
-              >
-                See what you would keep
-              </button>
+              {!lean && (
+                <button
+                  onClick={() => onGo?.("margin")}
+                  style={{
+                    fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 600, minHeight: 44, padding: "0 20px",
+                    borderRadius: R.md, border: 0, cursor: "pointer",
+                    background: T.bgBrand, color: T.textInverse, whiteSpace: "nowrap",
+                  }}
+                >
+                  See what you would keep
+                </button>
+              )}
               <button
                 onClick={() => onGo?.("instantstore")}
                 style={{
                   fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 600, minHeight: 44, padding: "0 20px",
                   borderRadius: R.md, cursor: "pointer", whiteSpace: "nowrap",
-                  background: "#fff", color: T.textBrand, border: `1px solid ${T.borderBrand}`,
+                  ...(lean
+                    ? { background: T.bgBrand, color: T.textInverse, border: 0 }
+                    : { background: "#fff", color: T.textBrand, border: `1px solid ${T.borderBrand}` }),
                 }}
               >
                 About Instant Stores

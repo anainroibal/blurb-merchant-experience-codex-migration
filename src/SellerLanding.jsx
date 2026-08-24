@@ -227,7 +227,7 @@ const PRINT_TIERS = [
     alt: "Identical photo books moving along a conveyor at the bindery.",
     title: "A small run for signings, events and giveaways",
     line: "Volume discounts start at ten copies, and the whole order ships to one address.",
-    cta: "Price up a print run", stage: "pricing",
+    cta: "Price up a print run", stage: "pricing", leanHref: "https://www.blurb.com/pricing",
   },
   {
     id: "los", band: "100+ copies", img: ILLUS + "large-order.Dolls1H4_A7dqn.webp",
@@ -241,6 +241,8 @@ const PRINT_TIERS = [
 const SELL_CARDS = [
   {
     id: "link", name: "Instant Store", isNew: true, stage: "margin", cta: "See what you would keep",
+    /* Where it goes when there is no estimator to go to. */
+    leanStage: "instantstore", leanCta: "About Instant Stores",
     img: ILLUS + "blurb-dashboard.YPDjPrK8_Z1bvCol.webp",
     alt: "An illustration of a person setting up a book listing.",
     line: "Share one link — a newsletter, a bio, a talk, a stall — and we print and ship every order.",
@@ -294,7 +296,7 @@ const WHY = [
    says the same. Everything else is Blurb's. */
 const FAQS = [
   ["How do I set the price for my book?",
-   "It depends on the route. In an Instant Store you set the price outright — the margin estimator shows what a copy costs you and what is left at any price you name. On the Bookstore, Amazon and Ingram your price sits on top of a base price, and the channel takes its cut from what the buyer pays."],
+   "It depends on the route. In an Instant Store you set the price outright, and what is left after your cost is yours. On the Bookstore, Amazon and Ingram your price sits on top of a base price, and the channel takes its cut from what the buyer pays."],
   ["How and when will I get paid?",
    "A US $25 minimum applies before any payout is released, whichever route you sell through. Instant Store and Bookstore sales pay out by PayPal or check on a set cadence; Amazon holds payment through its returns window, and Ingram can take up to four months."],
   ["Can I update my book after it is published?",
@@ -307,7 +309,7 @@ const FAQS = [
    "That is what an Instant Store is for: one link, shared or embedded wherever you already are, and we print and ship every order."],
 ];
 
-export default function SellerLanding({ onGo }) {
+export default function SellerLanding({ onGo, lean = false }) {
   /* One question open at a time, none by default — a page of open answers is
      the wall of copy this redesign removed. */
   const [openQ, setOpenQ] = useState(null);
@@ -408,7 +410,7 @@ export default function SellerLanding({ onGo }) {
 
                 <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.6, color: T.textSubtle }}>{tier.line}</p>
 
-                {tier.stage ? (
+                {tier.stage && !(lean && tier.leanHref) ? (
                   <button
                     onClick={() => onGo?.(tier.stage)}
                     style={{
@@ -421,8 +423,8 @@ export default function SellerLanding({ onGo }) {
                   </button>
                 ) : (
                   <a
-                    href={tier.href}
-                    {...(tier.href.startsWith("#") ? {} : { target: "_blank", rel: "noreferrer" })}
+                    href={lean && tier.leanHref ? tier.leanHref : tier.href}
+                    {...((lean && tier.leanHref ? tier.leanHref : tier.href).startsWith("#") ? {} : { target: "_blank", rel: "noreferrer" })}
                     style={{
                       justifySelf: "start", fontSize: TYPE.base, fontWeight: 700, color: T.textBrand,
                       display: "inline-flex", alignItems: "center", gap: 5,
@@ -430,7 +432,8 @@ export default function SellerLanding({ onGo }) {
                     }}
                   >
                     {tier.cta}
-                    {!tier.href.startsWith("#") && <span className="ms" style={{ fontSize: 16 }}>open_in_new</span>}
+                    {!(lean && tier.leanHref ? tier.leanHref : tier.href).startsWith("#") &&
+                      <span className="ms" style={{ fontSize: 16 }}>open_in_new</span>}
                   </a>
                 )}
               </div>
@@ -508,14 +511,14 @@ export default function SellerLanding({ onGo }) {
 
                 {card.stage ? (
                   <button
-                    onClick={() => onGo?.(card.stage)}
+                    onClick={() => onGo?.(lean && card.leanStage ? card.leanStage : card.stage)}
                     style={{
                       justifySelf: "start", fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 700,
                       color: T.textBrand, background: "transparent", border: 0, padding: 0, cursor: "pointer",
                       textDecoration: "underline", textUnderlineOffset: 4,
                     }}
                   >
-                    {card.cta}
+                    {lean && card.leanCta ? card.leanCta : card.cta}
                   </button>
                 ) : (
                   <a
@@ -791,12 +794,14 @@ export default function SellerLanding({ onGo }) {
           from #e2e8f0 through #f5f0ea, 120px of air above the heading and
           80px below, and a shallow arc across the top — the same shape the
           home hero cuts, mirrored. */}
-      <section style={{
-        background: "linear-gradient(71deg, #e2e8f0 -0.95%, #f5f0ea 45.34%, #e2e8f0 98.72%)",
-        borderRadius: "50% 50% 0 0 / 60px 60px 0 0",
-        padding: "clamp(72px, 9vw, 120px) 24px clamp(56px, 7vw, 80px)",
-        marginTop: 8,
-      }}>
+      <section
+        className="curve-cta"
+        style={{
+          background: "linear-gradient(71deg, #e2e8f0 -0.95%, #f5f0ea 45.34%, #e2e8f0 98.72%)",
+          padding: "clamp(72px, 9vw, 120px) 24px clamp(56px, 7vw, 80px)",
+          marginTop: 8,
+        }}
+      >
         <div style={{
           maxWidth: 1000, margin: "0 auto", textAlign: "center",
           display: "grid", gap: 16, justifyItems: "center",
@@ -808,23 +813,29 @@ export default function SellerLanding({ onGo }) {
             Ready to sell your book?
           </h2>
           <p style={{ margin: 0, fontSize: TYPE.lg, color: T.textSubtle, lineHeight: 1.6, maxWidth: 640 }}>
-            Every one of them starts with a book. The margin estimator prices an{" "}
-            <strong style={{ color: T.textNeutral }}>Instant Store sale</strong>; for the other three, the
-            table above is the comparison.
+            {lean ? (
+              <>Every one of them starts with a book, and the table above is how the four compare.</>
+            ) : (
+              <>
+                Every one of them starts with a book. The margin estimator prices an{" "}
+                <strong style={{ color: T.textNeutral }}>Instant Store sale</strong>; for the other three,
+                the table above is the comparison.
+              </>
+            )}
           </p>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center", marginTop: 8 }}>
             <button
-              onClick={() => onGo?.("margin")}
+              onClick={() => onGo?.(lean ? "instantstore" : "margin")}
               style={{
                 fontFamily: FONT_BODY, fontSize: TYPE.lg, fontWeight: 600, minHeight: 48, padding: "0 26px",
                 borderRadius: R.md, border: 0, cursor: "pointer",
                 background: T.bgBrand, color: T.textInverse, whiteSpace: "nowrap",
               }}
             >
-              See what you would keep
+              {lean ? "About Instant Stores" : "See what you would keep"}
             </button>
             <button
-              onClick={() => onGo?.("getstarted", { route: "sell" })}
+              onClick={() => onGo?.(lean ? "catalog" : "getstarted", lean ? null : { route: "sell" })}
               style={{
                 fontFamily: FONT_BODY, fontSize: TYPE.lg, fontWeight: 600, minHeight: 48, padding: "0 26px",
                 borderRadius: R.md, cursor: "pointer", whiteSpace: "nowrap",
@@ -834,7 +845,7 @@ export default function SellerLanding({ onGo }) {
                 background: "#fff", color: T.textBrand, border: `1px solid ${T.borderBrand}`,
               }}
             >
-              Start a book to sell
+              {lean ? "Shop all products" : "Start a book to sell"}
             </button>
           </div>
         </div>

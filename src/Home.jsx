@@ -97,7 +97,7 @@ const TABS = [
   {
     id: "print", label: "Printing", img: IMG + "hp-printing.DiLqSDVo_ZqlQ0R.webp",
     body: "On-demand printing lets you print the quantity you need whether that’s one book or hundreds. We handle all shipping and distribution, too.",
-    cta: "Start your book", stage: "getstarted",
+    cta: "Start your book", stage: "getstarted",  // remapped in lean, see `start`
   },
   {
     id: "sell", label: "Selling", img: IMG + "hp-selling.Bihm600K_YtSAD.webp",
@@ -179,7 +179,12 @@ function H2({ children, center, style }) {
   );
 }
 
-export default function Home({ onGo }) {
+export default function Home({ onGo, lean }) {
+  /* In the minimum-effort scope /getting-started is untouched, so it is not
+     a screen this prototype can hand over to. The catalogue is: it exists on
+     the live site, it is where "start something" actually begins today, and
+     the lean version changes it anyway. */
+  const start = lean ? "catalog" : "getstarted";
   /* Selling opens first here. On the live page Book creation does, which is
      the right production default; this prototype is about the seller, and
      the Instant Store is the thing being shown. */
@@ -199,13 +204,15 @@ export default function Home({ onGo }) {
           src={HERO_BG}
           alt=""
           aria-hidden
-          /* The live page cuts the photograph with a shallow arc — it is not
-             in the file (the source is a plain 3888×2592 photograph), it is
-             the section's own shape. A 50%/60px bottom radius is that arc:
-             the edge hangs lowest in the middle, where the books cross it. */
+          /* The live page's own cut: #hero-clip, an SVG clip path in
+             objectBoundingBox units, copied from blurb.com into index.html.
+             A border-radius approximation was close at 1440 and wrong at
+             every other height, because a percentage radius scales with the
+             box while the real curve's control points do not. */
+          className="curve-hero"
           style={{
             position: "absolute", inset: "0 0 auto", width: "100%", height: 577,
-            objectFit: "cover", borderRadius: "0 0 50% 50% / 0 0 60px 60px",
+            objectFit: "cover",
           }}
         />
         <div style={{
@@ -225,7 +232,7 @@ export default function Home({ onGo }) {
           </div>
 
           {/* Live: /formats. Ours: the page that prices what you pick. */}
-          <Btn onClick={() => onGo("getstarted")}>Get started</Btn>
+          <Btn onClick={() => onGo(start)}>Get started</Btn>
 
           <img
             src={HERO_ART}
@@ -333,7 +340,7 @@ export default function Home({ onGo }) {
           </p>
 
           {active.stage
-            ? <Btn onClick={() => onGo(active.stage)}>{active.cta}</Btn>
+            ? <Btn onClick={() => onGo(active.stage === "getstarted" ? start : active.stage)}>{active.cta}</Btn>
             : <Btn href={active.href}>{active.cta}</Btn>}
 
           <img
@@ -405,7 +412,7 @@ export default function Home({ onGo }) {
         <div style={{ ...PAGE, display: "grid", gap: 40 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, flexWrap: "wrap" }}>
             <H2>Inspiring examples made with Blurb</H2>
-            <Btn onClick={() => onGo("getstarted")}>Start a project</Btn>
+            <Btn onClick={() => onGo(start)}>Start a project</Btn>
           </div>
 
           <div style={{ display: "grid", gap: 24, gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
@@ -465,7 +472,7 @@ export default function Home({ onGo }) {
       <section style={{ ...section, paddingTop: 40 }}>
         <div style={{ ...PAGE, display: "grid", gap: 24, justifyItems: "center", textAlign: "center" }}>
           <H2 center>Ready to get started?</H2>
-          <Btn onClick={() => onGo("getstarted")}>Start your project</Btn>
+          <Btn onClick={() => onGo(start)}>Start your project</Btn>
         </div>
       </section>
     </div>

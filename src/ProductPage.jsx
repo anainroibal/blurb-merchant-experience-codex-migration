@@ -85,7 +85,7 @@ const FINISHES = [
    summary sending someone here to read about the book they just priced.
    Opening on a different size than the one they were looking at would make
    the link feel like a reset rather than an explanation. */
-export default function ProductPage({ onGo, seed = null }) {
+export default function ProductPage({ onGo, seed = null, lean = false }) {
   /* A specification can arrive from a screen that was not looking at an
      ImageWrap — the calculators offer "learn more about photo books" for any
      photo book. So the seed is repaired against this page's cover before it
@@ -346,16 +346,23 @@ export default function ProductPage({ onGo, seed = null }) {
 
                 It carries the CONFIGURATION, not just the destination, so the
                 estimator opens on this book rather than an empty form. */}
+            {/* In the lean scope there is no estimator, so the door leads to
+                the Instant Store page instead — and the words have to change
+                with it: "see your price" promises a number, and that version
+                does not have one to show. */}
             <div style={{ marginTop: 14, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.6 }}>
               Selling this?{" "}
               <button
-                onClick={() => onGo("margin", { seed: { formatId, sel: { cover, size, paper, pages } } })}
+                onClick={() =>
+                  lean
+                    ? onGo("instantstore")
+                    : onGo("margin", { seed: { formatId, sel: { cover, size, paper, pages } } })}
                 style={{
                   font: "inherit", fontWeight: 600, color: T.textBrand, textDecoration: "underline",
                   background: "transparent", border: 0, padding: 0, cursor: "pointer",
                 }}
               >
-                See your price
+                {lean ? "Open an Instant Store" : "See your price"}
               </button>
             </div>
           </div>

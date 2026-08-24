@@ -271,9 +271,16 @@ const chunk = (arr, size) =>
    menus are lists of names, and a name only helps if you already know what
    it means. "Volume orders" is a good example: the label says nothing about
    100 copies, and the line under it does. */
-function MenuLink({ item, onClose, onGo }) {
+/* The screens the minimum-effort scope does not build. A nav item pointing
+   at one of them is still the right nav item — those pages exist on
+   blurb.com — it just has nothing to open here. */
+const LEAN_MISSING = ["getstarted", "pricing", "margin"];
+const reachable = (stage, lean) => (lean && LEAN_MISSING.includes(stage) ? null : stage);
+
+function MenuLink({ item, onClose, onGo, lean }) {
   const [hot, setHot] = useState(false);
-  const [label, body, tag, stage] = item;
+  const [label, body, tag, rawStage] = item;
+  const stage = reachable(rawStage, lean);
   return (
     <a
       href="#"
@@ -317,7 +324,7 @@ function MenuLink({ item, onClose, onGo }) {
   );
 }
 
-function MegaMenu({ group, isOpen, onClose, onGo }) {
+function MegaMenu({ group, isOpen, onClose, onGo, lean }) {
   /* Every menu is headed (2026-08-24). The rule used to be "only when the
      menu holds more than one kind of thing", which left Tools — a single
      column — as the one panel that opened with no label on it, and the row
@@ -384,7 +391,7 @@ function MegaMenu({ group, isOpen, onClose, onGo }) {
                   {col.heading}
                 </div>
               )}
-              {sub.map(item => <MenuLink key={item[0]} item={item} onClose={onClose} onGo={onGo} />)}
+              {sub.map(item => <MenuLink key={item[0]} item={item} onClose={onClose} onGo={onGo} lean={lean} />)}
             </div>
           ))}
         </div>
@@ -561,7 +568,7 @@ function LocaleMenu({ open, onToggle, value, onPick }) {
 
    Account items join the same list when signed in, rather than hiding
    behind a second control that would compete with this one. */
-function MobileNav({ open, signedIn, onClose, onSignedIn, onGo }) {
+function MobileNav({ open, signedIn, onClose, onSignedIn, onGo, lean }) {
   if (!open) return null;
   return (
     <div
@@ -587,7 +594,7 @@ function MobileNav({ open, signedIn, onClose, onSignedIn, onGo }) {
                 <a
                   key={label}
                   href="#"
-                  onClick={e => { e.preventDefault(); onClose(); if (stage) onGo?.(stage); }}
+                  onClick={e => { e.preventDefault(); onClose(); const to = reachable(stage, lean); if (to) onGo?.(to); }}
                   style={{ padding: "9px 0", textDecoration: "none", color: T.textSubtle, fontSize: TYPE.base }}
                 >
                   {label}<Tag>{tag}</Tag>
@@ -705,7 +712,7 @@ function AccountMenu({ open, onToggle, onSignOut }) {
   );
 }
 
-export default function SiteNav({ signedIn, onSignedIn, onGo }) {
+export default function SiteNav({ signedIn, onSignedIn, onGo, lean = false }) {
   const [open, setOpen] = useState(null);
   const [locale, setLocale] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -787,7 +794,7 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
       >
         {group.label}
       </button>
-      <MegaMenu group={group} isOpen={open === group.label} onClose={() => setOpen(null)} onGo={onGo} />
+      <MegaMenu group={group} isOpen={open === group.label} onClose={() => setOpen(null)} onGo={onGo} lean={lean} />
     </span>
   );
 
@@ -801,7 +808,9 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
           the six destinations, then the account actions and Start Project.
           Same height as the live header, and the menus below are unaffected. */}
       <div style={{
-        maxWidth: 1400, margin: "0 auto", padding: "0 16px", minHeight: 66,
+        /* 40px gutters, which is where the live header puts the logo at
+           1440 — ours sat at 36 and everything after it was 4px out. */
+        maxWidth: 1440, margin: "0 auto", padding: "0 40px", minHeight: 66,
         display: "flex", alignItems: "center", gap: 16, fontFamily: FONT_BODY,
       }}>
         <a
@@ -811,7 +820,10 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
           onClick={e => { e.preventDefault(); onGo?.("home"); }}
           style={{ display: "flex", alignItems: "center", flex: "0 0 auto" }}
         >
-          <img src={BLURB_LOGO} alt="Blurb" style={{ height: 36, width: "auto", display: "block" }} />
+          {/* 50px tall, as the live mark is — its SVG renders 52×50 in a 65px
+              header. Ours was 36, which made the whole row read as a smaller
+              site than the one it is copying. */}
+          <img src={BLURB_LOGO} alt="Blurb" style={{ height: 50, width: "auto", display: "block" }} />
         </a>
 
         <button
@@ -902,6 +914,7 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
         open={mobileOpen}
         signedIn={signedIn}
         onGo={onGo}
+        lean={lean}
         onClose={() => setMobileOpen(false)}
         onSignedIn={v => onSignedIn && onSignedIn(v)}
       />
