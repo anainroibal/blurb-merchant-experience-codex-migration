@@ -1,5 +1,9 @@
 import React, { useState } from "react";
-import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.js";
+import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
+import {
+  CATALOG, SELL_CHANNELS, channelsFor, channelBlockedBecause,
+  defaultSelection, sellerCost, minSellPrice, money,
+} from "./catalog.js";
 
 /* ────────────────────────────────────────────────────────────────
    The seller landing page.
@@ -51,215 +55,270 @@ import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.
    Everything here serves the comparison, and the page ends with the one
    step that follows from having chosen — nothing else.
 
-   Fee structures are sourced from blurb.com. Margins are not — Blurb
-   publishes no fulfilment pricing, so anything resembling a margin
-   figure is deliberately absent rather than invented.
+   ── A table, not four cards, 2026-08-24 ──
+   Each card carried five labelled facts, which meant the labels were
+   printed four times and the eye had to travel down one card and back up
+   the next to compare anything. A table prints each label once and puts
+   the four answers side by side, which is the whole job of this page. It
+   is also the compact form: the same information in about a third of the
+   height.
+
+   ── And a worked example at the top ──
+   "What you earn" as a sentence is unreadable across four routes — "list
+   price minus the wholesale discount you set, minus print cost" is true
+   and useless. So the page opens with one product at one price, and every
+   route answers in money. Change either and the row moves. This is the
+   section that came off the calculators: it belongs here, where choosing
+   the route is the job.
+
+   Fee structures are sourced from blurb.com. The seller's cost is not —
+   Blurb publishes no fulfilment pricing, so FULFILMENT_FACTOR stands in
+   for it and every figure below inherits that.
    ──────────────────────────────────────────────────────────────── */
 
-const BASIS = {
-  fulfilment: { label: "Fulfilment price", tone: "brand" },
-  list:       { label: "List price",       tone: "neutral" },
-  quoted:     { label: "Quoted",           tone: "neutral" },
-};
 
-const CHANNELS = [
-  {
-    id: "link",
-    name: "Checkout links",
-    isNew: true,
-    prop: "One link, one book — share it anywhere you can paste a link.",
-    suits: "Anyone with an audience and no shop — a newsletter, a talk, a stall, a bio link.",
-    basis: "fulfilment",
-    buyerPays: "Your price, plus Blurb shipping",
-    youEarn: "Your price minus the fulfilment price. You set the price.",
-    paid: "PayPal, at a set cadence",
-    setup: "Lowest of any channel — one link per project",
-    sourced: false,
-  },
-  {
-    id: "bookstore",
-    name: "Blurb Bookstore",
-    prop: "Put your book somewhere readers are already browsing.",
-    suits: "Sellers who want a listing without running anything themselves.",
-    basis: "list",
-    buyerPays: "Your list price, plus shipping",
-    youEarn: "List price minus print cost. No listing fees, and you keep 100% of the profit.",
-    paid: "Monthly",
-    setup: "List it and you are done",
-    sourced: true,
-  },
-  {
-    id: "amazon",
-    name: "Amazon",
-    prop: "Reach the readers who would never think to look for you.",
-    suits: "Reach over margin — buyers who would never come to Blurb.",
-    basis: "list",
-    buyerPays: "Your list price. Shipping depends on the buyer's Prime status.",
-    youEarn: "List price minus print cost, minus Amazon's fee of $1.35 + 15% of list.",
-    paid: "Up to 60 days after the sale",
-    setup: "Distribution setup, then Amazon's own review",
-    sourced: true,
-  },
-  {
-    id: "ingram",
-    name: "Ingram",
-    prop: "Get your book onto the shelves of bookshops and libraries.",
-    suits: "Getting into bookshops and libraries, where a trade discount is expected.",
-    basis: "list",
-    buyerPays: "Whatever the retailer decides. Not set by you.",
-    youEarn: "List price minus the wholesale discount you set for retailers, minus print cost.",
-    paid: "Up to four months",
-    setup: "Trade metadata, and a discount decision",
-    sourced: true,
-  },
-];
-
-function Chip({ children, tone = "neutral", solid }) {
-  const brand = tone === "brand";
+function Chip({ children, solid }) {
   return (
     <span style={{
-      display: "inline-flex", alignItems: "center", gap: 5,
-      padding: "3px 10px", borderRadius: 999, whiteSpace: "nowrap",
-      fontSize: TYPE.sm, fontWeight: 700,
-      background: solid ? C.blue600 : brand ? C.blue50 : C.gray100,
-      color: solid ? "#fff" : brand ? C.blue950 : T.textSubtle,
-      border: `1px solid ${solid ? "transparent" : brand ? C.blue100 : T.border}`,
+      padding: "2px 8px", borderRadius: 999, fontSize: TYPE.sm, fontWeight: 700,
+      letterSpacing: 0.4, textTransform: "uppercase", whiteSpace: "nowrap",
+      background: solid ? C.blue600 : C.blue50,
+      color: solid ? "#fff" : C.blue950,
     }}>
       {children}
     </span>
   );
 }
 
-function Fact({ label, children }) {
-  return (
-    <div style={{ display: "grid", gap: 3 }}>
-      <div style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.5, textTransform: "uppercase", color: T.textSubtle }}>
-        {label}
-      </div>
-      <div style={{ fontSize: TYPE.base, lineHeight: 1.55, color: T.textNeutral }}>{children}</div>
-    </div>
-  );
-}
 
-function Card({ c }) {
-  const basis = BASIS[c.basis];
-  return (
-    <div
-      style={{
-        background: T.bgNeutral, borderRadius: R.lg, padding: 24,
-        border: c.isNew ? `2px solid ${T.borderBrand}` : `1px solid ${T.border}`,
-        margin: c.isNew ? 0 : 1,
-        display: "grid", gap: 16, alignContent: "start", minWidth: 0,
-      }}
-    >
-      <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-        <span style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["5xl"], fontWeight: 500, lineHeight: 1.15 }}>
-          {c.name}
-        </span>
-        {c.isNew && <Chip solid>New</Chip>}
-      </div>
+/* Ana's line for each route — hers to overwrite. No dashed box around them
+   any more: the box marked them as unfinished, and they are finished enough
+   to read. If they change, they change. */
+const PROPS = {
+  link: "One link, one book — share it anywhere you can paste a link.",
+  bookstore: "Put your book somewhere readers are already browsing.",
+  amazon: "Reach the readers who would never think to look for you.",
+  ingram: "Get your book onto the shelves of bookshops and libraries.",
+};
 
-      <div style={{
-        fontSize: TYPE.lg, lineHeight: 1.5, color: T.textSubtle, fontStyle: "italic",
-        background: C.gray50, border: `1px dashed ${T.borderStrong}`, borderRadius: R.md, padding: "12px 14px",
-      }}>
-        {c.prop}
-      </div>
+/* The four routes, in the order a seller meets them: the one they control
+   entirely, then the two Blurb runs, then the one that reaches everyone
+   else. API printing and Large Order Services are not here — they are
+   services, not routes.
 
-      <Chip tone={basis.tone}>{basis.label}</Chip>
+   The two id sets do not match, and that is a real trap: SELL_CHANNELS
+   calls it `link` while a product's `sellChannels` calls it
+   `checkout_link`. Comparing them directly silently reports every channel
+   as unavailable, which is exactly what it did on first run. Mapped here
+   rather than papered over, because the mismatch is worth seeing. */
+const ROUTE_IDS = ["link", "bookstore", "amazon", "ingram"];
+const CATALOG_ID = { link: "checkout_link", bookstore: "bookstore", amazon: "amazon", ingram: "ingram" };
 
-      <div style={{ display: "grid", gap: 14, borderTop: `1px solid ${T.border}`, paddingTop: 16 }}>
-        <Fact label="Who it suits">{c.suits}</Fact>
-        <Fact label="What your buyer pays">{c.buyerPays}</Fact>
-        <Fact label="What you earn">{c.youEarn}</Fact>
-        <Fact label="When you are paid">{c.paid}</Fact>
-        <Fact label="Setup">{c.setup}</Fact>
-      </div>
+const ROWS = [
+  { key: "keep",      label: "You keep, per copy", strong: true },
+  { key: "buyerPays", label: "Your buyer pays" },
+  { key: "takes",     label: "What the channel takes" },
+  { key: "paid",      label: "When you are paid" },
+  { key: "suits",     label: "Who it suits" },
+];
 
-    </div>
-  );
-}
+const control = {
+  height: 40, minWidth: 0, border: `1px solid ${T.borderStrong}`, borderRadius: 4,
+  background: T.bgNeutral, padding: "0 10px",
+  fontFamily: FONT_BODY, fontSize: TYPE.base, color: T.textNeutral,
+};
 
 export default function SellerLanding({ onGo }) {
-  const [showProps, setShowProps] = useState(true);
+  /* One worked example for the whole table. A photo book at a round price,
+     because the point is the comparison rather than the book. */
+  const [formatId, setFormatId] = useState("photo");
+  const [price, setPrice] = useState(24);
+
+  const sel = defaultSelection(formatId);
+  const cost = sellerCost(formatId, sel);
+  const floor = minSellPrice(formatId, sel);
+  const shown = Math.max(price, floor);
+  const allowed = channelsFor(formatId, sel);
+
+  const routes = ROUTE_IDS
+    .map(id => SELL_CHANNELS.find(c => c.id === id))
+    .filter(Boolean);
+
+  const allows = route => allowed.includes(CATALOG_ID[route.id]);
+
+  const cellFor = (route, row) => {
+    if (row.key !== "keep") return route[row.key];
+    const ok = allows(route);
+    if (!ok) return null;
+    const net = route.net(shown, cost);
+    return net == null ? null : money(Math.max(0, net));
+  };
+
   return (
     <div style={{ fontFamily: FONT_BODY, color: T.textNeutral }}>
-      <section style={{ maxWidth: 1240, margin: "0 auto", padding: "56px 24px 24px", textAlign: "center" }}>
+      <section style={{ maxWidth: 1240, margin: "0 auto", padding: "56px 24px 8px", textAlign: "center" }}>
         <h1 style={{ fontFamily: FONT_DISPLAY, fontWeight: 400, fontSize: "clamp(2rem, 4.5vw, 3rem)", lineHeight: 1.15, margin: 0 }}>
           Four ways to sell your book
         </h1>
         <p style={{ fontSize: TYPE.xl, lineHeight: 1.55, color: T.textSubtle, maxWidth: 680, margin: "16px auto 0" }}>
-          Same book, five routes to a buyer. They differ in who finds it, what your buyer pays, and how much
-          of it you keep.
+          Same book, four routes to a buyer. They differ in who finds it, what your buyer pays, and how much of
+          it you keep.
         </p>
       </section>
 
-      <section style={{ background: T.bgSubtle, borderTop: `1px solid ${T.border}`, padding: "36px 24px 72px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+      <section style={{ background: T.bgSubtle, borderTop: `1px solid ${T.border}`, marginTop: 32, padding: "28px 24px 72px" }}>
+        <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 20 }}>
+
+          {/* ── The example that makes the table numeric ── */}
           <div style={{
-            display: "flex", alignItems: "center", justifyContent: "space-between",
-            gap: 16, flexWrap: "wrap", marginBottom: 20,
+            background: "#fff", border: `1px solid ${T.border}`, borderRadius: R.lg, padding: "16px 20px",
+            display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap",
           }}>
-            <div style={{ fontSize: TYPE.sm, color: T.textSubtle, maxWidth: 720, lineHeight: 1.55 }}>
-              Every card carries the same four facts in the same order, so they can be compared down the column
-              rather than read one at a time. Fee structures are from blurb.com; no margin figures appear, because
-              Blurb publishes no fulfilment pricing.
-            </div>
-            <button
-              onClick={() => setShowProps(s => !s)}
-              style={{
-                height: 32, padding: "0 14px", borderRadius: 999, fontFamily: FONT_BODY,
-                fontSize: TYPE.sm, fontWeight: 700, background: "#fff",
-                border: `1px solid ${T.border}`, color: T.textBrand, whiteSpace: "nowrap",
-              }}
-            >
-              {showProps ? "Hide copy slots" : "Show copy slots"}
-            </button>
+            <span style={{ fontSize: TYPE.base, fontWeight: 700 }}>Comparing</span>
+
+            <label style={{ display: "grid", gap: 4 }}>
+              <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>Product</span>
+              <select
+                style={control}
+                value={formatId}
+                onChange={e => { setFormatId(e.target.value); }}
+              >
+                {["photo", "trade", "magazine", "notebook"].map(id => (
+                  <option key={id} value={id}>{CATALOG[id].label}</option>
+                ))}
+              </select>
+            </label>
+
+            <label style={{ display: "grid", gap: 4 }}>
+              <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>Your price</span>
+              <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <span style={{ fontSize: TYPE.base, color: T.textSubtle }}>US $</span>
+                <input
+                  type="number" min={floor} step={1} value={shown}
+                  onChange={e => setPrice(Math.max(floor, Number(e.target.value) || floor))}
+                  style={{ ...control, width: 96 }}
+                />
+              </span>
+            </label>
+
+            <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5, maxWidth: 420 }}>
+              A copy costs you <strong style={{ color: T.textNeutral }}>{money(cost)}</strong> to print, so
+              your price cannot go below it. Shipping is not here: your buyer pays it, wherever they are.
+            </span>
           </div>
 
-          <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
-            {CHANNELS.map(c => (
-              <Card key={c.id} c={showProps ? c : { ...c, prop: null }} />
-            ))}
+          {/* ── The comparison ── */}
+          <div style={{
+            background: "#fff", border: `1px solid ${T.border}`, borderRadius: R.lg,
+            overflowX: "auto",
+          }}>
+            <table style={{ borderCollapse: "collapse", width: "100%", minWidth: 860 }}>
+              <thead>
+                <tr>
+                  <th style={{
+                    textAlign: "left", verticalAlign: "bottom", padding: "20px 16px 14px",
+                    borderBottom: `1px solid ${T.border}`, width: 190,
+                  }} />
+                  {routes.map(r => {
+                    const blocked = !allows(r);
+                    return (
+                      <th key={r.id} style={{
+                        textAlign: "left", verticalAlign: "top", padding: "20px 16px 14px",
+                        borderBottom: `1px solid ${T.border}`,
+                        borderLeft: `1px solid ${T.border}`,
+                        opacity: blocked ? 0.55 : 1, minWidth: 180,
+                      }}>
+                        <span style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                          <span style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 500 }}>
+                            {r.name}
+                          </span>
+                          {r.isNew && <Chip solid>New</Chip>}
+                        </span>
+                        <span style={{
+                          display: "block", marginTop: 6, fontSize: TYPE.sm,
+                          color: T.textSubtle, lineHeight: 1.5, fontWeight: 400,
+                        }}>
+                          {PROPS[r.id]}
+                        </span>
+                      </th>
+                    );
+                  })}
+                </tr>
+              </thead>
+              <tbody>
+                {ROWS.map(row => (
+                  <tr key={row.key}>
+                    <th style={{
+                      textAlign: "left", verticalAlign: "top", padding: "14px 16px",
+                      borderBottom: `1px solid ${T.border}`,
+                      fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase",
+                      color: T.textSubtle,
+                    }}>
+                      {row.label}
+                    </th>
+                    {routes.map(r => {
+                      const value = cellFor(r, row);
+                      const blocked = !allows(r);
+                      return (
+                        <td key={r.id} style={{
+                          verticalAlign: "top", padding: "14px 16px",
+                          borderBottom: `1px solid ${T.border}`,
+                          borderLeft: `1px solid ${T.border}`,
+                          fontSize: row.strong ? TYPE.xl : TYPE.base,
+                          fontWeight: row.strong ? 700 : 400,
+                          color: blocked ? T.textSubtle : T.textNeutral,
+                          lineHeight: 1.5,
+                        }}>
+                          {value ?? (
+                            <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
+                              {blocked
+                                ? channelBlockedBecause(CATALOG_ID[r.id], formatId, sel) ?? "Not this product"
+                                : "You set the retailer's discount, so this is yours to decide"}
+                            </span>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
 
-          <div style={{
-            marginTop: 24, background: "#fff", border: `1px solid ${T.border}`,
-            borderRadius: R.lg, padding: 20, display: "grid", gap: 8, maxWidth: 900,
-          }}>
-            <div style={{ fontSize: TYPE.base, fontWeight: 700 }}>
-              Coming, and not compared yet
+          {/* ── What is true of all of them, and what is not here yet ── */}
+          <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))" }}>
+            <div style={{
+              background: "#fff", border: `1px solid ${T.border}`, borderRadius: R.lg,
+              padding: 20, display: "grid", gap: 8,
+            }}>
+              <div style={{ fontSize: TYPE.base, fontWeight: 700 }}>True of every route</div>
+              <div style={{ fontSize: TYPE.base, color: T.textSubtle, lineHeight: 1.65 }}>
+                A US $25 minimum before any payout is released. Volume discounts are retail-only and never
+                apply to fulfilment pricing. And every book needs a proof — order and review one copy before it
+                goes on sale, whichever route you choose.
+              </div>
             </div>
-            <div style={{ fontSize: TYPE.base, color: T.textSubtle, lineHeight: 1.65 }}>
-              <strong style={{ color: T.textNeutral }}>Store integrations</strong> — connecting a shop you
-              already run on Shopify or Etsy — would be the fifth route. It is named here rather than compared
-              beside the others because a card on this page promises four facts about a channel, and none of
-              them can be answered honestly for something unbuilt. API printing and Large Order Services are
-              not routes to market: they are services, and they live under Services in the nav.
-            </div>
-          </div>
 
-          <div style={{
-            marginTop: 16, background: "#fff", border: `1px solid ${T.border}`,
-            borderRadius: R.lg, padding: 20, display: "grid", gap: 8, maxWidth: 900,
-          }}>
-            <div style={{ fontSize: TYPE.base, fontWeight: 700 }}>Applies to every channel</div>
-            <div style={{ fontSize: TYPE.base, color: T.textSubtle, lineHeight: 1.65 }}>
-              A US $25 minimum before any payout is released. Volume discounts are retail-only and never apply
-              to fulfilment pricing. And every book needs a proof — order and review one copy before it goes on
-              sale, whichever route you choose.
+            <div style={{
+              background: "#fff", border: `1px solid ${T.border}`, borderRadius: R.lg,
+              padding: 20, display: "grid", gap: 8,
+            }}>
+              <div style={{ fontSize: TYPE.base, fontWeight: 700 }}>Coming, and not compared yet</div>
+              <div style={{ fontSize: TYPE.base, color: T.textSubtle, lineHeight: 1.65 }}>
+                <strong style={{ color: T.textNeutral }}>Store integrations</strong> — connecting a shop you
+                already run on Shopify or Etsy — would be the fifth route. It is named rather than compared
+                because the table asks five things of a channel and none of them can be answered for something
+                unbuilt. API printing and Large Order Services are not routes to market: they are services,
+                and they live under Services in the nav.
+              </div>
             </div>
           </div>
 
           {/* ── The way out ──
-              This page ended nowhere, which made the home page's Sell card
-              carry two actions to make up for it. Comparison before
-              commitment is the rule: the choice of route is made here, so
-              the step that acts on it belongs here too — once, at the end,
-              after the facts that justify it. */}
+              Comparison before commitment: the route is chosen here, so the
+              step that acts on it belongs here too — once, at the end. */}
           <div style={{
-            marginTop: 24, background: "#fff", border: `1px solid ${T.border}`,
-            borderRadius: R.lg, padding: 24, maxWidth: 900,
+            background: "#fff", border: `1px solid ${T.border}`, borderRadius: R.lg, padding: 24,
             display: "flex", alignItems: "center", justifyContent: "space-between", gap: 20, flexWrap: "wrap",
           }}>
             <div style={{ minWidth: 0 }}>
