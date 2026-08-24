@@ -486,7 +486,8 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
      delivery. The seller's is an illustration, so a country is enough
      and it is always shown — and it is priced for ONE copy, since that
      is what a buyer orders. */
-  const makerShip = ship.postal.trim().length > 1
+  const hasDestination = ship.postal.trim().length > 1;
+  const makerShip = hasDestination
     ? shippingFor(ship.country, ship.speed, state.qty)
     : null;
   const buyerShip = shippingFor(ship.country, ship.speed, 1);
@@ -607,8 +608,14 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
 
             <ShipTo selling={selling} shipping={!selling} ship={ship} setShip={setShip} />
 
-            {!selling && (
-              <div style={{ display: "grid", gap: 10, borderTop: `1px solid ${T.border}`, paddingTop: 16 }}>
+            {/* Arrival dates wait for a postcode. Rates and speeds mean
+                nothing without a destination, and a table of dates that
+                cannot be right yet is worse than no table: it invites
+                someone to plan around figures that will move the moment
+                they type. The same test the quote uses, so the panel's
+                "include shipping" switch and this section appear together. */}
+            {!selling && hasDestination && (
+              <div className="fade-in" style={{ display: "grid", gap: 10, borderTop: `1px solid ${T.border}`, paddingTop: 16 }}>
                 <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>
                   When it would arrive
                 </span>
