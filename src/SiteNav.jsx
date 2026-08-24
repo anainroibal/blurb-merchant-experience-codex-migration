@@ -88,24 +88,25 @@ const NAV = [
      Bookstore, one more than today. If that ever needs paying for, the
      Bookstore is the candidate: shopping is not one of these jobs, and it
      would sit naturally beside the cart in the account actions. */
-  { label: "Products", href: "/formats", columns: [
-    { heading: "Products", items: [
+  { label: "Products", href: "/formats", detailed: true, columns: [
+    /* The seven products Blurb prints, with the "best for" line each one
+       carries in the sample. Split 4 / 3 across two columns under a single
+       heading, as drawn. */
+    { heading: "Products", chunkAt: 4, items: [
       ["Shop All", "Every format Blurb prints."],
-      ["Hardcover", "Ideal for photo books, portfolios and anything meant to last."],
-      ["Softcover", "Perfect bound, lighter and lower cost. Also suits text-led publications."],
-    ], note: ["Not making a book? We also print ", "photo prints and framed wall art", "."] },
-
-    /* Ten kinds in two columns under one heading, as drawn — and the same
-       vocabulary as PROJECT_KINDS and the live /getting-started dropdown,
-       which is the strongest thing about this menu. */
-    { heading: "What are you making?", split: true, items: [
-      ["Photo Books"], ["Wedding"],
-      ["Travel"], ["Cookbooks"],
-      ["Zines"], ["Magazines"],
-      ["Comic books"], ["Portfolio"],
-      ["Novels"], ["Children's books"],
+      ["Photo Books", "Best for travel, fine-art photography, and books built to last on a shelf."],
+      ["Layflat Books", "Best for wedding albums, panoramic landscapes, and portfolio work."],
+      ["Paperback and Hardcover Books", "Best for novels, cookbooks, children's books, and prototyping."],
+      ["Magazines", "Best for editorial projects, lookbooks, and serial publications."],
+      ["Notebooks & Journals", "Best for sketchbooks, planners, field notes, and writing practice."],
+      ["Wall Art", "Best for gallery displays, home décor, and print gifting."],
     ]},
-  ]},
+  ], featured: {
+    heading: "Featured",
+    title: "Layflat Photo Books",
+    body: "Our most seamless format — open flat, edge to edge, with no gutter interruption.",
+    cta: "Shop Layflat",
+  }},
 
   /* TOOLS, top level. It was folded into Products for a while, on the
      argument that tools serve making rather than being a reason to visit.
@@ -252,9 +253,9 @@ const chunk = (arr, size) =>
    bleeds into the panel's padding, so the target is the whole line rather
    than the label's own width. Grey ground, brand-blue label — the live
    site's treatment. */
-function MenuLink({ item, onClose }) {
+function MenuLink({ item, onClose, detailed }) {
   const [hot, setHot] = useState(false);
-  const [label, , tag] = item;
+  const [label, body, tag] = item;
   return (
     <a
       href="#"
@@ -270,15 +271,27 @@ function MenuLink({ item, onClose }) {
            min-width --spacing * 55 = 220px, and rounded-md (6px) on the
            hover ground, which is --color-light-gray-50. */
         display: "block", textDecoration: "none",
-        fontSize: TYPE.sm, lineHeight: 1.4, fontWeight: 500,
-        padding: 16, borderRadius: 6, minWidth: 220,
-        color: hot ? C.blue600 : C.gray950,
+        fontSize: TYPE.sm, lineHeight: 1.4, fontWeight: detailed ? 400 : 500,
+        padding: 16, borderRadius: 6, minWidth: detailed ? 300 : 220,
+        /* blue600 on white is 4.52:1, which passes AA for this 14px text by
+           a hair. On the grey hover ground it drops to 4.14:1 and fails, so
+           the hover uses blue700 — 5.54:1 on grey. The live site keeps
+           blue600 on both, which is a real (small) contrast bug there. */
+        color: hot ? C.blue700 : C.gray950,
         background: hot ? C.gray50 : "transparent",
         /* .nav__link-desktop: 200ms, cubic-bezier(.4, 0, .2, 1). */
         transition: "color var(--nav-hover) var(--nav-ease), background-color var(--nav-hover) var(--nav-ease)",
       }}
     >
-      {label}<Tag>{tag}</Tag>
+      <span style={{ display: "block", fontWeight: 700 }}>{label}<Tag>{tag}</Tag></span>
+      {detailed && body && (
+        <span style={{
+          display: "block", marginTop: 3, fontWeight: 400,
+          color: T.textSubtle, whiteSpace: "normal", maxWidth: 300,
+        }}>
+          {body}
+        </span>
+      )}
     </a>
   );
 }
@@ -289,7 +302,7 @@ function MegaMenu({ group, isOpen, onClose }) {
      project kinds, and without a heading "Hardcover" sits beside "Zines"
      with nothing to tell them apart. So: plain list where the menu is one
      set, headed columns where it is two. */
-  const headed = group.columns.length > 1;
+  const headed = group.columns.length > 1 || !!group.featured;
 
   return (
     /* Mounted whether or not it is open, so the exit is animated too — a
@@ -337,7 +350,7 @@ function MegaMenu({ group, isOpen, onClose }) {
         <div key={col.heading} style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
           {/* A long set breaks into columns of five, which is how the live
               Products menu splits its seven. */}
-          {chunk(col.items, COLUMN_MAX).map((sub, i) => (
+          {chunk(col.items, col.chunkAt || COLUMN_MAX).map((sub, i) => (
             <div key={i}>
               {headed && (
                 <div style={{
@@ -350,12 +363,79 @@ function MegaMenu({ group, isOpen, onClose }) {
                   {col.heading}
                 </div>
               )}
-              {sub.map(item => <MenuLink key={item[0]} item={item} onClose={onClose} />)}
+              {sub.map(item => (
+                <MenuLink key={item[0]} item={item} onClose={onClose} detailed={group.detailed} />
+              ))}
             </div>
           ))}
         </div>
       ))}
+
+      {/* ── The Featured card ──
+          One promoted product beside the list. It is a SINGLE link wrapping
+          the image, the heading and the call to action, not three — two
+          adjacent links to the same page is a redundant tab stop, and the
+          image carries no information the heading does not, so its alt is
+          empty rather than a description repeated to a screen reader.
+
+          It sits last in the DOM on purpose: keyboard and screen-reader
+          users reach the seven products before the advert, which is the
+          order they came for. */}
+      {group.featured && (
+        <div style={{ minWidth: 260, maxWidth: 280 }}>
+          <div style={{
+            fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.6, textTransform: "uppercase",
+            color: T.textSubtle, padding: "0 16px 6px",
+          }}>
+            {group.featured.heading}
+          </div>
+          <FeaturedCard card={group.featured} onClose={onClose} />
+        </div>
+      )}
     </div>
+  );
+}
+
+function FeaturedCard({ card, onClose }) {
+  const [hot, setHot] = useState(false);
+  return (
+    <a
+      href="#"
+      onClick={e => { e.preventDefault(); onClose(); }}
+      onMouseEnter={() => setHot(true)}
+      onMouseLeave={() => setHot(false)}
+      onFocus={() => setHot(true)}
+      onBlur={() => setHot(false)}
+      style={{
+        display: "block", textDecoration: "none", padding: 16, borderRadius: 6,
+        background: hot ? C.gray50 : "transparent", whiteSpace: "normal",
+        transition: "background-color var(--nav-hover) var(--nav-ease)",
+      }}
+    >
+      {/* Decorative: the heading beside it already names the product, so a
+          description here would be read out twice. */}
+      <span
+        role="img"
+        aria-label=""
+        style={{ display: "block", height: 116, borderRadius: 4, background: C.gray100 }}
+      />
+      <span style={{
+        display: "block", marginTop: 12, fontSize: TYPE.sm, fontWeight: 700,
+        color: C.gray950, lineHeight: 1.4,
+      }}>
+        {card.title}
+      </span>
+      <span style={{ display: "block", marginTop: 4, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.45 }}>
+        {card.body}
+      </span>
+      <span style={{
+        display: "block", marginTop: 10, fontSize: TYPE.sm, fontWeight: 700,
+        color: hot ? C.blue700 : C.blue600,
+        transition: "color var(--nav-hover) var(--nav-ease)",
+      }}>
+        {card.cta}
+      </span>
+    </a>
   );
 }
 
