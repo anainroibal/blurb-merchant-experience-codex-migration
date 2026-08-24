@@ -417,17 +417,12 @@ export default function SummaryPanel({
               Your buyer pays shipping, so your margin is the same wherever they live.
             </p>
 
-            {quote && (
-              <div style={{ display: "grid", gap: 10, borderTop: `1px solid ${T.border}`, paddingTop: 14 }}>
-                <Line label="Your price" value={money(sellPrice)} muted />
-                <Line label="Shipping, paid by them" value={money(quote.cost)} muted />
-                <Line label="Your buyer pays" value={money(sellPrice + quote.cost)} strong />
-                <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>
-                  Nothing above changed. Your cost, your price and your profit are the same numbers — this is
-                  only what the buyer sees at checkout.
-                </p>
-              </div>
-            )}
+            {/* The buyer's total is NOT here. It used to be three lines
+                under this ladder, which put the buyer's money inside the
+                seller's panel — the one place it must never appear. It now
+                sits in the Shipping section beside the checkbox that asks
+                for it, where it belongs: with its own control, and out of
+                the seller's numbers. */}
 
             <CostExplainer compact />
           </>

@@ -596,8 +596,34 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
                 </label>
 
                 {ship.show && (
-                  <div className="fade-in" style={{ borderTop: `1px solid ${T.border}`, paddingTop: 16 }}>
+                  <div className="fade-in" style={{ display: "grid", gap: 14, borderTop: `1px solid ${T.border}`, paddingTop: 16 }}>
                     <ShipTo selling shipping={false} ship={ship} setShip={setShip} />
+
+                    {/* ── The buyer's total, where the question was asked ──
+                        One line, in the section with the checkbox, rather
+                        than three lines in the panel. The panel is the
+                        seller's numbers and nothing else; this is the
+                        buyer's, so it lives with the control that reveals
+                        it and stays the size of an aside. */}
+                    {buyerShip && (
+                      <div style={{
+                        background: C.gray50, border: `1px solid ${T.border}`, borderRadius: R.md,
+                        padding: "12px 14px", display: "grid", gap: 4,
+                      }}>
+                        <span style={{ fontSize: TYPE.base, lineHeight: 1.55 }}>
+                          A buyer in{" "}
+                          {ship.country === "US"
+                            ? ship.state
+                            : SHIPPING.countries.find(c => c.id === ship.country)?.label}{" "}
+                          pays <strong>{money(shown)}</strong> for the book and{" "}
+                          <strong>{money(buyerShip.cost)}</strong> to have it sent —{" "}
+                          <strong>{money(shown + buyerShip.cost)}</strong> in all.
+                        </span>
+                        <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>
+                          Your cost, your price and your profit are unchanged — none of this is yours to pay.
+                        </span>
+                      </div>
+                    )}
                   </div>
                 )}
               </>
