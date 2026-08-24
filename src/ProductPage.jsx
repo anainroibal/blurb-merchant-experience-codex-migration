@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { OptionCard, Divider } from "./Configurator.jsx";
+import { Field } from "./ProductOptions.jsx";
 import {
   CATALOG, availableFor, reconcile, hasTool,
   unitPrice, perPagePrice, pageLimit, money,
@@ -140,42 +141,6 @@ function ToolRow({ tool, onBuild }) {
   return tool.external
     ? <a href={tool.external} target="_blank" rel="noreferrer" style={style}>{inner}</a>
     : <button onClick={onBuild} style={style}>{inner}</button>;
-}
-
-/* One selection group, laid out as the live PDP lays it out: a bold
-   sentence-case label with Details opposite, the current choice named
-   underneath, then the control, then a rule. Not the configurator's
-   uppercase summary voice and not its StepHeading — a product page is not
-   a numbered flow, and the live page is the reference for this block.
-
-   Details is not decoration: it toggles the spec Blurb shows in its own
-   Details modal — paper weights, trim sizes — from data the catalog
-   already carries. A control that opened nothing would be worse than none. */
-function Field({ label, value, children, detailsOpen, onDetails, note }) {
-  return (
-    <div style={{ display: "grid", gap: 8 }}>
-      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 12 }}>
-        <span style={{ fontSize: TYPE.base, fontWeight: 700 }}>{label}</span>
-        {onDetails && (
-          <button
-            onClick={onDetails}
-            aria-expanded={detailsOpen}
-            style={{
-              font: "inherit", fontSize: TYPE.sm, fontWeight: 600, color: T.textBrand,
-              background: "transparent", border: 0, padding: 0, cursor: "pointer",
-              display: "inline-flex", alignItems: "center", gap: 4,
-            }}
-          >
-            <span className="ms" style={{ fontSize: 16 }}>info</span>
-            Details
-          </button>
-        )}
-      </div>
-      {value && <div style={{ fontSize: TYPE.base, color: T.textNeutral }}>{value}</div>}
-      {note && <div style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.6 }}>{note}</div>}
-      <div style={{ marginTop: 2 }}>{children}</div>
-    </div>
-  );
 }
 
 /* `seed` is a configuration arriving from somewhere else — the pricing

@@ -231,36 +231,6 @@ function Line({ label, value, strong, muted, accent }) {
   );
 }
 
-/* The switch. A checkbox rather than a disclosure, because it changes a
-   number rather than revealing more reading — and it names which number. */
-function ShippingSwitch({ on, onChange, quote, selling }) {
-  return (
-    <label style={{
-      display: "grid", gap: 4, cursor: "pointer",
-      borderTop: `1px solid ${T.border}`, paddingTop: 12,
-    }}>
-      <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
-        <input
-          type="checkbox"
-          checked={on}
-          onChange={e => onChange(e.target.checked)}
-          style={{ width: 18, height: 18, accentColor: C.blue600, flex: "0 0 auto" }}
-        />
-        <span style={{ fontSize: TYPE.sm, fontWeight: 700 }}>
-          {selling ? "Show what your buyer pays" : "Include shipping in the total"}
-        </span>
-      </span>
-      <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5, paddingLeft: 28 }}>
-        {quote
-          ? (selling
-              ? "Their price plus delivery, kept apart from your numbers."
-              : `Adds ${money(quote.cost)} — ${quote.speed.label.toLowerCase()}.`)
-          : "Choose a destination under Shipping to get a figure."}
-      </span>
-    </label>
-  );
-}
-
 /* ── Which configurations have a product page to read ──
    blurb.com has a PDP per cover, not per family: /photo-books has
    /imagewrap-hardcover-photo-book, /layflat-photo-book and the rest. Only
@@ -298,24 +268,31 @@ export default function SummaryPanel({
   const [ownShip, setOwnShip] = useState({ open: false, country: "US", postal: "", speed: "economy" });
   const ship = shipProp ?? ownShip;
   const setShip = setShipProp ?? setOwnShip;
-  const quote = ship.postal.trim().length > 1 ? shippingFor(ship.country, ship.speed, selling ? 1 : state.qty) : null;
+  /* ── What counts as knowing the destination ──
+     A maker is receiving the box, so nothing is quoted until there is a
+     postcode: a country-level guess would be a number they might plan a
+     delivery around. A seller is not receiving anything — their buyers are
+     everywhere, so the country they pick IS the destination, and the figure
+     is an illustration of what one buyer somewhere pays. So the seller's
+     lines appear as soon as a country is chosen, and the maker's total
+     waits for the postcode. */
+  const quote = selling
+    ? shippingFor(ship.country, ship.speed, 1)
+    : (ship.postal.trim().length > 1 ? shippingFor(ship.country, ship.speed, state.qty) : null);
 
-  /* ── Shipping is a question, not a section ──
-     It used to be a block in this panel: destination, postcode, four
-     speeds, folded away but always present. The destination now lives in
-     the main column, where there is room for arrival dates beside it, and
-     what is left here is the only shipping question this panel needs to
-     answer — do you want to see it in the total?
+  /* ── Shipping answers to the postcode, not to a checkbox ──
+     It used to be a block in this panel, then briefly a switch. Both were
+     asking a question the postcode already answers: someone who types a
+     destination has said they want to see delivery, and someone who clears
+     it has said they do not. So the total simply follows — shipping is in
+     it while there is a destination, and out of it the moment there is not.
 
-     Off by default, deliberately. The price of the book is what is being
-     decided; shipping is a fact about one delivery to one address, and
-     folding it in by default makes every number on the page conditional on
-     a postcode nobody has typed yet. Turn it on and the total changes.
+     One state, one place. A checkbox beside a field that means the same
+     thing is two controls for one decision, and they can disagree.
 
-     On the selling side it stays out of the seller's numbers entirely —
-     the buyer pays it, so what the switch reveals there is what the BUYER
-     pays, as separate lines. That rule is why this panel exists. */
-  const [withShipping, setWithShipping] = useState(false);
+     On the selling side it never enters the seller's numbers: the buyer
+     pays it, so it appears as what the BUYER pays, on its own lines under
+     the ladder. That rule is why this panel exists. */
 
   const toggleAddon = id => {
     const on = state.addons.includes(id);
@@ -424,17 +401,12 @@ export default function SummaryPanel({
               Your buyer pays shipping, so your margin is the same wherever they live.
             </p>
 
-            {shipProp && (
-              <>
-                <ShippingSwitch on={withShipping} onChange={setWithShipping} quote={quote} selling />
-                {withShipping && quote && (
-                  <div style={{ display: "grid", gap: 10 }}>
-                    <Line label="Your price" value={money(sellPrice)} muted />
-                    <Line label="Shipping, paid by them" value={money(quote.cost)} muted />
-                    <Line label="Your buyer pays" value={money(sellPrice + quote.cost)} strong />
-                  </div>
-                )}
-              </>
+            {quote && (
+              <div style={{ display: "grid", gap: 10, borderTop: `1px solid ${T.border}`, paddingTop: 14 }}>
+                <Line label="Your price" value={money(sellPrice)} muted />
+                <Line label="Shipping, paid by them" value={money(quote.cost)} muted />
+                <Line label="Your buyer pays" value={money(sellPrice + quote.cost)} strong />
+              </div>
             )}
 
             <CostExplainer compact />
@@ -446,12 +418,10 @@ export default function SummaryPanel({
               {p.addons > 0 && <Line label="Upgrades" value={money(p.addons)} muted />}
               {state.qty > 1 && <Line label={`${state.qty} copies`} value={money(p.subtotal)} muted />}
               {p.tier && <Line label={`Volume discount ${Math.round(p.tier.pct * 100)}%`} value={`− ${money(p.subtotal - p.total)}`} muted />}
-              {withShipping && quote && (
-                <Line label={`Shipping — ${quote.speed.label}`} value={money(quote.cost)} muted />
-              )}
+              {quote && <Line label={`Shipping — ${quote.speed.label}`} value={money(quote.cost)} muted />}
               <Line
-                label={withShipping && quote ? "Total with shipping" : "Total"}
-                value={money(p.total + (withShipping && quote ? quote.cost : 0))}
+                label={quote ? "Total with shipping" : "Total"}
+                value={money(p.total + (quote?.cost ?? 0))}
                 strong
               />
               {/* A bulk buyer prices the run by the copy — it is the number
@@ -460,12 +430,10 @@ export default function SummaryPanel({
                 <Line label="Cost per copy" value={money(p.total / state.qty)} accent />
               )}
             </div>
-            {shipProp && (
-              <ShippingSwitch on={withShipping} onChange={setWithShipping} quote={quote} selling={false} />
-            )}
-
             <p style={{ fontSize: TYPE.sm, color: T.textSubtle, margin: 0, lineHeight: 1.5 }}>
-              {withShipping && quote ? "Excludes taxes." : "Excludes taxes and shipping."}
+              {quote
+                ? "Includes shipping to the postcode you entered. Excludes taxes."
+                : "Excludes taxes and shipping — add a postcode to include delivery."}
               {p.tier && " A promo code replaces this discount rather than adding to it."}
             </p>
           </>

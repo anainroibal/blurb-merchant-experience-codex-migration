@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.js";
 import SellChannels from "./SellChannels.jsx";
 import SummaryPanel from "./SummaryPanel.jsx";
+import ProductOptions from "./ProductOptions.jsx";
 import {
   CATALOG, PROJECT_KINDS, fromPrice, sizeCount,
   seedFor, priceFor, sellerCost, minSellPrice, defaultSelection,
@@ -211,48 +212,6 @@ function Field({ label, hint, children }) {
       </span>
       {children}
     </label>
-  );
-}
-
-/* Product options, as compact selects rather than the full step page.
-   Everything the matrix cannot build is disabled rather than hidden, so
-   the shape of what Blurb makes stays visible. */
-function SpecPicker({ formatId, state, onState }) {
-  const f = CATALOG[formatId];
-  const derived = derivedSteps(formatId, state);
-
-  const set = (groupId, id) => {
-    let next = reconcile(formatId, { ...state, [groupId]: id }, groupId);
-    const cap = pageLimit(formatId, next);
-    if (cap && next.pages > cap) next.pages = cap;
-    onState(next);
-  };
-
-  return (
-    <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))" }}>
-      {f.groups.map(g => {
-        const ok = availableFor(formatId, state, g.id);
-        return (
-          <Field key={g.id} label={g.label.replace(/^choose your /i, "")}>
-            <select style={control} value={state[g.id]} onChange={e => set(g.id, e.target.value)}>
-              {g.options.map(o => (
-                <option key={o.id} value={o.id} disabled={!ok.has(o.id)}>
-                  {o.label}{o.dims ? ` — ${o.dims}` : ""}{ok.has(o.id) ? "" : " (not available)"}
-                </option>
-              ))}
-            </select>
-          </Field>
-        );
-      })}
-
-      {derived.map(d => (
-        <Field key={d.id} label={d.label.replace(/^your /i, "")} hint="included">
-          <span style={{ ...control, display: "flex", alignItems: "center", color: T.textSubtle, background: C.gray50 }}>
-            {d.option.label}
-          </span>
-        </Field>
-      ))}
-    </div>
   );
 }
 
@@ -584,7 +543,10 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
             background: T.bgNeutral, border: `1px solid ${T.border}`, borderRadius: R.lg,
             padding: 24, display: "grid", gap: 18,
           }}>
-            <SpecPicker formatId={formatId} state={state} onState={setState} />
+            {/* The PDP's own option component, not a row of selects. Same
+                questions, same treatment, and the size modifiers are
+                visible where a dropdown hid them. */}
+            <ProductOptions formatId={formatId} state={state} onChange={setState} />
 
             {/* ── Only for the person who wants it ── */}
             <HelpMeDecide
