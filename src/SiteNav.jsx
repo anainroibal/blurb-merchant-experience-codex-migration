@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.js";
 
 /* ────────────────────────────────────────────────────────────────
-   Site navigation — the proposal.
+   Site navigation — the proposal, now on Deb's option D.
 
    There was a Today/Proposed toggle here. It is gone: the "today"
    nav was a reconstruction of the live header and did not match it
@@ -10,16 +10,46 @@ import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.
    than it explained. Anyone who wants today's nav has blurb.com open
    in the next tab, which is a truer reference than a rebuild.
 
-   What remains is the proposal itself, with NEW and CHANGED marking
-   what it adds. This is Anain's recommendation into Deb's nav work
-   (meeting item 6) — the architecture case, made to be argued with.
+   ── Why D, of Deb's four LOS drafts (26-08 LOS Volume Nav Drafts) ──
+   A moved Large Order Services from a buried link to a promoted panel;
+   B and C made it a persistent header item. All three leave it filed
+   under selling, and it is not a way to sell — it is a SERVICE. You buy
+   the stock and distribute it yourself; Blurb is not in the sale.
 
-   Signed out, it makes two moves:
-     1. Sell & Self-Publish stops being a flat list of five channels
-        and groups them by HOW you sell — direct, through retailers,
-        or in bulk. Checkout Links joins the direct group.
-     2. Seller pricing does NOT appear under Pricing. It sits behind
-        the seller hub, which is what keeps the public pricing pages
+   D is the only draft that gives it an honest home, and the same for
+   API printing. That resolves the 8/21 pod's "API printing is not
+   included in the selling tool" WITHOUT reversing the 2026-08-18
+   decision: that decision was about the ways-to-sell comparison, where
+   API printing genuinely is a route to market. Where it lives in NAV is
+   a different question, and the answer is Services.
+
+   D also agrees with the live site. /print-api-software already offers
+   Large Order Services, the Self-Service API and the Custom API as one
+   three-way chooser — "Pathways to print". Every other draft contradicts
+   that page; this one matches it.
+
+   And "Make → what are you making?" is the vocabulary the rest of this
+   project already runs on: PROJECT_KINDS, the live /getting-started
+   dropdown, and the twelve vertical landing pages all speak in project
+   kinds rather than product types.
+
+   Two departures from the sketch, both deliberate:
+     · NO "Shop with AI". Out of scope, and it would dominate both the
+       conversation and the estimate.
+     · Search is drawn but inert. It is a product — an index, a results
+       page, ranking — not a nav control, and pretending otherwise in a
+       prototype invites the wrong conversation. The placeholder is here
+       because D's utility row is shaped around it.
+
+   Signed out, the proposal makes three moves:
+     1. Five top-level groups by JOB, not by department: Make, Sell,
+        Services, Pricing, Resources. Bookstore sits apart, because
+        shopping is not one of those jobs.
+     2. Services exists at all — LOS ("Volume orders", Deb's rename, and
+        the clearer word) and API printing stop being smuggled into a
+        selling menu.
+     3. Seller pricing does NOT appear under Pricing. It sits behind the
+        seller hub, which is what keeps the public pricing pages
         retail-only and the maker guardrail intact.
    ──────────────────────────────────────────────────────────────── */
 
@@ -31,37 +61,80 @@ export const NEW = "new";
 export const CHANGED = "changed";
 
 const NAV = [
-  { label: "Products", href: "/formats", items: [
-    [null, ["Shop All", "Photo Books", "Layflat Books", "Paperback and Hardcover Books", "Magazines", "Notebooks & Journals", "Wall Art"]],
-  ]},
-  { label: "Pricing", href: "/pricing", items: [
-    [null, [
-      ["Pricing Calculator", CHANGED, "What your book costs to make, and when it arrives"],
-      "Shipping Calculator",
+  /* MAKE — everything about producing the object. Products answer "what
+     can I print", the kinds answer "what am I making", and the tools are
+     how. Three columns because they are three different questions, and a
+     maker arrives holding one of them. */
+  { label: "Make", href: "/formats", mark: CHANGED, items: [
+    ["Products", ["Shop All", "Photo Books", "Layflat Books", "Paperback and Hardcover Books", "Magazines", "Notebooks & Journals", "Wall Art"]],
+    ["What are you making?", [
+      ["Photo books", null, "Travel, family, weddings"],
+      ["Cookbooks", null, "Recipes, long text beside colour"],
+      ["Children's books", null, "Colour on every page"],
+      ["Novels and poetry", null, "Text-first, priced to sell"],
+      ["Portfolios", null, "Your work, at gallery quality"],
+      ["Yearbooks", null, "A run of the same book"],
+    ]],
+    ["Tools", [
+      ["Online editor", CHANGED, "Design in your browser. Nothing to download"],
+      "BookWright for desktop",
+      "Adobe plug-ins",
+      "PDF to Book",
+      "Templates",
     ]],
   ]},
-  { label: "Design Tools", href: "/bookmaking-tools", items: [
-    [null, ["BookWright", "Adobe Tools", "PDF to Book", "BookWright Templates"]],
-  ]},
-  { label: "Sell & Self-Publish", href: "/self-publish", mark: CHANGED, items: [
+
+  /* SELL — routes to market only. API printing and Large Order Services
+     have moved to Services; what is left is the set of ways a copy
+     reaches a buyer, grouped by who finds that buyer. */
+  { label: "Sell", href: "/self-publish", mark: CHANGED, items: [
     ["Start selling", [
       ["Sell with Blurb", NEW, "The seller hub — join free, then sell how you like"],
       ["Margin estimator", NEW, "What a copy costs you, what to charge, what you keep"],
     ]],
     ["Sell direct", [
       ["Checkout Links", NEW, "One link per book. Share it anywhere"],
-      "API Printing",
+      ["Store integrations", NEW, "⚠️ In Deb's draft A. No source yet — needs an owner before it ships"],
     ]],
     ["Sell through retailers", ["Blurb Bookstore", "Amazon", "Ingram"]],
-    ["Bulk and services", ["Large Order Services"]],
   ]},
-  { label: "Bookstore", href: "/bookstore", items: [
-    [null, ["All Categories", "Photography", "Portfolios", "Cookbooks", "Travel"]],
+
+  /* SERVICES — the new group, and the point of option D. Neither of these
+     is a way to sell: one prints a run you distribute yourself, the other
+     prints behind someone else's storefront. /print-api-software already
+     groups them exactly this way. */
+  { label: "Services", href: "/large-order-services", mark: NEW, items: [
+    ["Print in volume", [
+      ["Volume orders", CHANGED, "Was Large Order Services. Discounts start at 100+ copies"],
+      ["Get a bulk quote", null, "Our team prices the run and handles the logistics"],
+    ]],
+    ["Print as infrastructure", [
+      ["Self-Service API", null, "No minimums, no setup fees. US shipping, photo books"],
+      ["Custom API", null, "Global, more products, tailored SLAs"],
+    ]],
+    ["Help from a person", [
+      ["Hire an expert", null, "Design and layout help, if you would rather not"],
+    ]],
   ]},
+
+  { label: "Pricing", href: "/pricing", mark: CHANGED, items: [
+    [null, [
+      ["Pricing calculator", CHANGED, "What your book costs to make, and when it arrives"],
+      "Shipping calculator",
+      ["Volume discounts", null, "Retail only — they never apply to fulfilment pricing"],
+    ]],
+  ]},
+
   { label: "Resources", href: "/blog", items: [
-    [null, ["Blog", "Help Center"]],
+    [null, ["Blog", "Help Center", "Book dimensions", "Swatch kit"]],
   ]},
 ];
+
+/* Shopping is not one of the five jobs, so the Bookstore sits apart from
+   them — its own item on the right of the nav row, as in the sketch. */
+const BOOKSTORE = { label: "Blurb Bookstore", href: "/bookstore", icon: "storefront", items: [
+  [null, ["All Categories", "Photography", "Portfolios", "Cookbooks", "Travel", "Children's Books"]],
+]};
 
 /* ── The signed-in header ──
    Today it is: Settings · Help · Log Out · 🇺🇸 · [My Dashboard]. Three
@@ -114,7 +187,7 @@ const norm = i => (Array.isArray(i) ? { label: i[0], mark: i[1], hint: i[2] } : 
    footer cannot drift from the header — one list, two renderings. Group
    headings are dropped: a mega-menu has room to sub-group four ways, a
    footer column does not, and the order carries the same argument. */
-export const NAV_COLUMNS = NAV.map(g => ({
+export const NAV_COLUMNS = [...NAV, BOOKSTORE].map(g => ({
   label: g.label,
   items: g.items.flatMap(([, items]) => items.map(norm)),
 }));
@@ -146,7 +219,9 @@ function MegaMenu({ group }) {
         borderRadius: `0 0 ${R.lg}px ${R.lg}px`, boxShadow: "0 16px 36px rgba(0,0,0,0.12)",
         padding: grouped ? 20 : 12, minWidth: grouped ? 560 : 260,
         display: "grid", gap: grouped ? 18 : 2,
-        gridTemplateColumns: grouped ? "repeat(2, minmax(240px, 1fr))" : "1fr",
+        gridTemplateColumns: grouped
+          ? `repeat(${Math.min(group.items.length, 3)}, minmax(230px, 1fr))`
+          : "1fr",
       }}
     >
       {group.items.map(([heading, items], gi) => (
@@ -300,7 +375,7 @@ function MobileNav({ open, signedIn, onClose, onSignedIn }) {
         padding: "8px 16px 20px", fontFamily: FONT_BODY,
       }}
     >
-      {NAV.map(group => (
+      {[...NAV, BOOKSTORE].map(group => (
         <div key={group.label} style={{ padding: "10px 0", borderBottom: `1px solid ${T.border}` }}>
           <div style={{ fontSize: TYPE.lg, fontWeight: 700, color: T.textNeutral, padding: "4px 0 6px" }}>
             {group.label}{group.mark && <Mark kind={group.mark} />}
@@ -442,24 +517,77 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
     return () => document.removeEventListener("mousedown", onDoc);
   }, []);
 
+  /* One place to decide whether a mega menu is open, so the two rows can
+     both close each other's popovers. */
+  const toggle = key => setOpen(open === key ? null : key);
+
+  const NavItem = ({ group }) => (
+    <span key={group.label} style={{ position: "relative" }}>
+      <button
+        onClick={() => toggle(group.label)}
+        onMouseEnter={() => open && setOpen(group.label)}
+        aria-expanded={open === group.label}
+        style={{
+          background: "transparent", border: 0, padding: "14px 10px",
+          fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 500,
+          color: open === group.label ? C.blue600 : T.textNeutral,
+          borderBottom: open === group.label ? `2px solid ${C.blue600}` : "2px solid transparent",
+          whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 6, cursor: "pointer",
+        }}
+      >
+        {group.icon && <span className="ms" style={{ fontSize: 20 }}>{group.icon}</span>}
+        {group.label}
+        {group.mark && <Mark kind={group.mark} />}
+        <span className="ms turn" style={{ fontSize: 18, transform: open === group.label ? "rotate(180deg)" : "none" }}>
+          expand_more
+        </span>
+      </button>
+      {open === group.label && <MegaMenu group={group} />}
+    </span>
+  );
+
   return (
     <div ref={ref} style={{ borderBottom: `1px solid ${T.border}`, background: "#fff", position: "relative", zIndex: 40 }}>
+
+      {/* ── Utility row ──
+          Draft D moves the logo, search, account, locale and cart up here,
+          which leaves the row below for the five jobs and nothing else.
+          "Shop with AI" is deliberately absent — see the file header. */}
       <div style={{
-        maxWidth: 1400, margin: "0 auto", padding: "0 16px", height: 66,
+        maxWidth: 1400, margin: "0 auto", padding: "0 16px", minHeight: 56,
         display: "flex", alignItems: "center", gap: 16, fontFamily: FONT_BODY,
       }}>
-        {/* The real brand mark, carried over from Blurb Checkout Prototypes —
-            same asset, same proportions as the live header (52px square).
-            A logo goes home; there is no home page in this prototype, so it
-            goes to the first screen of the journey instead of nowhere. */}
         <a
           href="#"
           aria-label="Blurb home"
           onClick={e => { e.preventDefault(); onGo?.("getstarted"); }}
           style={{ display: "flex", alignItems: "center", flex: "0 0 auto" }}
         >
-          <img src={BLURB_LOGO} alt="Blurb" style={{ height: 42, width: "auto", display: "block" }} />
+          <img src={BLURB_LOGO} alt="Blurb" style={{ height: 36, width: "auto", display: "block" }} />
         </a>
+
+        {/* Search is drawn, not built. A prototype search box that returned
+            nothing would invite a conversation about results rather than
+            about navigation. */}
+        <label
+          className="hide-sm"
+          title="Search is not prototyped"
+          style={{
+            flex: "1 1 320px", maxWidth: 420, minWidth: 0, height: 40,
+            display: "flex", alignItems: "center", gap: 8, padding: "0 12px",
+            border: `1px solid ${T.border}`, borderRadius: 999, color: T.textSubtle,
+          }}
+        >
+          <span className="ms" style={{ fontSize: 20 }}>search</span>
+          <input
+            readOnly
+            placeholder="Search books, formats and tools"
+            style={{
+              border: 0, outline: "none", background: "transparent", minWidth: 0, width: "100%",
+              fontFamily: FONT_BODY, fontSize: TYPE.sm, color: T.textSubtle, cursor: "default",
+            }}
+          />
+        </label>
 
         <button
           className="nav-toggle"
@@ -474,38 +602,11 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
           <span className="ms" style={{ fontSize: 26 }}>{mobileOpen ? "close" : "menu"}</span>
         </button>
 
-        <nav className="nav-desktop" style={{ display: "flex", alignItems: "center", gap: 4, flex: 1, minWidth: 0 }}>
-          {NAV.map(group => (
-            <span key={group.label} style={{ position: "relative" }}>
-              <button
-                onClick={() => setOpen(open === group.label ? null : group.label)}
-                onMouseEnter={() => open && setOpen(group.label)}
-                aria-expanded={open === group.label}
-                style={{
-                  background: "transparent", border: 0, padding: "22px 10px",
-                  fontFamily: FONT_BODY, fontSize: TYPE.sm, fontWeight: 500,
-                  color: open === group.label ? C.blue600 : T.textNeutral,
-                  borderBottom: open === group.label ? `2px solid ${C.blue600}` : "2px solid transparent",
-                  whiteSpace: "nowrap",
-                }}
-              >
-                {group.label}
-                {group.mark && <Mark kind={group.mark} />}
-              </button>
-              {open === group.label && <MegaMenu group={group} />}
-            </span>
-          ))}
-        </nav>
-
-        <div style={{ display: "flex", alignItems: "center", gap: 16, flex: "0 0 auto" }}>
-          {/* On a phone these live in the menu instead, so the bar keeps
-              room for the two things you cannot reach from there — your
-              cart, and the action the page is for. */}
-          <span className="hide-sm" style={{ display: "inline-flex", alignItems: "center", gap: 16 }}>
+        <div className="hide-sm" style={{ display: "flex", alignItems: "center", gap: 16, marginLeft: "auto", flex: "0 0 auto" }}>
           {signedIn ? (
             <AccountMenu
               open={open === "__account"}
-              onToggle={() => setOpen(open === "__account" ? null : "__account")}
+              onToggle={() => toggle("__account")}
               onSignOut={() => { setOpen(null); onSignedIn && onSignedIn(false); }}
             />
           ) : (
@@ -514,23 +615,21 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
               <a href="#" onClick={e => { e.preventDefault(); onSignedIn && onSignedIn(true); }} style={{ fontSize: TYPE.sm, color: T.textNeutral, textDecoration: "none" }}>Log In</a>
             </>
           )}
-          </span>
 
           <LocaleMenu
             open={open === "__locale"}
-            onToggle={() => setOpen(open === "__locale" ? null : "__locale")}
+            onToggle={() => toggle("__locale")}
             value={locale}
             onPick={i => { setLocale(i); setOpen(null); }}
           />
 
           {/* Kept when signed in. Today it disappears, which strands anyone mid-order. */}
           <span className="ms" style={{ fontSize: 20, color: T.textNeutral }}>shopping_cart</span>
-          {/* Start Project goes to /getting-started, not to registration.
-              On the live site this button is the header's most prominent
-              action and it opens /my/account/register — an account form
-              before a price, which is the identity gate the audit argues
-              against. The page it should open is the one that asks what you
-              are making and prices it. */}
+
+          {/* Start Project goes to /getting-started, not to registration. On
+              the live site this is the header's most prominent action and it
+              opens /my/account/register — an account form before a price,
+              which is the identity gate the audit argues against. */}
           <button
             onClick={() => onGo?.("getstarted")}
             style={{
@@ -544,6 +643,23 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
           </button>
         </div>
       </div>
+
+      {/* ── Nav row ── the five jobs, and the Bookstore apart from them. */}
+      <nav
+        className="nav-desktop"
+        style={{
+          borderTop: `1px solid ${T.border}`,
+          maxWidth: 1400, margin: "0 auto", padding: "0 16px",
+          display: "flex", alignItems: "center", gap: 4, fontFamily: FONT_BODY,
+        }}
+      >
+        {NAV.map(group => <NavItem key={group.label} group={group} />)}
+
+        <span style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 4 }}>
+          <span aria-hidden style={{ width: 1, height: 22, background: T.border, margin: "0 8px" }} />
+          <NavItem group={BOOKSTORE} />
+        </span>
+      </nav>
 
       <MobileNav
         open={mobileOpen}
@@ -571,11 +687,11 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
               </>
             ) : (
               <>
-                <strong style={{ color: T.textNeutral }}>Proposed nav.</strong>{" "}
-                Sell &amp; Self-Publish groups by <em>how</em> you sell, and seller pricing stays off the
-                Pricing menu. <strong style={{ color: T.textNeutral }}>New</strong> and{" "}
-                <strong style={{ color: T.textNeutral }}>Changed</strong> mark what it adds — open those two
-                menus to see them.
+                <strong style={{ color: T.textNeutral }}>Proposed nav — Deb's option D.</strong>{" "}
+                Five jobs, not six departments: <em>Make</em> · <em>Sell</em> · <em>Services</em> ·{" "}
+                <em>Pricing</em> · <em>Resources</em>, with the Bookstore apart. Volume orders and API
+                printing move to <em>Services</em>, because neither is a way to sell. Seller pricing stays
+                off the Pricing menu. Search is drawn, not built; no AI.
               </>
             )}
           </span>
