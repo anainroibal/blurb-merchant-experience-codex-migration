@@ -59,6 +59,53 @@ export function Field({ label, value, children, detailsOpen, onDetails, note }) 
 }
 
 
+/* ── A size swatch ──
+   The tile IS the control and the label sits under it, outside the frame —
+   which is what the live PDP does, and what my first pass got wrong by
+   wrapping both in a bordered card. Only the chosen tile is outlined;
+   the rest have a transparent border of the same width so choosing one
+   cannot nudge the row.
+
+   Inside each tile is a white rectangle in the real proportions of that
+   size, scaled against the largest size in the group: a 12×12 reads
+   bigger than a 7×7, and an 8×10 reads taller than it is wide. That is
+   the whole point of showing a shape rather than a glyph — the control
+   answers "what will this look like" before the label does. */
+function SizeSwatch({ option, selected, disabled, onClick, maxDim }) {
+  const [w, h] = (option.dims?.match(/[\d.]+/g) || [1, 1]).slice(0, 2).map(Number);
+  const scale = 0.78 / (maxDim || Math.max(w, h));
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      aria-pressed={selected}
+      title={disabled ? "Not available with the rest of your selection" : option.label}
+      style={{
+        background: "transparent", border: 0, padding: 0, cursor: disabled ? "not-allowed" : "pointer",
+        display: "grid", justifyItems: "center", gap: 8, minWidth: 0,
+        opacity: disabled ? 0.4 : 1, fontFamily: FONT_BODY,
+      }}
+    >
+      <span style={{
+        display: "grid", placeItems: "center", width: "100%", aspectRatio: "1 / 1",
+        background: C.gray100, borderRadius: 8,
+        border: `2px solid ${selected ? C.gray950 : "transparent"}`,
+        boxSizing: "border-box",
+        transition: "border-color var(--nav-hover) var(--nav-ease)",
+      }}>
+        <span style={{
+          display: "block", background: "#fff", borderRadius: 2,
+          width: `${w * scale * 100}%`, height: `${h * scale * 100}%`,
+          boxShadow: "0 1px 3px rgba(0,0,0,0.18)",
+        }} />
+      </span>
+      <span style={{ fontSize: TYPE.sm, color: C.gray950, lineHeight: 1.3, textAlign: "center" }}>
+        {option.dims ? option.dims.split(" (")[0] : option.label}
+      </span>
+    </button>
+  );
+}
+
 /* One group: its label, the choice as words, and the options themselves.
    Sizes get swatches because a size is a shape; everything else is a word
    and gets a text button. */
@@ -77,22 +124,31 @@ export function OptionGroup({
     >
       <div style={
         thumb
-          ? { display: "grid", gap: 12, gridTemplateColumns: "repeat(auto-fit, minmax(88px, 1fr))" }
+          ? { display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(74px, 84px))" }
           : { display: "grid", gap: 10, gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))" }
       }>
-        {options.map(o => (
-          <OptionCard
-            key={o.id}
-            variant={variant}
-            title={thumb ? (o.dims ? o.dims.split(" (")[0] : o.label) : o.label}
-            sub={thumb && detailsOpen ? o.label : null}
-            spec={!thumb && detailsOpen ? o.spec : null}
-            note={thumb && detailsOpen && modifier ? modifier(o.id) : null}
-            selected={o.id === selected}
-            disabled={available ? !available.has(o.id) : false}
-            onClick={() => onPick(o.id)}
-          />
-        ))}
+        {thumb
+          ? options.map(o => (
+              <SizeSwatch
+                key={o.id}
+                option={o}
+                selected={o.id === selected}
+                disabled={available ? !available.has(o.id) : false}
+                onClick={() => onPick(o.id)}
+                maxDim={Math.max(...options.flatMap(x => (x.dims?.match(/[\d.]+/g) || [1]).slice(0, 2).map(Number)))}
+              />
+            ))
+          : options.map(o => (
+              <OptionCard
+                key={o.id}
+                variant="text"
+                title={o.label}
+                spec={detailsOpen ? o.spec : null}
+                selected={o.id === selected}
+                disabled={available ? !available.has(o.id) : false}
+                onClick={() => onPick(o.id)}
+              />
+            ))}
       </div>
       {footer}
     </Field>

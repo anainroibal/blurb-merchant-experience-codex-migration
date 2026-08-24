@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { OptionCard, Divider } from "./Configurator.jsx";
-import { Field } from "./ProductOptions.jsx";
+import { Field, OptionGroup } from "./ProductOptions.jsx";
 import {
   CATALOG, availableFor, reconcile, hasTool,
   unitPrice, perPagePrice, pageLimit, money,
@@ -312,75 +312,52 @@ export default function ProductPage({ onGo, seed = null }) {
             </p>
           </div>
 
-          <Field
+          {/* Size and paper go through the shared OptionGroup — the same
+              component the calculators use, so a swatch cannot look like one
+              thing here and another there. */}
+          <OptionGroup
             label="Size"
             value={`${opt("size", size)?.label} (${sizeModifier(size) ?? "not available"})`}
+            options={f.groups.find(g => g.id === "size").options}
+            selected={size}
+            onPick={changeSize}
+            available={sizesOk}
+            variant="thumb"
+            modifier={sizeModifier}
             detailsOpen={details.has("size")}
             onDetails={() => toggleDetails("size")}
-          >
-            {/* An even grid rather than a flex row of fixed widths: the cards
-                stretch to fill the column, so the sixth size wraps into line
-                with the first instead of leaving a ragged gap. */}
-            <div style={{ display: "grid", gap: 12, gridTemplateColumns: "repeat(auto-fit, minmax(88px, 1fr))" }}>
-              {f.groups.find(g => g.id === "size").options.map(o => (
-                <OptionCard
-                  key={o.id}
-                  variant="thumb"
-                  title={o.dims.split(" (")[0]}
-                  sub={details.has("size") ? o.label : null}
-                  note={details.has("size") ? sizeModifier(o.id) : null}
-                  selected={o.id === size}
-                  disabled={!sizesOk.has(o.id)}
-                  onClick={() => changeSize(o.id)}
-                />
-              ))}
-            </div>
-          </Field>
+          />
 
           <Divider />
 
-          <Field
+          <OptionGroup
             label="Paper"
             value={opt("paper", paper)?.label}
+            options={f.groups.find(g => g.id === "paper").options}
+            selected={paper}
+            onPick={setPaper}
+            available={papersOk}
             detailsOpen={details.has("paper")}
             onDetails={() => toggleDetails("paper")}
-          >
-            <div style={{ display: "grid", gap: 10, gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))" }}>
-              {f.groups.find(g => g.id === "paper").options.map(o => (
-                <OptionCard
-                  key={o.id}
-                  variant="text"
-                  title={o.label}
-                  spec={details.has("paper") ? o.spec : null}
-                  selected={o.id === paper}
-                  disabled={!papersOk.has(o.id)}
-                  onClick={() => setPaper(o.id)}
-                />
-              ))}
-            </div>
-            <p style={{ margin: "12px 0 0", fontSize: TYPE.sm }}>
-              <span className="ms" style={{ fontSize: 16, color: T.bgBrand, verticalAlign: "-3px", marginRight: 6 }}>
-                palette
-              </span>
-              <span style={{ color: T.textBrand, fontWeight: 600, textDecoration: "underline" }}>{COPY.swatch}</span>
-            </p>
-          </Field>
+            footer={
+              <p style={{ margin: "12px 0 0", fontSize: TYPE.sm }}>
+                <span className="ms" style={{ fontSize: 16, color: T.bgBrand, verticalAlign: "-3px", marginRight: 6 }}>
+                  palette
+                </span>
+                <span style={{ color: T.textBrand, fontWeight: 600, textDecoration: "underline" }}>{COPY.swatch}</span>
+              </p>
+            }
+          />
 
           <Divider />
 
-          <Field label="Cover finish" value={FINISHES.find(o => o.id === finish)?.label}>
-            <div style={{ display: "grid", gap: 10, gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))" }}>
-              {FINISHES.map(o => (
-                <OptionCard
-                  key={o.id}
-                  variant="text"
-                  title={o.label}
-                  selected={o.id === finish}
-                  onClick={() => setFinish(o.id)}
-                />
-              ))}
-            </div>
-          </Field>
+          <OptionGroup
+            label="Cover finish"
+            value={FINISHES.find(o => o.id === finish)?.label}
+            options={FINISHES}
+            selected={finish}
+            onPick={setFinish}
+          />
 
           <Divider />
 
