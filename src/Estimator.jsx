@@ -3,7 +3,7 @@ import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.
 import SellChannels from "./SellChannels.jsx";
 import SummaryPanel from "./SummaryPanel.jsx";
 import {
-  CATALOG, FORMAT_IDS, PROJECT_KINDS,
+  CATALOG, PROJECT_KINDS, fromPrice, sizeCount,
   seedFor, priceFor, sellerCost, minSellPrice, defaultSelection,
   availableFor, reconcile, pageLimit, derivedSteps, money,
   SHIPPING, US_STATES, shippingFor, speedDays, arrivalWindow, formatDay, PRINT_RANGE,
@@ -59,6 +59,104 @@ const MODES = {
   },
 };
 
+/* ── The format cards, as /pricing opens with them ──
+   "Select a format to see size and paper options" — the products first,
+   then the controls that price one. It is the same principle the whole
+   prototype runs on: a maker who already knows they want an 8×10 hardback
+   must not be asked what kind of book they are writing first.
+
+   Descriptions and badges are the live page's. The size counts and the
+   from-prices are computed — sizeCount() and fromPrice() — so a card can
+   never advertise a size the matrix does not hold. Expect the trade,
+   notebook and wall-art figures to differ from the live page: it types
+   $3.99, $12.00 and $65.00 where the matrix says $2.99, $14.67 and
+   $10.11. That gap is ticket T7, and showing the computed number is the
+   point rather than an oversight.
+
+   PDFs are not here, because /pricing does not offer one. They are still
+   in the catalogue, and still priced, for the pages that do. */
+const FORMAT_CARDS = [
+  ["photo",    "Photo Book",             "Premium books made for visual storytelling.", "Most Popular"],
+  ["trade",    "Paperback & Hardcover Books", "Ideal for projects that pair text and imagery.", "Budget-friendly"],
+  ["magazine", "Magazine",               "Great for serial content or volume printing. Think lookbooks and zines."],
+  ["notebook", "Notebooks & Journals",   "Blank, lined, dotted or grid pages made for sketching, planning, and day-dreaming."],
+  ["wallart",  "Wall Art",               "Gallery-quality wall décor, featuring your favorite photos or custom designs."],
+];
+
+function FormatCards({ formatId, onPick }) {
+  return (
+    <div style={{ display: "grid", gap: 18 }}>
+      <div style={{ textAlign: "center" }}>
+        <h2 style={{
+          fontFamily: FONT_DISPLAY, fontWeight: 500, letterSpacing: "-0.01em",
+          fontSize: "clamp(1.5rem, 3.2vw, 2.125rem)", lineHeight: 1.2, margin: 0,
+        }}>
+          Select a format to see size and paper options
+        </h2>
+        <p style={{ margin: "10px 0 0", fontSize: TYPE.base, color: T.textSubtle }}>
+          Save more when you print in bulk. Learn about{" "}
+          <span style={{ color: T.textBrand, fontWeight: 600, textDecoration: "underline" }}>
+            volume discounts
+          </span>.
+        </p>
+      </div>
+
+      <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))" }}>
+        {FORMAT_CARDS.map(([id, title, blurb, badge]) => {
+          const on = id === formatId;
+          const from = fromPrice(id);
+          return (
+            <button
+              key={id}
+              onClick={() => onPick(id)}
+              aria-pressed={on}
+              className="card-move"
+              style={{
+                textAlign: "left", font: "inherit", cursor: "pointer", minWidth: 0,
+                background: T.bgNeutral, borderRadius: R.lg, padding: 12,
+                border: on ? `2px solid ${T.borderBrand}` : `1px solid ${T.border}`,
+                margin: on ? 0 : 1,
+                display: "grid", gap: 10, alignContent: "start",
+              }}
+            >
+              {/* The live cards photograph the product; this is the placeholder
+                  for that, with the badge sitting on it as it does there. */}
+              <span style={{
+                position: "relative", display: "block", background: C.gray50,
+                borderRadius: R.md, aspectRatio: "1 / 1",
+              }}>
+                {badge && (
+                  <span style={{
+                    position: "absolute", top: 8, left: 8, background: "#fff",
+                    border: `1px solid ${T.border}`, borderRadius: R.sm,
+                    padding: "2px 8px", fontSize: TYPE.sm, fontWeight: 600,
+                  }}>
+                    {badge}
+                  </span>
+                )}
+              </span>
+
+              <span style={{
+                display: "block", fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"],
+                fontWeight: 600, lineHeight: 1.2, color: T.textNeutral,
+              }}>
+                {title}
+              </span>
+              <span style={{ display: "block", fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>
+                {blurb}
+              </span>
+              <span style={{ display: "block", fontSize: TYPE.sm, fontWeight: 700 }}>
+                {sizeCount(id)} {sizeCount(id) === 1 ? "size" : "sizes"} —{" "}
+                {from == null ? "price on request" : `from ${money(from)}`}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 const control = {
   height: 40, width: "100%", minWidth: 0,
   border: `1px solid ${T.borderStrong}`, borderRadius: 4, background: T.bgNeutral,
@@ -82,7 +180,7 @@ function Field({ label, hint, children }) {
 /* Product options, as compact selects rather than the full step page.
    Everything the matrix cannot build is disabled rather than hidden, so
    the shape of what Blurb makes stays visible. */
-function SpecPicker({ formatId, state, onFormat, onState }) {
+function SpecPicker({ formatId, state, onState }) {
   const f = CATALOG[formatId];
   const derived = derivedSteps(formatId, state);
 
@@ -95,12 +193,6 @@ function SpecPicker({ formatId, state, onFormat, onState }) {
 
   return (
     <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))" }}>
-      <Field label="Product">
-        <select style={control} value={formatId} onChange={e => onFormat(e.target.value)}>
-          {FORMAT_IDS.map(id => <option key={id} value={id}>{CATALOG[id].label}</option>)}
-        </select>
-      </Field>
-
       {f.groups.map(g => {
         const ok = availableFor(formatId, state, g.id);
         return (
@@ -406,6 +498,9 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
       <section style={{ padding: "24px 16px 72px" }}>
         <div style={{ maxWidth: 1180, margin: "0 auto", display: "grid", gap: 18 }}>
 
+          {/* ── Formats first, then the controls that price one ── */}
+          <FormatCards formatId={formatId} onPick={changeFormat} />
+
           {/* ── The get-started layout: choices on one side, the running
                  total on the other ──
                  Same grid and the same two classes, so the responsive rules
@@ -429,10 +524,7 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
             background: T.bgNeutral, border: `1px solid ${T.border}`, borderRadius: R.lg,
             padding: 24, display: "grid", gap: 18,
           }}>
-            <SpecPicker
-              formatId={formatId} state={state}
-              onFormat={changeFormat} onState={setState}
-            />
+            <SpecPicker formatId={formatId} state={state} onState={setState} />
 
             {/* ── Only for the person who wants it ── */}
             <HelpMeDecide
@@ -441,24 +533,33 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
             />
           </div>
 
-          {/* Arrival dates stay here rather than moving into the panel: they
-              are the maker's question, they need the width, and the panel is
-              deliberately the calculation and nothing else. It reads the same
-              shipping state the panel does. */}
-          {!selling && (
-            <div style={{
-              background: T.bgNeutral, border: `1px solid ${T.border}`, borderRadius: R.lg,
-              padding: 24, display: "grid", gap: 10,
-            }}>
-              <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>
-                When it would arrive
-              </span>
-              <DeliveryTable
-                qty={state.qty} country={ship.country} poBox={ship.poBox}
-                chosen={ship.speed} onChoose={id => setShip({ ...ship, speed: id })}
-              />
-            </div>
-          )}
+          {/* ── Shipping, in the main column ──
+              The destination lives out here, not in the panel: it needs the
+              width for arrival dates beside it, and the panel's job is the
+              calculation. The panel's opt-in reads this state, so turning
+              "include shipping" on there uses whatever is chosen here. */}
+          <div style={{
+            background: T.bgNeutral, border: `1px solid ${T.border}`, borderRadius: R.lg,
+            padding: 24, display: "grid", gap: 16,
+          }}>
+            <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>
+              Shipping
+            </span>
+
+            <ShipTo selling={selling} shipping={!selling} ship={ship} setShip={setShip} />
+
+            {!selling && (
+              <div style={{ display: "grid", gap: 10, borderTop: `1px solid ${T.border}`, paddingTop: 16 }}>
+                <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>
+                  When it would arrive
+                </span>
+                <DeliveryTable
+                  qty={state.qty} country={ship.country} poBox={ship.poBox}
+                  chosen={ship.speed} onChoose={id => setShip({ ...ship, speed: id })}
+                />
+              </div>
+            )}
+          </div>
 
           {selling && <SellChannels price={shown} cost={cost} formatId={formatId} sel={state} />}
 

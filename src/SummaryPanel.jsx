@@ -231,102 +231,33 @@ function Line({ label, value, strong, muted, accent }) {
   );
 }
 
-function ShippingBlock({ ship, setShip, qty, selling, cost }) {
-  const country = SHIPPING.countries.find(c => c.id === ship.country);
-  const ready = ship.postal.trim().length > 1;
-  const quote = ready ? shippingFor(ship.country, ship.speed, qty) : null;
-
+/* The switch. A checkbox rather than a disclosure, because it changes a
+   number rather than revealing more reading — and it names which number. */
+function ShippingSwitch({ on, onChange, quote, selling }) {
   return (
-    <div style={{ display: "grid", gap: 12 }}>
-      <button
-        onClick={() => setShip({ ...ship, open: !ship.open })}
-        aria-expanded={ship.open}
-        style={{
-          display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8,
-          background: "transparent", border: 0, padding: 0, width: "100%",
-          fontFamily: FONT_BODY, textAlign: "left",
-        }}
-      >
-        <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>
-          {selling ? "What your buyer pays" : "Shipping"}
+    <label style={{
+      display: "grid", gap: 4, cursor: "pointer",
+      borderTop: `1px solid ${T.border}`, paddingTop: 12,
+    }}>
+      <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <input
+          type="checkbox"
+          checked={on}
+          onChange={e => onChange(e.target.checked)}
+          style={{ width: 18, height: 18, accentColor: C.blue600, flex: "0 0 auto" }}
+        />
+        <span style={{ fontSize: TYPE.sm, fontWeight: 700 }}>
+          {selling ? "Show what your buyer pays" : "Include shipping in the total"}
         </span>
-        <span style={{ display: "inline-flex", alignItems: "center", gap: 6, color: T.textSubtle, fontSize: TYPE.sm }}>
-          {quote ? money(quote.cost) : "Estimate"}
-          <span className="ms" style={{ fontSize: 18 }}>{ship.open ? "expand_less" : "expand_more"}</span>
-        </span>
-      </button>
-
-      {ship.open && (
-        <div className="fade-in" style={{ display: "grid", gap: 10 }}>
-          <div style={{ display: "grid", gap: 8, gridTemplateColumns: "1fr 1fr" }}>
-            <select
-              value={ship.country}
-              onChange={e => setShip({ ...ship, country: e.target.value, postal: "" })}
-              style={{
-                border: `1px solid ${T.border}`, borderRadius: R.sm, padding: "8px 10px",
-                fontFamily: FONT_BODY, fontSize: TYPE.sm, background: T.bgNeutral, minWidth: 0,
-              }}
-            >
-              {SHIPPING.countries.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
-            </select>
-            <input
-              value={ship.postal}
-              onChange={e => setShip({ ...ship, postal: e.target.value })}
-              placeholder={country?.example}
-              aria-label={country?.postal}
-              style={{
-                border: `1px solid ${T.border}`, borderRadius: R.sm, padding: "8px 10px",
-                fontFamily: FONT_BODY, fontSize: TYPE.sm, minWidth: 0,
-              }}
-            />
-          </div>
-
-          <div style={{ display: "grid", gap: 6 }}>
-            {SHIPPING.speeds.map(s => {
-              const on = ship.speed === s.id;
-              const q = ready ? shippingFor(ship.country, s.id, qty) : null;
-              return (
-                <button
-                  key={s.id}
-                  onClick={() => setShip({ ...ship, speed: s.id })}
-                  aria-pressed={on}
-                  style={{
-                    display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10,
-                    padding: "8px 10px", borderRadius: R.sm, background: T.bgNeutral,
-                    border: on ? `2px solid ${T.borderBrand}` : `1px solid ${T.border}`,
-                    margin: on ? 0 : 1, fontFamily: FONT_BODY, textAlign: "left",
-                  }}
-                >
-                  <span style={{ display: "grid", gap: 1, minWidth: 0 }}>
-                    <span style={{ fontSize: TYPE.sm, fontWeight: on ? 700 : 500 }}>{s.label}</span>
-                    <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>{speedDays(s)}</span>
-                  </span>
-                  <span style={{ fontSize: TYPE.sm, fontWeight: 700, color: on ? C.blue600 : T.textSubtle, whiteSpace: "nowrap" }}>
-                    {q ? money(q.cost) : "—"}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-
-          <p style={{ fontSize: TYPE.sm, color: T.textSubtle, margin: 0, lineHeight: 1.5 }}>
-            This is an estimate. Taxes and delivery rates vary by destination and are confirmed at checkout.
-            Printing takes {PRINT_DAYS.label} before your order ships.
-          </p>
-
-          {selling && quote && (
-            <div style={{ display: "grid", gap: 8, borderTop: `1px solid ${T.border}`, paddingTop: 10 }}>
-              <Line label="Your price" value={money(cost.sellPrice)} muted />
-              <Line label="Shipping, paid by them" value={money(quote.cost)} muted />
-              <Line label="Buyer pays" value={money(cost.sellPrice + quote.cost)} />
-              <p style={{ fontSize: TYPE.sm, color: T.textSubtle, margin: 0, lineHeight: 1.5 }}>
-                None of this touches your margin — your buyer pays shipping directly.
-              </p>
-            </div>
-          )}
-        </div>
-      )}
-    </div>
+      </span>
+      <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5, paddingLeft: 28 }}>
+        {quote
+          ? (selling
+              ? "Their price plus delivery, kept apart from your numbers."
+              : `Adds ${money(quote.cost)} — ${quote.speed.label.toLowerCase()}.`)
+          : "Choose a destination under Shipping to get a figure."}
+      </span>
+    </label>
   );
 }
 
@@ -368,6 +299,23 @@ export default function SummaryPanel({
   const ship = shipProp ?? ownShip;
   const setShip = setShipProp ?? setOwnShip;
   const quote = ship.postal.trim().length > 1 ? shippingFor(ship.country, ship.speed, selling ? 1 : state.qty) : null;
+
+  /* ── Shipping is a question, not a section ──
+     It used to be a block in this panel: destination, postcode, four
+     speeds, folded away but always present. The destination now lives in
+     the main column, where there is room for arrival dates beside it, and
+     what is left here is the only shipping question this panel needs to
+     answer — do you want to see it in the total?
+
+     Off by default, deliberately. The price of the book is what is being
+     decided; shipping is a fact about one delivery to one address, and
+     folding it in by default makes every number on the page conditional on
+     a postcode nobody has typed yet. Turn it on and the total changes.
+
+     On the selling side it stays out of the seller's numbers entirely —
+     the buyer pays it, so what the switch reveals there is what the BUYER
+     pays, as separate lines. That rule is why this panel exists. */
+  const [withShipping, setWithShipping] = useState(false);
 
   const toggleAddon = id => {
     const on = state.addons.includes(id);
@@ -464,12 +412,6 @@ export default function SummaryPanel({
                 </div>
               </>
             )}
-            <Divider />
-            <ShippingBlock
-              ship={ship} setShip={setShip}
-              qty={selling ? 1 : state.qty} selling={selling}
-              cost={{ sellPrice }}
-            />
           </>
         )}
 
@@ -481,6 +423,20 @@ export default function SummaryPanel({
             <p style={{ fontSize: TYPE.sm, color: T.textSubtle, margin: 0, lineHeight: 1.5 }}>
               Your buyer pays shipping, so your margin is the same wherever they live.
             </p>
+
+            {shipProp && (
+              <>
+                <ShippingSwitch on={withShipping} onChange={setWithShipping} quote={quote} selling />
+                {withShipping && quote && (
+                  <div style={{ display: "grid", gap: 10 }}>
+                    <Line label="Your price" value={money(sellPrice)} muted />
+                    <Line label="Shipping, paid by them" value={money(quote.cost)} muted />
+                    <Line label="Your buyer pays" value={money(sellPrice + quote.cost)} strong />
+                  </div>
+                )}
+              </>
+            )}
+
             <CostExplainer compact />
           </>
         ) : (
@@ -490,16 +446,26 @@ export default function SummaryPanel({
               {p.addons > 0 && <Line label="Upgrades" value={money(p.addons)} muted />}
               {state.qty > 1 && <Line label={`${state.qty} copies`} value={money(p.subtotal)} muted />}
               {p.tier && <Line label={`Volume discount ${Math.round(p.tier.pct * 100)}%`} value={`− ${money(p.subtotal - p.total)}`} muted />}
-              {quote && <Line label={`Shipping — ${quote.speed.label}`} value={money(quote.cost)} muted />}
-              <Line label="Total" value={money(p.total + (quote?.cost ?? 0))} strong />
+              {withShipping && quote && (
+                <Line label={`Shipping — ${quote.speed.label}`} value={money(quote.cost)} muted />
+              )}
+              <Line
+                label={withShipping && quote ? "Total with shipping" : "Total"}
+                value={money(p.total + (withShipping && quote ? quote.cost : 0))}
+                strong
+              />
               {/* A bulk buyer prices the run by the copy — it is the number
                   they will set their own price against. */}
               {bulk && state.qty > 0 && (
                 <Line label="Cost per copy" value={money(p.total / state.qty)} accent />
               )}
             </div>
+            {shipProp && (
+              <ShippingSwitch on={withShipping} onChange={setWithShipping} quote={quote} selling={false} />
+            )}
+
             <p style={{ fontSize: TYPE.sm, color: T.textSubtle, margin: 0, lineHeight: 1.5 }}>
-              {quote ? "Excludes taxes." : "Excludes taxes and shipping."}
+              {withShipping && quote ? "Excludes taxes." : "Excludes taxes and shipping."}
               {p.tier && " A promo code replaces this discount rather than adding to it."}
             </p>
           </>
