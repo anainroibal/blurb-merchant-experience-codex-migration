@@ -214,106 +214,100 @@ function Tag({ children }) {
   );
 }
 
-/* ── The panel ──
-   Full width, under the nav row, as drawn: one rule per column heading and
-   the whole thing spanning the header rather than hanging off its trigger.
-   That is the shape that lets Make hold ten project kinds and a note box
-   without becoming a scrolling column. */
+/* ── The panel, as blurb.com draws it ──
+   Anchored under its trigger rather than spanning the header, sized to its
+   contents, white on a soft shadow, and inside it nothing but the
+   destinations: no column headings, no descriptions, one label per line
+   with a lot of air around it.
+
+   That is a real choice and worth naming, because draft D's panels carried
+   a description under every item. Two arguments for the live treatment:
+
+     · A menu is for getting somewhere, and a list of seven plain words is
+       scanned in about a second. The same list with a line of explanation
+       under each takes an order of magnitude longer to read, and the
+       explanation is repeated on the page it leads to anyway.
+     · Descriptions in a menu are where copy goes to be forgotten. Nobody
+       reviews them, nobody translates them twice, and they drift from the
+       pages they describe.
+
+   THE DESCRIPTIONS ARE STILL IN THE DATA, unused by this renderer. If they
+   are wanted back, it is one `body &&` away — see the commented line
+   below. What is genuinely parked by this style: Products' wall-art note,
+   and the Switch to Blurb and API Printing promo panels. Those need a
+   layout with room for a picture, which this one does not have.
+
+   Items flow DOWN each column and then across, in columns of at most five,
+   which is how the live Products menu breaks its seven products. */
+const COLUMN_MAX = 5;
+
+const chunk = (arr, size) =>
+  arr.reduce((cols, item, i) => {
+    if (i % size === 0) cols.push([]);
+    cols[cols.length - 1].push(item);
+    return cols;
+  }, []);
+
+function MenuLink({ item, onClose }) {
+  const [label, , tag] = item;
+  return (
+    <a
+      href="#"
+      onClick={e => { e.preventDefault(); onClose(); }}
+      style={{
+        display: "block", padding: "13px 0", textDecoration: "none",
+        color: T.textNeutral, fontSize: TYPE.base, minWidth: 170,
+      }}
+      onMouseEnter={e => (e.currentTarget.style.color = C.blue600)}
+      onMouseLeave={e => (e.currentTarget.style.color = T.textNeutral)}
+    >
+      {label}<Tag>{tag}</Tag>
+    </a>
+  );
+}
+
 function MegaMenu({ group, onClose }) {
-  const cols = group.columns.length + (group.promo ? 1 : 0);
+  /* Headings only when the menu holds more than one KIND of thing. The live
+     Products menu is seven products and needs no label; ours also holds ten
+     project kinds, and without a heading "Hardcover" sits beside "Zines"
+     with nothing to tell them apart. So: plain list where the menu is one
+     set, headed columns where it is two. */
+  const headed = group.columns.length > 1;
+
   return (
     <div
       className="pop-in"
       style={{
-        position: "absolute", top: "100%", left: 0, right: 0, zIndex: 50,
-        background: "#fff", borderTop: `1px solid ${T.border}`,
-        borderBottom: `1px solid ${T.border}`,
-        boxShadow: "0 16px 36px rgba(0,0,0,0.10)",
+        position: "absolute", top: "100%", left: 0, zIndex: 50,
+        background: "#fff", border: `1px solid ${T.border}`, borderRadius: 2,
+        boxShadow: "0 10px 28px rgba(0,0,0,0.10)",
+        padding: "20px 28px 24px",
+        display: "flex", gap: 56, alignItems: "flex-start",
+        fontFamily: FONT_BODY, whiteSpace: "nowrap",
       }}
     >
-      <div style={{
-        maxWidth: 1400, margin: "0 auto", padding: "22px 16px 28px",
-        display: "grid", gap: 32,
-        gridTemplateColumns: `repeat(${cols}, minmax(220px, 1fr))`,
-        alignItems: "start",
-      }}>
-        {group.columns.map(col => (
-          <div key={col.heading} style={{ minWidth: 0 }}>
-            <div style={{
-              fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.8, textTransform: "uppercase",
-              color: T.textSubtle, paddingBottom: 8, borderBottom: `1px solid ${T.border}`,
-            }}>
-              {col.heading}
-            </div>
-
-            <div style={{
-              marginTop: 14, display: "grid", gap: col.split ? "10px 24px" : 14,
-              gridTemplateColumns: col.split ? "repeat(2, minmax(0, 1fr))" : "1fr",
-            }}>
-              {col.items.map(([label, body, tag]) => (
-                <a
-                  key={label}
-                  href="#"
-                  onClick={e => { e.preventDefault(); onClose(); }}
-                  style={{ textDecoration: "none", color: T.textNeutral, display: "grid", gap: 2, minWidth: 0 }}
-                >
-                  <span style={{ fontSize: TYPE.base, fontWeight: 700 }}>
-                    {label}<Tag>{tag}</Tag>
-                  </span>
-                  {body && (
-                    <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>{body}</span>
-                  )}
-                </a>
-              ))}
-            </div>
-
-            {col.note && (
-              <div style={{
-                marginTop: 18, border: `1px dashed ${T.borderStrong}`, borderRadius: R.sm,
-                padding: "10px 12px", fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5,
-              }}>
-                {col.note[0]}<strong style={{ color: T.textNeutral }}>{col.note[1]}</strong>{col.note[2]}
-              </div>
-            )}
-          </div>
-        ))}
-
-        {group.promo && (
-          <div style={{ minWidth: 0 }}>
-            {group.promo.heading && (
-              <div style={{
-                fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.8, textTransform: "uppercase",
-                color: T.textSubtle, paddingBottom: 8, borderBottom: `1px solid ${T.border}`,
-              }}>
-                {group.promo.heading}
-              </div>
-            )}
-            <div style={{
-              marginTop: group.promo.heading ? 14 : 0,
-              border: `1px solid ${T.border}`, borderRadius: R.md, padding: 14,
-              display: "grid", gap: 10,
-            }}>
-              <div style={{ background: C.gray50, borderRadius: R.sm, height: 96 }} />
-              <span style={{ fontSize: TYPE.base, fontWeight: 700 }}>
-                {group.promo.title}<Tag>{group.promo.tag}</Tag>
-              </span>
-              <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>
-                {group.promo.body}
-              </span>
-              {group.promo.cta && (
-                <span style={{
-                  justifySelf: "start", border: `1px solid ${T.borderStrong}`, borderRadius: R.sm,
-                  padding: "6px 12px", fontSize: TYPE.sm, fontWeight: 700,
-                  display: "inline-flex", alignItems: "center", gap: 6,
+      {group.columns.map(col => (
+        <div key={col.heading} style={{ display: "flex", gap: 56, alignItems: "flex-start" }}>
+          {/* A long set breaks into columns of five, which is how the live
+              Products menu splits its seven. */}
+          {chunk(col.items, COLUMN_MAX).map((sub, i) => (
+            <div key={i}>
+              {headed && (
+                <div style={{
+                  fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.6, textTransform: "uppercase",
+                  color: T.textSubtle, paddingBottom: 6,
+                  /* The heading belongs to the set, not to each column of it,
+                     so only the first column of a split set is labelled. */
+                  visibility: i === 0 ? "visible" : "hidden",
                 }}>
-                  {group.promo.cta}
-                  {group.promo.external && <span className="ms" style={{ fontSize: 16 }}>open_in_new</span>}
-                </span>
+                  {col.heading}
+                </div>
               )}
+              {sub.map(item => <MenuLink key={item[0]} item={item} onClose={onClose} />)}
             </div>
-          </div>
-        )}
-      </div>
+          ))}
+        </div>
+      ))}
     </div>
   );
 }
@@ -569,22 +563,25 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
      a row of words into a row of controls. The open item takes the brand
      colour, which is how the live header marks it. */
   const NavItem = ({ group }) => (
-    <button
-      onClick={() => toggle(group.label)}
-      onMouseEnter={() => open && !open.startsWith("__") && setOpen(group.label)}
-      aria-expanded={open === group.label}
-      style={{
-        background: "transparent", border: 0, padding: "22px 12px",
-        fontFamily: FONT_BODY, fontSize: TYPE.sm, fontWeight: 500,
-        color: open === group.label ? C.blue600 : T.textNeutral,
-        whiteSpace: "nowrap", cursor: "pointer",
-      }}
-    >
-      {group.label}
-    </button>
+    /* The panel is anchored to its own trigger now, so it lives inside the
+       item rather than being rendered once for the whole row. */
+    <span style={{ position: "relative" }}>
+      <button
+        onClick={() => toggle(group.label)}
+        onMouseEnter={() => open && !open.startsWith("__") && setOpen(group.label)}
+        aria-expanded={open === group.label}
+        style={{
+          background: "transparent", border: 0, padding: "22px 12px",
+          fontFamily: FONT_BODY, fontSize: TYPE.sm, fontWeight: 500,
+          color: open === group.label ? C.blue600 : T.textNeutral,
+          whiteSpace: "nowrap", cursor: "pointer",
+        }}
+      >
+        {group.label}
+      </button>
+      {open === group.label && <MegaMenu group={group} onClose={() => setOpen(null)} />}
+    </span>
   );
-
-  const openGroup = [...NAV, BOOKSTORE].find(g => g.label === open);
 
   return (
     <div ref={ref} style={{ borderBottom: `1px solid ${T.border}`, background: "#fff", position: "relative", zIndex: 40 }}>
@@ -670,8 +667,6 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
           </button>
         </div>
       </div>
-
-      {openGroup && <MegaMenu group={openGroup} onClose={() => setOpen(null)} />}
 
       <MobileNav
         open={mobileOpen}
