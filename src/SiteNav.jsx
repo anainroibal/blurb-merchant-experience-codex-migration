@@ -92,7 +92,7 @@ const NAV = [
     /* The seven products Blurb prints, with the "best for" line each one
        carries in the sample. Split 4 / 3 across two columns under a single
        heading, as drawn. */
-    { heading: "Products", chunkAt: 4, items: [
+    { heading: "Product catalog", chunkAt: 4, items: [
       ["Shop All", "Every format Blurb prints."],
       ["Photo Books", "Best for travel, fine-art photography, and books built to last on a shelf.", null, "product"],
       ["Layflat Books", "Best for wedding albums, panoramic landscapes, and portfolio work."],
@@ -120,7 +120,7 @@ const NAV = [
      reading material. The live site agrees: its Design Tools menu carries
      BookWright, Adobe Tools, PDF to Book and BookWright Templates. */
   { label: "Tools", href: "/bookmaking-tools", columns: [
-    { heading: "Design tools", items: [
+    { heading: "Creative tools", items: [
       ["Blurb online editor", "Design in your browser. Nothing to download."],
       ["BookWright", "Blurb's own book-making software."],
       ["PDF to Book", "Bring a file you have already laid out."],
@@ -318,12 +318,12 @@ function MenuLink({ item, onClose, onGo }) {
 }
 
 function MegaMenu({ group, isOpen, onClose, onGo }) {
-  /* Headings only when the menu holds more than one KIND of thing. The live
-     Products menu is seven products and needs no label; ours also holds ten
-     project kinds, and without a heading "Hardcover" sits beside "Zines"
-     with nothing to tell them apart. So: plain list where the menu is one
-     set, headed columns where it is two. */
-  const headed = group.columns.length > 1 || !!group.featured;
+  /* Every menu is headed (2026-08-24). The rule used to be "only when the
+     menu holds more than one kind of thing", which left Tools — a single
+     column — as the one panel that opened with no label on it, and the row
+     reading inconsistently as you moved along it. A heading costs one line
+     and says what the list is; there is no menu here where that is wasted. */
+  const headed = true;
 
   return (
     /* Mounted whether or not it is open, so the exit is animated too — a
