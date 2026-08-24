@@ -54,21 +54,48 @@ const TOOL_PATHS = [
   { id: "bookwright", icon: "download", label: "BookWright for desktop",
     body: "Our free desktop app, for longer books and more control over layout.",
     external: "https://www.blurb.com/bookwright" },
-  { id: "lightroom", icon: "photo_library", label: "Adobe Lightroom plug-in",
-    body: "Already editing in Lightroom? Send a gallery straight into a book layout.",
-    external: "https://www.blurb.com/lightroom" },
-  { id: "indesign", icon: "article", label: "Adobe InDesign plug-in",
-    body: "Lay it out in InDesign and export a Blurb-ready file.",
-    external: "https://www.blurb.com/indesign-plugin" },
+  /* ── One Adobe row, pointing at the Adobe tools page ──
+     There were two: a Lightroom row linking to /lightroom and an InDesign
+     row linking to /indesign-plugin. Both pages exist — the sitemap sweep
+     found Adobe living on three of them, /lightroom, /indesign-plugin and
+     /photoshop-plugin — but the destination a maker wants is the hub that
+     holds all of them, /bookmaking-tools/adobe-tools, which is also where
+     the nav sends them.
+
+     So one row, and the copy says Adobe rather than naming a single
+     application. Which applications get named in the line underneath comes
+     from TOOLS in the catalogue, because it differs by product: a photo
+     book has Lightroom, wall art has InDesign and Photoshop. Naming all
+     three everywhere would be quicker to write and wrong two ways. */
+  { id: "adobe", icon: "photo_library", label: "Adobe tools",
+    body: null,
+    external: "https://www.blurb.com/bookmaking-tools/adobe-tools" },
   { id: "pdf", icon: "upload_file", label: "Upload a print-ready PDF",
     body: "Finished it elsewhere? Bring the PDF and it is ready to order.",
     action: "build" },
 ];
 
+/* The Adobe applications this product can be laid out in, named from the
+   catalogue. "Lay it out in Lightroom, where you already work." */
+const ADOBE = [
+  ["lightroom", "Lightroom"],
+  ["indesign", "InDesign"],
+  ["photoshop", "Photoshop"],
+];
+
+const adobeBody = formatId => {
+  const names = ADOBE.filter(([id]) => hasTool(formatId, id)).map(([, name]) => name);
+  if (!names.length) return null;
+  const list = names.length === 1
+    ? names[0]
+    : `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+  return `Plug-ins for ${list} — lay the book out where you already work.`;
+};
+
 /* One row of the tools list. A button when it starts something here, a link
    when it leaves for blurb.com — same shape either way, so the list reads as
    one set of choices rather than two. */
-function ToolRow({ tool, onBuild }) {
+function ToolRow({ tool, onBuild, body }) {
   const inner = (
     <>
       <span className="ms" style={{ fontSize: 22, color: T.bgBrand, flex: "0 0 auto" }}>{tool.icon}</span>
@@ -79,7 +106,7 @@ function ToolRow({ tool, onBuild }) {
             {tool.external ? "open_in_new" : "arrow_forward"}
           </span>
         </span>
-        <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.55 }}>{tool.body}</span>
+        <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.55 }}>{body}</span>
       </span>
     </>
   );
@@ -170,8 +197,18 @@ export default function CreateActions({ formatId, sel, onGo, showLearnMore = tru
             padding: 16, display: "grid", gap: 14, background: T.bgSubtle,
           }}
         >
-          {TOOL_PATHS.filter(t => hasTool(formatId, t.id) && t.label !== primary.label)
-            .map(t => <ToolRow key={t.id} tool={t} onBuild={build} />)}
+          {TOOL_PATHS
+            .filter(t => t.id === "adobe"
+              ? ADOBE.some(([id]) => hasTool(formatId, id))
+              : hasTool(formatId, t.id) && t.label !== primary.label)
+            .map(t => (
+              <ToolRow
+                key={t.id}
+                tool={t}
+                onBuild={build}
+                body={t.id === "adobe" ? adobeBody(formatId) : t.body}
+              />
+            ))}
           <div style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
             Every one of these makes the book you have priced, and the price does not change with the tool
             you pick.
