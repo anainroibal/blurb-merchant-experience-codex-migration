@@ -517,20 +517,20 @@ export default function SellerLanding({ onGo }) {
               </div>
             ))}
           </div>
-        </div>
-      </section>
 
-      {/* ── The comparison, on its own ground ── */}
-      <section style={{ background: T.bgSubtle, borderTop: `1px solid ${T.border}`, padding: "clamp(56px, 7vw, 80px) 24px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 32 }}>
-          <div style={{ textAlign: "center" }}>
-            <h2 style={{
-              fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
-              lineHeight: 1.25, margin: 0,
-            }}>
-              The four, side by side
-            </h2>
-          </div>
+          {/* ── …and the same four, side by side ──
+              One section, not two (2026-08-24). The cards and the table are
+              one question — which route is mine? — asked twice over: once as
+              four pictures you skim, once as five facts you can read across.
+              A grey band between them made the table look like a different
+              subject, and a second h2 said so out loud. It gets a quiet
+              label under the same heading instead, and the ground never
+              changes, so the eye stays in one section until the answer is
+              chosen. */}
+          <div style={{ display: "grid", gap: 20, marginTop: 8 }}>
+            <div style={{ textAlign: "center", fontSize: TYPE.lg, fontWeight: 700 }}>
+              The same four, side by side
+            </div>
 
           {/* ── The comparison ──
               Built like the tool comparison on blurb.com/bookmaking-tools,
@@ -637,8 +637,9 @@ export default function SellerLanding({ onGo }) {
             True of every route: a US $25 payout minimum, a proof before the book goes on sale, and volume
             discounts that are retail-only. A route can also fall away once the book is specified — Amazon
             takes photo books but not layflat ones or the 5×5. Store integrations (Shopify, Etsy) would be
-            the fifth route; unbuilt, so not compared.
-          </p>
+              the fifth route; unbuilt, so not compared.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -761,7 +762,16 @@ export default function SellerLanding({ onGo }) {
           that acts on it belongs here too — once, at the end. Two actions,
           because there are two states to be in: you have picked the Instant
           Store and want the number, or you have not started the book yet. */}
-      <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
+      {/* The live page's closing band, read off it: a duotone gradient at 71°
+          from #e2e8f0 through #f5f0ea, 120px of air above the heading and
+          80px below, and a shallow arc across the top — the same shape the
+          home hero cuts, mirrored. */}
+      <section style={{
+        background: "linear-gradient(71deg, #e2e8f0 -0.95%, #f5f0ea 45.34%, #e2e8f0 98.72%)",
+        borderRadius: "50% 50% 0 0 / 60px 60px 0 0",
+        padding: "clamp(72px, 9vw, 120px) 24px clamp(56px, 7vw, 80px)",
+        marginTop: 8,
+      }}>
         <div style={{
           maxWidth: 1000, margin: "0 auto", textAlign: "center",
           display: "grid", gap: 16, justifyItems: "center",
@@ -793,7 +803,10 @@ export default function SellerLanding({ onGo }) {
               style={{
                 fontFamily: FONT_BODY, fontSize: TYPE.lg, fontWeight: 600, minHeight: 48, padding: "0 26px",
                 borderRadius: R.md, cursor: "pointer", whiteSpace: "nowrap",
-                background: "transparent", color: T.textBrand, border: `1px solid ${T.borderBrand}`,
+                /* White rather than transparent: on the gradient a
+                   transparent button reads as a hole in the band. The live
+                   page's secondary is white too. */
+                background: "#fff", color: T.textBrand, border: `1px solid ${T.borderBrand}`,
               }}
             >
               Start a book to sell
