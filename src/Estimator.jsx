@@ -123,7 +123,7 @@ function FormatCards({ formatId, onPick }) {
         </p>
       </div>
 
-      <div style={{ display: "grid", gap: 24, gridTemplateColumns: "repeat(auto-fit, minmax(185px, 1fr))" }}>
+      <div style={{ display: "grid", gap: 28, gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))", alignItems: "start" }}>
         {FORMAT_CARDS.map(card => {
           const on = card.id === formatId;
           const from = fromPrice(card.id);
@@ -134,11 +134,16 @@ function FormatCards({ formatId, onPick }) {
               onClick={() => onPick(card.id)}
               aria-pressed={on}
               style={{
+                /* No frame unless it is chosen. The border is transparent
+                   rather than absent so selecting one cannot shift the row
+                   by two pixels. The image runs to the card's edges and the
+                   card clips it, which is what gives the rounded top; only
+                   the text below is inset. */
                 textAlign: "left", font: "inherit", cursor: "pointer", minWidth: 0,
-                background: "#fff", borderRadius: 8, padding: 12,
-                border: on ? `2px solid ${C.gray950}` : `1px solid ${T.border}`,
-                margin: on ? 0 : 1,
-                display: "grid", gap: 0, alignContent: "start",
+                background: "transparent", padding: 0, overflow: "hidden",
+                borderRadius: 10,
+                border: on ? `2px solid ${C.gray950}` : "2px solid transparent",
+                display: "block",
                 transition: "border-color var(--nav-hover) var(--nav-ease)",
               }}
             >
@@ -149,36 +154,37 @@ function FormatCards({ formatId, onPick }) {
                   width={700}
                   height={700}
                   loading="lazy"
-                  style={{ display: "block", width: "100%", height: "auto", borderRadius: 4 }}
+                  style={{ display: "block", width: "100%", height: "auto" }}
                 />
                 {card.badge && (
                   <span style={{
-                    position: "absolute", top: 10, left: 10, background: "#fff",
-                    borderRadius: 4, padding: "3px 9px",
+                    position: "absolute", top: 12, left: 12, background: "#fff",
+                    borderRadius: 4, padding: "4px 10px",
                     fontSize: TYPE.sm, fontWeight: 600, color: C.gray950,
-                    boxShadow: "0 1px 2px rgba(0,0,0,0.08)",
                   }}>
                     {card.badge}
                   </span>
                 )}
               </span>
 
-              <span style={{
-                display: "block", marginTop: 16, fontFamily: FONT_DISPLAY,
-                fontSize: TYPE["3xl"], fontWeight: 600, lineHeight: 1.2, color: C.gray950,
-              }}>
-                {card.title}
-              </span>
-              <span style={{
-                display: "block", marginTop: 8, fontSize: TYPE.sm,
-                color: T.textSubtle, lineHeight: 1.5,
-              }}>
-                {card.desc}
-              </span>
-              <span style={{
-                display: "block", marginTop: 12, fontSize: TYPE.sm, fontWeight: 700, color: C.gray950,
-              }}>
-                {count} {count === 1 ? "size" : "sizes"} - {from == null ? "price on request" : `From ${money(from)}`}
+              <span style={{ display: "block", padding: "18px 12px 20px" }}>
+                <span style={{
+                  display: "block", fontFamily: FONT_DISPLAY,
+                  fontSize: TYPE["3xl"], fontWeight: 600, lineHeight: 1.2, color: C.gray950,
+                }}>
+                  {card.title}
+                </span>
+                <span style={{
+                  display: "block", marginTop: 10, fontSize: TYPE.sm,
+                  color: T.textSubtle, lineHeight: 1.5,
+                }}>
+                  {card.desc}
+                </span>
+                <span style={{
+                  display: "block", marginTop: 12, fontSize: TYPE.sm, fontWeight: 700, color: C.gray950,
+                }}>
+                  {count} {count === 1 ? "size" : "sizes"} - {from == null ? "price on request" : `From ${money(from)}`}
+                </span>
               </span>
             </button>
           );
