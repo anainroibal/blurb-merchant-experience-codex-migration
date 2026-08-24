@@ -546,9 +546,6 @@ export default function SellerLanding({ onGo }) {
               changes, so the eye stays in one section until the answer is
               chosen. */}
           <div style={{ display: "grid", gap: 20, marginTop: 8 }}>
-            <div style={{ textAlign: "center", fontSize: TYPE.lg, fontWeight: 700 }}>
-              The same four, side by side
-            </div>
 
           {/* ── The comparison ──
               Built like the tool comparison on blurb.com/bookmaking-tools,
