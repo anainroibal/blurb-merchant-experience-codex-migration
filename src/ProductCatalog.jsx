@@ -168,16 +168,20 @@ export default function ProductCatalog({ onGo }) {
               Shop All Products
             </h1>
 
+            {/* The live link: brand blue #107eb1 at 16/500, and the rule under
+                the WORDS only — the icon sits outside it. Underlining the
+                whole control put a line under the ⓘ, which reads as a typo
+                rather than a link. */}
             <button
               onClick={() => onGo?.("pricing")}
               style={{
                 display: "inline-flex", alignItems: "center", gap: 4, font: "inherit",
-                fontSize: TYPE.base, fontWeight: 500, color: T.textBrand,
-                background: "transparent", border: 0, padding: 0, cursor: "pointer", textDecoration: "underline",
+                fontSize: TYPE.base, fontWeight: 500, color: C.blue600,
+                background: "transparent", border: 0, padding: 0, cursor: "pointer",
               }}
             >
-              <span className="ms" style={{ fontSize: 18 }}>info</span>
-              What changes the price?
+              <span className="ms" style={{ fontSize: 18, textDecoration: "none" }}>info</span>
+              <span style={{ textDecoration: "underline" }}>What changes the price?</span>
             </button>
           </div>
 
