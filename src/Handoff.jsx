@@ -24,7 +24,7 @@ import {
    skips the tools entirely.
    ──────────────────────────────────────────────────────────────── */
 
-/* ── What a checkout link cannot sell ──
+/* ── What an Instant Store cannot sell ──
    Said BEFORE the link is set up, not discovered after. Under "to Sell"
    the product row already hides what cannot be sold, and a silent
    omission is the worst version of this: the seller either does not
@@ -56,12 +56,12 @@ function LinkLimits({ formatId }) {
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <span className="ms" style={{ fontSize: 20, color: T.textSubtle }}>info</span>
         <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>
-          What a checkout link can sell
+          What an Instant Store can sell
         </span>
       </div>
       <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.65, color: T.textSubtle }}>
-        Printed books and magazines. <strong style={{ color: T.textNeutral }}>A PDF cannot be sold through a
-        checkout link</strong> — it is ordered, not sold. {excluded.length > 0 && (
+        Printed books and magazines. <strong style={{ color: T.textNeutral }}>A PDF cannot be sold through an
+        Instant Store</strong> — it is ordered, not sold. {excluded.length > 0 && (
           <>Nor can {list(excluded)} — unconfirmed rather than decided, so ask before promising it to anyone.{" "}</>
         )}
         {elsewhere.length > 0 && formatId && (

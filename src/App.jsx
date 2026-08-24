@@ -5,6 +5,7 @@ import GetStarted from "./GetStarted.jsx";
 import SiteNav from "./SiteNav.jsx";
 import SiteFooter from "./SiteFooter.jsx";
 import Estimator from "./Estimator.jsx";
+import Home from "./Home.jsx";
 
 /* ────────────────────────────────────────────────────────────────
    Blurb — Merchant Experience prototypes
@@ -79,7 +80,11 @@ function WipChip() {
 
 /* ── Stages. One linear journey, same idea as the checkout stepper. ── */
 const STAGES = [
-  /* The product page comes first: it is where someone meets a price before
+  /* Home is back (2026-08-24). It is where the journey actually starts, and
+     what it adds is the lane: the Instant Store is the newest way to sell
+     and nothing on the live home page mentions it. */
+  { id: "home",       short: "Home",         label: "blurb.com — the lane into get started" },
+  /* The product page comes next: it is where someone meets a price before
      they have decided anything, and it is the doorway page — retail-only,
      one quiet line for a seller. */
   { id: "product",    short: "Photo book",   label: "/photo-books/imagewrap-hardcover-photo-book — the doorway" },
@@ -252,6 +257,7 @@ export default function App() {
       </div>
       {/* Keyed on the stage so switching screens fades rather than cuts. */}
       <div key={stage} className="fade-in" style={{ flex: 1, minWidth: 0 }}>
+        {stage === "home"       && <Home onGo={go} />}
         {stage === "product"    && <ProductPage onGo={go} seed={entry?.seed} />}
         {stage === "getstarted" && (
           <GetStarted

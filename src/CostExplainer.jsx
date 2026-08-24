@@ -16,13 +16,13 @@ import { C, T, TYPE, R, FONT_BODY } from "./tokens.js";
 
    Stated in general, never as a per-sale condition. An earlier version
    read "when we find the buyer / when you find the buyer", which implied
-   the split could flip case by case. It cannot: on a checkout link the
+   the split could flip case by case. It cannot: in an Instant Store the
    seller always brings the buyer. Conditional phrasing invented a
    variable that does not exist.
 
    That reframes the whole thing. It is not a discount off a price, it is
    payment for the part of the job the seller did. It also says the true
-   thing about who a checkout link is for: someone with an audience they
+   thing about who an Instant Store is for: someone with an audience they
    brought themselves.
 
    ⚠️ NO FIGURES HERE. Not the retail price, and not the print cost

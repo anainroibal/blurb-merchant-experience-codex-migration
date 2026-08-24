@@ -48,14 +48,16 @@ const MODES = {
     cta: "Estimate cost",
     other: "sell",
     swap: "Looking to sell, and want to see what it would earn you?",
-    swapBody: "The margin estimator shows what a copy costs you, what to charge, and what you keep through each route to market.",
+    swapBody: "The margin estimator shows what a copy costs you, what to charge, and what you keep on an Instant Store sale.",
   },
   sell: {
     id: "sell",
     tab: "Margin estimator",
     sub: "What you'd earn selling it",
-    h1: "Compare what you would keep",
-    lede: "Whatever you charge, see what a copy costs you and what is left after each route to market.",
+    h1: "See what you would keep",
+    /* Names the route, because the arithmetic only holds for one of them.
+       See the note above the calculator. */
+    lede: "Set your price against a real book and see what a copy costs you and what is left — on a sale through your Instant Store.",
     cta: "Estimate your margin",
     other: "make",
     swap: "Just making it for yourself?",
@@ -386,6 +388,44 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
 
           {/* ── Formats first, then the controls that price one ── */}
           <span id="calculator" aria-hidden style={{ display: "block", scrollMarginTop: 90 }} />
+
+          {/* ── Which route these figures are for (2026-08-24) ──
+              The ladder is your cost → your price → your profit, and that
+              shape is only true where YOU set the price and nothing is taken
+              off it: an Instant Store. Through the Bookstore, Amazon or
+              Ingram the buyer's price is not yours to set and the channel
+              takes a cut, so the same three numbers would be wrong.
+
+              Said before the controls rather than under them. Someone who
+              reads this after setting a price has already been misled, and
+              the mistake is silent — the figures look just as plausible for
+              the wrong route. It carries the way out with it, because the
+              honest answer to "what about Amazon?" is another page. */}
+          {selling && (
+            <div style={{
+              background: C.blue50, border: `1px solid ${C.blue100}`, borderRadius: R.md,
+              padding: "14px 16px", display: "flex", gap: 12, alignItems: "flex-start", flexWrap: "wrap",
+            }}>
+              <span className="ms" style={{ fontSize: 22, color: C.blue600, flex: "0 0 auto" }}>info</span>
+              <span style={{ minWidth: 240, flex: "1 1 420px", fontSize: TYPE.base, lineHeight: 1.6 }}>
+                <strong>These figures are for an Instant Store sale</strong> — the route where you set the
+                price and nothing is taken off it. The Blurb Bookstore, Amazon and Ingram each change what
+                your buyer pays and what the channel keeps, so they are compared, not calculated.
+              </span>
+              <button
+                onClick={() => onGo?.("seller")}
+                style={{
+                  fontFamily: FONT_BODY, fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.5,
+                  textTransform: "uppercase", minHeight: 40, padding: "0 16px", borderRadius: R.sm,
+                  cursor: "pointer", whiteSpace: "nowrap", flex: "0 0 auto",
+                  background: "transparent", color: T.textBrand, border: `1px solid ${T.borderBrand}`,
+                }}
+              >
+                Compare the routes
+              </button>
+            </div>
+          )}
+
           <FormatCards formatId={formatId} onPick={changeFormat} />
 
           {/* ── The get-started layout: choices on one side, the running

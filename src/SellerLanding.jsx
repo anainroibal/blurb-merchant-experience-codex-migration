@@ -114,7 +114,7 @@ const PROPS = {
 
    The two id sets do not match, and that is a real trap: SELL_CHANNELS
    calls it `link` while a product's `sellChannels` calls it
-   `checkout_link`. Comparing them directly silently reports every channel
+   `checkout_link` (the Instant Store's key). Comparing them directly silently reports every channel
    as unavailable, which is exactly what it did on first run. Mapped here
    rather than papered over, because the mismatch is worth seeing. */
 const ROUTE_IDS = ["link", "bookstore", "amazon", "ingram"];
@@ -139,7 +139,7 @@ const ROWS = [
 
 /* Each route's own page. Three of them exist on blurb.com and open there;
    the fourth does not exist at all, which is worth showing rather than
-   hiding — checkout links are the one route with no landing page, and
+   hiding — the Instant Store is the one route with no landing page, and
    whoever writes it will need to know that. */
 const ROUTE_PAGE = {
   link: null,
@@ -158,6 +158,35 @@ const productsFor = channelId =>
     .filter(f => (f.sellChannels || []).includes(channelId))
     .map(f => f.label)
     .join(", ");
+
+/* ── Table styling, read off blurb.com/bookmaking-tools ──
+   16px cells, 16px/1.4 text, labels bold, zebra starting white, a #d1d1d1
+   rule under each row and between the columns — but never between the label
+   and the first column, where the sticky cell's inset shadow does that job
+   so the rule travels with it while the rest scrolls. */
+const ROW_BG = i => (i % 2 === 0 ? "#fff" : C.gray50);
+
+const cellBase = {
+  padding: 16, fontSize: TYPE.base, lineHeight: 1.4,
+  color: C.gray950, textAlign: "left", verticalAlign: "top",
+  background: "inherit",
+};
+
+const labelCell = { ...cellBase, fontWeight: 700, width: 200, minWidth: 160 };
+
+const stickyCell = {
+  position: "sticky", left: 0, zIndex: 1,
+  boxShadow: `inset -1px 0 0 0 ${C.charcoal200}`,
+};
+
+const dataCell = {
+  ...cellBase, minWidth: 250,
+  /* Right, not left: the label column's inset shadow already draws the first
+     rule, and a left border here would double it. Exactly what the live
+     table does — border-r on the data cells, shadow on the sticky one. */
+  borderRight: `1px solid ${C.charcoal200}`,
+  scrollSnapAlign: "end",
+};
 
 export default function SellerLanding({ onGo }) {
   const routes = ROUTE_IDS.map(id => SELL_CHANNELS.find(c => c.id === id)).filter(Boolean);
@@ -183,112 +212,99 @@ export default function SellerLanding({ onGo }) {
       <section style={{ background: T.bgSubtle, borderTop: `1px solid ${T.border}`, marginTop: 32, padding: "28px 24px 72px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 20 }}>
 
-          {/* ── The comparison ── */}
-          <div style={{
-            background: "#fff", border: `1px solid ${T.border}`, borderRadius: R.lg,
-            overflowX: "auto",
-          }}>
-            <table style={{ borderCollapse: "collapse", width: "100%", minWidth: 860 }}>
-              <thead>
-                <tr>
-                  <th style={{
-                    textAlign: "left", verticalAlign: "bottom", padding: "20px 16px 14px",
-                    borderBottom: `1px solid ${T.border}`, width: 190,
-                  }} />
-                  {routes.map(r => {
-                    return (
-                      <th key={r.id} style={{
-                        textAlign: "left", verticalAlign: "top", padding: "20px 16px 14px",
-                        borderBottom: `1px solid ${T.border}`,
-                        borderLeft: `1px solid ${T.border}`, minWidth: 180,
-                      }}>
-                        <span style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                          <span style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 500 }}>
-                            {r.name}
-                          </span>
-                          {r.isNew && <Chip solid>New</Chip>}
-                        </span>
-                        <span style={{
-                          display: "block", marginTop: 6, fontSize: TYPE.sm,
-                          color: T.textSubtle, lineHeight: 1.5, fontWeight: 400,
-                        }}>
-                          {PROPS[r.id]}
-                        </span>
-                      </th>
-                    );
-                  })}
-                </tr>
-              </thead>
+          {/* ── The comparison ──
+              Built like the tool comparison on blurb.com/bookmaking-tools,
+              which is the site's own pattern for exactly this job — one
+              column per option, one labelled row per thing they differ on.
+              Values read off the live table rather than eyeballed: zebra
+              rows (#fff / #f5f5f5) with the header row counted as the first
+              stripe, a 1px #d1d1d1 rule under every row, a vertical rule
+              between the columns but not against the labels, 16px cells at
+              16px/1.4, and the labels bold.
+
+              Two things that table does and this one has to: the label
+              column STICKS while the columns scroll, because a value with
+              its label off-screen is unreadable, and the columns snap, so a
+              horizontal drag lands on a route rather than between two.
+
+              The one departure is the button row. The live table uses solid
+              near-black buttons; ours are the outlined secondary, matching
+              the rest of the prototype. */}
+          <div
+            className="cmp-scroll"
+            style={{ background: "#fff", overflowX: "auto", scrollSnapType: "x mandatory" }}
+          >
+            <table style={{ borderCollapse: "collapse", width: "100%", minWidth: 200 + routes.length * 250 }}>
               <tbody>
-                {ROWS.map(row => (
-                  <tr key={row.key}>
-                    <th style={{
-                      textAlign: "left", verticalAlign: "top", padding: "14px 16px",
-                      borderBottom: `1px solid ${T.border}`,
-                      fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase",
-                      color: T.textSubtle,
-                    }}>
-                      {row.label}
+                {/* The header row is a row, not a thead: it takes the first
+                    zebra stripe like every other row on the live table. */}
+                <tr style={{ background: ROW_BG(0), borderBottom: `1px solid ${C.charcoal200}` }}>
+                  <th style={{ ...labelCell, ...stickyCell }}>Route</th>
+                  {routes.map(r => (
+                    <th key={r.id} style={{ ...dataCell, fontWeight: 700, verticalAlign: "middle" }}>
+                      <span style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                        <span style={{ fontSize: TYPE.base, fontWeight: 700, color: C.gray950 }}>{r.name}</span>
+                        {r.isNew && <Chip solid>New</Chip>}
+                      </span>
+                      <span style={{
+                        display: "block", marginTop: 6, fontSize: TYPE.sm,
+                        color: T.textSubtle, lineHeight: 1.4, fontWeight: 400,
+                      }}>
+                        {PROPS[r.id]}
+                      </span>
                     </th>
-                    {routes.map(r => {
-                      const value = cellFor(r, row);
-                      return (
-                        <td key={r.id} style={{
-                          verticalAlign: "top", padding: "14px 16px",
-                          borderBottom: `1px solid ${T.border}`,
-                          borderLeft: `1px solid ${T.border}`,
-                          fontSize: TYPE.base,
-                          fontWeight: row.strong ? 600 : 400,
-                          color: T.textNeutral, lineHeight: 1.55,
-                        }}>
-                          {value}
-                        </td>
-                      );
-                    })}
+                  ))}
+                </tr>
+
+                {ROWS.map((row, i) => (
+                  <tr key={row.key} style={{ background: ROW_BG(i + 1), borderBottom: `1px solid ${C.charcoal200}` }}>
+                    <th style={{ ...labelCell, ...stickyCell }}>{row.label}</th>
+                    {routes.map(r => (
+                      <td key={r.id} style={{ ...dataCell, fontWeight: row.strong ? 600 : 400 }}>
+                        {cellFor(r, row)}
+                      </td>
+                    ))}
                   </tr>
                 ))}
-              </tbody>
 
-              {/* ── Each column ends in its own way out ──
-                  A table that compares four things should let you leave by
-                  any of the four. The link sits in a footer row so it lands
-                  at the bottom of its own column rather than floating
-                  beside the heading, where it would compete with the route
-                  name for the first read. */}
-              <tfoot>
-                <tr>
-                  <th style={{ borderTop: `1px solid ${T.border}` }} />
+                {/* ── Each column ends in its own way out ──
+                    A table that compares four things should let you leave by
+                    any of the four, and the button belongs at the foot of its
+                    own column rather than beside the route name, where it
+                    would compete for the first read. */}
+                <tr style={{ background: ROW_BG(ROWS.length + 1), borderBottom: `1px solid ${C.charcoal200}` }}>
+                  <th style={{ ...labelCell, ...stickyCell }} />
                   {routes.map(r => {
                     const href = ROUTE_PAGE[r.id];
                     return (
-                      <td key={r.id} style={{
-                        padding: "14px 16px 18px", verticalAlign: "top",
-                        borderTop: `1px solid ${T.border}`, borderLeft: `1px solid ${T.border}`,
-                      }}>
+                      <td key={r.id} style={{ ...dataCell, verticalAlign: "middle" }}>
                         {href ? (
                           <a
                             href={href}
                             target="_blank"
                             rel="noreferrer"
                             style={{
-                              fontSize: TYPE.sm, fontWeight: 700, color: T.textBrand,
-                              textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 5,
+                              display: "flex", alignItems: "center", justifyContent: "center", gap: 5,
+                              width: "100%", minHeight: 40, padding: "0 16px", borderRadius: R.sm,
+                              fontFamily: FONT_BODY, fontSize: TYPE.sm, fontWeight: 700,
+                              letterSpacing: 0.5, textTransform: "uppercase", textDecoration: "none",
+                              background: "transparent", color: T.textBrand, border: `1px solid ${T.borderBrand}`,
                             }}
                           >
-                            How this route works
+                            How this works
                             <span className="ms" style={{ fontSize: 16 }}>open_in_new</span>
                           </a>
                         ) : (
-                          <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>
-                            No page for this route yet — it is the newest one, and the only one without a
-                            page of its own.
+                          <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.45, fontStyle: "italic" }}>
+                            No page for this route yet — the newest one, and the only one without a page of
+                            its own.
                           </span>
                         )}
                       </td>
                     );
                   })}
                 </tr>
-              </tfoot>
+              </tbody>
             </table>
           </div>
 
@@ -302,11 +318,15 @@ export default function SellerLanding({ onGo }) {
             display: "flex", alignItems: "center", justifyContent: "space-between", gap: 20, flexWrap: "wrap",
           }}>
             <div style={{ minWidth: 0, maxWidth: 720 }}>
-              <div style={{ fontSize: TYPE.base, fontWeight: 700 }}>What you keep depends on the book</div>
+              <div style={{ fontSize: TYPE.base, fontWeight: 700 }}>
+                Chosen the Instant Store? Price it on the margin estimator
+              </div>
               <p style={{ margin: "6px 0 0", fontSize: TYPE.base, color: T.textSubtle, lineHeight: 1.65 }}>
-                Not on the route alone — the size, the cover, the paper and the page count all move your cost,
-                and Amazon's fee is a share of your price. The margin estimator has all of that in one place,
-                so you set a price against a real book once and see what each route leaves you.
+                What you keep depends on the book, not the route alone — the size, the cover, the paper and
+                the page count all move your cost. The estimator works that out against a real
+                specification. <strong style={{ color: T.textNeutral }}>It prices an Instant Store sale
+                only</strong>: it is the one route where you set the price and nothing is taken off it. For
+                the others, this table is the comparison.
               </p>
             </div>
             <button
@@ -332,8 +352,8 @@ export default function SellerLanding({ onGo }) {
                 A US $25 minimum before any payout is released. Volume discounts are retail-only and never
                 apply to fulfilment pricing. Every book needs a proof — order and review one copy before it
                 goes on sale. And some products drop out on configuration rather than on format: Amazon takes
-                photo books but not layflat ones and not the 5×5 Mini Square, so the estimator is where
-                eligibility is settled for a particular book.
+                photo books but not layflat ones and not the 5×5 Mini Square, so a route can fall away once
+                the book is specified even when the format is listed above.
               </div>
             </div>
 

@@ -96,7 +96,8 @@ const WALL_SIZES = {
 
 const mk = (dict, ids) => ids.map(id => ({ id, ...dict[id] }));
 
-/* DECISION, 2026-08-18: a PDF cannot be sold through a checkout link.
+/* DECISION, 2026-08-18: a PDF cannot be sold through an Instant Store
+   (called a checkout link when the decision was made).
    It can still be ordered for yourself. See `sellChannels` on each format
    and `formatsFor` below — the restriction is by channel, not intention. */
 
@@ -235,7 +236,7 @@ export const CATALOG = {
   /* Wall Art. Priced material × size — a shape no other product here
      uses, so it carries its own availability and lookup. There are no
      pages, and nothing to bind. Displaying and gifting are the whole
-     point of it; you cannot sell one through a checkout link, and
+     point of it; you cannot sell one through an Instant Store, and
      "keepsake" is a book word. */
   wallart: {
     fam: "wall_art",
@@ -277,9 +278,9 @@ export const CATALOG = {
     note: "A digital download — nothing to print, and no page count to set.",
     /* PDFs can still be ORDERED for yourself — they stay in the product
        types for keepsake, display and gift. What is not allowed is selling
-       one through a checkout link, so `checkout_link` is absent below.
+       one through an Instant Store, so `checkout_link` is absent below.
        Other channels are listed because the decision was specific to
-       checkout links; confirm before relying on it. */
+       the Instant Store; confirm before relying on it. */
     /* No channel lists PDFs. The earlier ["bookstore","amazon","ingram"]
        was our guess, flagged as unconfirmed; the evidence says none. */
     sellChannels: [],
@@ -329,8 +330,8 @@ export const hasTool = (formatId, tool) => (TOOLS[formatId] ?? []).includes(tool
 export const formatsWithTool = (tool, route, use) =>
   formatsFor(route, use).filter(id => hasTool(id, tool)).map(id => CATALOG[id].label);
 
-/* The selling route this page leads to. Its seller path ends at a checkout
-   link, so that is what "to Sell" is filtered against. If the page ever
+/* The selling route this page leads to. Its seller path ends at an Instant
+   Store, so that is what "to Sell" is filtered against. If the page ever
    forks to the other channels, this stops being a constant. */
 export const SELLING_CHANNEL = "checkout_link";
 
@@ -410,7 +411,7 @@ export const BULK_MIN = 100;
    Three different filters, and they are not the same kind of rule:
 
      · SELL narrows by CHANNEL. A PDF is perfectly orderable for
-       yourself; it just cannot be sold through a checkout link.
+       yourself; it just cannot be sold through an Instant Store.
      · KEEP narrows by what the product IS. Wall art is for hanging and
        for giving — "keepsake" is a book word. A notebook is a book you
        write in, so it is a keepsake or a gift and nothing else.
@@ -842,7 +843,13 @@ export function priceFor(formatId, sel) {
    where the channel cannot be computed from a list price at all. */
 export const SELL_CHANNELS = [
   {
-    id: "link", name: "Checkout links", isNew: true, mode: "pod",
+    /* ── Renamed: Instant Store, 2026-08-24 (Anain) ──
+       Called "checkout links" until then, and the id and the channel key
+       (`checkout_link`) still are — renaming those would touch every
+       product's sellChannels for no gain, and the old name is what the
+       source files and the board still say. Only what a seller reads
+       changes. */
+    id: "link", name: "Instant Store", isNew: true, mode: "pod",
     buyerPays: "Your price, plus shipping",
     takes: "Nothing published",
     paid: "PayPal, at a set cadence",
@@ -912,7 +919,7 @@ export const SELL_CHANNELS = [
        than a way to sell — unresolved, so nothing here has changed. Whoever
        settles it should answer the reasoning above rather than overwrite
        it, and /print-api-software supports it: the page makes the same
-       only-pay-for-printing promise a checkout link does. */
+       only-pay-for-printing promise an Instant Store does. */
     buyerPays: "Whatever your own store charges",
     takes: "Nothing — you pay Blurb to print",
     paid: "Through your own store",

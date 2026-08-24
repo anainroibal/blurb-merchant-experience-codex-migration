@@ -16,7 +16,7 @@ import { FONT_BODY } from "./tokens.js";
 
    Worth knowing what this trades away: the earlier sitemap footer put a
    link to the seller pages — Sell with Blurb, Your cost and your margin,
-   Checkout Links — on every page of the site, which is the cheapest SEO
+   Checkout Link file — on every page of the site, which is the cheapest SEO
    there is. A five-link bar cannot carry that, so if those pages are to
    be found, the header nav and the marketing pages have to do all of it.
    ──────────────────────────────────────────────────────────────── */

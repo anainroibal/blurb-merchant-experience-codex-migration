@@ -131,7 +131,7 @@ const NAV = [
 
   { label: "Sell", href: "/self-publish", columns: [
     { heading: "Blurb seller hub", items: [
-      ["Checkout links", "Share a link or embed a button. We print and ship each order."],
+      ["Instant Store", "Share a link or embed a button. We print and ship each order."],
       ["Sell on Blurb's Bookstore", "List in Blurb's own storefront."],
       ["Sell on Amazon", "Reach the largest book audience."],
       ["Ingram Distribution", "Distribute to bookstores and libraries."],
@@ -805,7 +805,8 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
         <a
           href="#"
           aria-label="Blurb home"
-          onClick={e => { e.preventDefault(); onGo?.("getstarted"); }}
+          /* The logo goes home, now that there is a home page to go to. */
+          onClick={e => { e.preventDefault(); onGo?.("home"); }}
           style={{ display: "flex", alignItems: "center", flex: "0 0 auto" }}
         >
           <img src={BLURB_LOGO} alt="Blurb" style={{ height: 36, width: "auto", display: "block" }} />

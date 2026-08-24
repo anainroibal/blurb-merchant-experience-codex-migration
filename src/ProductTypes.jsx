@@ -15,7 +15,7 @@ import { FormatRow } from "./FormatCards.jsx";
 
    The live page stars the types that suit selling. We narrow the set
    instead: under "to Sell" a PDF card is simply absent, because a PDF
-   cannot be sold through a checkout link. Withdrawing the option says
+   cannot be sold through an Instant Store. Withdrawing the option says
    it more plainly than decorating the ones that remain, and it leaves
    the row uniform. See `sellChannels` in catalog.js.
 

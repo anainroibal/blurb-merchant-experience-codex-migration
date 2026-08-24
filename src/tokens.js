@@ -27,6 +27,10 @@ export const C = {
   gray50:  "#f5f5f5",
   gray100: "#efefef",
   gray200: "#dcdcdc",
+  /* --color-light-charcoal-200. A hair darker than gray200 and used for one
+     job on the live site: the rules inside a comparison table
+     (/bookmaking-tools). Keep it for that. */
+  charcoal200: "#d1d1d1",
   gray400: "#989898",
   gray600: "#656565",
   gray700: "#525252",
