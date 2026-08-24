@@ -83,10 +83,11 @@ const NAV = [
      menu HOLDS — products, project kinds and tools in one place — so this
      keeps D's menu and takes the live site's label for it.
 
-     It also absorbs Design Tools, which was a department rather than a job:
-     tools serve making, they are not a reason to visit. That is what keeps
-     this row at six items, the same as today, while still finding room for
-     Services. */
+     Tools were briefly folded in here and are now their own destination
+     again — see the note on that group. So the row runs to seven with the
+     Bookstore, one more than today. If that ever needs paying for, the
+     Bookstore is the candidate: shopping is not one of these jobs, and it
+     would sit naturally beside the cart in the account actions. */
   { label: "Products", href: "/formats", columns: [
     { heading: "Products", items: [
       ["Shop All", "Every format Blurb prints."],
@@ -104,12 +105,26 @@ const NAV = [
       ["Comic books"], ["Portfolio"],
       ["Novels"], ["Children's books"],
     ]},
+  ]},
 
-    { heading: "Tools", items: [
+  /* TOOLS, top level. It was folded into Products for a while, on the
+     argument that tools serve making rather than being a reason to visit.
+     That is true of a shopper and wrong about everyone else: the tool is
+     the decision for anyone who has already decided to make something, and
+     it is the thing they come back for. Blurb has four of them and they
+     are genuinely different — a browser editor, a desktop app, a PDF path
+     and two Adobe plug-ins — which is a choice, not a footnote.
+
+     Templates comes here from Resources, because a template is a tool, not
+     reading material. The live site agrees: its Design Tools menu carries
+     BookWright, Adobe Tools, PDF to Book and BookWright Templates. */
+  { label: "Tools", href: "/bookmaking-tools", columns: [
+    { heading: "Design tools", items: [
       ["Blurb online editor", "Design in your browser. Nothing to download."],
       ["BookWright", "Blurb's own book-making software."],
       ["PDF to Book", "Bring a file you have already laid out."],
       ["Adobe software", "InDesign plugin and Lightroom Book Module."],
+      ["Templates", "Layouts sized to every format Blurb prints."],
     ]},
   ]},
 
@@ -158,7 +173,6 @@ const NAV = [
   { label: "Resources", href: "/blog", columns: [
     { heading: "Resources", items: [
       ["Blog", "Craft, printing and selling, from Blurb and its makers."],
-      ["Templates", "Layouts sized to every format Blurb prints."],
       ["Events", "Workshops, talks and book fairs."],
       ["Help Center", "Guides, specs and answers."],
     ]},
