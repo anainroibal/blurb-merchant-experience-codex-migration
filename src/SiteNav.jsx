@@ -88,7 +88,7 @@ const NAV = [
      Bookstore, one more than today. If that ever needs paying for, the
      Bookstore is the candidate: shopping is not one of these jobs, and it
      would sit naturally beside the cart in the account actions. */
-  { label: "Products", href: "/formats", detailed: true, columns: [
+  { label: "Products", href: "/formats", columns: [
     /* The seven products Blurb prints, with the "best for" line each one
        carries in the sample. Split 4 / 3 across two columns under a single
        heading, as drawn. */
@@ -145,11 +145,12 @@ const NAV = [
          the two axes meet. */
       ["What you can sell", "Which formats sell through which route, and what each one asks of you."],
     ]},
-  ], promo: {
-    heading: "Switch to Blurb",
+  ], featured: {
+    heading: "Featured",
     title: "Switch to Blurb",
     tag: "Concept",
     body: "Already selling books elsewhere? Move your titles across.",
+    cta: "See how it works",
   }},
 
   { label: "Services", href: "/large-order-services", columns: [
@@ -157,7 +158,8 @@ const NAV = [
       ["Volume orders", "Volume discounts start at 100 copies. We quote the run and handle the logistics."],
       ["Switch to Blurb", "Already selling books elsewhere? Move your titles across.", "Concept"],
     ]},
-  ], promo: {
+  ], featured: {
+    heading: "Featured",
     title: "API Printing",
     body: "Print as infrastructure. Send orders from your own system and we print and ship them.",
     cta: "RPI Print",
@@ -166,10 +168,15 @@ const NAV = [
 
   { label: "Pricing", href: "/pricing", columns: [
     { heading: "Pricing", items: [
-      ["Compare products & pricing", "What each format costs, with cost estimates per book."],
+      ["Pricing Calculator", "Price a specific book by size, pages and paper."],
       ["Shipping Calculator", "Estimate delivery cost and time."],
     ]},
-  ]},
+  ], featured: {
+    heading: "Featured",
+    title: "Need to order in volume?",
+    body: "Volume discounts start at 100+ copies. Our Large Order Services quotes the run and handles the logistics.",
+    cta: "Learn more",
+  }},
 
   { label: "Resources", href: "/blog", columns: [
     { heading: "Resources", items: [
@@ -182,19 +189,21 @@ const NAV = [
 
 /* Shopping is not one of the five jobs, so the Bookstore sits apart from
    them — its own item to the right of the nav row, as in the sketch. */
-/* No icon, and no "Blurb" in front of it. It was the only pictogram in the
-   row, which made the Bookstore look like a different kind of thing rather
-   than another destination — and the label already says what it is. */
-const BOOKSTORE = { label: "Bookstore", href: "/bookstore", columns: [
-  { heading: "The Bookstore", items: [
-    ["Browse the Bookstore", "Read what other makers are selling."],
-    ["All Categories", "Photography, portfolios, cookbooks, travel, memoir and more."],
-  ]},
-]};
+/* ── The Bookstore is a link, not a menu ──
+   It goes straight there. Everything else in the row is a category of
+   pages; this is one page, and it is somewhere people arrive meaning to
+   browse rather than to choose. A dropdown holding "Browse the Bookstore"
+   and "All Categories" was two links to the same shop with a click in
+   front of them.
+
+   No icon and no "Blurb" either: it was the only pictogram in the row,
+   which made it look like a different kind of thing, and the logo already
+   says whose site this is. */
+const BOOKSTORE = { label: "Bookstore", href: "/bookstore", direct: true };
 
 /* The same navigation, flattened into footer columns. Exported so a footer
    cannot drift from the header — one list, two renderings. */
-export const NAV_COLUMNS = [...NAV, BOOKSTORE].map(g => ({
+export const NAV_COLUMNS = NAV.map(g => ({
   label: g.label,
   items: g.columns.flatMap(c => c.items.map(([label, body]) => ({ label, hint: body }))),
 }));
@@ -249,11 +258,17 @@ const chunk = (arr, size) =>
     return cols;
   }, []);
 
-/* A row, not a word: the highlight is a block that spans the column and
-   bleeds into the panel's padding, so the target is the whole line rather
-   than the label's own width. Grey ground, brand-blue label — the live
-   site's treatment. */
-function MenuLink({ item, onClose, detailed }) {
+/* A row, not a word: the highlight is a block that spans the column, so
+   the target is the whole line rather than the label's own width. Grey
+   ground, brand-blue label — the live site's treatment.
+
+   Every item carries its description, as Deb's design has them: bold label,
+   one line underneath. The earlier plain-list version matched the live site
+   but lost the only thing in a nav that helps someone CHOOSE — the live
+   menus are lists of names, and a name only helps if you already know what
+   it means. "Volume orders" is a good example: the label says nothing about
+   100 copies, and the line under it does. */
+function MenuLink({ item, onClose }) {
   const [hot, setHot] = useState(false);
   const [label, body, tag] = item;
   return (
@@ -271,8 +286,8 @@ function MenuLink({ item, onClose, detailed }) {
            min-width --spacing * 55 = 220px, and rounded-md (6px) on the
            hover ground, which is --color-light-gray-50. */
         display: "block", textDecoration: "none",
-        fontSize: TYPE.sm, lineHeight: 1.4, fontWeight: detailed ? 400 : 500,
-        padding: 16, borderRadius: 6, minWidth: detailed ? 300 : 220,
+        fontSize: TYPE.sm, lineHeight: 1.4, fontWeight: 400,
+        padding: 16, borderRadius: 6, minWidth: body ? 300 : 220,
         /* blue600 on white is 4.52:1, which passes AA for this 14px text by
            a hair. On the grey hover ground it drops to 4.14:1 and fails, so
            the hover uses blue700 — 5.54:1 on grey. The live site keeps
@@ -284,7 +299,7 @@ function MenuLink({ item, onClose, detailed }) {
       }}
     >
       <span style={{ display: "block", fontWeight: 700 }}>{label}<Tag>{tag}</Tag></span>
-      {detailed && body && (
+      {body && (
         <span style={{
           display: "block", marginTop: 3, fontWeight: 400,
           color: T.textSubtle, whiteSpace: "normal", maxWidth: 300,
@@ -363,16 +378,21 @@ function MegaMenu({ group, isOpen, onClose }) {
                   {col.heading}
                 </div>
               )}
-              {sub.map(item => (
-                <MenuLink key={item[0]} item={item} onClose={onClose} detailed={group.detailed} />
-              ))}
+              {sub.map(item => <MenuLink key={item[0]} item={item} onClose={onClose} />)}
             </div>
           ))}
         </div>
       ))}
 
-      {/* ── The Featured card ──
-          One promoted product beside the list. It is a SINGLE link wrapping
+      {/* ── The Featured card — the ONLY promo pattern in the nav ──
+          Products, Sell, Services and Pricing all promote something beside
+          their list, and they all do it this way: image, title, one line,
+          a text link. An earlier pass gave Pricing its own treatment — icon,
+          bordered box, outlined button — which meant two patterns doing one
+          job, and a reader learning the second one for no reason. Check for
+          an existing pattern before adding one.
+
+          One promoted thing beside the list. It is a SINGLE link wrapping
           the image, the heading and the call to action, not three — two
           adjacent links to the same page is a redundant tab stop, and the
           image carries no information the heading does not, so its alt is
@@ -423,17 +443,19 @@ function FeaturedCard({ card, onClose }) {
         display: "block", marginTop: 12, fontSize: TYPE.sm, fontWeight: 700,
         color: C.gray950, lineHeight: 1.4,
       }}>
-        {card.title}
+        {card.title}<Tag>{card.tag}</Tag>
       </span>
       <span style={{ display: "block", marginTop: 4, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.45 }}>
         {card.body}
       </span>
       <span style={{
-        display: "block", marginTop: 10, fontSize: TYPE.sm, fontWeight: 700,
+        display: "inline-flex", alignItems: "center", gap: 5, marginTop: 10,
+        fontSize: TYPE.sm, fontWeight: 700,
         color: hot ? C.blue700 : C.blue600,
         transition: "color var(--nav-hover) var(--nav-ease)",
       }}>
         {card.cta}
+        {card.external && <span className="ms" aria-hidden style={{ fontSize: 16 }}>open_in_new</span>}
       </span>
     </a>
   );
@@ -544,7 +566,7 @@ function MobileNav({ open, signedIn, onClose, onSignedIn }) {
         padding: "8px 16px 20px", fontFamily: FONT_BODY,
       }}
     >
-      {[...NAV, BOOKSTORE].map(group => (
+      {NAV.map(group => (
         <div key={group.label} style={{ padding: "10px 0", borderBottom: `1px solid ${T.border}` }}>
           <div style={{ fontSize: TYPE.lg, fontWeight: 700, color: T.textNeutral, padding: "4px 0 6px" }}>
             {group.label}
@@ -569,6 +591,17 @@ function MobileNav({ open, signedIn, onClose, onSignedIn }) {
           ))}
         </div>
       ))}
+
+      <a
+        href="#"
+        onClick={e => { e.preventDefault(); onClose(); }}
+        style={{
+          display: "block", padding: "14px 0", borderBottom: `1px solid ${T.border}`,
+          textDecoration: "none", fontSize: TYPE.lg, fontWeight: 700, color: T.textNeutral,
+        }}
+      >
+        {BOOKSTORE.label}
+      </a>
 
       <div style={{ padding: "14px 0", display: "grid", gap: 2 }}>
         {signedIn
@@ -790,7 +823,21 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
           style={{ display: "flex", alignItems: "center", gap: 0, flex: 1, minWidth: 0 }}
         >
           {NAV.map(group => <NavItem key={group.label} group={group} />)}
-          <NavItem group={BOOKSTORE} />
+
+          {/* Straight to the shop — no panel, so no hover intent either. */}
+          <a
+            href="#"
+            onClick={e => { e.preventDefault(); setOpen(null); }}
+            onMouseEnter={hoverClose}
+            style={{
+              padding: "22px 12px", textDecoration: "none",
+              fontFamily: FONT_BODY, fontSize: TYPE.sm, fontWeight: 500,
+              color: T.textNeutral, whiteSpace: "nowrap",
+              transition: "color var(--nav-hover) var(--nav-ease)",
+            }}
+          >
+            {BOOKSTORE.label}
+          </a>
         </nav>
 
         <div className="hide-sm" style={{ display: "flex", alignItems: "center", gap: 16, flex: "0 0 auto" }}>
