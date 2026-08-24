@@ -2,6 +2,8 @@ import React from "react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { CATALOG, SELL_CHANNELS } from "./catalog.js";
 
+const ILLUS = "https://assets.blurb.com/_astro/";
+
 /* ────────────────────────────────────────────────────────────────
    The seller landing page.
 
@@ -188,60 +190,49 @@ const dataCell = {
   scrollSnapAlign: "end",
 };
 
-/* ── "Choose how to sell your book", with the card that is missing ──
-   Bookstore, Amazon and Ingram are the live /self-publish cards, copied
-   rather than paraphrased so the difference is visible: the Instant Store
-   card is the only new thing on the page. Its bullets say what the others
-   cannot — the price is yours, and there is no shopfront to run. */
+/* ── The four routes as cards ──
+   Rewritten shorter, 2026-08-24. Each card carried a "Best for" line, a
+   sentence and up to six bullets lifted from /self-publish, which made four
+   columns of small print that nobody reads across. A card's job here is to
+   say who the route is for and let you leave — the six facts are one scroll
+   below, in the table, where they can actually be compared.
+
+   So: an illustration, the name, one sentence, two facts, a link. The
+   illustrations are Blurb's own, from /amazon and /ingram — the same hand,
+   so four routes look like one family rather than four brands. */
 const SELL_CARDS = [
   {
     id: "link", name: "Instant Store", isNew: true, stage: "margin", cta: "See what you would keep",
-    bestFor: "Creators who already have an audience and no shop to send them to.",
-    lede: "Share one link — in a newsletter, a bio, a talk, a stall — and we print and ship every order.",
-    points: [
-      "You set the price, so what you make on a copy is yours to decide",
-      "Nothing to run: no shopfront, no stock, no listing fees",
-      "Paid out by PayPal at a set cadence",
-      "Available formats: photo books, paperback and hardcover books, magazines",
-    ],
+    img: ILLUS + "share-books-1.BHcvSHBn_2rGILu.webp",
+    alt: "An illustration of a person holding out a book to share.",
+    line: "Share one link — a newsletter, a bio, a talk, a stall — and we print and ship every order.",
+    facts: ["You set the price", "Nothing to run, and no listing fees"],
   },
   {
     id: "bookstore", name: "Blurb Bookstore", href: "https://www.blurb.com/sell-through-blurb", cta: "Sell with us",
-    bestFor: "Creators with a built-in audience or strong social presence.",
-    lede: "Keep 100% of profits when you sell your book in our bookstore.",
-    points: [
-      "No listing fees or hidden costs",
-      "Earn more by setting your own price",
-      "Monthly Blurb-funded bookstore promotions",
-      "Drive traffic with direct links from your site or social media",
-      "Blurb takes care of printing, global shipping, and fulfillment",
-      "Available formats: photo books, paperback and hardcover books, magazines, notebooks, and journals",
-    ],
+    img: ILLUS + "blurb-dashboard.YPDjPrK8_Z1bvCol.webp",
+    alt: "An illustration of a person arranging a book listing.",
+    line: "A listing you do not have to run, in a shop readers already browse.",
+    facts: ["No listing fee", "Takes the widest range of products"],
   },
   {
     id: "amazon", name: "Sell on Amazon", href: "https://www.blurb.com/amazon", cta: "Sell on Amazon",
-    bestFor: "Selling your book online to readers everywhere.",
-    lede: "Put your book in front of millions by listing it on Amazon — the world's largest online book retailer.",
-    points: [
-      "Expand your reach",
-      "Benefit from Amazon's built-in ratings and rankings",
-      "Blurb manages printing, shipping, and fulfillment",
-      "Available formats: photo books (layflat not included)",
-      "Note: Amazon charges additional distribution fees",
-    ],
+    img: ILLUS + "share-books-3.CrZIj1S-_725ax.webp",
+    alt: "An illustration of a reader being found through a magnifying glass.",
+    line: "Put the book in front of readers who would never think to look for you.",
+    facts: ["Amazon takes a cut of your list price", "Photo books only"],
   },
   {
     id: "ingram", name: "Sell through Ingram", href: "https://www.blurb.com/ingram", cta: "Sell through Ingram",
-    bestFor: "Selling your book in bookstores around the world.",
-    lede: "Leverage one of the largest global distribution networks in publishing.",
-    points: [
-      "Reach 40,000+ online and physical bookstores and retailers in 195 countries",
-      "Blurb handles printing, shipping, and fulfillment",
-      "Available formats: paperback and hardcover books",
-      "Note: Additional distribution fees apply",
-    ],
+    img: ILLUS + "reach-bookstores.BYbE8YXC_Z1XIS6H.webp",
+    alt: "An illustration of a person riding an open book past a globe.",
+    line: "Orderable anywhere books are — bookshops, libraries, and the retailers among them.",
+    facts: ["You set the trade discount", "Paperback and hardcover only"],
   },
 ];
+
+/* Blurb's own illustrations, served from the site. */
+const ILLUS_NOTE = null;
 
 export default function SellerLanding({ onGo }) {
   const routes = ROUTE_IDS.map(id => SELL_CHANNELS.find(c => c.id === id)).filter(Boolean);
@@ -255,110 +246,144 @@ export default function SellerLanding({ onGo }) {
   return (
     <div style={{ fontFamily: FONT_BODY, color: T.textNeutral }}>
       {/* ── This IS /self-publish ──
-          The live page's own heading and lede, because that is the page this
-          replaces: blurb.com/self-publish, where the home page's Selling tab
-          already sends people. Its "Choose how to sell your book" section
-          offers three cards — Bookstore, Amazon, Ingram — and the Instant
-          Store is missing from it. Adding a fourth card there is the change
-          this page argues for (2026-08-24). */}
-      <section style={{ maxWidth: 1240, margin: "0 auto", padding: "56px 24px 8px", textAlign: "center" }}>
-        <h1 style={{ fontFamily: FONT_DISPLAY, fontWeight: 400, fontSize: "clamp(2rem, 4.5vw, 3rem)", lineHeight: 1.15, margin: 0 }}>
-          Publish and sell your books on demand
-        </h1>
-        <p style={{ fontSize: TYPE.xl, lineHeight: 1.55, color: T.textSubtle, maxWidth: 680, margin: "16px auto 0" }}>
-          Blurb gives you the tools to design, print, and sell your books — whether you're a creative
-          professional, a small or medium business, or a first-time author.
-        </p>
+          The live page's own heading, because that is the page this replaces
+          — where the home page's Selling tab already sends people. Its
+          "Choose how to sell your book" section offers three routes and the
+          Instant Store is missing from it; adding the fourth is the change
+          this page argues for.
+
+          The hero is the one /pricing and /bookmaking-tools use: a wide
+          gradient band, 96px of air, the title and one line centred in it.
+          It is the site's own way of opening a marketing page, and it puts
+          some colour at the top of a page that was white to the horizon. */}
+      <section style={{
+        background: "linear-gradient(100deg, #e9ecef 0%, #f6f3ef 45%, #ebebeb 100%)",
+        padding: "clamp(56px, 8vw, 96px) 24px",
+      }}>
+        <div style={{ maxWidth: 860, margin: "0 auto", textAlign: "center", display: "grid", gap: 20, justifyItems: "center" }}>
+          <h1 style={{
+            fontFamily: FONT_DISPLAY, fontWeight: 500, letterSpacing: "-0.01em",
+            fontSize: "clamp(2rem, 4.6vw, 2.75rem)", lineHeight: 1.2, margin: 0,
+          }}>
+            Publish and sell your books on demand
+          </h1>
+          <p style={{ fontSize: TYPE.xl, lineHeight: 1.55, color: T.textNeutral, margin: 0, maxWidth: 640 }}>
+            Four ways to reach a buyer. They differ in who finds the book, what they ask of you, and what
+            the channel takes.
+          </p>
+          <a
+            href="#routes"
+            style={{
+              display: "inline-flex", alignItems: "center", minHeight: 44, padding: "0 24px",
+              borderRadius: R.md, textDecoration: "none",
+              background: T.bgBrand, color: T.textInverse,
+              fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 600,
+            }}
+          >
+            Compare the routes
+          </a>
+        </div>
       </section>
 
-      <section style={{ background: T.bgSubtle, borderTop: `1px solid ${T.border}`, marginTop: 32, padding: "28px 24px 72px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 20 }}>
+      {/* ── Choose how to sell your book ──
+          The /self-publish section with a fourth card, and with the copy cut
+          to what a card can carry: an illustration, the name, one sentence,
+          two facts, a link. The bullet lists that used to sit here were four
+          columns of small print arguing across each other — the same facts
+          are one scroll down, in the table, where they line up.
 
-          {/* ── Choose how to sell your book ──
-              The live section, with a fourth card. Its three cards are the
-              live page's own copy, bullet for bullet; the Instant Store card
-              is ours, written to the same shape — a "Best for" line, a
-              sentence, bullets, a button.
+          Sections are 80px apart, which is what /bookmaking-tools uses, and
+          it is most of what "lighten it up" means on a page like this. */}
+      <section id="routes" style={{ padding: "clamp(56px, 7vw, 80px) 24px", scrollMarginTop: 140 }}>
+        <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 48 }}>
+          <div style={{ textAlign: "center", display: "grid", gap: 12, justifyItems: "center" }}>
+            <h2 style={{
+              fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
+              lineHeight: 1.25, margin: 0,
+            }}>
+              Choose how to sell your book
+            </h2>
+            <p style={{ fontSize: TYPE.lg, color: T.textSubtle, margin: 0, maxWidth: 680, lineHeight: 1.6 }}>
+              Sell from your own Instant Store, in our bookstore, on Amazon, with Ingram — or all of them.
+            </p>
+          </div>
 
-              It leads rather than trails because it is the change being
-              proposed: someone landing on /self-publish today is offered
-              three ways to sell and told nothing about the one where they
-              set the price. The table underneath is what none of these cards
-              can do — read the same fact across all four. */}
-          <div style={{ display: "grid", gap: 20 }}>
-            <div style={{ textAlign: "center" }}>
-              <h2 style={{
-                fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
-                lineHeight: 1.25, margin: 0,
-              }}>
-                Choose how to sell your book
-              </h2>
-              <p style={{ fontSize: TYPE.base, color: T.textSubtle, margin: "10px auto 0", maxWidth: 720, lineHeight: 1.6 }}>
-                Blurb gives you flexible ways to sell your print-on-demand book to a global audience — from
-                your own Instant Store, in our bookstore, on Amazon, with Ingram, or all of them.
-              </p>
-            </div>
-
-            <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(270px, 1fr))" }}>
-              {SELL_CARDS.map(card => (
-                <div
-                  key={card.id}
-                  style={{
-                    background: "#fff", border: `1px solid ${card.isNew ? C.blue600 : T.border}`,
-                    borderRadius: R.lg, padding: 24, display: "grid", gap: 12, alignContent: "start", minWidth: 0,
-                  }}
-                >
-                  <span style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                    <span style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["4xl"], fontWeight: 500, lineHeight: 1.2 }}>
-                      {card.name}
-                    </span>
-                    {card.isNew && <Chip solid>New</Chip>}
-                  </span>
-
-                  <span style={{ fontSize: TYPE.sm, lineHeight: 1.5 }}>
-                    <strong>Best for:</strong> {card.bestFor}
-                  </span>
-
-                  <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.6, color: T.textSubtle }}>{card.lede}</p>
-
-                  <ul style={{ margin: 0, paddingLeft: 18, display: "grid", gap: 6, fontSize: TYPE.sm, lineHeight: 1.55, color: T.textSubtle }}>
-                    {card.points.map(pt => <li key={pt}>{pt}</li>)}
-                  </ul>
-
-                  <span style={{ marginTop: 4 }}>
-                    {card.stage ? (
-                      <button
-                        onClick={() => onGo?.(card.stage)}
-                        style={{
-                          fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 600, minHeight: 40,
-                          padding: "0 18px", borderRadius: R.md, cursor: "pointer",
-                          background: card.isNew ? T.bgBrand : "transparent",
-                          color: card.isNew ? T.textInverse : T.textBrand,
-                          border: card.isNew ? "1px solid transparent" : `1px solid ${T.borderBrand}`,
-                        }}
-                      >
-                        {card.cta}
-                      </button>
-                    ) : (
-                      <a
-                        href={card.href}
-                        target="_blank"
-                        rel="noreferrer"
-                        style={{
-                          display: "inline-flex", alignItems: "center", gap: 5, minHeight: 40, padding: "0 18px",
-                          borderRadius: R.md, textDecoration: "none",
-                          fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 600,
-                          background: "transparent", color: T.textBrand, border: `1px solid ${T.borderBrand}`,
-                        }}
-                      >
-                        {card.cta}
-                        <span className="ms" style={{ fontSize: 16 }}>open_in_new</span>
-                      </a>
-                    )}
-                  </span>
+          <div style={{ display: "grid", gap: 32, gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
+            {SELL_CARDS.map(card => (
+              <div key={card.id} style={{ display: "grid", gap: 16, alignContent: "start", minWidth: 0 }}>
+                {/* The illustration sits on the same cream tile the product
+                    cards use, so a route card and a product card are
+                    recognisably the same kind of object. */}
+                <div style={{
+                  position: "relative", background: "#f5f0ea", borderRadius: R.lg,
+                  aspectRatio: "4 / 3", display: "grid", placeItems: "center", overflow: "hidden",
+                }}>
+                  <img
+                    src={card.img}
+                    alt={card.alt}
+                    loading="lazy"
+                    /* The illustrations ship on a white ground, which read as
+                       a white square pasted on the cream tile. Multiply drops
+                       the white out and leaves the drawing. */
+                    style={{ width: "78%", height: "auto", display: "block", mixBlendMode: "multiply" }}
+                  />
+                  {card.isNew && (
+                    <span style={{ position: "absolute", top: 12, left: 12 }}><Chip solid>New</Chip></span>
+                  )}
                 </div>
-              ))}
-            </div>
+
+                <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["4xl"], fontWeight: 500, lineHeight: 1.2 }}>
+                  {card.name}
+                </div>
+
+                <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.6, color: T.textSubtle }}>{card.line}</p>
+
+                <ul style={{ margin: 0, paddingLeft: 18, display: "grid", gap: 4, fontSize: TYPE.sm, lineHeight: 1.5, color: T.textSubtle }}>
+                  {card.facts.map(f => <li key={f}>{f}</li>)}
+                </ul>
+
+                {card.stage ? (
+                  <button
+                    onClick={() => onGo?.(card.stage)}
+                    style={{
+                      justifySelf: "start", fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 700,
+                      color: T.textBrand, background: "transparent", border: 0, padding: 0, cursor: "pointer",
+                      textDecoration: "underline", textUnderlineOffset: 4,
+                    }}
+                  >
+                    {card.cta}
+                  </button>
+                ) : (
+                  <a
+                    href={card.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{
+                      justifySelf: "start", fontSize: TYPE.base, fontWeight: 700, color: T.textBrand,
+                      display: "inline-flex", alignItems: "center", gap: 5,
+                      textDecoration: "underline", textUnderlineOffset: 4,
+                    }}
+                  >
+                    {card.cta}
+                    <span className="ms" style={{ fontSize: 16 }}>open_in_new</span>
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── The comparison, on its own ground ── */}
+      <section style={{ background: T.bgSubtle, borderTop: `1px solid ${T.border}`, padding: "clamp(56px, 7vw, 80px) 24px" }}>
+        <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 32 }}>
+          <div style={{ textAlign: "center" }}>
+            <h2 style={{
+              fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
+              lineHeight: 1.25, margin: 0,
+            }}>
+              The four, side by side
+            </h2>
           </div>
 
           {/* ── The comparison ──
@@ -457,92 +482,58 @@ export default function SellerLanding({ onGo }) {
             </table>
           </div>
 
-          {/* ── The number lives on the estimator ──
-              Said immediately under the table, because "what would I keep"
-              is the next question and this page deliberately does not
-              answer it: the answer depends on the size, cover, paper and
-              page count, and those live on the calculator. */}
-          <div style={{
-            background: "#fff", border: `1px solid ${T.border}`, borderRadius: R.lg, padding: 20,
-            display: "flex", alignItems: "center", justifyContent: "space-between", gap: 20, flexWrap: "wrap",
+          {/* ── The small print, once ──
+              Three cards of prose used to sit here — what is true of every
+              route, what is coming, and a closing pitch — which is a lot of
+              reading for facts that qualify a table. They are one line each
+              now, under the thing they qualify. */}
+          <p style={{ margin: 0, fontSize: TYPE.sm, lineHeight: 1.7, color: T.textSubtle, maxWidth: 900 }}>
+            True of every route: a US $25 payout minimum, a proof before the book goes on sale, and volume
+            discounts that are retail-only. A route can also fall away once the book is specified — Amazon
+            takes photo books but not layflat ones or the 5×5. Store integrations (Shopify, Etsy) would be
+            the fifth route; unbuilt, so not compared.
+          </p>
+        </div>
+      </section>
+
+      {/* ── The way out ──
+          Comparison before commitment: the route is chosen here, so the step
+          that acts on it belongs here too — once, at the end. Two actions,
+          because there are two states to be in: you have picked the Instant
+          Store and want the number, or you have not started the book yet. */}
+      <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
+        <div style={{
+          maxWidth: 1000, margin: "0 auto", textAlign: "center",
+          display: "grid", gap: 16, justifyItems: "center",
+        }}>
+          <h2 style={{
+            fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
+            lineHeight: 1.25, margin: 0,
           }}>
-            <div style={{ minWidth: 0, maxWidth: 720 }}>
-              <div style={{ fontSize: TYPE.base, fontWeight: 700 }}>
-                Chosen the Instant Store? Price it on the margin estimator
-              </div>
-              <p style={{ margin: "6px 0 0", fontSize: TYPE.base, color: T.textSubtle, lineHeight: 1.65 }}>
-                What you keep depends on the book, not the route alone — the size, the cover, the paper and
-                the page count all move your cost. The estimator works that out against a real
-                specification. <strong style={{ color: T.textNeutral }}>It prices an Instant Store sale
-                only</strong>: it is the one route where you set the price and nothing is taken off it. For
-                the others, this table is the comparison.
-              </p>
-            </div>
+            Picked your route?
+          </h2>
+          <p style={{ margin: 0, fontSize: TYPE.lg, color: T.textSubtle, lineHeight: 1.6, maxWidth: 640 }}>
+            Every one of them starts with a book. The margin estimator prices an{" "}
+            <strong style={{ color: T.textNeutral }}>Instant Store sale</strong>; for the other three, the
+            table above is the comparison.
+          </p>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center", marginTop: 8 }}>
             <button
               onClick={() => onGo?.("margin")}
-              style={{
-                fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 600, minHeight: 44, padding: "0 20px",
-                borderRadius: R.md, cursor: "pointer", whiteSpace: "nowrap",
-                background: "transparent", color: T.textBrand, border: `1px solid ${T.borderBrand}`,
-              }}
-            >
-              Open the margin estimator
-            </button>
-          </div>
-
-          {/* ── What is true of all of them, and what is not here yet ── */}
-          <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))" }}>
-            <div style={{
-              background: "#fff", border: `1px solid ${T.border}`, borderRadius: R.lg,
-              padding: 20, display: "grid", gap: 8,
-            }}>
-              <div style={{ fontSize: TYPE.base, fontWeight: 700 }}>True of every route</div>
-              <div style={{ fontSize: TYPE.base, color: T.textSubtle, lineHeight: 1.65 }}>
-                A US $25 minimum before any payout is released. Volume discounts are retail-only and never
-                apply to fulfilment pricing. Every book needs a proof — order and review one copy before it
-                goes on sale. And some products drop out on configuration rather than on format: Amazon takes
-                photo books but not layflat ones and not the 5×5 Mini Square, so a route can fall away once
-                the book is specified even when the format is listed above.
-              </div>
-            </div>
-
-            <div style={{
-              background: "#fff", border: `1px solid ${T.border}`, borderRadius: R.lg,
-              padding: 20, display: "grid", gap: 8,
-            }}>
-              <div style={{ fontSize: TYPE.base, fontWeight: 700 }}>Coming, and not compared yet</div>
-              <div style={{ fontSize: TYPE.base, color: T.textSubtle, lineHeight: 1.65 }}>
-                <strong style={{ color: T.textNeutral }}>Store integrations</strong> — connecting a shop you
-                already run on Shopify or Etsy — would be the fifth route. It is named rather than compared
-                because the table asks five things of a channel and none of them can be answered for something
-                unbuilt. API printing and Large Order Services are not routes to market: they are services,
-                and they live under Services in the nav.
-              </div>
-            </div>
-          </div>
-
-          {/* ── The way out ──
-              Comparison before commitment: the route is chosen here, so the
-              step that acts on it belongs here too — once, at the end. */}
-          <div style={{
-            background: "#fff", border: `1px solid ${T.border}`, borderRadius: R.lg, padding: 24,
-            display: "flex", alignItems: "center", justifyContent: "space-between", gap: 20, flexWrap: "wrap",
-          }}>
-            <div style={{ minWidth: 0 }}>
-              <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["4xl"], fontWeight: 500, lineHeight: 1.2 }}>
-                Picked your route?
-              </div>
-              <p style={{ margin: "6px 0 0", fontSize: TYPE.base, color: T.textSubtle, lineHeight: 1.6 }}>
-                Every one of them starts with a book. Choose the product, set your price, and see what you keep
-                before you commit to any of this.
-              </p>
-            </div>
-            <button
-              onClick={() => onGo?.("getstarted", { route: "sell" })}
               style={{
                 fontFamily: FONT_BODY, fontSize: TYPE.lg, fontWeight: 600, minHeight: 48, padding: "0 26px",
                 borderRadius: R.md, border: 0, cursor: "pointer",
                 background: T.bgBrand, color: T.textInverse, whiteSpace: "nowrap",
+              }}
+            >
+              See what you would keep
+            </button>
+            <button
+              onClick={() => onGo?.("getstarted", { route: "sell" })}
+              style={{
+                fontFamily: FONT_BODY, fontSize: TYPE.lg, fontWeight: 600, minHeight: 48, padding: "0 26px",
+                borderRadius: R.md, cursor: "pointer", whiteSpace: "nowrap",
+                background: "transparent", color: T.textBrand, border: `1px solid ${T.borderBrand}`,
               }}
             >
               Start a book to sell
