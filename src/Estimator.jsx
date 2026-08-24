@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.js";
 import SellChannels from "./SellChannels.jsx";
-import CostExplainer from "./CostExplainer.jsx";
-import MarginLadder from "./MarginLadder.jsx";
-import Modal from "./Modal.jsx";
+import SummaryPanel from "./SummaryPanel.jsx";
 import {
-  CATALOG, FORMAT_IDS, PROJECT_KINDS, BULK_MIN,
+  CATALOG, FORMAT_IDS, PROJECT_KINDS,
   seedFor, priceFor, sellerCost, minSellPrice, defaultSelection,
-  selectedOption, availableFor, reconcile, pageLimit, derivedSteps, money,
-  SHIPPING, US_STATES, shippingFor, PRINT_DAYS, speedDays, arrivalWindow, formatDay, PRINT_RANGE,
+  availableFor, reconcile, pageLimit, derivedSteps, money,
+  SHIPPING, US_STATES, shippingFor, speedDays, arrivalWindow, formatDay, PRINT_RANGE,
 } from "./catalog.js";
 
 /* ────────────────────────────────────────────────────────────────
@@ -418,35 +416,6 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
               onFormat={changeFormat} onState={setState}
             />
 
-            <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))" }}>
-              {!f.pageless && !f.digital && (
-                <Field label="Pages" hint={`${f.basePages}–${limit}`}>
-                  <input
-                    type="number" style={control}
-                    value={state.pages} min={f.basePages} max={limit}
-                    onChange={e => setState({
-                      ...state,
-                      pages: Math.min(limit, Math.max(f.basePages, Number(e.target.value) || f.basePages)),
-                    })}
-                  />
-                </Field>
-              )}
-
-              {selling ? null : (
-                <Field label="Copies" hint={state.qty >= BULK_MIN ? "large order" : "discount from 10"}>
-                  <input
-                    type="number" style={control}
-                    value={state.qty} min={1} max={9999}
-                    onChange={e => setState({ ...state, qty: Math.max(1, Number(e.target.value) || 1) })}
-                  />
-                </Field>
-              )}
-            </div>
-
-            <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 18 }}>
-              <ShipTo selling={selling} shipping={!selling} ship={ship} setShip={setShip} />
-            </div>
-
             {/* ── Only for the person who wants it ── */}
             <HelpMeDecide
               open={helpOpen} onToggle={() => setHelpOpen(o => !o)}
@@ -454,99 +423,46 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
             />
           </div>
 
-          {/* ── The answer ── */}
-          <div style={{
-            background: T.bgNeutral, border: `1px solid ${T.border}`, borderRadius: R.lg,
-            padding: 24, display: "grid", gap: 16,
-          }}>
-            {selling ? (
-              <>
-                {/* Plain rows, not display figures — 8/21 pod, item 5. */}
-                <MarginLadder cost={cost} price={shown} onPrice={setPrice} floor={floor} plain />
-                <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.6 }}>
-                  Your profit is {margin}% of what your buyer pays for the book.
-                </p>
+          {/* ── The answer ──
+              The same panel /getting-started uses. It was a different
+              component doing the same job: a row of big figures, its own
+              shipping block, its own footnotes. Two panels answering "what
+              does this cost and what would I keep" is two places to fix a
+              rule and two chances to disagree about it. */}
+          <SummaryPanel
+            formatId={formatId}
+            state={state}
+            onChange={setState}
+            mode={mode}
+            sellPrice={shown}
+            onSellPrice={setPrice}
+            sticky={false}
+            ship={ship}
+            setShip={setShip}
+          />
 
-                <CostExplainer />
-
-                {/* ── Shipping, demoted out of the panel — 8/21 pod, item 1 ──
-                    The rule already says shipping stays out of the calculation
-                    because the buyer pays it. It was still sitting in the same
-                    column as the margin, and anything in that column reads as
-                    part of the arithmetic whether it is labelled that way or
-                    not. So it moves behind a link: available to look up, never
-                    beside the seller's numbers. */}
-                <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 14 }}>
-                  <button
-                    onClick={() => setBuyerOpen(true)}
-                    style={{
-                      font: "inherit", fontSize: TYPE.sm, fontWeight: 600, color: T.textBrand,
-                      background: "transparent", border: 0, padding: 0, cursor: "pointer",
-                      display: "inline-flex", alignItems: "center", gap: 4,
-                    }}
-                  >
-                    <span className="ms" style={{ fontSize: 18 }}>local_shipping</span>
-                    What your buyer pays to have it sent
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
-                <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", alignItems: "end" }}>
-                  <Rung label="Per copy" value={money(p.unit)} />
-                  <Rung label={`${state.qty} ${state.qty === 1 ? "copy" : "copies"}`} value={money(p.total)} />
-                  <Rung label="Shipping" value={makerShip ? money(makerShip.cost) : "—"} />
-                  <Rung label="Total" value={money(p.total + (makerShip?.cost ?? 0))} loud />
-                </div>
-                {/* Not a second calculator — the same shipping, shown as the
-                    dates people actually plan around. The live /shipping
-                    page buries "4-5 business days printing" in prose and
-                    leaves you to count weekends yourself. */}
-                <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 16, display: "grid", gap: 10 }}>
-                  <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>
-                    When it would arrive
-                  </span>
-                  <DeliveryTable
-                    qty={state.qty} country={ship.country} poBox={ship.poBox}
-                    chosen={ship.speed} onChoose={id => setShip({ ...ship, speed: id })}
-                  />
-                </div>
-
-                <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.6 }}>
-                  {p.tier
-                    ? `Includes the ${Math.round(p.tier.pct * 100)}% volume discount. `
-                    : "Volume discounts start at 10 copies. "}
-                  {makerShip
-                    ? `Shipping is ${SHIPPING.speeds.find(s => s.id === ship.speed)?.label.toLowerCase()} to ${ship.postal.trim().toUpperCase()}, and printing takes ${PRINT_DAYS.label} before it ships. `
-                    : "Enter a postal code to add shipping. "}
-                  Excludes taxes, which are worked out at checkout.
-                  {state.qty >= BULK_MIN && " At this quantity, Large Order Services will quote you better than this can."}
-                </p>
-              </>
-            )}
-          </div>
+          {/* Arrival dates stay here rather than moving into the panel: they
+              are the maker's question, they need the width, and the panel is
+              deliberately the calculation and nothing else. It reads the same
+              shipping state the panel does. */}
+          {!selling && (
+            <div style={{
+              background: T.bgNeutral, border: `1px solid ${T.border}`, borderRadius: R.lg,
+              padding: 24, display: "grid", gap: 10,
+            }}>
+              <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>
+                When it would arrive
+              </span>
+              <DeliveryTable
+                qty={state.qty} country={ship.country} poBox={ship.poBox}
+                chosen={ship.speed} onChoose={id => setShip({ ...ship, speed: id })}
+              />
+            </div>
+          )}
 
           {selling && <SellChannels price={shown} cost={cost} formatId={formatId} sel={state} />}
 
-          <Modal open={buyerOpen} title="What your buyer pays" onClose={() => setBuyerOpen(false)}>
-            <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.65 }}>
-              A buyer in {ship.country === "US" ? ship.state : SHIPPING.countries.find(c => c.id === ship.country)?.label}{" "}
-              pays <strong>{money(shown)}</strong> for the book and{" "}
-              <strong>{money(buyerShip?.cost ?? 0)}</strong> to have it sent —{" "}
-              <strong>{money(shown + (buyerShip?.cost ?? 0))}</strong> in all.
-            </p>
-            <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.6 }}>
-              None of the shipping is yours to pay, so your {money(profit)} does not move wherever they live.
-              That is why it is in here rather than in your numbers.
-            </p>
-            <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.6 }}>
-              Rates are placeholders and do not vary by state in this prototype; sales tax does, and is settled
-              at checkout.
-            </p>
-            <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 14 }}>
-              <ShipTo selling shipping={false} ship={ship} setShip={setShip} />
-            </div>
-          </Modal>
+
 
           {/* ── The other page ──
               Two pages, not two tabs: the maker's price lives under
