@@ -1,9 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
-import {
-  CATALOG, SELL_CHANNELS, channelsFor, channelBlockedBecause,
-  defaultSelection, sellerCost, minSellPrice, money,
-} from "./catalog.js";
+import { CATALOG, SELL_CHANNELS } from "./catalog.js";
 
 /* ────────────────────────────────────────────────────────────────
    The seller landing page.
@@ -63,13 +60,22 @@ import {
    is also the compact form: the same information in about a third of the
    height.
 
-   ── And a worked example at the top ──
-   "What you earn" as a sentence is unreadable across four routes — "list
-   price minus the wholesale discount you set, minus print cost" is true
-   and useless. So the page opens with one product at one price, and every
-   route answers in money. Change either and the row moves. This is the
-   section that came off the calculators: it belongs here, where choosing
-   the route is the job.
+   ── NO MONEY ON THIS PAGE, 2026-08-24 ──
+   It had a worked example: one product, one price, and "you keep" per
+   route. It read as precision and could not be. What a route pays depends
+   on the whole specification — size, cover, paper, page count — and this
+   page holds none of it, so the figure was either a guess dressed as an
+   answer or a demand that someone configure a book twice.
+
+   The fix is not a smaller form. It is to stop asking this page to do two
+   jobs: here you choose a ROUTE, on the margin estimator you price a
+   BOOK. So the table compares what the routes actually differ on —
+   who they reach, what they take, when they pay, what they ask of you —
+   and the page hands over to the estimator for the number, where the
+   specification already exists and nothing has to be typed again.
+
+   "Pick this if" is the row that does the work. A seller is not choosing
+   between fee structures, they are choosing between situations.
 
    Fee structures are sourced from blurb.com. The seller's cost is not —
    Blurb publishes no fulfilment pricing, so FULFILMENT_FACTOR stands in
@@ -114,44 +120,41 @@ const PROPS = {
 const ROUTE_IDS = ["link", "bookstore", "amazon", "ingram"];
 const CATALOG_ID = { link: "checkout_link", bookstore: "bookstore", amazon: "amazon", ingram: "ingram" };
 
+/* The decisive line for each route, written as a situation rather than a
+   feature. This is the row a seller actually reads. */
+const PICK_IF = {
+  link: "You already have people listening — a newsletter, a talk, a stall, a bio link — and no shop to send them to.",
+  bookstore: "You want a listing you do not have to run, and you are happy for readers to find it by browsing.",
+  amazon: "Reach matters more than margin, and the book is a photo book you are happy to sell at Amazon's terms.",
+  ingram: "You want the book orderable anywhere books are — bookshops, libraries, and the retailers Amazon among them.",
+};
+
 const ROWS = [
-  { key: "keep",      label: "You keep, per copy", strong: true },
+  { key: "pick",      label: "Pick this if", strong: true },
+  { key: "products",  label: "Products it takes" },
   { key: "buyerPays", label: "Your buyer pays" },
   { key: "takes",     label: "What the channel takes" },
   { key: "paid",      label: "When you are paid" },
-  { key: "suits",     label: "Who it suits" },
 ];
 
-const control = {
-  height: 40, minWidth: 0, border: `1px solid ${T.borderStrong}`, borderRadius: 4,
-  background: T.bgNeutral, padding: "0 10px",
-  fontFamily: FONT_BODY, fontSize: TYPE.base, color: T.textNeutral,
-};
+/* Which products each route takes, read off the catalogue rather than
+   typed — so this can never claim a channel a product does not have.
+   Family level on purpose: the exceptions are per configuration (Amazon
+   excludes layflat and the 5×5) and they belong in the caveat under the
+   table, not in a cell. */
+const productsFor = channelId =>
+  Object.values(CATALOG)
+    .filter(f => (f.sellChannels || []).includes(channelId))
+    .map(f => f.label)
+    .join(", ");
 
 export default function SellerLanding({ onGo }) {
-  /* One worked example for the whole table. A photo book at a round price,
-     because the point is the comparison rather than the book. */
-  const [formatId, setFormatId] = useState("photo");
-  const [price, setPrice] = useState(24);
-
-  const sel = defaultSelection(formatId);
-  const cost = sellerCost(formatId, sel);
-  const floor = minSellPrice(formatId, sel);
-  const shown = Math.max(price, floor);
-  const allowed = channelsFor(formatId, sel);
-
-  const routes = ROUTE_IDS
-    .map(id => SELL_CHANNELS.find(c => c.id === id))
-    .filter(Boolean);
-
-  const allows = route => allowed.includes(CATALOG_ID[route.id]);
+  const routes = ROUTE_IDS.map(id => SELL_CHANNELS.find(c => c.id === id)).filter(Boolean);
 
   const cellFor = (route, row) => {
-    if (row.key !== "keep") return route[row.key];
-    const ok = allows(route);
-    if (!ok) return null;
-    const net = route.net(shown, cost);
-    return net == null ? null : money(Math.max(0, net));
+    if (row.key === "pick") return PICK_IF[route.id];
+    if (row.key === "products") return productsFor(CATALOG_ID[route.id]);
+    return route[row.key];
   };
 
   return (
@@ -161,51 +164,13 @@ export default function SellerLanding({ onGo }) {
           Four ways to sell your book
         </h1>
         <p style={{ fontSize: TYPE.xl, lineHeight: 1.55, color: T.textSubtle, maxWidth: 680, margin: "16px auto 0" }}>
-          Same book, four routes to a buyer. They differ in who finds it, what your buyer pays, and how much of
-          it you keep.
+          Same book, four routes to a buyer. They differ in who finds it, what they ask of you, and what the
+          channel takes on the way through.
         </p>
       </section>
 
       <section style={{ background: T.bgSubtle, borderTop: `1px solid ${T.border}`, marginTop: 32, padding: "28px 24px 72px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 20 }}>
-
-          {/* ── The example that makes the table numeric ── */}
-          <div style={{
-            background: "#fff", border: `1px solid ${T.border}`, borderRadius: R.lg, padding: "16px 20px",
-            display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap",
-          }}>
-            <span style={{ fontSize: TYPE.base, fontWeight: 700 }}>Comparing</span>
-
-            <label style={{ display: "grid", gap: 4 }}>
-              <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>Product</span>
-              <select
-                style={control}
-                value={formatId}
-                onChange={e => { setFormatId(e.target.value); }}
-              >
-                {["photo", "trade", "magazine", "notebook"].map(id => (
-                  <option key={id} value={id}>{CATALOG[id].label}</option>
-                ))}
-              </select>
-            </label>
-
-            <label style={{ display: "grid", gap: 4 }}>
-              <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>Your price</span>
-              <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <span style={{ fontSize: TYPE.base, color: T.textSubtle }}>US $</span>
-                <input
-                  type="number" min={floor} step={1} value={shown}
-                  onChange={e => setPrice(Math.max(floor, Number(e.target.value) || floor))}
-                  style={{ ...control, width: 96 }}
-                />
-              </span>
-            </label>
-
-            <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5, maxWidth: 420 }}>
-              A copy costs you <strong style={{ color: T.textNeutral }}>{money(cost)}</strong> to print, so
-              your price cannot go below it. Shipping is not here: your buyer pays it, wherever they are.
-            </span>
-          </div>
 
           {/* ── The comparison ── */}
           <div style={{
@@ -220,13 +185,11 @@ export default function SellerLanding({ onGo }) {
                     borderBottom: `1px solid ${T.border}`, width: 190,
                   }} />
                   {routes.map(r => {
-                    const blocked = !allows(r);
                     return (
                       <th key={r.id} style={{
                         textAlign: "left", verticalAlign: "top", padding: "20px 16px 14px",
                         borderBottom: `1px solid ${T.border}`,
-                        borderLeft: `1px solid ${T.border}`,
-                        opacity: blocked ? 0.55 : 1, minWidth: 180,
+                        borderLeft: `1px solid ${T.border}`, minWidth: 180,
                       }}>
                         <span style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                           <span style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 500 }}>
@@ -258,24 +221,16 @@ export default function SellerLanding({ onGo }) {
                     </th>
                     {routes.map(r => {
                       const value = cellFor(r, row);
-                      const blocked = !allows(r);
                       return (
                         <td key={r.id} style={{
                           verticalAlign: "top", padding: "14px 16px",
                           borderBottom: `1px solid ${T.border}`,
                           borderLeft: `1px solid ${T.border}`,
-                          fontSize: row.strong ? TYPE.xl : TYPE.base,
-                          fontWeight: row.strong ? 700 : 400,
-                          color: blocked ? T.textSubtle : T.textNeutral,
-                          lineHeight: 1.5,
+                          fontSize: TYPE.base,
+                          fontWeight: row.strong ? 600 : 400,
+                          color: T.textNeutral, lineHeight: 1.55,
                         }}>
-                          {value ?? (
-                            <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
-                              {blocked
-                                ? channelBlockedBecause(CATALOG_ID[r.id], formatId, sel) ?? "Not this product"
-                                : "You set the retailer's discount, so this is yours to decide"}
-                            </span>
-                          )}
+                          {value}
                         </td>
                       );
                     })}
@@ -283,6 +238,35 @@ export default function SellerLanding({ onGo }) {
                 ))}
               </tbody>
             </table>
+          </div>
+
+          {/* ── The number lives on the estimator ──
+              Said immediately under the table, because "what would I keep"
+              is the next question and this page deliberately does not
+              answer it: the answer depends on the size, cover, paper and
+              page count, and those live on the calculator. */}
+          <div style={{
+            background: "#fff", border: `1px solid ${T.border}`, borderRadius: R.lg, padding: 20,
+            display: "flex", alignItems: "center", justifyContent: "space-between", gap: 20, flexWrap: "wrap",
+          }}>
+            <div style={{ minWidth: 0, maxWidth: 720 }}>
+              <div style={{ fontSize: TYPE.base, fontWeight: 700 }}>What you keep depends on the book</div>
+              <p style={{ margin: "6px 0 0", fontSize: TYPE.base, color: T.textSubtle, lineHeight: 1.65 }}>
+                Not on the route alone — the size, the cover, the paper and the page count all move your cost,
+                and Amazon's fee is a share of your price. The margin estimator has all of that in one place,
+                so you set a price against a real book once and see what each route leaves you.
+              </p>
+            </div>
+            <button
+              onClick={() => onGo?.("margin")}
+              style={{
+                fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 600, minHeight: 44, padding: "0 20px",
+                borderRadius: R.md, cursor: "pointer", whiteSpace: "nowrap",
+                background: "transparent", color: T.textBrand, border: `1px solid ${T.borderBrand}`,
+              }}
+            >
+              Open the margin estimator
+            </button>
           </div>
 
           {/* ── What is true of all of them, and what is not here yet ── */}
@@ -294,8 +278,10 @@ export default function SellerLanding({ onGo }) {
               <div style={{ fontSize: TYPE.base, fontWeight: 700 }}>True of every route</div>
               <div style={{ fontSize: TYPE.base, color: T.textSubtle, lineHeight: 1.65 }}>
                 A US $25 minimum before any payout is released. Volume discounts are retail-only and never
-                apply to fulfilment pricing. And every book needs a proof — order and review one copy before it
-                goes on sale, whichever route you choose.
+                apply to fulfilment pricing. Every book needs a proof — order and review one copy before it
+                goes on sale. And some products drop out on configuration rather than on format: Amazon takes
+                photo books but not layflat ones and not the 5×5 Mini Square, so the estimator is where
+                eligibility is settled for a particular book.
               </div>
             </div>
 
