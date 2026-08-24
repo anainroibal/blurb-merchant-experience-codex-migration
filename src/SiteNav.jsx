@@ -60,203 +60,231 @@ import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.
    show the same logo. Served from public/assets. */
 const BLURB_LOGO = "/assets/blurb-logo.png";
 
+/* ── Draft D's menus, as drawn ──
+   Column headings, the label-plus-description shape and the wording are
+   Deb's. At most three columns of content, a note box under Make's
+   products, and a promoted panel on the right of Sell and Services.
+
+   Two tags survive from the sketch and one does not. CONCEPT and COMING
+   SOON stay: they say a thing is not real yet, which a visitor needs to
+   know and which nav is otherwise very bad at admitting. The NEW badges
+   are out, per 2026-08-24 — those spoke to reviewers, not to visitors.
+
+   ⚠️ Store integrations and Switch to Blurb both come from Deb's drafts
+   and appear in no source we hold — not the DES-469 audit, not Stacey's
+   files. Nav is a commitment surface, and "coming soon" against an
+   unowned thing is how /apple-books-store happened. Tagged here, and
+   raised with Deb. */
 const NAV = [
-  /* MAKE — everything about producing the object. Products answer "what
-     can I print", the kinds answer "what am I making", and the tools are
-     how. Three columns because they are three different questions, and a
-     maker arrives holding one of them. */
-  { label: "Make", href: "/formats", items: [
-    ["Products", ["Shop All", "Photo Books", "Layflat Books", "Paperback and Hardcover Books", "Magazines", "Notebooks & Journals", "Wall Art"]],
-    ["What are you making?", [
-      ["Photo books", null, "Travel, family, weddings"],
-      ["Cookbooks", null, "Recipes, long text beside colour"],
-      ["Children's books", null, "Colour on every page"],
-      ["Novels and poetry", null, "Text-first, priced to sell"],
-      ["Portfolios", null, "Your work, at gallery quality"],
-      ["Yearbooks", null, "A run of the same book"],
-    ]],
-    ["Tools", [
-      ["Online editor", null, "Design in your browser. Nothing to download"],
-      "BookWright for desktop",
-      "Adobe plug-ins",
-      "PDF to Book",
-      "Templates",
-    ]],
+  { label: "Make", href: "/formats", columns: [
+    { heading: "Products", items: [
+      ["Shop All", "Every format Blurb prints."],
+      ["Hardcover", "Ideal for photo books, portfolios and anything meant to last."],
+      ["Softcover", "Perfect bound, lighter and lower cost. Also suits text-led publications."],
+    ], note: ["Not making a book? We also print ", "photo prints and framed wall art", "."] },
+
+    /* Ten kinds in two columns under one heading, as drawn — and the same
+       vocabulary as PROJECT_KINDS and the live /getting-started dropdown,
+       which is the strongest thing about this menu. */
+    { heading: "What are you making?", split: true, items: [
+      ["Photo Books"], ["Wedding"],
+      ["Travel"], ["Cookbooks"],
+      ["Zines"], ["Magazines"],
+      ["Comic books"], ["Portfolio"],
+      ["Novels"], ["Children's books"],
+    ]},
+
+    { heading: "Tools", items: [
+      ["Blurb online editor", "Design in your browser. Nothing to download."],
+      ["BookWright", "Blurb's own book-making software."],
+      ["PDF to Book", "Bring a file you have already laid out."],
+      ["Adobe software", "InDesign plugin and Lightroom Book Module."],
+    ]},
   ]},
 
-  /* SELL — routes to market only. API printing and Large Order Services
-     have moved to Services; what is left is the set of ways a copy
-     reaches a buyer, grouped by who finds that buyer. */
-  { label: "Sell", href: "/self-publish", items: [
-    ["Start selling", [
-      ["Sell with Blurb", null, "The seller hub — join free, then sell how you like"],
-      ["Margin estimator", null, "What a copy costs you, what to charge, what you keep"],
-    ]],
-    ["Sell direct", [
-      ["Checkout Links", null, "One link per book. Share it anywhere"],
-      ["Store integrations", null, "⚠️ In Deb's draft A. No source yet — needs an owner before it ships"],
-    ]],
-    ["Sell through retailers", ["Blurb Bookstore", "Amazon", "Ingram"]],
+  { label: "Sell", href: "/self-publish", columns: [
+    { heading: "Blurb seller hub", items: [
+      ["Checkout links", "Share a link or embed a button. We print and ship each order."],
+      ["Sell on Blurb's Bookstore", "List in Blurb's own storefront."],
+      ["Sell on Amazon", "Reach the largest book audience."],
+      ["Ingram Distribution", "Distribute to bookstores and libraries."],
+      ["Store integrations", "Connect Shopify, Etsy and more.", "Coming soon"],
+    ]},
+    { heading: "Pricing", items: [
+      ["Margin estimator", "Set a price and see what you keep per copy."],
+    ]},
+  ], promo: {
+    heading: "Switch to Blurb",
+    title: "Switch to Blurb",
+    tag: "Concept",
+    body: "Already selling books elsewhere? Move your titles across.",
+  }},
+
+  { label: "Services", href: "/large-order-services", columns: [
+    { heading: "Services", items: [
+      ["Volume orders", "Volume discounts start at 100 copies. We quote the run and handle the logistics."],
+      ["Switch to Blurb", "Already selling books elsewhere? Move your titles across.", "Concept"],
+    ]},
+  ], promo: {
+    title: "API Printing",
+    body: "Print as infrastructure. Send orders from your own system and we print and ship them.",
+    cta: "RPI Print",
+    external: true,
+  }},
+
+  { label: "Pricing", href: "/pricing", columns: [
+    { heading: "Pricing", items: [
+      ["Compare products & pricing", "What each format costs, with cost estimates per book."],
+      ["Shipping Calculator", "Estimate delivery cost and time."],
+    ]},
   ]},
 
-  /* SERVICES — the new group, and the point of option D. Neither of these
-     is a way to sell: one prints a run you distribute yourself, the other
-     prints behind someone else's storefront. /print-api-software already
-     groups them exactly this way. */
-  { label: "Services", href: "/large-order-services", items: [
-    ["Print in volume", [
-      ["Volume orders", null, "Was Large Order Services. Discounts start at 100+ copies"],
-      ["Get a bulk quote", null, "Our team prices the run and handles the logistics"],
-    ]],
-    ["Print as infrastructure", [
-      ["Self-Service API", null, "No minimums, no setup fees. US shipping, photo books"],
-      ["Custom API", null, "Global, more products, tailored SLAs"],
-    ]],
-    ["Help from a person", [
-      ["Hire an expert", null, "Design and layout help, if you would rather not"],
-    ]],
-  ]},
-
-  { label: "Pricing", href: "/pricing", items: [
-    [null, [
-      ["Pricing calculator", null, "What your book costs to make, and when it arrives"],
-      "Shipping calculator",
-      ["Volume discounts", null, "Retail only — they never apply to fulfilment pricing"],
-    ]],
-  ]},
-
-  { label: "Resources", href: "/blog", items: [
-    [null, ["Blog", "Help Center", "Book dimensions", "Swatch kit"]],
+  { label: "Resources", href: "/blog", columns: [
+    { heading: "Resources", items: [
+      ["Blog", "Craft, printing and selling, from Blurb and its makers."],
+      ["Templates", "Layouts sized to every format Blurb prints."],
+      ["Events", "Workshops, talks and book fairs."],
+      ["Help Center", "Guides, specs and answers."],
+    ]},
   ]},
 ];
 
 /* Shopping is not one of the five jobs, so the Bookstore sits apart from
-   them — its own item on the right of the nav row, as in the sketch. */
-const BOOKSTORE = { label: "Blurb Bookstore", href: "/bookstore", icon: "storefront", items: [
-  [null, ["All Categories", "Photography", "Portfolios", "Cookbooks", "Travel", "Children's Books"]],
+   them — its own item to the right of the nav row, as in the sketch. */
+const BOOKSTORE = { label: "Blurb Bookstore", href: "/bookstore", icon: "storefront", columns: [
+  { heading: "The Bookstore", items: [
+    ["Browse the Bookstore", "Read what other makers are selling."],
+    ["All Categories", "Photography, portfolios, cookbooks, travel, memoir and more."],
+  ]},
 ]};
 
-/* ── The signed-in header ──
-   Today it is: Settings · Help · Log Out · 🇺🇸 · [My Dashboard]. Three
-   account chores hold permanent top-level space, nothing says which
-   account you are in, the flag could mean language, country or currency,
-   and there is no cart — so a signed-in buyer mid-order has no way back
-   to it.
-
-   Proposed: one account menu, opened from your own name, holding
-   everything you rarely need and everything a seller does often. That
-   frees the top level for the two things worth a permanent slot — the
-   cart, and Start Project, which then means the same thing and sits in
-   the same place whether you are logged in or not.
-
-   Which five, judged against today's dashboard sidebar — eleven items in
-   two groups, all set at the same weight:
-
-     · BOOKWRIGHT ONLINE PROJECTS is a second projects list, split by the
-       tool that made it. That is Blurb's internal division, not the
-       seller's. One Projects, with a filter.
-     · SALES OVERVIEW and MONTHLY PROFIT REPORTS are two doors to the same
-       room, one of them named after a date range. Earnings, with the
-       period as a control inside it.
-     · ADDRESS BOOK, MY PROFILE, ACCOUNT SETTINGS and PAYMENT SETTINGS are
-       four settings pages. Settings.
-     · PUBLISHING RESOURCES is reading material, not a destination. Help.
-     · CHECKOUT LINKS is missing entirely, which is the gap this project
-       exists to close. Josh's dashboard file already has it as a section
-       beside Projects and Earnings.
-     · MY ORDERS earns its place: it is where a buyer goes, and it is also
-       where a seller's proof copy lives, which is what unlocks selling.
-
-   Naming: the live sidebar mixes MY PROJECTS with SALES OVERVIEW. Pick
-   one. Second person throughout, as everywhere else in this prototype. */
-const ACCOUNT_MENU = [
-  [
-    { label: "Dashboard" },
-    { label: "Your projects" },
-    { label: "Your checkout links", hint: "Every link, and what each has earned" },
-    { label: "Your earnings", hint: "Sales overview and profit reports, in one place" },
-    { label: "Your orders", hint: "Including the proof copy that unlocks selling" },
-  ],
-  [{ label: "Settings" }, { label: "Help" }],
-  [{ label: "Log out", quiet: true }],
-];
-
-/* ["Label", null, "hint"] — the middle slot used to carry a New/Changed
-   badge. Kept as a hole rather than rewritten out of every entry, so the
-   tuples stay diffable against the version that had them. */
-const norm = i => (Array.isArray(i) ? { label: i[0], hint: i[2] } : { label: i });
-
-/* The same navigation, flattened into footer columns. Exported so the
-   footer cannot drift from the header — one list, two renderings. Group
-   headings are dropped: a mega-menu has room to sub-group four ways, a
-   footer column does not, and the order carries the same argument. */
+/* The same navigation, flattened into footer columns. Exported so a footer
+   cannot drift from the header — one list, two renderings. */
 export const NAV_COLUMNS = [...NAV, BOOKSTORE].map(g => ({
   label: g.label,
-  items: g.items.flatMap(([, items]) => items.map(norm)),
+  items: g.columns.flatMap(c => c.items.map(([label, body]) => ({ label, hint: body }))),
 }));
 
-function MegaMenu({ group }) {
-  const grouped = group.items.length > 1 || group.items[0][0];
+/* COMING SOON / CONCEPT. Content, not annotation — the outline treatment
+   keeps them quieter than a filled badge, because a status is a caveat
+   rather than a selling point. */
+function Tag({ children }) {
+  if (!children) return null;
+  return (
+    <span style={{
+      marginLeft: 8, padding: "1px 8px", borderRadius: 999, verticalAlign: "middle",
+      fontSize: 10, fontWeight: 700, letterSpacing: 0.6, textTransform: "uppercase",
+      border: `1px solid ${T.borderStrong}`, color: T.textSubtle, whiteSpace: "nowrap",
+    }}>
+      {children}
+    </span>
+  );
+}
+
+/* ── The panel ──
+   Full width, under the nav row, as drawn: one rule per column heading and
+   the whole thing spanning the header rather than hanging off its trigger.
+   That is the shape that lets Make hold ten project kinds and a note box
+   without becoming a scrolling column. */
+function MegaMenu({ group, onClose }) {
+  const cols = group.columns.length + (group.promo ? 1 : 0);
   return (
     <div
-      className="pop-in pop-wide"
+      className="pop-in"
       style={{
-        position: "absolute", top: "100%", left: 0, zIndex: 50,
-        background: "#fff", border: `1px solid ${T.border}`, borderTop: 0,
-        borderRadius: `0 0 ${R.lg}px ${R.lg}px`, boxShadow: "0 16px 36px rgba(0,0,0,0.12)",
-        padding: grouped ? 20 : 12, minWidth: grouped ? 560 : 260,
-        display: "grid", gap: grouped ? 18 : 2,
-        gridTemplateColumns: grouped
-          ? `repeat(${Math.min(group.items.length, 3)}, minmax(230px, 1fr))`
-          : "1fr",
+        position: "absolute", top: "100%", left: 0, right: 0, zIndex: 50,
+        background: "#fff", borderTop: `1px solid ${T.border}`,
+        borderBottom: `1px solid ${T.border}`,
+        boxShadow: "0 16px 36px rgba(0,0,0,0.10)",
       }}
     >
-      {group.items.map(([heading, items], gi) => (
-        <div key={gi} style={{ display: "grid", gap: 2, alignContent: "start" }}>
-          {heading && (
+      <div style={{
+        maxWidth: 1400, margin: "0 auto", padding: "22px 16px 28px",
+        display: "grid", gap: 32,
+        gridTemplateColumns: `repeat(${cols}, minmax(220px, 1fr))`,
+        alignItems: "start",
+      }}>
+        {group.columns.map(col => (
+          <div key={col.heading} style={{ minWidth: 0 }}>
             <div style={{
-              fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.6, textTransform: "uppercase",
-              color: T.textSubtle, padding: "4px 10px 6px",
-            }}>{heading}</div>
-          )}
-          {items.map(raw => {
-            const it = norm(raw);
-            return (
-              <a
-                key={it.label}
-                href="#"
-                onClick={e => e.preventDefault()}
-                style={{
-                  display: "grid", gap: 1, padding: "8px 10px", borderRadius: R.sm,
-                  textDecoration: "none", color: T.textNeutral, fontSize: TYPE.base,
-                }}
-                onMouseEnter={e => (e.currentTarget.style.background = C.gray50)}
-                onMouseLeave={e => (e.currentTarget.style.background = "transparent")}
-              >
-                <span>{it.label}</span>
-                {it.hint && <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>{it.hint}</span>}
-              </a>
-            );
-          })}
-        </div>
-      ))}
+              fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.8, textTransform: "uppercase",
+              color: T.textSubtle, paddingBottom: 8, borderBottom: `1px solid ${T.border}`,
+            }}>
+              {col.heading}
+            </div>
+
+            <div style={{
+              marginTop: 14, display: "grid", gap: col.split ? "10px 24px" : 14,
+              gridTemplateColumns: col.split ? "repeat(2, minmax(0, 1fr))" : "1fr",
+            }}>
+              {col.items.map(([label, body, tag]) => (
+                <a
+                  key={label}
+                  href="#"
+                  onClick={e => { e.preventDefault(); onClose(); }}
+                  style={{ textDecoration: "none", color: T.textNeutral, display: "grid", gap: 2, minWidth: 0 }}
+                >
+                  <span style={{ fontSize: TYPE.base, fontWeight: 700 }}>
+                    {label}<Tag>{tag}</Tag>
+                  </span>
+                  {body && (
+                    <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>{body}</span>
+                  )}
+                </a>
+              ))}
+            </div>
+
+            {col.note && (
+              <div style={{
+                marginTop: 18, border: `1px dashed ${T.borderStrong}`, borderRadius: R.sm,
+                padding: "10px 12px", fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5,
+              }}>
+                {col.note[0]}<strong style={{ color: T.textNeutral }}>{col.note[1]}</strong>{col.note[2]}
+              </div>
+            )}
+          </div>
+        ))}
+
+        {group.promo && (
+          <div style={{ minWidth: 0 }}>
+            {group.promo.heading && (
+              <div style={{
+                fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.8, textTransform: "uppercase",
+                color: T.textSubtle, paddingBottom: 8, borderBottom: `1px solid ${T.border}`,
+              }}>
+                {group.promo.heading}
+              </div>
+            )}
+            <div style={{
+              marginTop: group.promo.heading ? 14 : 0,
+              border: `1px solid ${T.border}`, borderRadius: R.md, padding: 14,
+              display: "grid", gap: 10,
+            }}>
+              <div style={{ background: C.gray50, borderRadius: R.sm, height: 96 }} />
+              <span style={{ fontSize: TYPE.base, fontWeight: 700 }}>
+                {group.promo.title}<Tag>{group.promo.tag}</Tag>
+              </span>
+              <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>
+                {group.promo.body}
+              </span>
+              {group.promo.cta && (
+                <span style={{
+                  justifySelf: "start", border: `1px solid ${T.borderStrong}`, borderRadius: R.sm,
+                  padding: "6px 12px", fontSize: TYPE.sm, fontWeight: 700,
+                  display: "inline-flex", alignItems: "center", gap: 6,
+                }}>
+                  {group.promo.cta}
+                  {group.promo.external && <span className="ms" style={{ fontSize: 16 }}>open_in_new</span>}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
-/* ── Region and language ──
-   The live control is a bare flag opening these twelve destinations. The
-   list is really locales wearing country labels — Canada appears twice,
-   split by language, which is the tell.
-
-   CONFIRMED 2026-08-18: currency follows the region. That makes this the
-   control that decides what a seller's buyers are charged in — which no
-   part of a bare flag says. So the trigger names the region and the
-   CURRENCY, the two that carry money, and the menu names the language as
-   well, which is what makes the two Canadas explain themselves.
-
-   Currency codes below are the obvious ones for each store and are easy to
-   correct; the rule they follow is confirmed. */
 const LOCALES = [
   { flag: "🇺🇸", label: "United States",   lang: "English",    ccy: "USD" },
   { flag: "🇫🇷", label: "France",          lang: "Français",   ccy: "EUR" },
@@ -367,30 +395,22 @@ function MobileNav({ open, signedIn, onClose, onSignedIn }) {
           <div style={{ fontSize: TYPE.lg, fontWeight: 700, color: T.textNeutral, padding: "4px 0 6px" }}>
             {group.label}
           </div>
-          {group.items.map(([heading, items], gi) => (
-            <div key={gi} style={{ display: "grid", gap: 1, paddingBottom: heading ? 8 : 0 }}>
-              {heading && (
-                <div style={{
-                  fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.6, textTransform: "uppercase",
-                  color: T.textSubtle, padding: "8px 0 2px",
-                }}>{heading}</div>
-              )}
-              {items.map(raw => {
-                const it = norm(raw);
-                return (
-                  <a
-                    key={it.label}
-                    href="#"
-                    onClick={e => { e.preventDefault(); onClose(); }}
-                    style={{
-                      padding: "9px 0", textDecoration: "none",
-                      color: T.textSubtle, fontSize: TYPE.base,
-                    }}
-                  >
-                    {it.label}
-                  </a>
-                );
-              })}
+          {group.columns.map(col => (
+            <div key={col.heading} style={{ display: "grid", gap: 1, paddingBottom: 8 }}>
+              <div style={{
+                fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.6, textTransform: "uppercase",
+                color: T.textSubtle, padding: "8px 0 2px",
+              }}>{col.heading}</div>
+              {col.items.map(([label, , tag]) => (
+                <a
+                  key={label}
+                  href="#"
+                  onClick={e => { e.preventDefault(); onClose(); }}
+                  style={{ padding: "9px 0", textDecoration: "none", color: T.textSubtle, fontSize: TYPE.base }}
+                >
+                  {label}<Tag>{tag}</Tag>
+                </a>
+              ))}
             </div>
           ))}
         </div>
@@ -508,29 +528,30 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
      both close each other's popovers. */
   const toggle = key => setOpen(open === key ? null : key);
 
+  /* The trigger only. The panel is full width, so it is rendered once
+     below the row rather than inside each item. */
   const NavItem = ({ group }) => (
-    <span key={group.label} style={{ position: "relative" }}>
-      <button
-        onClick={() => toggle(group.label)}
-        onMouseEnter={() => open && setOpen(group.label)}
-        aria-expanded={open === group.label}
-        style={{
-          background: "transparent", border: 0, padding: "14px 10px",
-          fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 500,
-          color: open === group.label ? C.blue600 : T.textNeutral,
-          borderBottom: open === group.label ? `2px solid ${C.blue600}` : "2px solid transparent",
-          whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 6, cursor: "pointer",
-        }}
-      >
-        {group.icon && <span className="ms" style={{ fontSize: 20 }}>{group.icon}</span>}
-        {group.label}
-        <span className="ms turn" style={{ fontSize: 18, transform: open === group.label ? "rotate(180deg)" : "none" }}>
-          expand_more
-        </span>
-      </button>
-      {open === group.label && <MegaMenu group={group} />}
-    </span>
+    <button
+      onClick={() => toggle(group.label)}
+      onMouseEnter={() => open && !open.startsWith("__") && setOpen(group.label)}
+      aria-expanded={open === group.label}
+      style={{
+        background: "transparent", border: 0, padding: "14px 10px",
+        fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: open === group.label ? 700 : 500,
+        color: T.textNeutral,
+        borderBottom: open === group.label ? `2px solid ${T.textNeutral}` : "2px solid transparent",
+        whiteSpace: "nowrap", display: "inline-flex", alignItems: "center", gap: 6, cursor: "pointer",
+      }}
+    >
+      {group.icon && <span className="ms" style={{ fontSize: 20 }}>{group.icon}</span>}
+      {group.label}
+      <span className="ms turn" style={{ fontSize: 18, transform: open === group.label ? "rotate(180deg)" : "none" }}>
+        expand_more
+      </span>
+    </button>
   );
+
+  const openGroup = [...NAV, BOOKSTORE].find(g => g.label === open);
 
   return (
     <div ref={ref} style={{ borderBottom: `1px solid ${T.border}`, background: "#fff", position: "relative", zIndex: 40 }}>
@@ -608,21 +629,24 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
       </div>
 
       {/* ── Nav row ── the five jobs, and the Bookstore apart from them. */}
-      <nav
-        className="nav-desktop"
-        style={{
-          borderTop: `1px solid ${T.border}`,
-          maxWidth: 1400, margin: "0 auto", padding: "0 16px",
-          display: "flex", alignItems: "center", gap: 4, fontFamily: FONT_BODY,
-        }}
-      >
-        {NAV.map(group => <NavItem key={group.label} group={group} />)}
+      <div style={{ position: "relative", borderTop: `1px solid ${T.border}` }}>
+        <nav
+          className="nav-desktop"
+          style={{
+            maxWidth: 1400, margin: "0 auto", padding: "0 16px",
+            display: "flex", alignItems: "center", gap: 4, fontFamily: FONT_BODY,
+          }}
+        >
+          {NAV.map(group => <NavItem key={group.label} group={group} />)}
 
-        <span style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 4 }}>
-          <span aria-hidden style={{ width: 1, height: 22, background: T.border, margin: "0 8px" }} />
-          <NavItem group={BOOKSTORE} />
-        </span>
-      </nav>
+          <span style={{ display: "flex", alignItems: "center", gap: 4 }}>
+            <span aria-hidden style={{ width: 1, height: 22, background: T.border, margin: "0 12px" }} />
+            <NavItem group={BOOKSTORE} />
+          </span>
+        </nav>
+
+        {openGroup && <MegaMenu group={openGroup} onClose={() => setOpen(null)} />}
+      </div>
 
       <MobileNav
         open={mobileOpen}
