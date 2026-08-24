@@ -1,442 +1,471 @@
 import React, { useState } from "react";
-import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.js";
-import { FormatRow } from "./FormatCards.jsx";
+import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
+import { CATALOG, fromPrice, money } from "./catalog.js";
 
 /* ────────────────────────────────────────────────────────────────
-   blurb.com — the home page, with a lane to /getting-started
+   blurb.com — the home page, rebuilt to match
 
-   Captured 21 Aug, 1440×6896. The live page in order: hero ("Your
-   story starts here" · "Create. Print. Sell. Share.") → four product
-   cards with typed from-prices → "Tools and resources for makers,
-   sellers, and businesses" as four tabs → The Blurb Difference →
-   an email capture → inspiring examples → "Ready to get started?".
+   Captured 24 Aug 2026 at 1440 wide, from the live page rather than from
+   a screenshot: every measurement below was read off the rendered DOM.
+   The values that shape it:
 
-   WHY THIS SCREEN EXISTS. Three links on that page point at starting
-   something, and they go three different places:
+     container   1280, section padding 80px
+     h1          futura-pt 80/96, weight 400, centred
+     h2          futura-pt 44/52.8, weight 500
+     card title  futura-pt 32/38.4, weight 400
+     column head futura-pt 24/28.8, weight 600
+     body        proxima-nova 16/24, #292929; tab body 18/25.2, #4a5565
+     primary     #107eb1, white, 8px 24px, radius 4 (= our C.blue600)
+     subtle text #464646, card cream #f5f0ea, image ground #f2f1ef
+     hero        background 1440×577 under the nav, book image 846×423
+                 straddling its lower edge
 
-     · the hero's "Get started"     → /formats, a product grid
-     · the header's "Start Project" → /my/account/register
-     · "Start a project"            → /getting-started
+   Photography and copy are Blurb's own, served from assets.blurb.com.
 
-   Only the third one reaches the page that asks what you are making
-   and prices it, and it sits inside a case-study carousel two thirds
-   of the way down. So the most valuable page in this whole flow is
-   reachable from the home page by its least visible link, and the two
-   prominent doors lead to a grid and to a registration form.
+   WHAT WE CHANGE, and nothing else:
 
-   WHAT CHANGES HERE, and nothing else does:
+     1. The hero's action goes to /getting-started. On the live page
+        "Get started" opens /formats, a product grid; the header's Start
+        Project opens a registration form. Neither answers "what will
+        this cost me" — that page does.
+     2. The closing band asks for a project, not an account. Pricing
+        follows the order, not the user.
+     3. The four product cards compute their from-price from the matrix.
+        On 21 Aug the live page typed $4.99 for a trade book, /pricing
+        typed $3.99 and the matrix said $2.99 — ticket T7, on screen.
+     4. THE SELLING TAB CARRIES THE INSTANT STORE. It is the live page's
+        own selling surface, it already opens /self-publish, and it is
+        the only place on the page where a seller is being spoken to —
+        so the new channel belongs in that copy rather than in a band of
+        its own. Its first sentence is the Instant Store; the tab opens
+        selected. Nothing else about the section moves.
 
-     1. The hero's primary action goes to /getting-started. A product
-        grid cannot answer "what will this cost me"; that page can.
-     2. Registration stops being a door. Pricing follows the order, not
-        the user — so the closing band asks for a project, not an
-        account. You make one when you order.
-     3. The fork is named, once, directly under the hero. Making and
-        selling want different pages, and today a seller has to guess
-        that "Sell & Self-Publish" in the nav is for them.
-     4. The product cards compute their from-prices from the matrix
-        instead of typing them. See fromPrice() — on 21 Aug this page
-        typed $4.99 for a trade book, /pricing typed $3.99, and the
-        matrix says $2.99. That is ticket T7, visible here.
+   NOT REBUILT: the "Shop our most popular products" strip. It is a
+   client-rendered recommendation widget — it did not even render on two
+   of three captures — and every product in it appears in the grid
+   below, there with a from-price computed from the matrix.
 
-   BACK IN v2, 2026-08-24, with three changes forced by what v2 dropped:
-   /pdf-to-book is not in this build, so the hero's second prompt is the
-   pricing calculator; ways-to-sell became the seller page; and the NEW /
-   CHANGED marks are gone from the whole prototype, so nothing here wears
-   one. The four product cards are now the shared product card — the same
-   component and the same photographs as /pricing and /getting-started —
-   rather than a title over a grey band.
-
-   AND ONE ADDITION: a lane for the Instant Store. It is the new selling
-   channel and the only one where the seller sets the price, so it is the
-   one thing on this page a visitor could not have found last month. It is
-   still a DOORWAY: no margin, no fulfilment price, no arithmetic.
-
-   PHASE 1 RULE, held: no second price on this page. The home page
-   stays retail-only, which is what protects makers. The selling lane
-   is a doorway — a line of copy and a destination, no margin, no
-   fulfilment price, no arithmetic. Everything a seller needs to see a
-   number lives behind it.
+   PHASE 1 RULE, held: no second price on this page. The home page stays
+   retail-only, which is what protects makers. The Instant Store copy is
+   a doorway — no margin, no fulfilment price, no arithmetic. Everything
+   a seller needs to see a number lives behind it.
    ──────────────────────────────────────────────────────────────── */
 
-/* Their copy, kept. The hero line and the four Difference columns are
-   Blurb's own words from the live page — this screen argues about
-   structure and destinations, not about the writing. */
+const IMG = "https://assets.blurb.com/_astro/";
+
+/* Read off the live page. Keeping the hashed filenames means these are
+   the same files the site serves, not lookalikes. */
+const HERO_BG = IMG + "hero-background-011226.BPI44Cje_vnf7f.webp";
+const HERO_ART = IMG + "hero-image-011226.DnTBrpcB_Zp8W1e.webp";
+
+const CREAM = "#f5f0ea";   // --color-light-foam-100
+const SUBTLE = "#464646";  // --color-blurb-text-subtle
+const GROUND = "#f2f1ef";  // the image ground on a card
+const TAB_ON = "#f1f8fd";  // the selected tab's ground
+
+const PAGE = { maxWidth: 1280, margin: "0 auto" };
+const section = { padding: "80px", width: "100%" };
+
+/* Their words, kept. This screen argues about structure and
+   destinations, not about the writing. */
 const HERO = {
   title: "Your story starts here",
   sub: "Create. Print. Sell. Share. Blurb specializes in custom books and book printing services for photographers, businesses, and creative storytellers alike.",
 };
 
+const PRODUCTS = [
+  { id: "photo", title: "Photo Books", img: IMG + "photo-books.OjYWWhTA.png",
+    body: "From high-end photography albums to keepsake family books, photo books are our most premium format with multiple trim sizes and paper types." },
+  { id: "trade", title: "Paperback & Hardcover", img: IMG + "paperbacks-hardcovers.D5Abrnqy.png",
+    body: "Ideal for books that combine art with text or just text alone like portfolios, cookbooks, novels, children’s books and the like" },
+  { id: "magazine", title: "Magazines", img: IMG + "magazines.C_7iBsxM.png",
+    body: "Great for a series or one-off custom projects. Impressive newsstand quality and easy distribution." },
+  { id: "notebook", title: "Notebooks & Journals", img: IMG + "notebooks-journals.DLSuzQlP.png",
+    body: "Choose from blank, lined, square, or dot-grid notebook pages, plus easily add photos or illustrations within the pages." },
+];
+
+/* The live tab set, its images, its destinations. Only the Selling copy
+   is ours — see change 4 above. `lead` is set in bold, which is how the
+   new thing gets to be the first thing read without the section growing
+   a badge or a second heading. */
+const TABS = [
+  {
+    id: "create", label: "Book creation", img: IMG + "hp-book-creation.7hSxeBZk_1qKVwM.webp",
+    body: "Design online or use our free desktop software. We also integrate with several Adobe products.",
+    cta: "Explore free tools", href: "https://build.blurb.com/create",
+  },
+  {
+    id: "print", label: "Printing", img: IMG + "hp-printing.DiLqSDVo_ZqlQ0R.webp",
+    body: "On-demand printing lets you print the quantity you need whether that’s one book or hundreds. We handle all shipping and distribution, too.",
+    cta: "Start your book", stage: "getstarted",
+  },
+  {
+    id: "sell", label: "Selling", img: IMG + "hp-selling.Bihm600K_YtSAD.webp",
+    lead: "New: sell it yourself with an Instant Store.",
+    body: "Share one link and we print and ship every order — you set the price, so what you make on a copy is yours to decide. Or set your books up for sale on the Blurb Bookstore, or with Amazon or Ingram, all through one convenient dashboard.",
+    cta: "Learn more", stage: "seller",
+  },
+  {
+    id: "business", label: "Business services", img: IMG + "hp-business-service-en.CJfmvcxF_Z1NQUYC.webp",
+    body: "Customized support, API tools, bulk discounts, and all your print needs fulfilled. Plus, quick quotes and consultations.",
+    cta: "Explore services", href: "https://www.blurb.com/large-order-services",
+  },
+];
+
+/* Their four columns, their words. The live page draws a 48px outline
+   illustration above each; ours are the nearest Material Symbol at the
+   same size and the same blue, because the drawings are assets rather
+   than an argument. */
 const DIFFERENCE = [
-  ["auto_awesome", "Professional bookstore-grade quality",
+  ["star", "Professional bookstore-grade quality",
    "Versatile formats and sizes, luxe paper options, and three unique cover types all printed and shipped in-house."],
   ["menu_book", "Trusted printing partner",
    "Backed by 20 years of in-house expertise and full production control, Blurb ensures consistent quality from start to finish. No outsourcing, no compromises."],
   ["eco", "Sustainable papers & practices",
-   "Photo books are crafted in the US with Forest Stewardship Council-certified papers, printed at the facility nearest you."],
+   "Our photo books are crafted in the US with Forest Stewardship Council-certified papers and printed at the facility nearest you, reducing emissions and supporting sustainable publishing."],
   ["architecture", "Complete creative control",
-   "Choose between our free bookmaking software with flexible templates and page layouts, or our plugins that work with Adobe programs."],
+   "Choose between our free bookmaking software with flexible templates and page layouts or our plugins that work with Adobe programs."],
 ];
 
-/* The four families the live page shows, in its order. Their descriptions
-   are not repeated here — they live on the card, with the photograph and the
-   from-price. */
-const PRODUCT_IDS = ["photo", "trade", "magazine", "notebook"];
-
-/* The live "Tools and resources" tabs, with their real destinations. The
-   Selling tab is where the Instant Store belongs: it is the only tab whose
-   audience has already decided to sell, and today it offers them the
-   retail channels and no way to see what they would keep. */
-const TABS = [
-  {
-    id: "create", label: "Book creation",
-    body: "Design online, or use our free desktop software. We also integrate with several Adobe products.",
-    actions: [["Explore free tools", null]],
-  },
-  {
-    id: "print", label: "Printing",
-    body: "One copy or a thousand. Print on demand for a single book, or a bulk quote when you need a run.",
-    actions: [["See prices", "pricing"]],
-  },
-  {
-    id: "sell", label: "Selling",
-    body: "Sell from your own Instant Store, or list the book where readers are already browsing. Four routes, and they work differently — the comparison is the point.",
-    actions: [["Compare the ways to sell", "seller"], ["Work out what you keep", "margin"]],
-  },
-  {
-    id: "business", label: "Business services",
-    body: "Connect your own storefront through the API, or hand a large order to a team that quotes it for you.",
-    actions: [["Large orders and API printing", null]],
-  },
+const EXAMPLES = [
+  { title: "Branding at its best", img: IMG + "building-better-brands.CM3hOj_b_Z1WFOiV.webp",
+    body: "Already in its second edition, this author put his 30 years of brand consultancy knowledge into a 6x9-inch paperback under US $3.99",
+    creator: "Mid-size business, agency", by: "Scott Lerman,", work: "Building Better Brands",
+    tool: "Blurb plugin for Adobe InDesign", format: "Paperback", paper: "Standard Color" },
+  { title: "A travel treasure", img: IMG + "door.BJehDc6f_Rcewj.webp",
+    body: "A layflat book was the go-to format for this travel photographer wanting a coffee-table worthy piece that commanded attention.",
+    creator: "Photographer, self-published author", by: "Adam C. Stuart,", work: "Europe in One-Way Tickets",
+    tool: "Blurb plugin for Adobe InDesign", format: "Layflat", paper: "Premium Lustre" },
+  { title: "Refueling print", img: IMG + "Refueled-1.DqQj5T3k_2f327w.webp",
+    body: "With 32 Blurb-made publications, this artist-publisher used his magazines as a canvas to feature the people and culture that drive his work.",
+    creator: "Artist, publisher, entrepreneur", by: "Chris Brown,", work: "Refueled Magazine",
+    tool: "Blurb plugin for Adobe InDesign", format: "Magazine", paper: null },
 ];
 
-function Btn({ children, onClick, tone = "brand", size = "lg" }) {
-  const brand = tone === "brand";
-  return (
-    <button
-      onClick={onClick}
-      style={{
-        fontFamily: FONT_BODY, fontSize: size === "lg" ? TYPE.lg : TYPE.base, fontWeight: 600,
-        minHeight: size === "lg" ? 48 : BUTTON_HEIGHT, padding: size === "lg" ? "0 26px" : "0 18px",
-        borderRadius: R.md, cursor: "pointer",
-        background: brand ? T.bgBrand : "transparent",
-        color: brand ? T.textInverse : T.textBrand,
-        border: brand ? "1px solid transparent" : `1px solid ${T.borderBrand}`,
-      }}
-    >
-      {children}
-    </button>
-  );
+const FAQS = [
+  "What book formats can I create with Blurb?",
+  "How do I create my own book with Blurb?",
+  "How do I self-publish a book with Blurb?",
+  "How much does it cost to self-publish a book?",
+  "How long does it take to produce and ship my book?",
+  "Does Blurb offer volume pricing?",
+];
+
+/* Their button: 16/24, 8px 24px, 4px radius, #107eb1. */
+function Btn({ children, onClick, href, tone = "brand" }) {
+  const style = {
+    display: "inline-flex", alignItems: "center", justifyContent: "center",
+    fontFamily: FONT_BODY, fontSize: TYPE.base, lineHeight: 1.5, fontWeight: 400,
+    padding: "8px 24px", borderRadius: R.sm, cursor: "pointer", textDecoration: "none",
+    background: tone === "brand" ? C.blue600 : "transparent",
+    color: tone === "brand" ? "#fff" : C.blue600,
+    border: tone === "brand" ? "1px solid transparent" : `1px solid ${C.blue600}`,
+    whiteSpace: "nowrap",
+  };
+  return href
+    ? <a href={href} target="_blank" rel="noreferrer" style={style}>{children}</a>
+    : <button onClick={onClick} style={style}>{children}</button>;
 }
 
-/* A quiet inline link, for the sideways moves that must not compete with
-   the primary action on the same card. */
-function GoLink({ children, onClick }) {
+function H2({ children, center, style }) {
   return (
-    <button
-      onClick={onClick}
-      style={{
-        font: "inherit", fontWeight: 600, color: T.textBrand, background: "transparent",
-        border: 0, padding: 0, cursor: "pointer", display: "inline-flex", alignItems: "center", gap: 4,
-      }}
-    >
-      {children}
-      <span className="ms" style={{ fontSize: 18 }}>arrow_forward</span>
-    </button>
-  );
-}
-
-function SectionHeading({ children, center = true }) {
-  return (
-    <h2
-      style={{
-        fontFamily: FONT_DISPLAY, fontWeight: 400, letterSpacing: "-0.01em",
-        fontSize: "clamp(1.75rem, 3.4vw, 2.5rem)", lineHeight: 1.18,
-        margin: "0 0 8px", textAlign: center ? "center" : "left",
-      }}
-    >
+    <h2 style={{
+      fontFamily: FONT_DISPLAY, fontSize: TYPE["9xl"], fontWeight: 500, lineHeight: 1.2,
+      margin: 0, color: C.gray950, textAlign: center ? "center" : "left",
+      maxWidth: center ? "none" : 640, ...style,
+    }}>
       {children}
     </h2>
   );
 }
 
 export default function Home({ onGo }) {
+  /* Selling opens first here. On the live page Book creation does, which is
+     the right production default; this prototype is about the seller, and
+     the Instant Store is the thing being shown. */
   const [tab, setTab] = useState("sell");
   const active = TABS.find(t => t.id === tab);
 
   return (
-    <div style={{ fontFamily: FONT_BODY, color: T.textNeutral }}>
+    <div style={{ fontFamily: FONT_BODY, color: C.gray950 }}>
 
       {/* ── Hero ──
-          The image collage on the live page is a photograph of books; it
-          carries no argument, so it is a tinted band here rather than a
-          borrowed asset. */}
-      <section style={{ background: T.bgAccentSubtle, borderBottom: `1px solid ${C.blue100}` }}>
-        <div style={{ maxWidth: 900, margin: "0 auto", padding: "clamp(48px, 7vw, 88px) 24px", textAlign: "center" }}>
-          <h1
-            style={{
-              fontFamily: FONT_DISPLAY, fontWeight: 400, letterSpacing: "-0.01em",
-              fontSize: "clamp(2.5rem, 6vw, 4rem)", lineHeight: 1.1, margin: 0,
-            }}
-          >
-            {HERO.title}
-          </h1>
-          <p style={{ fontSize: TYPE.lg, lineHeight: 1.6, color: T.textSubtle, margin: "16px auto 28px", maxWidth: 620 }}>
-            {HERO.sub}
-          </p>
-          {/* ── Two prompts, and they are the site's two real jobs ──
-              Create for people with an idea, Print for people with a file.
-              That is a genuine fork — the second group has already made the
-              book and needs specifications and an upload, not a product
-              chooser — so it earns two buttons where "Start your project"
-              beside "See what it costs" did not: those were one intent and
-              a hedge about price.
-
-              Create opens /getting-started, where the options and the tools
-              that make them live. Print pointed at /pdf-to-book, which is
-              not in this build, so it goes to the pricing calculator — the
-              other page that prices a real specification, and the one that
-              answers "what would this cost to print?" without a project. */}
-          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-            <Btn onClick={() => onGo("getstarted")}>Create</Btn>
-            <Btn tone="ghost" onClick={() => onGo("pricing")}>See prices</Btn>
-          </div>
-          <p style={{ fontSize: TYPE.sm, color: T.textSubtle, margin: "16px 0 0" }}>
-            Start from an idea and we will help you make it, or price a book you have already planned.
-          </p>
-          {/* No reassurance line under the hero. "You only need an account
-              when you order" answers a worry nobody has arrived with yet —
-              it puts registration in a visitor's head at the exact moment
-              the page is trying to get them started. The point still holds;
-              it is made by the closing band asking for a project instead of
-              an account, and by never gating a price. */}
-        </div>
-      </section>
-
-      {/* ── The fork ──
-          Two doors, named for what happens behind them rather than for who
-          the visitor is. "Create" and "Sell" are the two jobs this site
-          does, and a heading asking where to START says the choice is not
-          binding — you can come back and do the other one.
-
-          They are weighted the same on purpose. Selling is the newer road,
-          but highlighting it would answer the question the section asks, and
-          it would tell a maker — most of the traffic — that they picked the
-          lesser option. No figure appears on either: these are doors, not
-          calculators. */}
-      <section style={{ maxWidth: 1080, margin: "0 auto", padding: "clamp(40px, 6vw, 64px) 24px 8px" }}>
-        <SectionHeading>Where do you want to start?</SectionHeading>
-        <p style={{ textAlign: "center", fontSize: TYPE.base, color: T.textSubtle, margin: "0 auto 28px", maxWidth: 620 }}>
-          Both roads lead to prices and product options. They just start from different questions.
-        </p>
-
-        <div style={{ display: "grid", gap: 20, gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
-
-          <div style={{ border: `1px solid ${T.border}`, borderRadius: R.lg, padding: 24, display: "grid", gap: 12, alignContent: "start" }}>
-            <span className="ms" style={{ fontSize: 30, color: T.bgBrand }}>auto_stories</span>
-            <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["5xl"], fontWeight: 500, lineHeight: 1.15 }}>
-              Create
-            </div>
-            <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.6, color: T.textSubtle }}>
-              Pick your product and the tool you want to make it in, see what a copy costs, and start
-              building.
-            </p>
-            <div style={{ marginTop: 4 }}>
-              <Btn size="md" onClick={() => onGo("getstarted", { route: "keep" })}>Get started</Btn>
-            </div>
-          </div>
-
-          <div style={{ border: `1px solid ${T.border}`, borderRadius: R.lg, padding: 24, display: "grid", gap: 12, alignContent: "start" }}>
-            <span className="ms" style={{ fontSize: 30, color: T.bgBrand }}>sell</span>
-            <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["5xl"], fontWeight: 500, lineHeight: 1.15 }}>
-              Sell
-            </div>
-            <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.6, color: T.textSubtle }}>
-              See the ways to sell a book, what each one asks of you, and what you would keep on a sale.
-            </p>
-            {/* One action per card, matched to the other one.
-                "Start a book to sell" used to sit under this button, and the
-                two were the same intent pointing at two pages — so the card
-                asked the visitor to choose a page before they had anything to
-                choose between, and split its own clickthrough doing it.
-                Committing to a book belongs AFTER the comparison, which is
-                where it now lives: at the foot of the ways-to-sell page. */}
-            <div style={{ marginTop: 4 }}>
-              <Btn size="md" onClick={() => onGo("seller")}>See my selling options</Btn>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── The Instant Store lane ──
-          The one genuinely new thing on this page, and the reason the fork
-          above is not enough on its own: "Sell" has been a door on
-          blurb.com for years and it has always meant the same thing — list
-          your book somewhere Blurb runs and take what is left. The Instant
-          Store is different in the one way a seller cares about: they set
-          the price, so the margin is theirs to decide.
-
-          It sits under the fork rather than inside it. Making it a third
-          card would have made three doors where there are two jobs, and
-          weighting it over "Sell" would answer the question that section
-          asks. A band underneath can introduce something without competing
-          with the choice above it.
-
-          NO FIGURES. The phase-1 rule holds here more than anywhere: this
-          is the page that protects retail pricing, so the lane says what
-          the channel IS and hands over. Cost, price and profit live behind
-          it, on the estimator, where a real specification exists. Saying
-          "keep more" with no number is also the honest version — what a
-          seller keeps depends on the book, which is exactly the estimator's
-          argument. */}
-      <section style={{ maxWidth: 1080, margin: "0 auto", padding: "clamp(28px, 4vw, 40px) 24px 0" }}>
+          Background 1440×577 hard against the nav, the text stack centred
+          on it, and the book photograph straddling its lower edge — which
+          is why the image is in normal flow with a negative offset rather
+          than absolutely placed: it has to push the section's own height. */}
+      <section style={{ position: "relative", overflow: "hidden" }}>
+        <img
+          src={HERO_BG}
+          alt=""
+          aria-hidden
+          /* The live page cuts the photograph with a shallow arc — it is not
+             in the file (the source is a plain 3888×2592 photograph), it is
+             the section's own shape. A 50%/60px bottom radius is that arc:
+             the edge hangs lowest in the middle, where the books cross it. */
+          style={{
+            position: "absolute", inset: "0 0 auto", width: "100%", height: 577,
+            objectFit: "cover", borderRadius: "0 0 50% 50% / 0 0 60px 60px",
+          }}
+        />
         <div style={{
-          background: T.bgAccentSubtle, border: `1px solid ${C.blue100}`, borderRadius: R.lg,
-          padding: "clamp(20px, 3vw, 28px)", display: "grid", gap: 14,
+          position: "relative", ...PAGE, padding: "40px 24px 0",
+          display: "flex", flexDirection: "column", alignItems: "center", gap: 32,
         }}>
-          <span style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-            <span style={{
-              padding: "3px 10px", borderRadius: 999, background: C.blue600, color: "#fff",
-              fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.5, textTransform: "uppercase",
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16, textAlign: "center" }}>
+            <h1 style={{
+              fontFamily: FONT_DISPLAY, fontSize: TYPE["12xl"], fontWeight: 400, lineHeight: 1.2,
+              margin: 0, color: C.gray950, maxWidth: 720,
             }}>
-              New
-            </span>
-            <span style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["5xl"], fontWeight: 500, lineHeight: 1.15, color: C.blue950 }}>
-              Sell it yourself with an Instant Store
-            </span>
-          </span>
-
-          <p style={{ margin: 0, fontSize: TYPE.lg, lineHeight: 1.6, color: T.textNeutral, maxWidth: 760 }}>
-            Share one link — in a newsletter, a bio, a talk, a stall — and we print and ship every order.
-            You set the price, so what you make on a copy is yours to decide, and there is nothing to run:
-            no shop, no stock, no listing fees.
-          </p>
-
-          <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.6, color: T.textSubtle, maxWidth: 760 }}>
-            It is the only route where the price is yours. Because you bring the buyer, you are paying us
-            to print rather than to sell — so the margin the shop would have taken stays with you. The
-            estimator shows what that comes to for your book.
-          </p>
-
-          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 2 }}>
-            <Btn size="md" onClick={() => onGo("margin")}>See what you would keep</Btn>
-            <Btn size="md" tone="ghost" onClick={() => onGo("seller")}>Compare all four routes</Btn>
+              {HERO.title}
+            </h1>
+            <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.5, color: C.gray950, maxWidth: 550 }}>
+              {HERO.sub}
+            </p>
           </div>
+
+          {/* Live: /formats. Ours: the page that prices what you pick. */}
+          <Btn onClick={() => onGo("getstarted")}>Get started</Btn>
+
+          <img
+            src={HERO_ART}
+            alt="An open photo book and a softcover book of Vespa photography from Rome."
+            style={{ display: "block", width: 846, maxWidth: "100%", height: "auto", marginTop: 4 }}
+          />
         </div>
       </section>
 
       {/* ── Products ──
-          Same four families as the live page, in its order, but the card is
-          the shared product card (FormatCards.jsx) — the same photographs,
-          the same "6 sizes - From US $12.00" line computed from the matrix,
-          and the same selection geometry as /pricing and /getting-started.
-          A home page that shows a different card for the same product
-          teaches the visitor that they are different things.
+          Two columns of 628×700 cards. Each card is one of Blurb's own
+          product photographs filling it, the name and the from-price laid
+          over the top, and a cream band across the foot for the
+          description. Only the price is ours. */}
+      <section style={section}>
+        <div style={{ ...PAGE, display: "grid", gap: 48 }}>
+          <H2>Books and other products for every creative expression</H2>
 
-          Wall art is not on the live home page and is not added here; this
-          screen is not the place to argue for a fifth card. */}
-      <section style={{ maxWidth: 1240, margin: "0 auto", padding: "clamp(40px, 6vw, 64px) 24px 0" }}>
-        <SectionHeading>Books and other products for every creative expression</SectionHeading>
-        <p style={{ textAlign: "center", fontSize: TYPE.sm, color: T.textSubtle, margin: "0 auto 28px" }}>
-          From-prices computed from the price matrix, per copy, at the format's minimum page count.
-          Photo books open their product page, as they do on the live site.
-        </p>
-
-        <FormatRow
-          ids={PRODUCT_IDS}
-          formatId={null}
-          /* The card carries the product through as a seed, which is what
-             every other handover in this prototype uses — `{format}` was a
-             v1 shape nothing reads any more, so the destination opened on
-             its default product instead of the one that was clicked. */
-          onPick={id => onGo(id === "photo" ? "product" : "getstarted", { seed: { formatId: id } })}
-        />
-      </section>
-
-      {/* ── Tools and resources ──
-          The live tab set, kept. Selling is the default tab here because
-          this prototype is about the seller; on the live page Book
-          creation opens first, and that is the right production default. */}
-      <section style={{ maxWidth: 1080, margin: "0 auto", padding: "clamp(48px, 7vw, 72px) 24px 0" }}>
-        <SectionHeading>Tools and resources for makers, sellers, and businesses</SectionHeading>
-
-        <div style={{ display: "flex", gap: 4, justifyContent: "center", flexWrap: "wrap", margin: "20px 0 0" }}>
-          {TABS.map(t => {
-            const on = t.id === tab;
-            return (
-              <button
-                key={t.id}
-                onClick={() => setTab(t.id)}
-                aria-pressed={on}
-                style={{
-                  font: "inherit", fontSize: TYPE.base, fontWeight: on ? 700 : 500, cursor: "pointer",
-                  padding: "8px 14px", background: on ? T.bgAccentSubtle : "transparent",
-                  color: on ? T.textBrand : T.textSubtle,
-                  border: 0, borderBottom: `2px solid ${on ? T.bgBrand : "transparent"}`,
-                  borderRadius: `${R.sm}px ${R.sm}px 0 0`,
-                }}
-              >
-                {t.label}
-              </button>
-            );
-          })}
-        </div>
-
-        <div
-          style={{
-            border: `1px solid ${T.border}`, borderRadius: R.lg, padding: 24, marginTop: 16,
-            display: "grid", gap: 14, justifyItems: "center", textAlign: "center",
-          }}
-        >
-          <div style={{ fontSize: TYPE.lg, fontWeight: 600 }}>{active.label}</div>
-          <p style={{ margin: 0, maxWidth: 640, fontSize: TYPE.base, lineHeight: 1.6, color: T.textSubtle }}>
-            {active.body}
-          </p>
-          <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center", alignItems: "center" }}>
-            {active.actions.map(([label, target], i) =>
-              target
-                ? <GoLink key={label} onClick={() => onGo(target)}>{label}</GoLink>
-                : (
-                  <span key={label} style={{ fontSize: TYPE.base, color: T.textSubtle }}>
-                    {label} <span style={{ fontSize: TYPE.sm }}>(not prototyped)</span>
+          {/* Two columns, as the live grid is — 628px each at 1280 with a
+              24px gutter. The minimum is what keeps it two rather than
+              three: a third column would need 1464px. */}
+          <div style={{ display: "grid", gap: 24, gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 480px), 1fr))" }}>
+            {PRODUCTS.map(p => {
+              const from = fromPrice(p.id);
+              return (
+                <button
+                  key={p.id}
+                  onClick={() => onGo(p.id === "photo" ? "product" : "getstarted", { seed: { formatId: p.id } })}
+                  style={{
+                    position: "relative", overflow: "hidden", borderRadius: R.lg, border: 0, padding: 0,
+                    background: GROUND, cursor: "pointer", font: "inherit", textAlign: "left",
+                    height: 700, display: "block", width: "100%",
+                  }}
+                >
+                  <img
+                    src={p.img}
+                    alt={`${CATALOG[p.id].label} from Blurb`}
+                    style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+                  />
+                  <span style={{
+                    position: "relative", height: "100%", display: "flex", flexDirection: "column",
+                    justifyContent: "space-between",
+                  }}>
+                    <span style={{ display: "flex", flexDirection: "column", gap: 12, padding: 40 }}>
+                      <span style={{
+                        fontFamily: FONT_DISPLAY, fontSize: TYPE["5xl"], fontWeight: 400, lineHeight: 1.2,
+                        color: C.gray950,
+                      }}>
+                        {p.title}
+                      </span>
+                      <span style={{ fontSize: TYPE.base, fontWeight: 700, color: SUBTLE }}>
+                        {from == null ? "Price on request" : `Starting from ${money(from)}`}
+                      </span>
+                    </span>
+                    <span style={{ background: CREAM, padding: 40 }}>
+                      <span style={{ display: "block", fontSize: TYPE.base, lineHeight: 1.5, color: SUBTLE }}>
+                        {p.body}
+                      </span>
+                    </span>
                   </span>
-                )
-            )}
+                </button>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* ── The Blurb Difference ── their section, unchanged. */}
-      <section style={{ maxWidth: 1180, margin: "0 auto", padding: "clamp(48px, 7vw, 72px) 24px 0" }}>
-        <SectionHeading center={false}>The Blurb Difference</SectionHeading>
-        <div style={{ display: "grid", gap: 28, gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", marginTop: 24 }}>
-          {DIFFERENCE.map(([icon, title, body]) => (
-            <div key={title} style={{ display: "grid", gap: 8, alignContent: "start" }}>
-              <span className="ms" style={{ fontSize: 26, color: T.bgBrand }}>{icon}</span>
-              <div style={{ fontSize: TYPE.lg, fontWeight: 700, lineHeight: 1.3 }}>{title}</div>
-              <p style={{ margin: 0, fontSize: TYPE.sm, lineHeight: 1.6, color: T.textSubtle }}>{body}</p>
+      {/* ── Tools and resources ──
+          The live tabs, and the Selling one is where the Instant Store is
+          introduced: same section, same image, same button, one bold
+          sentence at the front of the copy. */}
+      <section style={section}>
+        <div style={{ ...PAGE, display: "grid", gap: 40, justifyItems: "center" }}>
+          <H2 center>Tools and resources for makers, sellers, and businesses</H2>
+
+          <div role="tablist" style={{ display: "inline-flex", alignItems: "center", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
+            {TABS.map(t => {
+              const on = t.id === tab;
+              return (
+                <button
+                  key={t.id}
+                  role="tab"
+                  aria-selected={on}
+                  onClick={() => setTab(t.id)}
+                  style={{
+                    font: "inherit", fontSize: TYPE.base, fontWeight: on ? 700 : 400, cursor: "pointer",
+                    padding: "8px 16px 12px", color: C.gray950,
+                    background: on ? TAB_ON : "transparent",
+                    border: 0, borderBottom: `2px solid ${on ? C.blue600 : "transparent"}`,
+                    borderRadius: `${R.sm}px ${R.sm}px 0 0`,
+                  }}
+                >
+                  {t.label}
+                </button>
+              );
+            })}
+          </div>
+
+          <p style={{
+            margin: 0, maxWidth: 672, textAlign: "center",
+            fontSize: TYPE.lg, lineHeight: 1.4, color: "#4a5565",
+          }}>
+            {active.lead && <strong style={{ color: C.gray950 }}>{active.lead} </strong>}
+            {active.body}
+          </p>
+
+          {active.stage
+            ? <Btn onClick={() => onGo(active.stage)}>{active.cta}</Btn>
+            : <Btn href={active.href}>{active.cta}</Btn>}
+
+          <img
+            key={active.id}
+            className="fade-in"
+            src={active.img}
+            alt={`${active.label} at Blurb`}
+            style={{ display: "block", width: "100%", height: "auto", borderRadius: R.lg }}
+          />
+        </div>
+      </section>
+
+      {/* ── The Blurb Difference ── their section, their words. */}
+      <section style={section}>
+        <div style={{ ...PAGE, display: "grid", gap: 48 }}>
+          <H2>The Blurb Difference</H2>
+          <div style={{ display: "grid", gap: 24, gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}>
+            {DIFFERENCE.map(([icon, title, body]) => (
+              <div key={title} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                <span className="ms" style={{ fontSize: 48, color: C.blue600, lineHeight: 1 }}>{icon}</span>
+                <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 600, lineHeight: 1.2 }}>
+                  {title}
+                </div>
+                <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.5 }}>{body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── The email band ──
+          Live furniture, kept for fidelity and inert here: nothing submits
+          and nothing is stored. Its photograph is the live page's own
+          (email-capture-desktop), which is why the copy sits in the left
+          third — that is where the image leaves room. */}
+      <section style={{
+        backgroundImage: `url(${IMG}email-capture-desktop.DFnncEC6_1DTtcA.png)`,
+        backgroundSize: "cover", backgroundPosition: "center",
+      }}>
+        <div style={{ ...PAGE, padding: "80px", display: "grid", gap: 24, maxWidth: 1440 }}>
+          <div style={{ maxWidth: 600, display: "grid", gap: 12 }}>
+            <H2 style={{ color: "#fff" }}>Want 30% off? Sign up and save on your first book.</H2>
+          </div>
+          <div style={{ display: "grid", gap: 8, maxWidth: 520 }}>
+            <label htmlFor="home-email" style={{ fontSize: TYPE.sm, fontWeight: 700, color: "#fff" }}>
+              Email Address
+            </label>
+            <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+              <input
+                id="home-email"
+                type="email"
+                style={{
+                  flex: "1 1 300px", minWidth: 0, height: 40, border: "1px solid #fff", borderRadius: R.sm,
+                  padding: "0 12px", fontFamily: FONT_BODY, fontSize: TYPE.base, background: "#fff",
+                }}
+              />
+              <Btn>Join us</Btn>
             </div>
-          ))}
+            <p style={{ margin: 0, fontSize: TYPE.sm, color: "#fff", lineHeight: 1.5 }}>
+              By continuing, you agree to our <span style={{ textDecoration: "underline" }}>Terms of Service</span>{" "}
+              and <span style={{ textDecoration: "underline" }}>Privacy Policy</span>.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Inspiring examples ── */}
+      <section style={section}>
+        <div style={{ ...PAGE, display: "grid", gap: 40 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, flexWrap: "wrap" }}>
+            <H2>Inspiring examples made with Blurb</H2>
+            <Btn onClick={() => onGo("getstarted")}>Start a project</Btn>
+          </div>
+
+          <div style={{ display: "grid", gap: 24, gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
+            {EXAMPLES.map(e => (
+              <div key={e.title} style={{ display: "grid", gap: 16, alignContent: "start" }}>
+                <div style={{
+                  background: GROUND, borderRadius: R.lg, height: 320,
+                  display: "grid", placeItems: "center", overflow: "hidden",
+                }}>
+                  <img src={e.img} alt={e.work} style={{ maxHeight: 320, maxWidth: "70%", objectFit: "contain" }} />
+                </div>
+                <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["5xl"], fontWeight: 400, lineHeight: 1.2 }}>
+                  {e.title}
+                </div>
+                <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.5 }}>{e.body}</p>
+                <dl style={{ margin: 0, display: "grid", gap: 8, fontSize: TYPE.base, lineHeight: 1.5 }}>
+                  <div><strong>Creator type:</strong><div>{e.creator}</div></div>
+                  <div>{e.by} <span style={{ color: C.blue600, textDecoration: "underline" }}>{e.work}</span></div>
+                  <div><strong>Tool:</strong><div>{e.tool}</div></div>
+                  <div><strong>Format:</strong><div>{e.format}</div></div>
+                  {e.paper && <div><strong>Paper:</strong><div>{e.paper}</div></div>}
+                </dl>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Questions ──
+          Their heading break — "Have questions?" over "Get answers." — and
+          their six questions, closed. The answers are on the live page; a
+          prototype that opened them would be inventing support copy. */}
+      <section style={section}>
+        <div style={{ ...PAGE, display: "grid", gap: 40, gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))" }}>
+          <H2>Have questions?<br />Get answers.</H2>
+          <div style={{ display: "grid" }}>
+            {FAQS.map(q => (
+              <div key={q} style={{
+                display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16,
+                padding: "20px 0", borderTop: `1px solid ${C.gray200}`, fontSize: TYPE.base,
+              }}>
+                {q}
+                <span className="ms" style={{ fontSize: 22, color: C.gray950 }}>expand_more</span>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* ── Closing band ──
-          The live page closes on "Ready to get started? Create your
-          account". An account is not what a visitor came for, and asking
-          for one here is the identity gate the audit argues against:
-          pricing follows the order, not the user. So it closes on the
-          project instead, and log-in waits until there is something to
-          save — which is exactly where /getting-started puts it. */}
-      <section style={{ marginTop: "clamp(48px, 7vw, 72px)", background: T.bgSubtle, borderTop: `1px solid ${T.border}` }}>
-        <div style={{ maxWidth: 780, margin: "0 auto", padding: "clamp(40px, 6vw, 64px) 24px", textAlign: "center" }}>
-          <SectionHeading>Ready to get started?</SectionHeading>
-          <p style={{ fontSize: TYPE.base, color: T.textSubtle, margin: "8px auto 24px", maxWidth: 560 }}>
-            Pick what you are making and see the price. Nothing to sign up for until you order.
-          </p>
-          <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-            <Btn onClick={() => onGo("getstarted")}>Start your project</Btn>
-            <Btn tone="ghost" onClick={() => onGo("getstarted", { route: "sell" })}>I want to sell one</Btn>
-          </div>
+          Live: "Ready to get started? / Create your account". An account is
+          not what a visitor came for, and asking for one here is the
+          identity gate the audit argues against — pricing follows the
+          order, not the user. So it closes on the project, and log-in waits
+          until there is something to save, which is where
+          /getting-started puts it. */}
+      <section style={{ ...section, paddingTop: 40 }}>
+        <div style={{ ...PAGE, display: "grid", gap: 24, justifyItems: "center", textAlign: "center" }}>
+          <H2 center>Ready to get started?</H2>
+          <Btn onClick={() => onGo("getstarted")}>Start your project</Btn>
         </div>
       </section>
     </div>

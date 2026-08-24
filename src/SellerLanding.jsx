@@ -188,6 +188,61 @@ const dataCell = {
   scrollSnapAlign: "end",
 };
 
+/* ── "Choose how to sell your book", with the card that is missing ──
+   Bookstore, Amazon and Ingram are the live /self-publish cards, copied
+   rather than paraphrased so the difference is visible: the Instant Store
+   card is the only new thing on the page. Its bullets say what the others
+   cannot — the price is yours, and there is no shopfront to run. */
+const SELL_CARDS = [
+  {
+    id: "link", name: "Instant Store", isNew: true, stage: "margin", cta: "See what you would keep",
+    bestFor: "Creators who already have an audience and no shop to send them to.",
+    lede: "Share one link — in a newsletter, a bio, a talk, a stall — and we print and ship every order.",
+    points: [
+      "You set the price, so what you make on a copy is yours to decide",
+      "Nothing to run: no shopfront, no stock, no listing fees",
+      "Paid out by PayPal at a set cadence",
+      "Available formats: photo books, paperback and hardcover books, magazines",
+    ],
+  },
+  {
+    id: "bookstore", name: "Blurb Bookstore", href: "https://www.blurb.com/sell-through-blurb", cta: "Sell with us",
+    bestFor: "Creators with a built-in audience or strong social presence.",
+    lede: "Keep 100% of profits when you sell your book in our bookstore.",
+    points: [
+      "No listing fees or hidden costs",
+      "Earn more by setting your own price",
+      "Monthly Blurb-funded bookstore promotions",
+      "Drive traffic with direct links from your site or social media",
+      "Blurb takes care of printing, global shipping, and fulfillment",
+      "Available formats: photo books, paperback and hardcover books, magazines, notebooks, and journals",
+    ],
+  },
+  {
+    id: "amazon", name: "Sell on Amazon", href: "https://www.blurb.com/amazon", cta: "Sell on Amazon",
+    bestFor: "Selling your book online to readers everywhere.",
+    lede: "Put your book in front of millions by listing it on Amazon — the world's largest online book retailer.",
+    points: [
+      "Expand your reach",
+      "Benefit from Amazon's built-in ratings and rankings",
+      "Blurb manages printing, shipping, and fulfillment",
+      "Available formats: photo books (layflat not included)",
+      "Note: Amazon charges additional distribution fees",
+    ],
+  },
+  {
+    id: "ingram", name: "Sell through Ingram", href: "https://www.blurb.com/ingram", cta: "Sell through Ingram",
+    bestFor: "Selling your book in bookstores around the world.",
+    lede: "Leverage one of the largest global distribution networks in publishing.",
+    points: [
+      "Reach 40,000+ online and physical bookstores and retailers in 195 countries",
+      "Blurb handles printing, shipping, and fulfillment",
+      "Available formats: paperback and hardcover books",
+      "Note: Additional distribution fees apply",
+    ],
+  },
+];
+
 export default function SellerLanding({ onGo }) {
   const routes = ROUTE_IDS.map(id => SELL_CHANNELS.find(c => c.id === id)).filter(Boolean);
 
@@ -199,18 +254,112 @@ export default function SellerLanding({ onGo }) {
 
   return (
     <div style={{ fontFamily: FONT_BODY, color: T.textNeutral }}>
+      {/* ── This IS /self-publish ──
+          The live page's own heading and lede, because that is the page this
+          replaces: blurb.com/self-publish, where the home page's Selling tab
+          already sends people. Its "Choose how to sell your book" section
+          offers three cards — Bookstore, Amazon, Ingram — and the Instant
+          Store is missing from it. Adding a fourth card there is the change
+          this page argues for (2026-08-24). */}
       <section style={{ maxWidth: 1240, margin: "0 auto", padding: "56px 24px 8px", textAlign: "center" }}>
         <h1 style={{ fontFamily: FONT_DISPLAY, fontWeight: 400, fontSize: "clamp(2rem, 4.5vw, 3rem)", lineHeight: 1.15, margin: 0 }}>
-          Four ways to sell your book
+          Publish and sell your books on demand
         </h1>
         <p style={{ fontSize: TYPE.xl, lineHeight: 1.55, color: T.textSubtle, maxWidth: 680, margin: "16px auto 0" }}>
-          Same book, four routes to a buyer. They differ in who finds it, what they ask of you, and what the
-          channel takes on the way through.
+          Blurb gives you the tools to design, print, and sell your books — whether you're a creative
+          professional, a small or medium business, or a first-time author.
         </p>
       </section>
 
       <section style={{ background: T.bgSubtle, borderTop: `1px solid ${T.border}`, marginTop: 32, padding: "28px 24px 72px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 20 }}>
+
+          {/* ── Choose how to sell your book ──
+              The live section, with a fourth card. Its three cards are the
+              live page's own copy, bullet for bullet; the Instant Store card
+              is ours, written to the same shape — a "Best for" line, a
+              sentence, bullets, a button.
+
+              It leads rather than trails because it is the change being
+              proposed: someone landing on /self-publish today is offered
+              three ways to sell and told nothing about the one where they
+              set the price. The table underneath is what none of these cards
+              can do — read the same fact across all four. */}
+          <div style={{ display: "grid", gap: 20 }}>
+            <div style={{ textAlign: "center" }}>
+              <h2 style={{
+                fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
+                lineHeight: 1.25, margin: 0,
+              }}>
+                Choose how to sell your book
+              </h2>
+              <p style={{ fontSize: TYPE.base, color: T.textSubtle, margin: "10px auto 0", maxWidth: 720, lineHeight: 1.6 }}>
+                Blurb gives you flexible ways to sell your print-on-demand book to a global audience — from
+                your own Instant Store, in our bookstore, on Amazon, with Ingram, or all of them.
+              </p>
+            </div>
+
+            <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(270px, 1fr))" }}>
+              {SELL_CARDS.map(card => (
+                <div
+                  key={card.id}
+                  style={{
+                    background: "#fff", border: `1px solid ${card.isNew ? C.blue600 : T.border}`,
+                    borderRadius: R.lg, padding: 24, display: "grid", gap: 12, alignContent: "start", minWidth: 0,
+                  }}
+                >
+                  <span style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+                    <span style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["4xl"], fontWeight: 500, lineHeight: 1.2 }}>
+                      {card.name}
+                    </span>
+                    {card.isNew && <Chip solid>New</Chip>}
+                  </span>
+
+                  <span style={{ fontSize: TYPE.sm, lineHeight: 1.5 }}>
+                    <strong>Best for:</strong> {card.bestFor}
+                  </span>
+
+                  <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.6, color: T.textSubtle }}>{card.lede}</p>
+
+                  <ul style={{ margin: 0, paddingLeft: 18, display: "grid", gap: 6, fontSize: TYPE.sm, lineHeight: 1.55, color: T.textSubtle }}>
+                    {card.points.map(pt => <li key={pt}>{pt}</li>)}
+                  </ul>
+
+                  <span style={{ marginTop: 4 }}>
+                    {card.stage ? (
+                      <button
+                        onClick={() => onGo?.(card.stage)}
+                        style={{
+                          fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 600, minHeight: 40,
+                          padding: "0 18px", borderRadius: R.md, cursor: "pointer",
+                          background: card.isNew ? T.bgBrand : "transparent",
+                          color: card.isNew ? T.textInverse : T.textBrand,
+                          border: card.isNew ? "1px solid transparent" : `1px solid ${T.borderBrand}`,
+                        }}
+                      >
+                        {card.cta}
+                      </button>
+                    ) : (
+                      <a
+                        href={card.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{
+                          display: "inline-flex", alignItems: "center", gap: 5, minHeight: 40, padding: "0 18px",
+                          borderRadius: R.md, textDecoration: "none",
+                          fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 600,
+                          background: "transparent", color: T.textBrand, border: `1px solid ${T.borderBrand}`,
+                        }}
+                      >
+                        {card.cta}
+                        <span className="ms" style={{ fontSize: 16 }}>open_in_new</span>
+                      </a>
+                    )}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
 
           {/* ── The comparison ──
               Built like the tool comparison on blurb.com/bookmaking-tools,

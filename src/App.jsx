@@ -91,7 +91,7 @@ const STAGES = [
   { id: "getstarted", short: "Get started",  label: "Get started — the intent router" },
   /* Ways to sell, renamed and given one goal: which route is mine? It is
      where a seller lands, and it ends in the single step that follows. */
-  { id: "seller",     short: "Seller page",  label: "The seller landing page — five ways to sell" },
+  { id: "seller",     short: "Self-publish", label: "/self-publish — choose how to sell, Instant Store included" },
   /* Two pages, not two tabs. The maker's price sits under Pricing; the
      seller's margin sits under Sell & Self-Publish, which is what keeps
      the public pricing pages retail-only. */
