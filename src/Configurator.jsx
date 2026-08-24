@@ -49,6 +49,13 @@ export function StepHeading({ n, children }) {
 export function OptionCard({ title, sub, spec, note, selected, onClick, disabled, variant = "default" }) {
   const thumb = variant === "thumb";
   const text = variant === "text";
+  /* The default card is the product card's geometry (FormatCards.jsx): the
+     swatch runs to the card's edges, only the caption is inset, and there is
+     no frame until the card is chosen — 2px transparent rather than absent,
+     so choosing one cannot shift the row. One way of showing a choice across
+     the whole prototype; the boxed, inset, always-bordered version this
+     replaced made the same act look like a different control on every page. */
+  const card = !thumb && !text;
   return (
     <button
       onClick={onClick}
@@ -57,29 +64,38 @@ export function OptionCard({ title, sub, spec, note, selected, onClick, disabled
       className="card-move"
       title={disabled ? "Not available with the rest of your selection" : undefined}
       style={{
-        textAlign: "center", background: T.bgNeutral, borderRadius: R.md,
-        padding: thumb ? 8 : text ? "10px 12px" : 16,
-        minWidth: 0, opacity: disabled ? 0.4 : 1,
+        textAlign: "center", minWidth: 0, opacity: disabled ? 0.4 : 1,
         cursor: disabled ? "not-allowed" : "pointer",
-        border: selected ? `2px solid ${T.borderBrand}` : `1px solid ${T.border}`,
-        margin: selected ? 0 : 1,
-        fontFamily: FONT_BODY, display: "grid", gap: thumb ? 6 : text ? 2 : 8, alignContent: "start",
+        fontFamily: FONT_BODY, display: "grid", alignContent: "start",
+        ...(card ? {
+          background: "transparent", padding: 0, overflow: "hidden", borderRadius: 10, gap: 0,
+          border: selected ? `2px solid ${C.gray950}` : "2px solid transparent",
+          transition: "border-color var(--nav-hover) var(--nav-ease)",
+        } : {
+          background: T.bgNeutral, borderRadius: R.md,
+          padding: thumb ? 8 : "10px 12px",
+          gap: thumb ? 6 : 2,
+          border: selected ? `2px solid ${T.borderBrand}` : `1px solid ${T.border}`,
+          margin: selected ? 0 : 1,
+        }),
       }}
     >
       {!text && (
         <div style={{
-          background: selected ? C.blue50 : C.gray100, borderRadius: R.sm,
+          background: card ? C.gray100 : (selected ? C.blue50 : C.gray100),
+          borderRadius: card ? 0 : R.sm,
           /* A square swatch, as on the live PDP. A fixed height inside a
              flexible card gave a squat rectangle that read as a cropped
              image rather than a sample. */
           aspectRatio: thumb ? "1 / 1" : "16 / 11",
           display: "grid", placeItems: "center",
         }}>
-          <span className="ms" style={{ fontSize: thumb ? 26 : 40, color: selected ? C.blue600 : C.gray400 }}>
+          <span className="ms" style={{ fontSize: thumb ? 26 : 40, color: card ? C.gray400 : (selected ? C.blue600 : C.gray400) }}>
             menu_book
           </span>
         </div>
       )}
+      <span style={card ? { display: "grid", gap: 6, padding: "14px 12px 18px" } : { display: "grid", gap: text ? 2 : 8 }}>
       <div style={{
         /* Only the default step card shouts. A thumbnail's caption and a text
            button are read as words, and the live PDP sets both in sentence
@@ -89,17 +105,18 @@ export function OptionCard({ title, sub, spec, note, selected, onClick, disabled
         fontWeight: thumb ? 600 : text ? 600 : 700,
         letterSpacing: thumb || text ? 0 : 0.6,
         textTransform: thumb || text ? "none" : "uppercase",
-        color: selected ? C.blue950 : T.textNeutral, lineHeight: 1.3,
+        color: card ? C.gray950 : (selected ? C.blue950 : T.textNeutral), lineHeight: 1.3,
       }}>
         {title}
       </div>
       {sub && <div style={{ fontSize: TYPE.sm, color: T.textSubtle }}>{sub}</div>}
       {spec && <div style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>{spec}</div>}
       {note && (
-        <div style={{ fontSize: TYPE.sm, fontWeight: 700, color: selected ? C.blue600 : T.textSubtle }}>
+        <div style={{ fontSize: TYPE.sm, fontWeight: 700, color: card ? T.textSubtle : (selected ? C.blue600 : T.textSubtle) }}>
           {note}
         </div>
       )}
+      </span>
     </button>
   );
 }

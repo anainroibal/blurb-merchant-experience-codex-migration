@@ -153,9 +153,22 @@ export function FormatCard({ id, selected, onPick, badge, icon }) {
 
 /* The row itself. `ids` lets a caller narrow or reorder the set — step one
    filters by route and leads with the recommendation. */
+const GAP = 28;
+/* /pricing shows five of these across the content width, which puts each
+   card at a little over 200px. A page offering three would stretch them to
+   nearly twice that on the same grid rule, and the same product would look
+   like a different component from one screen to the next. Capping the row
+   at what five cards occupy keeps the card itself one size everywhere and
+   simply centres a shorter row. */
+const CARD_MAX = 232;
+
 export function FormatRow({ ids, formatId, onPick, badgeFor }) {
   return (
-    <div style={{ display: "grid", gap: 28, gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))", alignItems: "start" }}>
+    <div style={{
+      display: "grid", gap: GAP, gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
+      alignItems: "start",
+      maxWidth: ids.length * CARD_MAX + (ids.length - 1) * GAP, margin: "0 auto", width: "100%",
+    }}>
       {ids.map(id => (
         <FormatCard
           key={id}

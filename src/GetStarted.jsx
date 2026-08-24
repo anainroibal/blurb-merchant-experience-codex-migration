@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
-import Configurator, { StepHeading } from "./Configurator.jsx";
+import Configurator from "./Configurator.jsx";
 import ProductTypes from "./ProductTypes.jsx";
 import Handoff from "./Handoff.jsx";
 import {
@@ -315,17 +315,65 @@ export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSe
         )}
       </section>
 
-      {/* ── The steps, with the calculator pinned alongside ── */}
+      {/* ── The product, first ──
+          /pricing opens with the format cards, on their own, above
+          everything the choice then feeds. This page does the same, and for
+          the same reason: the product is not step one of a form, it is the
+          thing being priced. Making it a numbered step implied an order the
+          page does not enforce — the row can be changed at any point, and
+          doing so re-seeds every option below it.
+
+          So the numbering starts at the first real step (the size), and
+          this section carries /pricing's heading instead. When a kind has
+          been named the recommendation leads the row and the reason runs
+          under it. */}
       <section
         style={{
-          background: T.bgSubtle,
           borderTop: `1px solid ${T.border}`,
-          padding: "clamp(28px, 4vw, 44px) 16px 72px",
+          padding: "clamp(28px, 4vw, 44px) 16px clamp(28px, 4vw, 44px)",
         }}
       >
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          {format ? (
-            /* Keyed on the format so the steps arrive rather than appear. */
+        <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 28 }}>
+          <div style={{ textAlign: "center" }}>
+            <h2 style={{
+              fontFamily: FONT_DISPLAY, fontWeight: 600, letterSpacing: "-0.01em",
+              fontSize: "clamp(1.5rem, 3.2vw, 2rem)", lineHeight: 1.25, margin: 0,
+            }}>
+              Select a format to see size and paper options
+            </h2>
+          </div>
+
+          <ProductTypes
+            format={format} route={route} use={use} onSelect={changeFormat}
+            recommended={format ? recommended : null}
+            why={format ? why : null}
+            kindLabel={PROJECT_KINDS.find(k => k.id === kind)?.label}
+          />
+
+          {!format && (
+            <p style={{ fontSize: TYPE.xl, color: T.textSubtle, textAlign: "center", margin: "12px auto 0", maxWidth: 780, lineHeight: 1.6 }}>
+              {selling
+                ? "Tell us what you're making at the top and we'll recommend a product, a size and a paper — with what it costs you and what you'd earn. Or pick one yourself."
+                : "Tell us what you're making at the top and we'll recommend a product, a size and a paper. Or pick one yourself."}
+            </p>
+          )}
+        </div>
+      </section>
+
+      {/* ── The options it feeds, with the calculator pinned alongside ── */}
+      {format && (
+        <section
+          /* White, as the calculators are. The grey ground this section used
+             to carry put a grey card on a grey page the moment the option
+             cards lost their white box, and the same option would have read
+             differently here than on /pricing. */
+          style={{
+            borderTop: `1px solid ${T.border}`,
+            padding: "clamp(28px, 4vw, 44px) 16px 72px",
+          }}
+        >
+          <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+            {/* Keyed on the format so the steps arrive rather than appear. */}
             <Configurator
               key={format}
               formatId={format}
@@ -337,17 +385,7 @@ export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSe
               /* The summary's way out to the product page. Optional: without
                  it the link simply does not appear. */
               onProductPage={onGo ? (spec => onGo("product", { seed: spec })) : null}
-              stepOffset={1}
-              leading={
-                <section>
-                  <StepHeading n={1}>{kind ? "Your product" : "Choose your project"}</StepHeading>
-                  <ProductTypes
-                    format={format} route={route} use={use} onSelect={changeFormat}
-                    recommended={recommended} why={why}
-                    kindLabel={PROJECT_KINDS.find(k => k.id === kind)?.label}
-                  />
-                </section>
-              }
+              stepOffset={0}
               trailing={
                 <Handoff
                   route={route} signedIn={signedIn} onSignIn={onSignIn}
@@ -356,19 +394,10 @@ export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSe
                 />
               }
             />
-          ) : (
-            <div style={{ maxWidth: 1000, margin: "0 auto" }}>
-              <StepHeading n={1}>Choose your project</StepHeading>
-              <ProductTypes format={format} route={route} use={use} onSelect={changeFormat} />
-              <p style={{ fontSize: TYPE.xl, color: T.textSubtle, textAlign: "center", margin: "40px 0 0", lineHeight: 1.6 }}>
-                {selling
-                  ? "Tell us what you're making at the top and we'll recommend a product, a size and a paper — with what it costs you and what you'd earn. Or pick one yourself."
-                  : "Tell us what you're making at the top and we'll recommend a product, a size and a paper. Or pick one yourself."}
-              </p>
-            </div>
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
+
     </div>
   );
 }
