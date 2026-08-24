@@ -181,6 +181,11 @@ const stickyCell = {
   boxShadow: `inset -1px 0 0 0 ${C.charcoal200}`,
 };
 
+/* The frame draws the outermost rules now, so the last column and the last
+   row must not draw them again — two 1px lines a pixel apart read as a
+   thicker, slightly wrong border. */
+const lastCol = (i, n) => (i === n - 1 ? { borderRight: 0 } : null);
+
 const dataCell = {
   ...cellBase, minWidth: 250,
   /* Right, not left: the label column's inset shadow already draws the first
@@ -236,15 +241,15 @@ const PRINT_TIERS = [
 const SELL_CARDS = [
   {
     id: "link", name: "Instant Store", isNew: true, stage: "margin", cta: "See what you would keep",
-    img: ILLUS + "share-books-1.BHcvSHBn_2rGILu.webp",
-    alt: "An illustration of a person holding out a book to share.",
+    img: ILLUS + "blurb-dashboard.YPDjPrK8_Z1bvCol.webp",
+    alt: "An illustration of a person setting up a book listing.",
     line: "Share one link — a newsletter, a bio, a talk, a stall — and we print and ship every order.",
     facts: ["You set the price", "Nothing to run, and no listing fees"],
   },
   {
     id: "bookstore", name: "Blurb Bookstore", href: "https://www.blurb.com/sell-through-blurb", cta: "Sell with us",
-    img: ILLUS + "blurb-dashboard.YPDjPrK8_Z1bvCol.webp",
-    alt: "An illustration of a person arranging a book listing.",
+    img: ILLUS + "share-books-1.BHcvSHBn_2rGILu.webp",
+    alt: "An illustration of a person holding out a book to share, beside a shelf of books.",
     line: "A listing you do not have to run, in a shop readers already browse.",
     facts: ["No listing fee", "Takes the widest range of products"],
   },
@@ -440,7 +445,17 @@ export default function SellerLanding({ onGo }) {
 
           Sections are 80px apart, which is what /bookmaking-tools uses, and
           it is most of what "lighten it up" means on a page like this. */}
-      <section id="routes" style={{ padding: "clamp(56px, 7vw, 80px) 24px", scrollMarginTop: 140 }}>
+      {/* Light grey, top and bottom rule: the choosing happens here, and the
+          band is what says so — everything above it is about printing, and
+          everything below it is reassurance. */}
+      <section
+        id="routes"
+        style={{
+          background: T.bgSubtle,
+          borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`,
+          padding: "clamp(56px, 7vw, 80px) 24px", scrollMarginTop: 140,
+        }}
+      >
         <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 48 }}>
           <div style={{ textAlign: "center", display: "grid", gap: 12, justifyItems: "center" }}>
             <h2 style={{
@@ -550,9 +565,18 @@ export default function SellerLanding({ onGo }) {
               The one departure is the button row. The live table uses solid
               near-black buttons; ours are the outlined secondary, matching
               the rest of the prototype. */}
+          {/* Outlined all the way round now that the section is grey: the
+              internal rules alone left the table's edges open, and on a
+              coloured ground an open-sided table reads as text that happens
+              to line up rather than as one object. The frame is the same
+              #d1d1d1 as the rules inside it, so it belongs to the table
+              rather than boxing it. */}
           <div
             className="cmp-scroll"
-            style={{ background: "#fff", overflowX: "auto", scrollSnapType: "x mandatory" }}
+            style={{
+              background: "#fff", overflowX: "auto", scrollSnapType: "x mandatory",
+              border: `1px solid ${C.charcoal200}`, borderRadius: R.md,
+            }}
           >
             <table style={{ borderCollapse: "collapse", width: "100%", minWidth: 200 + routes.length * 250 }}>
               <tbody>
@@ -560,8 +584,8 @@ export default function SellerLanding({ onGo }) {
                     zebra stripe like every other row on the live table. */}
                 <tr style={{ background: ROW_BG(0), borderBottom: `1px solid ${C.charcoal200}` }}>
                   <th style={{ ...labelCell, ...stickyCell }}>Route</th>
-                  {routes.map(r => (
-                    <th key={r.id} style={{ ...dataCell, fontWeight: 700, verticalAlign: "middle" }}>
+                  {routes.map((r, i) => (
+                    <th key={r.id} style={{ ...dataCell, ...lastCol(i, routes.length), fontWeight: 700, verticalAlign: "middle" }}>
                       <span style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
                         <span style={{ fontSize: TYPE.base, fontWeight: 700, color: C.gray950 }}>{r.name}</span>
                         {r.isNew && <Chip solid>New</Chip>}
@@ -579,8 +603,8 @@ export default function SellerLanding({ onGo }) {
                 {ROWS.map((row, i) => (
                   <tr key={row.key} style={{ background: ROW_BG(i + 1), borderBottom: `1px solid ${C.charcoal200}` }}>
                     <th style={{ ...labelCell, ...stickyCell }}>{row.label}</th>
-                    {routes.map(r => (
-                      <td key={r.id} style={{ ...dataCell, fontWeight: row.strong ? 600 : 400 }}>
+                    {routes.map((r, i) => (
+                      <td key={r.id} style={{ ...dataCell, ...lastCol(i, routes.length), fontWeight: row.strong ? 600 : 400 }}>
                         {cellFor(r, row)}
                       </td>
                     ))}
@@ -592,12 +616,13 @@ export default function SellerLanding({ onGo }) {
                     any of the four, and the button belongs at the foot of its
                     own column rather than beside the route name, where it
                     would compete for the first read. */}
-                <tr style={{ background: ROW_BG(ROWS.length + 1), borderBottom: `1px solid ${C.charcoal200}` }}>
+                {/* No bottom rule on the last row: the frame is that line. */}
+                <tr style={{ background: ROW_BG(ROWS.length + 1) }}>
                   <th style={{ ...labelCell, ...stickyCell }} />
-                  {routes.map(r => {
+                  {routes.map((r, i) => {
                     const href = ROUTE_PAGE[r.id];
                     return (
-                      <td key={r.id} style={{ ...dataCell, verticalAlign: "middle" }}>
+                      <td key={r.id} style={{ ...dataCell, ...lastCol(i, routes.length), verticalAlign: "middle" }}>
                         {href ? (
                           <a
                             href={href}
