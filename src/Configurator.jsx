@@ -218,7 +218,7 @@ export function Divider() {
 
 export default function Configurator({
   formatId, state, onChange, mode, sellPrice, onSellPrice,
-  stepOffset = 1, leading, trailing, onProductPage,
+  stepOffset = 1, leading, trailing, actions,
 }) {
   /* Everything the price depends on — the arithmetic, the shipping quote,
      the floor under the asking price — moved into SummaryPanel with the
@@ -293,7 +293,7 @@ export default function Configurator({
         mode={mode}
         sellPrice={sellPrice}
         onSellPrice={onSellPrice}
-        onProductPage={onProductPage}
+        actions={actions}
       />
 
     </div>

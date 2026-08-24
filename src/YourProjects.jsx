@@ -120,7 +120,7 @@ export default function YourProjects({ signedIn, onSignIn }) {
             height: BUTTON_HEIGHT, padding: "0 24px", borderRadius: R.md,
             fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 700,
             letterSpacing: 0.6, textTransform: "uppercase", whiteSpace: "nowrap",
-            background: C.blue950, color: "#fff", border: "1px solid transparent",
+            background: "transparent", color: T.textBrand, border: `1px solid ${T.borderBrand}`,
           }}
         >
           Log in

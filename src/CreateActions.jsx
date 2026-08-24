@@ -135,11 +135,11 @@ function primaryTool(formatId) {
   return { label: "Upload your PDF", hint: "Bring a print-ready file and order it." };
 }
 
-export default function CreateActions({ formatId, sel, onGo, showLearnMore = true, heading }) {
+export default function CreateActions({ formatId, sel, onGo, onBuild, showLearnMore = true, heading }) {
   const [toolsOpen, setToolsOpen] = useState(false);
   const primary = primaryTool(formatId);
   const pdp = pdpName(formatId, sel);
-  const build = () => onGo("getstarted", { seed: { formatId, sel } });
+  const build = onBuild ?? (() => onGo("getstarted", { seed: { formatId, sel } }));
 
   return (
     <div style={{ display: "grid", gap: 14, fontFamily: FONT_BODY, minWidth: 0 }}>

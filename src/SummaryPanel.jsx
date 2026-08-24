@@ -50,7 +50,7 @@ function BulkHandoff({ qty }) {
       </p>
       <button style={{
         justifySelf: "start", height: 36, padding: "0 16px", borderRadius: R.sm,
-        background: C.blue950, color: T.textInverse, border: "1px solid transparent",
+        background: "transparent", color: T.textBrand, border: `1px solid ${T.borderBrand}`,
         fontFamily: FONT_BODY, fontSize: TYPE.sm, fontWeight: 700,
         letterSpacing: 0.5, textTransform: "uppercase",
       }}>
@@ -254,7 +254,7 @@ export const pdpName = (formatId, sel) =>
 export const exactPdpName = (formatId, sel) => PDP_NAME[formatId]?.[sel?.cover] ?? null;
 
 export default function SummaryPanel({
-  formatId, state, onChange, mode, sellPrice, onSellPrice, onProductPage,
+  formatId, state, onChange, mode, sellPrice, onSellPrice,
   sticky = true, ship: shipProp, setShip: setShipProp, actions,
 }) {
   const selling = mode === "sell";
@@ -266,7 +266,6 @@ export default function SummaryPanel({
   const floor = minSellPrice(formatId, state);
   const derived = derivedSteps(formatId, state);
   const profit = Math.max(0, sellPrice - cost);
-  const pdp = exactPdpName(formatId, state);
 
   /* A pricier paper can push cost above the asking price — lift it rather
      than leaving the ladder showing zero profit. */
@@ -317,7 +316,10 @@ export default function SummaryPanel({
   const addons = (f.addons || []).map(id => ADDONS.find(a => a.id === id)).filter(Boolean);
 
   return (
-    <div style={{ ...(sticky ? { position: "sticky", top: 88 } : null), display: "grid", gap: 12, minWidth: 0 }}>
+    /* Clear of the sticky header, whatever height it is at this width —
+       App publishes it as --nav-h. The fallback matches the desktop block,
+       so a panel rendered before the measurement still lands correctly. */
+    <div style={{ ...(sticky ? { position: "sticky", top: "calc(var(--nav-h, 124px) + 16px)" } : null), display: "grid", gap: 12, minWidth: 0 }}>
       <aside
         className="cfg-aside"
         style={{
@@ -344,29 +346,10 @@ export default function SummaryPanel({
           ))}
         </div>
 
-        {/* ── Out to the product page ──
-            The summary names a specific product — an ImageWrap hardcover
-            photo book, 8×10, Premium Lustre — and this page can price that
-            without ever describing it. Paper weights, cover finishes, end
-            sheets, what the binding is actually like: all of that lives on
-            the PDP, and someone deciding between two papers needs it.
-
-            So the summary offers the way out, worded as what it is — a page
-            to read, not a step in the flow. It carries the configuration, so
-            the PDP opens on the same book, and coming back loses nothing. */}
-        {pdp && onProductPage && (
-          <button
-            onClick={() => onProductPage({ formatId, sel: { ...state } })}
-            style={{
-              font: "inherit", fontSize: TYPE.sm, fontWeight: 600, color: T.textBrand,
-              background: "transparent", border: 0, padding: 0, cursor: "pointer",
-              justifySelf: "start", textAlign: "left", display: "inline-flex", alignItems: "center", gap: 4,
-            }}
-          >
-            Learn more about this product
-            <span className="ms" style={{ fontSize: 18 }}>arrow_forward</span>
-          </button>
-        )}
+        {/* The way out to the product page used to sit here, and now sits in
+            the create block at the foot of this panel — one "Learn more about
+            this product" per panel, in the same place on every screen, next
+            to the actions it is an alternative to. See CreateActions. */}
 
         {!f.digital && (
           <>

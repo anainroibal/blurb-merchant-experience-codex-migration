@@ -283,6 +283,19 @@ export const CATALOG = {
     /* No channel lists PDFs. The earlier ["bookstore","amazon","ingram"]
        was our guess, flagged as unconfirmed; the evidence says none. */
     sellChannels: [],
+    /* ── Not offered on the product row (2026-08-24) ──
+       This reverses part of the 8/18 decision, which kept PDFs in the
+       product types for keepsake, display and gift and dropped them only
+       under "to Sell". The row is photographs of products now, and there is
+       no product photograph of a PDF: blurb.com has none, /pricing has no
+       PDF card, and the only PDF imagery on blurb.com is a page banner and
+       a screenshot of the uploader. A single icon tile in a row of
+       photographs read as a missing image rather than a product.
+
+       The entry stays — priced, with its formats and its channel rules —
+       because /pdf-to-book and the checkout-link limits both depend on it.
+       Flip this to offer it again once there is a photograph. */
+    offered: false,
   },
 };
 
@@ -406,13 +419,17 @@ export const BULK_MIN = 100;
 
    Order follows CATALOG, so the everyday products stay first. */
 export const formatsFor = (route, use = "keepsake", channel = SELLING_CHANNEL) => {
+  /* `offered: false` withdraws a product from every row at once — see the
+     PDF entry above. Not the same rule as the three below: those say which
+     of the products we offer suit what you are doing. */
+  const offered = FORMAT_IDS.filter(id => CATALOG[id].offered !== false);
   if (route === "sell") {
-    return FORMAT_IDS.filter(id => (CATALOG[id].sellChannels || []).includes(channel));
+    return offered.filter(id => (CATALOG[id].sellChannels || []).includes(channel));
   }
   if (route === "distribute") {
-    return FORMAT_IDS.filter(id => !CATALOG[id].digital);
+    return offered.filter(id => !CATALOG[id].digital);
   }
-  return FORMAT_IDS.filter(id => {
+  return offered.filter(id => {
     const only = CATALOG[id].intentions;
     return !only || only.includes(use);
   });

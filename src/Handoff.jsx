@@ -2,7 +2,7 @@ import React from "react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.js";
 import YourProjects from "./YourProjects.jsx";
 import {
-  CATALOG, FORMAT_IDS, SELLING_CHANNEL, hasTool, formatsWithTool,
+  CATALOG, FORMAT_IDS, SELLING_CHANNEL,
 } from "./catalog.js";
 
 /* ────────────────────────────────────────────────────────────────
@@ -23,56 +23,6 @@ import {
    route to a finished book, and for a seller it is the on-ramp that
    skips the tools entirely.
    ──────────────────────────────────────────────────────────────── */
-
-/* `unavailable` is not a disabled card. A tool that cannot make what you
-   have chosen should say so and say what it CAN make — a greyed-out
-   button with no explanation leaves you guessing whether it is broken,
-   whether you are signed out, or whether you chose wrong. */
-function Path({ icon, title, body, cta, primary, note, unavailable }) {
-  const quiet = unavailable || !primary;
-  return (
-    <div
-      className="card-move"
-      style={{
-        background: unavailable ? C.gray50 : T.bgNeutral, borderRadius: R.lg, padding: 24,
-        border: primary && !unavailable ? `2px solid ${T.borderBrand}` : `1px solid ${T.border}`,
-        margin: primary && !unavailable ? 0 : 1,
-        display: "grid", gap: 12, alignContent: "start", minWidth: 0,
-      }}
-    >
-      <span
-        className="ms"
-        style={{
-          fontSize: 32, color: quiet ? C.gray400 : C.blue600,
-          background: quiet ? C.gray100 : C.blue50,
-          width: 56, height: 56, borderRadius: R.md, display: "grid", placeItems: "center",
-        }}
-      >
-        {icon}
-      </span>
-      <div style={{
-        fontFamily: FONT_DISPLAY, fontSize: TYPE["4xl"], fontWeight: 500, lineHeight: 1.2,
-        color: unavailable ? T.textSubtle : T.textNeutral,
-      }}>
-        {title}
-      </div>
-      <p style={{ fontSize: TYPE.base, lineHeight: 1.65, color: T.textSubtle, margin: 0 }}>{body}</p>
-      <button
-        style={{
-          height: BUTTON_HEIGHT, borderRadius: R.md, marginTop: 4,
-          fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 700,
-          letterSpacing: 0.6, textTransform: "uppercase",
-          background: primary && !unavailable ? T.bgBrand : "transparent",
-          color: primary && !unavailable ? T.textInverse : T.textBrand,
-          border: primary && !unavailable ? "1px solid transparent" : `1px solid ${T.border}`,
-        }}
-      >
-        {cta}
-      </button>
-      {note && <div style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>{note}</div>}
-    </div>
-  );
-}
 
 /* ── What a checkout link cannot sell ──
    Said BEFORE the link is set up, not discovered after. Under "to Sell"
@@ -111,7 +61,7 @@ function LinkLimits({ formatId }) {
       </div>
       <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.65, color: T.textSubtle }}>
         Printed books and magazines. <strong style={{ color: T.textNeutral }}>A PDF cannot be sold through a
-        checkout link</strong> — you can still order one for yourself. {excluded.length > 0 && (
+        checkout link</strong> — it is ordered, not sold. {excluded.length > 0 && (
           <>Nor can {list(excluded)} — unconfirmed rather than decided, so ask before promising it to anyone.{" "}</>
         )}
         {elsewhere.length > 0 && formatId && (
@@ -128,64 +78,37 @@ const list = items =>
   items.length <= 1 ? (items[0] ?? "")
     : `${items.slice(0, -1).join(", ")} and ${items[items.length - 1]}`;
 
-export default function Handoff({ route, signedIn, onSignIn, formatId, use, price, cost, sel }) {
+export default function Handoff({ route, signedIn, onSignIn, formatId }) {
   const selling = route === "sell";
   const bulk = route === "distribute";
-  const product = formatId ? CATALOG[formatId] : null;
-  const online = formatId ? hasTool(formatId, "online") : true;
-  const onlineProducts = formatsWithTool("online", route, use);
 
   return (
     <section>
-      <div style={{ textAlign: "center", marginBottom: 8 }}>
-        <h2 style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["7xl"], fontWeight: 500, margin: 0, lineHeight: 1.2 }}>
-          {selling ? "Ready to sell it?" : bulk ? "Ready to order the run?" : "Ready to make your book?"}
-        </h2>
-        <p style={{ fontSize: TYPE.lg, color: T.textSubtle, marginTop: 10, maxWidth: 620, marginLeft: "auto", marginRight: "auto", lineHeight: 1.6 }}>
-          {selling
-            ? "Your project comes first — the link, the payout and the proof all follow from it. Make one here, or sell one you have already finished."
-            : bulk
-              ? "The book comes first, then the quote. Make one here or bring a finished PDF, and we'll price the run properly."
-              : "Bring a finished book or make one here. You only pay when it's ready to print."}
-        </p>
-      </div>
+      {/* The tools used to be three large cards here — Upload your PDF,
+          Create online, Download BookWright — under "Ready to make your
+          book?". That is now one block at the foot of the summary panel,
+          the same one the calculators carry: one primary tool chosen by
+          the catalogue, the rest behind "Other tools". Asking the same
+          question twice on one page, in two different shapes, was the
+          thing to fix.
 
-      <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", marginTop: 24 }}>
-        <Path
-          primary
-          icon="upload_file"
-          title="Upload your PDF"
-          body="Already have a finished book? This is the quickest route — upload it and it's ready to order."
-          cta="Upload your PDF"
-          note={selling ? "The shortest path to a sellable book." : null}
-        />
-        <Path
-          icon="design_services"
-          unavailable={!online}
-          title="Create online"
-          body={
-            online
-              ? `Design your ${product ? product.short.toLowerCase() : "book"} in the browser with our online editor. Nothing to install.`
-              : `The online editor can't make ${product ? `${product.label.toLowerCase()}` : "this"} yet. It makes ${list(onlineProducts)}.`
-          }
-          cta={
-            online
-              ? `Create your ${product ? product.short.toLowerCase() : "book"} online`
-              : "See what you can make online"
-          }
-          note={
-            online
-              ? null
-              : `For ${product ? product.label.toLowerCase() : "this"}, use BookWright or upload a print-ready PDF.`
-          }
-        />
-        <Path
-          icon="download"
-          title="Download BookWright"
-          body="Our desktop app, for longer books and more control over layout."
-          cta="Download BookWright"
-        />
-      </div>
+          What is left here is what the panel cannot hold: the fork. A
+          seller either makes the project or brings one they finished, and
+          only the second half needs a page. So the heading stays where
+          there is still a decision, and the keepsake route — where the
+          panel now says everything — ends without one. */}
+      {(selling || bulk) && (
+        <div style={{ textAlign: "center", marginBottom: 8 }}>
+          <h2 style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["7xl"], fontWeight: 500, margin: 0, lineHeight: 1.2 }}>
+            {selling ? "Ready to sell it?" : "Ready to order the run?"}
+          </h2>
+          <p style={{ fontSize: TYPE.lg, color: T.textSubtle, marginTop: 10, maxWidth: 620, marginLeft: "auto", marginRight: "auto", lineHeight: 1.6 }}>
+            {selling
+              ? "Your project comes first — the link, the payout and the proof all follow from it. Make one with the tools in the panel, or sell one you have already finished."
+              : "The book comes first, then the quote. Make one with the tools in the panel or bring a finished PDF, and we'll price the run properly."}
+          </p>
+        </div>
+      )}
 
       {/* The other route out of this page — and the only place it asks who you are. */}
       {selling && (
@@ -218,7 +141,7 @@ export default function Handoff({ route, signedIn, onSignIn, formatId, use, pric
               height: BUTTON_HEIGHT, padding: "0 24px", borderRadius: R.md,
               fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 700,
               letterSpacing: 0.6, textTransform: "uppercase", whiteSpace: "nowrap",
-              background: C.blue950, color: T.textInverse, border: "1px solid transparent",
+              background: "transparent", color: T.textBrand, border: `1px solid ${T.borderBrand}`,
             }}
           >
             How selling works
@@ -255,7 +178,7 @@ export default function Handoff({ route, signedIn, onSignIn, formatId, use, pric
               height: BUTTON_HEIGHT, padding: "0 24px", borderRadius: R.md,
               fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 700,
               letterSpacing: 0.6, textTransform: "uppercase", whiteSpace: "nowrap",
-              background: C.blue950, color: T.textInverse, border: "1px solid transparent",
+              background: "transparent", color: T.textBrand, border: `1px solid ${T.borderBrand}`,
             }}
           >
             Get a bulk quote

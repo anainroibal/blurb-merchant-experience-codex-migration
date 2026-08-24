@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import ProductPage from "./ProductPage.jsx";
 import SellerLanding from "./SellerLanding.jsx";
 import GetStarted from "./GetStarted.jsx";
@@ -219,6 +219,24 @@ export default function App() {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
   }, [stage]);
 
+  /* ── How tall the sticky header is, published as --nav-h ──
+     Anything else that sticks has to clear it, and its height is not a
+     constant: the demo bar wraps on a narrow screen, so the block is 124px
+     at desktop width and taller below that. A hardcoded offset was wrong at
+     both — the summary panel slid under the nav. Measured instead, and
+     re-measured on resize, so one number is right everywhere. */
+  const headerRef = useRef(null);
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const publish = () =>
+      document.documentElement.style.setProperty("--nav-h", `${Math.round(el.getBoundingClientRect().height)}px`);
+    publish();
+    const ro = new ResizeObserver(publish);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   /* Column layout, so the footer sits on the bottom of the viewport when a
      screen is short and after the content when it is not. */
   return (
@@ -228,7 +246,7 @@ export default function App() {
           changes when the bar wraps on a narrow screen — one sticky wrapper
           holds them together at any width. The nav keeps its own relative
           position inside, so the mega-menus still hang off it. */}
-      <div style={{ position: "sticky", top: 0, zIndex: 40 }}>
+      <div ref={headerRef} style={{ position: "sticky", top: 0, zIndex: 40 }}>
         <DemoBar stage={stage} onJump={jump} signedIn={signedIn} onSignedIn={setSignedIn} />
         <SiteNav signedIn={signedIn} onSignedIn={setSignedIn} onGo={jump} />
       </div>

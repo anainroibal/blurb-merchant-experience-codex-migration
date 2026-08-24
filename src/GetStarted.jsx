@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import Configurator from "./Configurator.jsx";
+import CreateActions from "./CreateActions.jsx";
 import ProductTypes from "./ProductTypes.jsx";
 import Handoff from "./Handoff.jsx";
 import {
@@ -382,15 +383,29 @@ export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSe
               mode={route}
               sellPrice={sellPrice}
               onSellPrice={setSellPrice}
-              /* The summary's way out to the product page. Optional: without
-                 it the link simply does not appear. */
-              onProductPage={onGo ? (spec => onGo("product", { seed: spec })) : null}
               stepOffset={0}
+              /* The same "Ready to make it?" block the calculators carry, in
+                 the same place — the foot of the summary panel. It used to be
+                 three large cards at the bottom of this page, which is a
+                 second way of asking one question: one primary tool, decided
+                 by the catalogue, with the rest behind "Other tools".
+
+                 No `onGo` for the build here: this IS /getting-started, so
+                 there is nowhere for it to hand over to. The tools it names
+                 are not prototyped on either page. */
+              actions={
+                <CreateActions
+                  formatId={format}
+                  sel={state}
+                  onGo={onGo}
+                  onBuild={() => {}}
+                  heading="Ready to make it?"
+                />
+              }
               trailing={
                 <Handoff
                   route={route} signedIn={signedIn} onSignIn={onSignIn}
-                  formatId={format} use={use}
-                  price={sellPrice} cost={sellerCost(format, state)} sel={state}
+                  formatId={format}
                 />
               }
             />
