@@ -92,6 +92,15 @@
         to   { opacity: 1; transform: none; }
       }
 
+      /* A tray sliding in from the right edge. Same easing as everything
+         else; the distance is short on purpose, because a long slide reads
+         as slow rather than smooth. */
+      .tray-in { animation: tray-in var(--menu, 420ms) var(--ease) both; }
+      @keyframes tray-in {
+        from { opacity: 0; transform: translateX(24px); }
+        to   { opacity: 1; transform: none; }
+      }
+
       /* Switching screen, and any section that arrives after a choice. */
       .fade-in { animation: fade-in var(--slow) var(--ease) both; }
       @keyframes fade-in {

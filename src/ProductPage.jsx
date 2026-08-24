@@ -253,6 +253,7 @@ export default function ProductPage({ onGo, seed = null }) {
             variant="thumb"
             detailsOpen={details.has("size")}
             onDetails={() => toggleDetails("size")}
+            trayNote="Select sizes have been rounded for uniformity. Refer to exact dimensions if needed."
           />
 
           <Divider />

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { C, T, TYPE, R, FONT_BODY } from "./tokens.js";
 import { OptionCard } from "./Configurator.jsx";
+import Modal from "./Modal.jsx";
 import { CATALOG, availableFor, reconcile, derivedSteps } from "./catalog.js";
 
 /* ────────────────────────────────────────────────────────────────
@@ -110,47 +111,103 @@ function SizeSwatch({ option, selected, disabled, onClick, maxDim }) {
    and gets a text button. */
 export function OptionGroup({
   label, value, options, selected, onPick, available, variant = "text",
-  detailsOpen, onDetails, note, footer,
+  detailsOpen, onDetails, note, footer, trayNote,
 }) {
   const thumb = variant === "thumb";
+  const chosen = options.find(o => o.id === selected);
+  const maxDim = Math.max(
+    ...options.flatMap(x => (x.dims?.match(/[\d.]+/g) || [1]).slice(0, 2).map(Number))
+  );
+
+  /* The controls, drawn once and used twice — inline, and again inside the
+     tray. Reading about a paper and choosing it are the same gesture there,
+     so the tray holds the real control rather than a picture of it. */
+  const controls = (
+    <div style={
+      thumb
+        ? { display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(74px, 84px))" }
+        : { display: "grid", gap: 10, gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))" }
+    }>
+      {thumb
+        ? options.map(o => (
+            <SizeSwatch
+              key={o.id}
+              option={o}
+              selected={o.id === selected}
+              disabled={available ? !available.has(o.id) : false}
+              onClick={() => onPick(o.id)}
+              maxDim={maxDim}
+            />
+          ))
+        : options.map(o => (
+            <OptionCard
+              key={o.id}
+              variant="text"
+              title={o.label}
+              selected={o.id === selected}
+              disabled={available ? !available.has(o.id) : false}
+              onClick={() => onPick(o.id)}
+            />
+          ))}
+    </div>
+  );
+
   return (
-    <Field
-      label={label}
-      value={value}
-      note={note}
-      detailsOpen={detailsOpen}
-      onDetails={onDetails}
-    >
-      <div style={
-        thumb
-          ? { display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(74px, 84px))" }
-          : { display: "grid", gap: 10, gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))" }
-      }>
-        {thumb
-          ? options.map(o => (
-              <SizeSwatch
-                key={o.id}
-                option={o}
-                selected={o.id === selected}
-                disabled={available ? !available.has(o.id) : false}
-                onClick={() => onPick(o.id)}
-                maxDim={Math.max(...options.flatMap(x => (x.dims?.match(/[\d.]+/g) || [1]).slice(0, 2).map(Number)))}
-              />
-            ))
-          : options.map(o => (
-              <OptionCard
-                key={o.id}
-                variant="text"
-                title={o.label}
-                spec={detailsOpen ? o.spec : null}
-                selected={o.id === selected}
-                disabled={available ? !available.has(o.id) : false}
-                onClick={() => onPick(o.id)}
-              />
-            ))}
-      </div>
-      {footer}
-    </Field>
+    <>
+      <Field label={label} value={value} note={note} onDetails={onDetails} detailsOpen={detailsOpen}>
+        {controls}
+        {footer}
+      </Field>
+
+      {/* ── Details opens a tray, not an inline reveal ──
+          The specification is reading material: a paper weight, a coating, a
+          trim size in two units. Inline it pushed every other choice down
+          the page and made the group taller the more you wanted to know.
+          In a tray it sits beside a picture of the thing, with the controls
+          repeated so a decision can be made while reading rather than
+          after remembering. */}
+      <Modal open={!!detailsOpen} variant="side" title={label} onClose={onDetails}>
+        <div style={{ display: "grid", gap: 6 }}>
+          <span style={{ fontSize: TYPE.base, fontWeight: 700 }}>
+            {chosen?.label}
+            {chosen?.dims ? ` (${chosen.dims.replace(" (", ", ").replace(")", "")})` : ""}
+            {!chosen?.dims && chosen?.spec ? ` (${chosen.spec})` : ""}
+          </span>
+          {trayNote && (
+            <span style={{ fontSize: TYPE.base, color: T.textSubtle, lineHeight: 1.6 }}>{trayNote}</span>
+          )}
+          {!trayNote && chosen?.spec && chosen?.dims && (
+            <span style={{ fontSize: TYPE.base, color: T.textSubtle, lineHeight: 1.6 }}>{chosen.spec}</span>
+          )}
+          {chosen?.maxPages && (
+            <span style={{ fontSize: TYPE.base, color: T.textSubtle, lineHeight: 1.6 }}>
+              Up to {chosen.maxPages} pages.
+            </span>
+          )}
+        </div>
+
+        {footer}
+
+        {controls}
+
+        {/* Where the live tray shows a photograph of the option. Ours is a
+            placeholder with the same caption, because the prototype ships
+            no photography — the shape of the tray is the point. */}
+        <div style={{
+          marginTop: 4, background: C.gray100, borderRadius: R.md, minHeight: 300,
+          position: "relative",
+        }}>
+          <span style={{
+            position: "absolute", top: 12, left: 12, background: "#fff",
+            border: `1px solid ${T.border}`, borderRadius: R.sm, padding: "4px 10px",
+            fontSize: TYPE.sm,
+          }}>
+            {chosen?.label}
+            {chosen?.dims ? ` (${chosen.dims.replace(" (", ", ").replace(")", "")})` : ""}
+          </span>
+        </div>
+      </Modal>
+    </>
   );
 }
 
@@ -201,6 +258,9 @@ export default function ProductOptions({ formatId, state, onChange }) {
             detailsOpen={details.has(g.id)}
             onDetails={() => toggle(g.id)}
             note={g.note}
+            trayNote={isSize
+              ? "Select sizes have been rounded for uniformity. Refer to exact dimensions if needed."
+              : null}
           />
         );
       })}
