@@ -555,37 +555,72 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
             />
           </div>
 
-          {/* ── Shipping, in the main column ──
-              The destination lives out here, not in the panel: it needs the
-              width for arrival dates beside it, and the panel's job is the
-              calculation. The panel's opt-in reads this state, so turning
-              "include shipping" on there uses whatever is chosen here. */}
+          {/* ── Shipping ──
+              Two different jobs, so two different defaults.
+
+              THE MAKER is buying the copies, so shipping is part of what
+              they pay: enter a postcode and it joins the total.
+
+              THE SELLER never pays it. It is not in their price and not in
+              their margin, and a delivery figure sitting beside the margin
+              invites exactly the misreading the whole pricing model exists
+              to prevent. So for them it is off, and it is a variable they
+              can switch on to answer one question: what does the buyer see
+              at checkout? Turning it on changes nothing in the ladder. */}
           <div style={{
             background: T.bgNeutral, border: `1px solid ${T.border}`, borderRadius: R.lg,
             padding: 24, display: "grid", gap: 16,
           }}>
             <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>
-              Shipping
+              Shipping{selling ? " — optional" : ""}
             </span>
 
-            <ShipTo selling={selling} shipping={!selling} ship={ship} setShip={setShip} />
+            {selling ? (
+              <>
+                <label style={{ display: "grid", gap: 6, cursor: "pointer" }}>
+                  <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <input
+                      type="checkbox"
+                      checked={!!ship.show}
+                      onChange={e => setShip({ ...ship, show: e.target.checked })}
+                      style={{ width: 18, height: 18, accentColor: C.blue600, flex: "0 0 auto" }}
+                    />
+                    <span style={{ fontSize: TYPE.base, fontWeight: 700 }}>
+                      Show what a buyer pays with delivery
+                    </span>
+                  </span>
+                  <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.55, paddingLeft: 28 }}>
+                    Your buyer pays shipping, so it is never part of your price or your profit. This only adds
+                    a line showing what they would see at checkout.
+                  </span>
+                </label>
 
-            {/* Arrival dates wait for a postcode. Rates and speeds mean
-                nothing without a destination, and a table of dates that
-                cannot be right yet is worse than no table: it invites
-                someone to plan around figures that will move the moment
-                they type. The same test the quote uses, so the panel's
-                "include shipping" switch and this section appear together. */}
-            {!selling && hasDestination && (
-              <div className="fade-in" style={{ display: "grid", gap: 10, borderTop: `1px solid ${T.border}`, paddingTop: 16 }}>
-                <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>
-                  When it would arrive
-                </span>
-                <DeliveryTable
-                  qty={state.qty} country={ship.country} poBox={ship.poBox}
-                  chosen={ship.speed} onChoose={id => setShip({ ...ship, speed: id })}
-                />
-              </div>
+                {ship.show && (
+                  <div className="fade-in" style={{ borderTop: `1px solid ${T.border}`, paddingTop: 16 }}>
+                    <ShipTo selling shipping={false} ship={ship} setShip={setShip} />
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                <ShipTo selling={false} shipping ship={ship} setShip={setShip} />
+
+                {/* Arrival dates wait for a postcode. Rates and dates mean
+                    nothing without a destination, and a table that cannot be
+                    right yet invites someone to plan around figures that will
+                    move the moment they type. */}
+                {hasDestination && (
+                  <div className="fade-in" style={{ display: "grid", gap: 10, borderTop: `1px solid ${T.border}`, paddingTop: 16 }}>
+                    <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>
+                      When it would arrive
+                    </span>
+                    <DeliveryTable
+                      qty={state.qty} country={ship.country} poBox={ship.poBox}
+                      chosen={ship.speed} onChoose={id => setShip({ ...ship, speed: id })}
+                    />
+                  </div>
+                )}
+              </>
             )}
           </div>
 

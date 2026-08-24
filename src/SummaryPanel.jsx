@@ -287,7 +287,12 @@ export default function SummaryPanel({
      lines appear as soon as a country is chosen, and the maker's total
      waits for the postcode. */
   const quote = selling
-    ? shippingFor(ship.country, ship.speed, 1)
+    /* The seller has to ask for this. Shipping is not part of their price
+       and not part of their margin — the buyer pays it — so showing it
+       unasked puts a number next to the margin that has nothing to do with
+       it. `show` is set by the Shipping section, which is switched off
+       until someone turns it on. */
+    ? (ship.show ? shippingFor(ship.country, ship.speed, 1) : null)
     : (ship.postal.trim().length > 1 ? shippingFor(ship.country, ship.speed, state.qty) : null);
 
   /* ── Shipping answers to the postcode, not to a checkbox ──
@@ -416,6 +421,10 @@ export default function SummaryPanel({
                 <Line label="Your price" value={money(sellPrice)} muted />
                 <Line label="Shipping, paid by them" value={money(quote.cost)} muted />
                 <Line label="Your buyer pays" value={money(sellPrice + quote.cost)} strong />
+                <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>
+                  Nothing above changed. Your cost, your price and your profit are the same numbers — this is
+                  only what the buyer sees at checkout.
+                </p>
               </div>
             )}
 
