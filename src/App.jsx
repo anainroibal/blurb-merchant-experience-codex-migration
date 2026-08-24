@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
-import Home from "./Home.jsx";
 import ProductPage from "./ProductPage.jsx";
-import PdfToBook from "./PdfToBook.jsx";
 import GetStarted from "./GetStarted.jsx";
 import SiteNav from "./SiteNav.jsx";
 import SiteFooter from "./SiteFooter.jsx";
-import WaysToSell from "./WaysToSell.jsx";
 import Estimator from "./Estimator.jsx";
 
 /* ────────────────────────────────────────────────────────────────
@@ -81,19 +78,11 @@ function WipChip() {
 
 /* ── Stages. One linear journey, same idea as the checkout stepper. ── */
 const STAGES = [
-  /* The home page comes first because that is where the journey actually
-     starts, and because the lane into get-started is the thing it adds. */
-  { id: "home",       short: "Home",         label: "blurb.com — the lane into get started" },
-  /* A product page, between the home page and get-started, because that is
-     where it sits on the live site: home → /photo-books/<cover> → build. It
-     is the doorway page — retail-only, one line for a seller. */
+  /* The product page comes first: it is where someone meets a price before
+     they have decided anything, and it is the doorway page — retail-only,
+     one quiet line for a seller. */
   { id: "product",    short: "Photo book",   label: "/photo-books/imagewrap-hardcover-photo-book — the doorway" },
-  /* The other way in: a finished file. The home page's Print prompt lands
-     here, and it is one of only two marketing pages that compute a price
-     from a product spec. */
-  { id: "pdftobook",  short: "PDF to book",  label: "/pdf-to-book — print a file you already have" },
   { id: "getstarted", short: "Get started",  label: "Get started — the intent router" },
-  { id: "waystosell", short: "Ways to sell", label: "The ways to sell" },
   /* Two pages, not two tabs. The maker's price sits under Pricing; the
      seller's margin sits under Sell & Self-Publish, which is what keeps
      the public pricing pages retail-only. */
@@ -170,14 +159,13 @@ export default function App() {
 
   const [signedIn, setSignedIn] = useState(false);
 
-  /* What the previous screen said on its way here — a route, a product
-     type, or nothing. The home page's lanes are the only thing that sets
-     it, and it exists so a lane arrives as an answer rather than as a
-     link: choosing "I'm selling something" should land on get-started
-     with the question already answered, not ask it again.
+  /* What the previous screen said on its way here — a specification, a
+     route, or nothing. It exists so a handover arrives as an answer rather
+     than as a link: the product page sending someone to build the book they
+     just configured should not drop them on a default one.
 
      Cleared whenever the stepper is used, because jumping stages from the
-     demo bar is not following a lane. */
+     demo bar is not following a link. */
   const [entry, setEntry] = useState(null);
   const go = (id, opts = null) => { setEntry(opts); setStage(id); };
   const jump = id => { setEntry(null); setStage(id); };
@@ -206,20 +194,16 @@ export default function App() {
       </div>
       {/* Keyed on the stage so switching screens fades rather than cuts. */}
       <div key={stage} className="fade-in" style={{ flex: 1, minWidth: 0 }}>
-        {stage === "home"       && <Home onGo={go} />}
         {stage === "product"    && <ProductPage onGo={go} seed={entry?.seed} />}
-        {stage === "pdftobook"  && <PdfToBook onGo={go} />}
         {stage === "getstarted" && (
           <GetStarted
             signedIn={signedIn}
             onSignIn={() => setSignedIn(true)}
             initialRoute={entry?.route}
-            initialFormat={entry?.format}
             initialSeed={entry?.seed}
             onGo={go}
           />
         )}
-        {stage === "waystosell" && <WaysToSell onGo={go} />}
         {stage === "pricing"    && <Estimator mode="make" onGo={go} seed={entry?.seed} />}
         {stage === "margin"     && <Estimator mode="sell" onGo={go} seed={entry?.seed} />}
       </div>

@@ -450,11 +450,12 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
       }}>
         {/* The real brand mark, carried over from Blurb Checkout Prototypes —
             same asset, same proportions as the live header (52px square).
-            It goes home, which is the one thing every site's logo does. */}
+            A logo goes home; there is no home page in this prototype, so it
+            goes to the first screen of the journey instead of nowhere. */}
         <a
           href="#"
           aria-label="Blurb home"
-          onClick={e => { e.preventDefault(); onGo?.("home"); }}
+          onClick={e => { e.preventDefault(); onGo?.("getstarted"); }}
           style={{ display: "flex", alignItems: "center", flex: "0 0 auto" }}
         >
           <img src={BLURB_LOGO} alt="Blurb" style={{ height: 42, width: "auto", display: "block" }} />

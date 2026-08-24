@@ -908,55 +908,6 @@ export const minSellPrice = (formatId, sel) => Math.ceil(sellerCost(formatId, se
 
 export const money = n => `US $${n.toFixed(2)}`;
 
-/* ── "From" prices, computed rather than typed ──
-   The cheapest buildable configuration of a family, at its base page count.
-   Nothing else on blurb.com does this: /pricing types its from-prices, the
-   home page types different ones again, and the verticals render a third
-   set from a real binding. On 21 Aug a trade book was "from $3.99" on
-   /pricing, "from $4.99" on the home page, and $2.99 wherever the price
-   came from the matrix — which is ticket T7 on the board.
-
-   So this is the fix being demonstrated, not a new number: one definition
-   of "from", derived from the same matrix every other price here uses.
-   Expect it to read lower than the live marketing pages. That gap IS the
-   finding. */
-export function fromPrice(formatId) {
-  const f = CATALOG[formatId];
-  if (!f) return null;
-
-  if (f.flat) {
-    /* Magazines and PDFs are priced by grade. Only offered grades count —
-       PRICING carries an economy magazine that the page does not sell. */
-    const prices = f.groups[0].options
-      .map(o => unitPrice(formatId, { grade: o.id }))
-      .filter(n => n != null);
-    return prices.length ? Math.min(...prices) : null;
-  }
-
-  if (f.fam === "wall_art") {
-    const materials = f.groups.find(g => g.id === "material").options;
-    const sizes = f.groups.find(g => g.id === "size").options;
-    const prices = [];
-    for (const m of materials) for (const s of sizes) {
-      const p = unitPrice(formatId, { material: m.id, size: s.id });
-      if (p != null) prices.push(p);
-    }
-    return prices.length ? Math.min(...prices) : null;
-  }
-
-  const sizes  = f.groups.find(g => g.id === "size").options;
-  const covers = f.groups.find(g => g.id === "cover").options;
-  const papers = f.groups.find(g => g.id === "paper").options;
-  const prices = [];
-  for (const c of covers) for (const s of sizes) for (const p of papers) {
-    const sel = { size: s.id, cover: c.id, paper: p.id };
-    if (!isAvailable(formatId, sel)) continue;
-    const price = unitPrice(formatId, sel);
-    if (price != null) prices.push(price);
-  }
-  return prices.length ? Math.min(...prices) : null;
-}
-
 /* ── Shipping ──────────────────────────────────────────────────────
    /shipping publishes no rates — it takes a destination and shows
    speeds, but carries no figures. So every rate below is INVENTED.

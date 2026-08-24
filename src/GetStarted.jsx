@@ -179,7 +179,7 @@ function InlineSelect({ value, options, onChange }) {
   );
 }
 
-export default function GetStarted({ signedIn, onSignIn, initialRoute, initialFormat, initialSeed, onGo }) {
+export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSeed, onGo }) {
   const [format, setFormat] = useState(null);
   /* Defaults to Project + to Sell. Note this is a prototype default, chosen so
      reviewers land on the selling path — not a recommendation for production,
@@ -250,18 +250,6 @@ export default function GetStarted({ signedIn, onSignIn, initialRoute, initialFo
     if (kind) { changeKind(kind, route, id); return; }
     if (format && !formatsFor(route, id).includes(format)) changeFormat(null);
   };
-
-  /* A product card on the home page names a product type, not a project
-     kind, so it seeds the format and leaves the headline's kind unset —
-     which is honest: nobody said what they were making, only what they
-     want to print it as. Runs once, on arrival; if the route rules out
-     that product (a PDF cannot be sold through a link) changeFormat is
-     skipped and step one asks the question normally. */
-  useEffect(() => {
-    if (!initialFormat) return;
-    if (!formatsFor(initialRoute ?? "sell", use).includes(initialFormat)) return;
-    changeFormat(initialFormat);
-  }, []);
 
   /* A product page hands over the WHOLE configuration, not just the family.
      Someone who chose 13×11 ImageWrap on Mohawk Pearl and pressed Create
