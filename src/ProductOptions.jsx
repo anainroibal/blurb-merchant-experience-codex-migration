@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { C, T, TYPE, R, FONT_BODY } from "./tokens.js";
 import { OptionCard } from "./Configurator.jsx";
-import { CATALOG, availableFor, reconcile, unitPrice, derivedSteps, money } from "./catalog.js";
+import { CATALOG, availableFor, reconcile, derivedSteps } from "./catalog.js";
 
 /* ────────────────────────────────────────────────────────────────
    Product options, the way the PDP asks them.
@@ -16,10 +16,9 @@ import { CATALOG, availableFor, reconcile, unitPrice, derivedSteps, money } from
    PDP uses it, and a size chip cannot look like one thing on a product
    page and another on a pricing page.
 
-   Modifiers are computed against the cheapest available option in the
-   same group, with the rest of the specification held still — so "+US
-   $9.00" means what it says for the book currently configured, and
-   recomputes when the paper changes.
+   No price modifiers on the options themselves — see the note above
+   ProductOptions for why. The price lives in the summary panel, where it
+   is one number for the book in front of you.
    ──────────────────────────────────────────────────────────────── */
 
 /* One selection group, laid out as the live PDP lays it out: a bold
@@ -111,7 +110,7 @@ function SizeSwatch({ option, selected, disabled, onClick, maxDim }) {
    and gets a text button. */
 export function OptionGroup({
   label, value, options, selected, onPick, available, variant = "text",
-  modifier, detailsOpen, onDetails, note, footer,
+  detailsOpen, onDetails, note, footer,
 }) {
   const thumb = variant === "thumb";
   return (
@@ -171,19 +170,16 @@ export default function ProductOptions({ formatId, state, onChange }) {
     onChange(next);
   };
 
-  /* The cheapest buildable option in a group, holding everything else
-     still — the baseline every modifier is measured from. */
-  const modifierFor = groupId => id => {
-    const options = f.groups.find(g => g.id === groupId).options;
-    const prices = options
-      .map(o => unitPrice(formatId, { ...state, [groupId]: o.id }))
-      .filter(n => n != null);
-    if (!prices.length) return null;
-    const cheapest = Math.min(...prices);
-    const mine = unitPrice(formatId, { ...state, [groupId]: id });
-    if (mine == null) return null;
-    return mine - cheapest === 0 ? "+US $0.00" : `+${money(mine - cheapest)}`;
-  };
+  /* ── No "+US $0.00" on the options ──
+     Every group used to name its choice as "Mini Square (+US $0.00)", a
+     modifier measured against the cheapest option in that group. It reads
+     as precision and is not: the baseline moves with the rest of the
+     specification, so the same size can be +$0.00 on one paper and +$9.00
+     on another, and nothing on screen says which book the zero belongs to.
+
+     The price it actually affects is in the panel, and it updates as the
+     choice is made. That is the honest version of the same information —
+     one number, always for the book in front of you. */
 
   return (
     <div style={{ display: "grid", gap: 24, fontFamily: FONT_BODY }}>
@@ -191,19 +187,17 @@ export default function ProductOptions({ formatId, state, onChange }) {
         const label = g.label.replace(/^choose your\s+/i, "");
         const pretty = label.charAt(0).toUpperCase() + label.slice(1);
         const chosen = g.options.find(o => o.id === state[g.id]);
-        const mod = modifierFor(g.id);
         const isSize = g.id === "size";
         return (
           <OptionGroup
             key={g.id}
             label={pretty}
-            value={chosen ? `${chosen.label}${isSize ? ` (${mod(chosen.id) ?? "not available"})` : ""}` : null}
+            value={chosen ? chosen.label : null}
             options={g.options}
             selected={state[g.id]}
             onPick={id => set(g.id, id)}
             available={availableFor(formatId, state, g.id)}
             variant={isSize ? "thumb" : "text"}
-            modifier={mod}
             detailsOpen={details.has(g.id)}
             onDetails={() => toggle(g.id)}
             note={g.note}

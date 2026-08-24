@@ -20,6 +20,11 @@ import { pdpName } from "./SummaryPanel.jsx";
    not competing.
 
    ── And why "Learn more about this product" is a link, not a button ──
+   The label says "this product" rather than naming the product: the page
+   already shows which one is selected, twice — in the summary panel and in
+   the options above — so naming it a third time is words without
+   information. "This product" also survives the product changing, which
+   the named version did not.
    Someone who wants to read about the paper has not finished deciding;
    someone who wants to build has. Making both look equally like the next
    step would slow the person who is ready, and the reading is one click
@@ -183,7 +188,7 @@ export default function CreateActions({ formatId, sel, onGo, showLearnMore = tru
             justifySelf: "start", display: "inline-flex", alignItems: "center", gap: 4,
           }}
         >
-          Learn more about {pdp}
+          Learn more about this product
           <span className="ms" style={{ fontSize: 18 }}>arrow_forward</span>
         </button>
       )}

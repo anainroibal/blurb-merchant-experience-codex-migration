@@ -363,7 +363,7 @@ export default function SummaryPanel({
               justifySelf: "start", textAlign: "left", display: "inline-flex", alignItems: "center", gap: 4,
             }}
           >
-            Learn more about {pdp}
+            Learn more about this product
             <span className="ms" style={{ fontSize: 18 }}>arrow_forward</span>
           </button>
         )}

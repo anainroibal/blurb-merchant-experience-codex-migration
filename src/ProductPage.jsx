@@ -37,10 +37,11 @@ import {
    CONFIGURATION over, not just the destination, so the estimator opens
    on the book they were looking at rather than an empty form.
 
-   Sizes carry "+US $0.00"-style modifiers on the live page. They are
-   computed here from the matrix instead of typed, so the modifier is
-   always the real difference from the cheapest size — see the diff
-   under each size chip.
+   The live page tags each size with a "+US $0.00"-style modifier. This
+   one does not, as of 2026-08-24: the baseline moves with the rest of the
+   specification, so the same size reads +$0.00 against one paper and
+   +$9.00 against another with nothing on screen to say which. The price
+   in the panel is the same information without the ambiguity.
    ──────────────────────────────────────────────────────────────── */
 
 /* The live page's own copy, kept. */
@@ -128,28 +129,10 @@ export default function ProductPage({ onGo, seed = null }) {
   const perPage = perPagePrice(formatId, sel);
   const limit = pageLimit(formatId, sel);
 
-  /* The cheapest ImageWrap, for the "+US $x.xx" size modifiers the live
-     page shows. Computed, so it can never drift from the matrix. */
-  const cheapest = Math.min(
-    ...f.groups.find(g => g.id === "size").options
-      .map(o => unitPrice(formatId, { cover, size: o.id, paper }))
-      .filter(n => n != null)
-  );
-
   const papersOk = availableFor(formatId, sel, "paper");
   const sizesOk = availableFor(formatId, sel, "size");
 
   const opt = (groupId, id) => f.groups.find(g => g.id === groupId).options.find(o => o.id === id);
-  /* "Small Square (+US $0.00)" — the live page's own way of naming the
-     current choice and what it adds. The modifier is computed, so it is the
-     real difference from the cheapest size rather than a typed figure. */
-  const sizeModifier = id => {
-    const price = unitPrice(formatId, { cover, size: id, paper });
-    if (price == null) return null;
-    const diff = price - cheapest;
-    return diff === 0 ? "+US $0.00" : `+${money(diff)}`;
-  };
-
   return (
     <div style={{ fontFamily: FONT_BODY, color: T.textNeutral }}>
 
@@ -262,13 +245,12 @@ export default function ProductPage({ onGo, seed = null }) {
               thing here and another there. */}
           <OptionGroup
             label="Size"
-            value={`${opt("size", size)?.label} (${sizeModifier(size) ?? "not available"})`}
+            value={opt("size", size)?.label}
             options={f.groups.find(g => g.id === "size").options}
             selected={size}
             onPick={changeSize}
             available={sizesOk}
             variant="thumb"
-            modifier={sizeModifier}
             detailsOpen={details.has("size")}
             onDetails={() => toggleDetails("size")}
           />
