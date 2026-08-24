@@ -264,9 +264,15 @@ function MenuLink({ item, onClose }) {
       onFocus={() => setHot(true)}
       onBlur={() => setHot(false)}
       style={{
-        display: "block", textDecoration: "none", fontSize: TYPE.base,
-        padding: "13px 16px", margin: "0 -16px", borderRadius: 2, minWidth: 170,
-        color: hot ? C.blue600 : T.textNeutral,
+        /* `.nav__link-desktop` in the same stylesheet, as used inside the
+           submenu: font-size --text-sm (14px) at line-height 1.4, weight
+           500, colour --color-light-gray-950, padding 16px all round,
+           min-width --spacing * 55 = 220px, and rounded-md (6px) on the
+           hover ground, which is --color-light-gray-50. */
+        display: "block", textDecoration: "none",
+        fontSize: TYPE.sm, lineHeight: 1.4, fontWeight: 500,
+        padding: 16, borderRadius: 6, minWidth: 220,
+        color: hot ? C.blue600 : C.gray950,
         background: hot ? C.gray50 : "transparent",
       }}
     >
@@ -292,11 +298,27 @@ function MegaMenu({ group, isOpen, onClose }) {
     <div
       aria-hidden={!isOpen}
       style={{
-        position: "absolute", top: "100%", left: 0, zIndex: 50,
-        background: "#fff", border: `1px solid ${T.border}`, borderRadius: 2,
-        boxShadow: "0 10px 28px rgba(0,0,0,0.10)",
-        padding: "20px 28px 24px",
-        display: "flex", gap: 56, alignItems: "flex-start",
+        /* ── Taken from the live stylesheet, not estimated ──
+           assets.blurb.com/_astro/index.CV0oYoXR.css, `.nav__submenu`:
+
+             left            calc(--spacing * -2)  = -8px
+             padding-inline  calc(--spacing * 2)   = 8px
+             padding-block   calc(--spacing * 4)   = 16px
+             radius          0 0 --radius-md --radius-md = 0 0 6px 6px
+             border-top      1px --color-light-gray-100
+             box-shadow      0 4px 6px -1px #0000001a,
+                             0 2px 4px -2px #0000001a
+
+           The top corners are square and only the top edge is bordered,
+           because the panel hangs off the header rather than floating: it
+           reads as the header continuing downwards. */
+        position: "absolute", top: "100%", left: -8, zIndex: 50,
+        background: "#fff",
+        borderTop: `1px solid ${C.gray100}`,
+        borderRadius: "0 0 6px 6px",
+        boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1)",
+        padding: "16px 8px",
+        display: "flex", gap: 8, alignItems: "flex-start",
         fontFamily: FONT_BODY, whiteSpace: "nowrap",
         opacity: isOpen ? 1 : 0,
         visibility: isOpen ? "visible" : "hidden",
@@ -305,12 +327,12 @@ function MegaMenu({ group, isOpen, onClose }) {
         transformOrigin: "top center",
         transition:
           isOpen
-            ? "opacity var(--slow) var(--ease), transform var(--slow) var(--ease)"
-            : "opacity var(--slow) var(--ease), transform var(--slow) var(--ease), visibility 0s var(--slow)",
+            ? "opacity var(--menu) var(--ease), transform var(--menu) var(--ease)"
+            : "opacity var(--menu) var(--ease), transform var(--menu) var(--ease), visibility 0s var(--menu)",
       }}
     >
       {group.columns.map(col => (
-        <div key={col.heading} style={{ display: "flex", gap: 56, alignItems: "flex-start" }}>
+        <div key={col.heading} style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
           {/* A long set breaks into columns of five, which is how the live
               Products menu splits its seven. */}
           {chunk(col.items, COLUMN_MAX).map((sub, i) => (
@@ -318,7 +340,7 @@ function MegaMenu({ group, isOpen, onClose }) {
               {headed && (
                 <div style={{
                   fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.6, textTransform: "uppercase",
-                  color: T.textSubtle, paddingBottom: 6,
+                  color: T.textSubtle, padding: "0 16px 6px",
                   /* The heading belongs to the set, not to each column of it,
                      so only the first column of a split set is labelled. */
                   visibility: i === 0 ? "visible" : "hidden",
