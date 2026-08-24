@@ -27,6 +27,26 @@ import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.
      · what you earn
      · when you get paid
 
+   ── API printing came off this page, 2026-08-24 ──
+   The 8/21 pod said "API printing is not included in the selling tool"
+   and it is now decided: it is not a route to market on this page. That
+   REVERSES the 2026-08-18 note, which argued it was — a business's own
+   store is where the selling happens and Blurb only prints behind it.
+   Both readings are defensible; the room chose. What made the difference
+   is nav option D: API printing is a SERVICE, and a page whose one goal
+   is "which route is mine?" should not answer with an engineering
+   integration.
+
+   The 8/18 reasoning is kept beside the api channel in catalog.js rather
+   than deleted, because the argument is still the argument if this ever
+   comes back. Large Order Services was never on this page for the same
+   reason: you buy the stock and distribute it yourself.
+
+   So four routes, not five. Store integrations — Shopify, Etsy — would be
+   the fifth when they exist, which is why they are named under the cards
+   rather than compared beside them: a card here promises four facts, and
+   we cannot fill them in for something unbuilt.
+
    ONE PAGE, ONE GOAL (8/21 rule): the goal is "which route is mine?".
    Everything here serves the comparison, and the page ends with the one
    step that follows from having chosen — nothing else.
@@ -90,31 +110,6 @@ const CHANNELS = [
     youEarn: "List price minus the wholesale discount you set for retailers, minus print cost.",
     paid: "Up to four months",
     setup: "Trade metadata, and a discount decision",
-    sourced: true,
-  },
-  {
-    id: "api",
-    name: "API printing",
-    prop: "Your storefront, your brand — our presses behind it.",
-    /* SETTLED 2026-08-18, and it still stands: API printing is a way to
-       sell, not a candidate for one. It is how a business connects its own
-       store to Blurb's print service. Large Order Services is a separate
-       route — you buy the stock and distribute it — and the two were never
-       alternatives for the same slot. /print-api-software backs it up: the
-       page makes the same only-pay-for-printing promise a checkout link
-       does.
-
-       The 8/21 pod said "API printing is not included in the selling tool",
-       which either reverses this or means a narrower surface than this page.
-       Unresolved, so the card stays. Whoever settles it should answer the
-       reasoning above rather than delete it. Same note lives beside the api
-       channel in catalog.js. */
-    suits: "Businesses with their own store, connecting it to our print service.",
-    basis: "quoted",
-    buyerPays: "Whatever your own store charges",
-    youEarn: "Your price minus what you pay Blurb. No setup fees, no minimums.",
-    paid: "Through your own store",
-    setup: "Engineering — an API integration",
     sourced: true,
   },
 ];
@@ -191,7 +186,7 @@ export default function SellerLanding({ onGo }) {
     <div style={{ fontFamily: FONT_BODY, color: T.textNeutral }}>
       <section style={{ maxWidth: 1240, margin: "0 auto", padding: "56px 24px 24px", textAlign: "center" }}>
         <h1 style={{ fontFamily: FONT_DISPLAY, fontWeight: 400, fontSize: "clamp(2rem, 4.5vw, 3rem)", lineHeight: 1.15, margin: 0 }}>
-          Five ways to sell your book
+          Four ways to sell your book
         </h1>
         <p style={{ fontSize: TYPE.xl, lineHeight: 1.55, color: T.textSubtle, maxWidth: 680, margin: "16px auto 0" }}>
           Same book, five routes to a buyer. They differ in who finds it, what your buyer pays, and how much
@@ -230,6 +225,22 @@ export default function SellerLanding({ onGo }) {
 
           <div style={{
             marginTop: 24, background: "#fff", border: `1px solid ${T.border}`,
+            borderRadius: R.lg, padding: 20, display: "grid", gap: 8, maxWidth: 900,
+          }}>
+            <div style={{ fontSize: TYPE.base, fontWeight: 700 }}>
+              Coming, and not compared yet
+            </div>
+            <div style={{ fontSize: TYPE.base, color: T.textSubtle, lineHeight: 1.65 }}>
+              <strong style={{ color: T.textNeutral }}>Store integrations</strong> — connecting a shop you
+              already run on Shopify or Etsy — would be the fifth route. It is named here rather than compared
+              beside the others because a card on this page promises four facts about a channel, and none of
+              them can be answered honestly for something unbuilt. API printing and Large Order Services are
+              not routes to market: they are services, and they live under Services in the nav.
+            </div>
+          </div>
+
+          <div style={{
+            marginTop: 16, background: "#fff", border: `1px solid ${T.border}`,
             borderRadius: R.lg, padding: 20, display: "grid", gap: 8, maxWidth: 900,
           }}>
             <div style={{ fontSize: TYPE.base, fontWeight: 700 }}>Applies to every channel</div>

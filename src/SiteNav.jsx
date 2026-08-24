@@ -94,7 +94,7 @@ const NAV = [
        heading, as drawn. */
     { heading: "Products", chunkAt: 4, items: [
       ["Shop All", "Every format Blurb prints."],
-      ["Photo Books", "Best for travel, fine-art photography, and books built to last on a shelf."],
+      ["Photo Books", "Best for travel, fine-art photography, and books built to last on a shelf.", null, "product"],
       ["Layflat Books", "Best for wedding albums, panoramic landscapes, and portfolio work."],
       ["Paperback and Hardcover Books", "Best for novels, cookbooks, children's books, and prototyping."],
       ["Magazines", "Best for editorial projects, lookbooks, and serial publications."],
@@ -138,12 +138,12 @@ const NAV = [
       ["Store integrations", "Connect Shopify, Etsy and more.", "Coming soon"],
     ]},
     { heading: "Pricing and products", items: [
-      ["Margin estimator", "Set a price and see what you keep per copy."],
+      ["Margin estimator", "Set a price and see what you keep per copy.", null, "margin"],
       /* The crossover. A seller whose question is "what can I sell?" is
          asking about products, and the Products menu answers what we print
          rather than what is sellable. One link, to the seller page where
          the two axes meet. */
-      ["What you can sell", "Which formats sell through which route, and what each one asks of you."],
+      ["What you can sell", "Which formats sell through which route, and what each one asks of you.", null, "seller"],
     ]},
   ], featured: {
     heading: "Featured",
@@ -168,8 +168,11 @@ const NAV = [
 
   { label: "Pricing", href: "/pricing", columns: [
     { heading: "Pricing", items: [
-      ["Pricing Calculator", "Price a specific book by size, pages and paper."],
-      ["Shipping Calculator", "Estimate delivery cost and time."],
+      ["Pricing Calculator", "Price a specific book by size, pages and paper.", null, "pricing"],
+      /* Shipping lives inside the pricing calculator now — the destination
+         and the arrival dates are a section of that page, so this opens the
+         same screen rather than pretending to a page of its own. */
+      ["Shipping Calculator", "Estimate delivery cost and time.", null, "pricing"],
     ]},
   ], featured: {
     heading: "Featured",
@@ -268,13 +271,16 @@ const chunk = (arr, size) =>
    menus are lists of names, and a name only helps if you already know what
    it means. "Volume orders" is a good example: the label says nothing about
    100 copies, and the line under it does. */
-function MenuLink({ item, onClose }) {
+function MenuLink({ item, onClose, onGo }) {
   const [hot, setHot] = useState(false);
-  const [label, body, tag] = item;
+  const [label, body, tag, stage] = item;
   return (
     <a
       href="#"
-      onClick={e => { e.preventDefault(); onClose(); }}
+      /* Items that have a screen behind them go to it. The rest close the
+         menu and stay put, which is honest: this prototype holds five
+         screens, not a site. */
+      onClick={e => { e.preventDefault(); onClose(); if (stage) onGo?.(stage); }}
       onMouseEnter={() => setHot(true)}
       onMouseLeave={() => setHot(false)}
       onFocus={() => setHot(true)}
@@ -311,7 +317,7 @@ function MenuLink({ item, onClose }) {
   );
 }
 
-function MegaMenu({ group, isOpen, onClose }) {
+function MegaMenu({ group, isOpen, onClose, onGo }) {
   /* Headings only when the menu holds more than one KIND of thing. The live
      Products menu is seven products and needs no label; ours also holds ten
      project kinds, and without a heading "Hardcover" sits beside "Zines"
@@ -378,7 +384,7 @@ function MegaMenu({ group, isOpen, onClose }) {
                   {col.heading}
                 </div>
               )}
-              {sub.map(item => <MenuLink key={item[0]} item={item} onClose={onClose} />)}
+              {sub.map(item => <MenuLink key={item[0]} item={item} onClose={onClose} onGo={onGo} />)}
             </div>
           ))}
         </div>
@@ -409,19 +415,19 @@ function MegaMenu({ group, isOpen, onClose }) {
           }}>
             {group.featured.heading}
           </div>
-          <FeaturedCard card={group.featured} onClose={onClose} />
+          <FeaturedCard card={group.featured} onClose={onClose} onGo={onGo} />
         </div>
       )}
     </div>
   );
 }
 
-function FeaturedCard({ card, onClose }) {
+function FeaturedCard({ card, onClose, onGo }) {
   const [hot, setHot] = useState(false);
   return (
     <a
       href="#"
-      onClick={e => { e.preventDefault(); onClose(); }}
+      onClick={e => { e.preventDefault(); onClose(); if (card.stage) onGo?.(card.stage); }}
       onMouseEnter={() => setHot(true)}
       onMouseLeave={() => setHot(false)}
       onFocus={() => setHot(true)}
@@ -555,7 +561,7 @@ function LocaleMenu({ open, onToggle, value, onPick }) {
 
    Account items join the same list when signed in, rather than hiding
    behind a second control that would compete with this one. */
-function MobileNav({ open, signedIn, onClose, onSignedIn }) {
+function MobileNav({ open, signedIn, onClose, onSignedIn, onGo }) {
   if (!open) return null;
   return (
     <div
@@ -577,11 +583,11 @@ function MobileNav({ open, signedIn, onClose, onSignedIn }) {
                 fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.6, textTransform: "uppercase",
                 color: T.textSubtle, padding: "8px 0 2px",
               }}>{col.heading}</div>
-              {col.items.map(([label, , tag]) => (
+              {col.items.map(([label, , tag, stage]) => (
                 <a
                   key={label}
                   href="#"
-                  onClick={e => { e.preventDefault(); onClose(); }}
+                  onClick={e => { e.preventDefault(); onClose(); if (stage) onGo?.(stage); }}
                   style={{ padding: "9px 0", textDecoration: "none", color: T.textSubtle, fontSize: TYPE.base }}
                 >
                   {label}<Tag>{tag}</Tag>
@@ -779,7 +785,7 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
       >
         {group.label}
       </button>
-      <MegaMenu group={group} isOpen={open === group.label} onClose={() => setOpen(null)} />
+      <MegaMenu group={group} isOpen={open === group.label} onClose={() => setOpen(null)} onGo={onGo} />
     </span>
   );
 
@@ -885,6 +891,7 @@ export default function SiteNav({ signedIn, onSignedIn, onGo }) {
       <MobileNav
         open={mobileOpen}
         signedIn={signedIn}
+        onGo={onGo}
         onClose={() => setMobileOpen(false)}
         onSignedIn={v => onSignedIn && onSignedIn(v)}
       />

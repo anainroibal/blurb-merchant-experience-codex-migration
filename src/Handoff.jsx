@@ -1,7 +1,6 @@
 import React from "react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.js";
 import YourProjects from "./YourProjects.jsx";
-import SellChannels from "./SellChannels.jsx";
 import {
   CATALOG, FORMAT_IDS, SELLING_CHANNEL, hasTool, formatsWithTool,
 } from "./catalog.js";
@@ -264,7 +263,9 @@ export default function Handoff({ route, signedIn, onSignIn, formatId, use, pric
         </div>
       )}
 
-      {selling && price != null && <SellChannels price={price} cost={cost} formatId={formatId} sel={sel} />}
+      {/* No channel comparison here either — it is the seller landing
+          page's job. This page hands off to a tool or a project; choosing a
+          route to market happens before that, on its own page. */}
     </section>
   );
 }

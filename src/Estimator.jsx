@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.js";
-import SellChannels from "./SellChannels.jsx";
 import SummaryPanel from "./SummaryPanel.jsx";
 import ProductOptions from "./ProductOptions.jsx";
 import {
@@ -589,7 +588,14 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
             )}
           </div>
 
-          {selling && <SellChannels price={shown} cost={cost} formatId={formatId} sel={state} />}
+          {/* The channel comparison used to sit here. It belongs on the
+              seller landing page and only there — that page's one goal is
+              "which route is mine?", and answering the same question in
+              three places is how a prototype starts contradicting itself.
+              Removed 2026-08-24. Note this supersedes the board's
+              "comparison before commitment — the channel comparison belongs
+              on the estimator": still comparison before commitment, but the
+              comparison has its own page now. */}
 
             </div>
 
