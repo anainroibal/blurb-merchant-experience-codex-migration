@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { CATALOG, SELL_CHANNELS } from "./catalog.js";
 
@@ -200,6 +200,39 @@ const dataCell = {
    So: an illustration, the name, one sentence, two facts, a link. The
    illustrations are Blurb's own, from /amazon and /ingram — the same hand,
    so four routes look like one family rather than four brands. */
+/* ── How many copies ──
+   The live page asks this BEFORE it asks how to sell, and it is the right
+   order: one-at-a-time, a small run and a print job are three different
+   businesses, and only the first one leads to the routes below. Missing
+   from our page until 2026-08-24.
+
+   Blurb's own photographs of the press floor, and its own bands. The copy
+   is cut to a line each, like the route cards — the paragraph the live page
+   runs under each band says the same thing at four times the length. */
+const PRINT_TIERS = [
+  {
+    id: "pod", band: "1+ copies", img: ILLUS + "on-demand.CB3F805E_Z27Lxnp.webp",
+    alt: "A print technician checking a photo book on the press floor.",
+    title: "Printed as it is ordered, one copy at a time",
+    line: "No upfront cost, nothing to stock, and never out of print. This is what the four routes below run on.",
+    cta: "Choose how to sell", href: "#routes",
+  },
+  {
+    id: "run", band: "10–99 copies", img: ILLUS + "volume-discount.B4mGU6AL_ZLbwTD.webp",
+    alt: "Identical photo books moving along a conveyor at the bindery.",
+    title: "A small run for signings, events and giveaways",
+    line: "Volume discounts start at ten copies, and the whole order ships to one address.",
+    cta: "Price up a print run", stage: "pricing",
+  },
+  {
+    id: "los", band: "100+ copies", img: ILLUS + "large-order.Dolls1H4_A7dqn.webp",
+    alt: "A press roller running colour on a large print job.",
+    title: "A print job, quoted by people",
+    line: "Past a hundred copies our print team quotes it, and handles the logistics with you.",
+    cta: "Large Order Services", href: "https://www.blurb.com/large-order-services",
+  },
+];
+
 const SELL_CARDS = [
   {
     id: "link", name: "Instant Store", isNew: true, stage: "margin", cta: "See what you would keep",
@@ -234,7 +267,45 @@ const SELL_CARDS = [
 /* Blurb's own illustrations, served from the site. */
 const ILLUS_NOTE = null;
 
+/* ── Why choose Blurb ── the live page's four columns, cut to a line each.
+   "Multiple ways to sell" is ours only insofar as it now names the Instant
+   Store first: it is the column that would otherwise describe a page that
+   no longer exists. */
+const WHY = [
+  ["menu_book", "Trusted printing partner",
+   "Twenty years of in-house printing and full production control. No outsourcing."],
+  ["architecture", "Complete creative control",
+   "Free bookmaking software, Adobe plug-ins, or a print-ready PDF — your layout, your call."],
+  ["storefront", "Several ways to sell",
+   "Your own Instant Store, the Blurb Bookstore, Amazon, Ingram. You choose the channel, the price and the pace."],
+  ["eco", "Sustainable papers and practices",
+   "FSC-certified papers, printed at the facility nearest your reader."],
+];
+
+/* ── The questions ──
+   The live page's, with the answers cut to what they actually answer. Two
+   are ours: pricing now names the Instant Store, because on that route the
+   price is the seller's rather than a markup on a base price, and payment
+   says the same. Everything else is Blurb's. */
+const FAQS = [
+  ["How do I set the price for my book?",
+   "It depends on the route. In an Instant Store you set the price outright — the margin estimator shows what a copy costs you and what is left at any price you name. On the Bookstore, Amazon and Ingram your price sits on top of a base price, and the channel takes its cut from what the buyer pays."],
+  ["How and when will I get paid?",
+   "A US $25 minimum applies before any payout is released, whichever route you sell through. Instant Store and Bookstore sales pay out by PayPal or check on a set cadence; Amazon holds payment through its returns window, and Ingram can take up to four months."],
+  ["Can I update my book after it is published?",
+   "Book details — description, keywords, price — can be changed at any time. The interior cannot: to change the content you upload the new file and publish it again."],
+  ["What creative control do I have?",
+   "All of it. Format, size, cover, paper, layout and price are yours, in whichever tool you make the book in."],
+  ["Do I get sales data?",
+   "Yes — sales and earnings per book, per channel, in your dashboard."],
+  ["Can I sell from my own website?",
+   "That is what an Instant Store is for: one link, shared or embedded wherever you already are, and we print and ship every order."],
+];
+
 export default function SellerLanding({ onGo }) {
+  /* One question open at a time, none by default — a page of open answers is
+     the wall of copy this redesign removed. */
+  const [openQ, setOpenQ] = useState(null);
   const routes = ROUTE_IDS.map(id => SELL_CHANNELS.find(c => c.id === id)).filter(Boolean);
 
   const cellFor = (route, row) => {
@@ -245,12 +316,17 @@ export default function SellerLanding({ onGo }) {
 
   return (
     <div style={{ fontFamily: FONT_BODY, color: T.textNeutral }}>
-      {/* ── This IS /self-publish ──
-          The live page's own heading, because that is the page this replaces
-          — where the home page's Selling tab already sends people. Its
-          "Choose how to sell your book" section offers three routes and the
-          Instant Store is missing from it; adding the fourth is the change
-          this page argues for.
+      {/* ── The Sell page ──
+          Renamed from /self-publish, 2026-08-24 (Anain). "Self-publish"
+          names a movement, not a task, and the nav item above it already
+          says Sell; a page whose whole job is "which route is mine?" should
+          be called the thing the reader came to do. The live URL is still
+          /self-publish and the redirect is somebody's call — the live page's
+          heading is kept, because that copy is not what is wrong with it.
+
+          This is where the home page's Selling tab lands. The live version
+          offers three routes and the Instant Store is missing from it;
+          adding the fourth is the change this page argues for.
 
           The hero is the one /pricing and /bookmaking-tools use: a wide
           gradient band, 96px of air, the title and one line centred in it.
@@ -282,6 +358,76 @@ export default function SellerLanding({ onGo }) {
           >
             Compare the routes
           </a>
+        </div>
+      </section>
+
+      {/* ── How many copies ──
+          Ahead of the routes, as the live page has it: the answer changes
+          whether the routes are even the right page. Same card as the route
+          cards — tile, band, one line, a link — so the two rows read as one
+          sequence rather than two designs. */}
+      <section style={{ padding: "clamp(56px, 7vw, 80px) 24px 0" }}>
+        <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 48 }}>
+          <div style={{ textAlign: "center", display: "grid", gap: 12, justifyItems: "center" }}>
+            <h2 style={{
+              fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
+              lineHeight: 1.25, margin: 0,
+            }}>
+              You've made your book — now choose how to print it
+            </h2>
+            <p style={{ fontSize: TYPE.lg, color: T.textSubtle, margin: 0, maxWidth: 680, lineHeight: 1.6 }}>
+              One copy at a time, a small run for an event, or a print job we quote for you.
+            </p>
+          </div>
+
+          <div style={{ display: "grid", gap: 32, gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
+            {PRINT_TIERS.map(tier => (
+              <div key={tier.id} style={{ display: "grid", gap: 16, alignContent: "start", minWidth: 0 }}>
+                <div style={{ borderRadius: R.lg, overflow: "hidden", aspectRatio: "4 / 3", background: "#f5f0ea" }}>
+                  <img
+                    src={tier.img}
+                    alt={tier.alt}
+                    loading="lazy"
+                    style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                  />
+                </div>
+
+                <span style={{ justifySelf: "start" }}><Chip>{tier.band}</Chip></span>
+
+                <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["4xl"], fontWeight: 500, lineHeight: 1.2 }}>
+                  {tier.title}
+                </div>
+
+                <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.6, color: T.textSubtle }}>{tier.line}</p>
+
+                {tier.stage ? (
+                  <button
+                    onClick={() => onGo?.(tier.stage)}
+                    style={{
+                      justifySelf: "start", fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 700,
+                      color: T.textBrand, background: "transparent", border: 0, padding: 0, cursor: "pointer",
+                      textDecoration: "underline", textUnderlineOffset: 4,
+                    }}
+                  >
+                    {tier.cta}
+                  </button>
+                ) : (
+                  <a
+                    href={tier.href}
+                    {...(tier.href.startsWith("#") ? {} : { target: "_blank", rel: "noreferrer" })}
+                    style={{
+                      justifySelf: "start", fontSize: TYPE.base, fontWeight: 700, color: T.textBrand,
+                      display: "inline-flex", alignItems: "center", gap: 5,
+                      textDecoration: "underline", textUnderlineOffset: 4,
+                    }}
+                  >
+                    {tier.cta}
+                    {!tier.href.startsWith("#") && <span className="ms" style={{ fontSize: 16 }}>open_in_new</span>}
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -496,6 +642,120 @@ export default function SellerLanding({ onGo }) {
         </div>
       </section>
 
+      {/* ── Precision printing in action ──
+          Blurb's own film of the press floor, embedded from its own channel.
+          It earns its place on a page about selling: everything above is a
+          promise that somebody prints and ships the book, and this is the
+          only thing on the page that shows it. */}
+      <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
+        <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 32, justifyItems: "center" }}>
+          <div style={{ textAlign: "center", display: "grid", gap: 12, justifyItems: "center" }}>
+            <h2 style={{
+              fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
+              lineHeight: 1.25, margin: 0,
+            }}>
+              Precision printing in action
+            </h2>
+            <p style={{ fontSize: TYPE.lg, color: T.textSubtle, margin: 0, lineHeight: 1.6 }}>
+              Go behind the scenes and see how a Blurb book is made.
+            </p>
+          </div>
+
+          <div style={{
+            width: "100%", maxWidth: 1000, aspectRatio: "16 / 9",
+            borderRadius: R.lg, overflow: "hidden", background: C.gray950,
+          }}>
+            <iframe
+              src="https://www.youtube.com/embed/G7GTVfHXVho?playsinline=1&cc_lang_pref=en&hl=en"
+              title="How Blurb Books Are Made — Behind the Scenes of Print-on-Demand"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              loading="lazy"
+              style={{ width: "100%", height: "100%", border: 0, display: "block" }}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ── Why choose Blurb ── four columns, a line each. */}
+      <section style={{ background: T.bgSubtle, borderTop: `1px solid ${T.border}`, padding: "clamp(56px, 7vw, 80px) 24px" }}>
+        <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 48 }}>
+          <div style={{ textAlign: "center", display: "grid", gap: 12, justifyItems: "center" }}>
+            <h2 style={{
+              fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
+              lineHeight: 1.25, margin: 0,
+            }}>
+              Why choose Blurb?
+            </h2>
+            <p style={{ fontSize: TYPE.lg, color: T.textSubtle, margin: 0, lineHeight: 1.6 }}>
+              Creative freedom, premium quality, and full control — all in one platform.
+            </p>
+          </div>
+
+          <div style={{ display: "grid", gap: 32, gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
+            {WHY.map(([icon, title, body]) => (
+              <div key={title} style={{ display: "grid", gap: 12, alignContent: "start" }}>
+                <span className="ms" style={{ fontSize: 40, color: C.blue600, lineHeight: 1 }}>{icon}</span>
+                <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 500, lineHeight: 1.2 }}>
+                  {title}
+                </div>
+                <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.6, color: T.textSubtle }}>{body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Questions ──
+          Closed by default and one at a time. The live page prints six long
+          answers in full, which is the wall of copy this redesign is about;
+          a question nobody asked costs a line here instead of a paragraph. */}
+      <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
+        <div style={{
+          maxWidth: 1240, margin: "0 auto", display: "grid", gap: 40,
+          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", alignItems: "start",
+        }}>
+          <h2 style={{
+            fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
+            lineHeight: 1.25, margin: 0, maxWidth: 420,
+          }}>
+            Have a question?<br />Here are answers.
+          </h2>
+
+          <div style={{ display: "grid" }}>
+            {FAQS.map(([q, a2]) => {
+              const on = openQ === q;
+              return (
+                <div key={q} style={{ borderTop: `1px solid ${T.border}` }}>
+                  <button
+                    onClick={() => setOpenQ(on ? null : q)}
+                    aria-expanded={on}
+                    style={{
+                      width: "100%", display: "flex", alignItems: "center", justifyContent: "space-between",
+                      gap: 16, padding: "20px 0", background: "transparent", border: 0, cursor: "pointer",
+                      font: "inherit", fontSize: TYPE.base, fontWeight: on ? 700 : 400, textAlign: "left",
+                      color: T.textNeutral,
+                    }}
+                  >
+                    {q}
+                    <span className="ms turn" style={{ fontSize: 22, transform: on ? "rotate(180deg)" : "none" }}>
+                      expand_more
+                    </span>
+                  </button>
+                  {on && (
+                    <p className="pop-in" style={{
+                      margin: "0 0 20px", fontSize: TYPE.base, lineHeight: 1.7, color: T.textSubtle, maxWidth: 620,
+                    }}>
+                      {a2}
+                    </p>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
       {/* ── The way out ──
           Comparison before commitment: the route is chosen here, so the step
           that acts on it belongs here too — once, at the end. Two actions,
@@ -510,7 +770,7 @@ export default function SellerLanding({ onGo }) {
             fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
             lineHeight: 1.25, margin: 0,
           }}>
-            Picked your route?
+            Ready to sell your book?
           </h2>
           <p style={{ margin: 0, fontSize: TYPE.lg, color: T.textSubtle, lineHeight: 1.6, maxWidth: 640 }}>
             Every one of them starts with a book. The margin estimator prices an{" "}
