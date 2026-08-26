@@ -1,6 +1,5 @@
 import React from "react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.js";
-import YourProjects from "./YourProjects.jsx";
 import {
   CATALOG, FORMAT_IDS, SELLING_CHANNEL,
 } from "./catalog.js";
@@ -24,20 +23,22 @@ import {
    skips the tools entirely.
    ──────────────────────────────────────────────────────────────── */
 
-/* ── What an Instant Store cannot sell ──
-   Said BEFORE the link is set up, not discovered after. Under "to Sell"
-   the product row already hides what cannot be sold, and a silent
-   omission is the worst version of this: the seller either does not
-   notice, or notices and cannot tell whether it is a rule or a bug.
+/* ── What an Instant Store can sell ──
+   An answer to a question in the FAQ at the foot of the page rather than a
+   panel beside the steps (Ana, DES-482): at the point of choosing a size,
+   the rules of a channel are more detail than the step needs. It stays ON
+   this page, though, and before any link is set up. A silent omission is
+   the worst version of this: the seller either does not notice, or notices
+   and cannot tell whether it is a rule or a bug.
 
    Only the PDF exclusion is decided (2026-08-18). Notebooks and wall art
-   are absent because nothing says they CAN be sold this way — a different
+   are absent because nothing says they CAN be sold this way, a different
    thing from a decision, and named as such.
 
-   What each OTHER channel takes is now known, from /self-publish
-   (2026-08-19), so this can point somewhere instead of stopping at a no:
-   a notebook cannot take a link, but the Bookstore sells notebooks. */
-function LinkLimits({ formatId }) {
+   What each OTHER channel takes is known, from /self-publish (2026-08-19),
+   so this can point somewhere instead of stopping at a no: a notebook
+   cannot take a link, but the Bookstore sells notebooks. */
+export function SellableAnswer({ formatId }) {
   const excluded = FORMAT_IDS
     .filter(id => id !== "pdf" && !(CATALOG[id].sellChannels || []).includes(SELLING_CHANNEL))
     .map(id => CATALOG[id].label);
@@ -49,27 +50,17 @@ function LinkLimits({ formatId }) {
   const NAMES = { bookstore: "the Blurb Bookstore", amazon: "Amazon", ingram: "Ingram" };
 
   return (
-    <div style={{
-      marginTop: 16, background: T.bgNeutral, border: `1px solid ${T.border}`,
-      borderRadius: R.lg, padding: 20, display: "grid", gap: 8,
-    }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <span className="ms" style={{ fontSize: 20, color: T.textSubtle }}>info</span>
-        <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>
-          What an Instant Store can sell
-        </span>
-      </div>
-      <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.65, color: T.textSubtle }}>
-        Printed books and magazines. <strong style={{ color: T.textNeutral }}>A PDF cannot be sold through an
-        Instant Store</strong> — it is ordered, not sold. {excluded.length > 0 && (
-          <>Nor can {list(excluded)} — unconfirmed rather than decided, so ask before promising it to anyone.{" "}</>
-        )}
-        {elsewhere.length > 0 && formatId && (
-          <>Beyond a link, {CATALOG[formatId].label.toLowerCase()} sell through{" "}
-          {list(elsewhere.map(c => NAMES[c] ?? c))}.</>
-        )}
-      </p>
-    </div>
+    <p style={{ margin: 0 }}>
+      Printed books and magazines. <strong style={{ color: T.textNeutral }}>A PDF cannot be sold through an
+      Instant Store.</strong> It is ordered, not sold. {excluded.length > 0 && (
+        <>Nor can {list(excluded)}, which is unconfirmed rather than decided, so ask before promising it to
+        anyone.{" "}</>
+      )}
+      {elsewhere.length > 0 && formatId && (
+        <>Beyond an Instant Store, {CATALOG[formatId].label.toLowerCase()} sell through{" "}
+        {list(elsewhere.map(c => NAMES[c] ?? c))}.</>
+      )}
+    </p>
   );
 }
 
@@ -78,8 +69,7 @@ const list = items =>
   items.length <= 1 ? (items[0] ?? "")
     : `${items.slice(0, -1).join(", ")} and ${items[items.length - 1]}`;
 
-export default function Handoff({ route, signedIn, onSignIn, formatId }) {
-  const selling = route === "sell";
+export default function Handoff({ route }) {
   const bulk = route === "distribute";
 
   return (
@@ -92,64 +82,28 @@ export default function Handoff({ route, signedIn, onSignIn, formatId }) {
           question twice on one page, in two different shapes, was the
           thing to fix.
 
-          What is left here is what the panel cannot hold: the fork. A
-          seller either makes the project or brings one they finished, and
-          only the second half needs a page. So the heading stays where
-          there is still a decision, and the keepsake route — where the
-          panel now says everything — ends without one. */}
-      {(selling || bulk) && (
+          The selling fork went the same way, into that block. What is left
+          under the steps is the bulk route alone, where the honest end of
+          the page is not a next step but a conversation. */}
+      {/* ── No "Ready to sell it?" ──
+          It was a heading, a paragraph and a project list sitting under the
+          steps, and every one of those is a next step rather than a section
+          (Ana, DES-482). The fork now lives where the other next steps are:
+          under "Ready to make it?" at the foot of the summary panel, tools
+          on one side of the rule and a finished book on the other. The bulk
+          route keeps a heading here, because what follows it is not a next
+          step but a different way of being priced. */}
+      {bulk && (
         <div style={{ textAlign: "center", marginBottom: 8 }}>
           <h2 style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["7xl"], fontWeight: 500, margin: 0, lineHeight: 1.2 }}>
-            {selling ? "Ready to sell it?" : "Ready to order the run?"}
+            Ready to order the run?
           </h2>
           <p style={{ fontSize: TYPE.lg, color: T.textSubtle, marginTop: 10, maxWidth: 620, marginLeft: "auto", marginRight: "auto", lineHeight: 1.6 }}>
-            {selling
-              ? "Your project comes first — the link, the payout and the proof all follow from it. Make one with the tools in the panel, or sell one you have already finished."
-              : "The book comes first, then the quote. Make one with the tools in the panel or bring a finished PDF, and we'll price the run properly."}
+            The book comes first, then the quote. Make one with the tools in the panel or bring a finished
+            PDF, and we'll price the run properly.
           </p>
         </div>
       )}
-
-      {/* The other route out of this page — and the only place it asks who you are. */}
-      {selling && (
-        <div style={{ marginTop: 32 }}>
-          <YourProjects signedIn={signedIn} onSignIn={onSignIn} />
-        </div>
-      )}
-
-      {selling && (
-        <div
-          className="stack-md"
-          style={{
-            marginTop: 20, background: C.gray50, border: `1px solid ${T.border}`,
-            borderRadius: R.lg, padding: 24,
-            display: "grid", gap: 16, gridTemplateColumns: "1fr auto", alignItems: "center",
-          }}
-        >
-          <div style={{ minWidth: 0 }}>
-            <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["4xl"], fontWeight: 500, lineHeight: 1.2 }}>
-              See it before your buyers do
-            </div>
-            <p style={{ fontSize: TYPE.base, lineHeight: 1.65, color: T.textSubtle, margin: "8px 0 0", maxWidth: 660 }}>
-              Blurb has always asked authors to order and review a copy before a book goes on sale. Your link
-              can go live straight away — buyers just can't buy until your proof is on file. A discounted
-              copy or a PDF proof, either one.
-            </p>
-          </div>
-          <button
-            style={{
-              height: BUTTON_HEIGHT, padding: "0 24px", borderRadius: R.md,
-              fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 700,
-              letterSpacing: 0.6, textTransform: "uppercase", whiteSpace: "nowrap",
-              background: "transparent", color: T.textBrand, border: `1px solid ${T.borderBrand}`,
-            }}
-          >
-            How selling works
-          </button>
-        </div>
-      )}
-
-      {selling && <LinkLimits formatId={formatId} />}
 
       {/* The bulk route's whole destination. It does not compare channels,
           because there is only one — you — and the price is quoted rather

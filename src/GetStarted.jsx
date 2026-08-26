@@ -3,7 +3,9 @@ import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import Configurator from "./Configurator.jsx";
 import CreateActions from "./CreateActions.jsx";
 import ProductTypes from "./ProductTypes.jsx";
-import Handoff from "./Handoff.jsx";
+import Handoff, { SellableAnswer } from "./Handoff.jsx";
+import Faq from "./Faq.jsx";
+import YourProjects from "./YourProjects.jsx";
 import {
   CATALOG, formatsFor, defaultSelection, minSellPrice, sellerCost,
   PROJECT_KINDS, seedFor, BULK_MIN,
@@ -69,6 +71,9 @@ const kindOptions = () => [
 
 function InlineSelect({ value, options, onChange }) {
   const [open, setOpen] = useState(false);
+  /* Pointer and keyboard both land on the same row treatment, so tabbing
+     through the menu looks the way hovering it does. */
+  const [hot, setHot] = useState(null);
   const ref = useRef(null);
   useEffect(() => {
     if (!open) return;
@@ -78,6 +83,8 @@ function InlineSelect({ value, options, onChange }) {
     document.addEventListener("keydown", onKey);
     return () => { document.removeEventListener("mousedown", onDoc); document.removeEventListener("keydown", onKey); };
   }, [open]);
+
+  useEffect(() => { if (!open) setHot(null); }, [open]);
 
   const current = options.find(o => o.id === value);
   const grouped = options.some(o => o.group);
@@ -120,39 +127,57 @@ function InlineSelect({ value, options, onChange }) {
             /* A heading whenever the group changes. "business" is the first
                intention and needs no heading — the list starts there. */
             const changed = grouped && o.group && o.group !== options[i - 1]?.group;
-            const heading = o.group === "business" ? null : o.group === "personal" ? "For yourself" : o.group;
             return (
               <React.Fragment key={String(o.id)}>
-                {changed && heading && (
+                {changed && (
                   /* A label, not an option — so it is set apart rather than
-                     merely smaller: left to the same inset as the items,
-                     uppercase, ruled off above, and stuck to the top of the
-                     menu while its own group scrolls past. */
+                     merely smaller: uppercase, and stuck to the top of the
+                     menu while its own group scrolls past.
+
+                     Full-bleed to the menu edges (the -8px undoes the list's
+                     side padding) for two reasons: a pinned heading has to
+                     cover the options sliding under it, edge to edge, and the
+                     rule then reads as a divider across the menu rather than
+                     as a line belonging to one option. Space above, none
+                     below: the rule and the gap belong to the group starting
+                     here, not to the one ending above. */
                   <li
                     aria-hidden
                     style={{
                       position: "sticky", top: 0, zIndex: 1,
                       background: T.bgNeutral,
-                      margin: "6px 0 2px",
-                      padding: "10px 12px 6px",
-                      borderTop: i > 0 ? `1px solid ${T.border}` : 0,
+                      margin: "8px -8px 0",
+                      padding: "14px 20px 8px",
+                      borderTop: `1px solid ${T.border}`,
+                      /* The headline this menu hangs off is centred, and the
+                         heading would inherit that. The options set their own
+                         alignment; this has to as well. */
+                      textAlign: "left",
                       fontSize: TYPE.sm, color: T.textSubtle,
                       fontWeight: 700, letterSpacing: 0.8, textTransform: "uppercase",
                     }}
                   >
-                    {heading}
+                    {o.group}
                   </li>
                 )}
                 <li role="option" aria-selected={selected}>
                   <button
                     onClick={() => { onChange(o.id); setOpen(false); }}
+                    onMouseEnter={() => setHot(i)}
+                    onMouseLeave={() => setHot(h => (h === i ? null : h))}
+                    onFocus={() => setHot(i)}
+                    onBlur={() => setHot(h => (h === i ? null : h))}
                     style={{
                       width: "100%", textAlign: "left", border: 0, borderRadius: R.md,
                       padding: "10px 12px", font: "inherit",
                       /* The menu has no top padding, so the sticky headings
                          can pin flush. The first row supplies its own. */
                       marginTop: i === 0 ? 8 : 0,
-                      background: selected ? T.bgAccentSubtle : "transparent",
+                      /* Hover is a grey wash, never the selected blue: the
+                         row you are pointing at must not look like the row
+                         you already chose. */
+                      background: selected ? T.bgAccentSubtle : hot === i ? T.bgSubtle : "transparent",
+                      transition: "background 120ms ease",
                       color: selected ? T.textBrand : T.textNeutral,
                       fontWeight: selected ? 600 : 400,
                       display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12,
@@ -342,6 +367,17 @@ export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSe
             }}>
               Select a format to see size and paper options
             </h2>
+            {/* The standing instruction for this section, so it reads as the
+                heading's second line rather than as a note left under the
+                cards. It goes once a format is chosen: by then the row has
+                already done what it describes. */}
+            {!format && (
+              <p style={{ fontSize: TYPE.lg, color: T.textSubtle, margin: "10px auto 0", maxWidth: 720, lineHeight: 1.6 }}>
+                {selling
+                  ? "Tell us what you're making at the top and we'll recommend a product, a size and a paper, with what it costs you and what you'd earn. Or pick one yourself."
+                  : "Tell us what you're making at the top and we'll recommend a product, a size and a paper. Or pick one yourself."}
+              </p>
+            )}
           </div>
 
           <ProductTypes
@@ -351,13 +387,6 @@ export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSe
             kindLabel={PROJECT_KINDS.find(k => k.id === kind)?.label}
           />
 
-          {!format && (
-            <p style={{ fontSize: TYPE.xl, color: T.textSubtle, textAlign: "center", margin: "12px auto 0", maxWidth: 780, lineHeight: 1.6 }}>
-              {selling
-                ? "Tell us what you're making at the top and we'll recommend a product, a size and a paper — with what it costs you and what you'd earn. Or pick one yourself."
-                : "Tell us what you're making at the top and we'll recommend a product, a size and a paper. Or pick one yourself."}
-            </p>
-          )}
         </div>
       </section>
 
@@ -400,17 +429,39 @@ export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSe
                   onGo={onGo}
                   onBuild={() => {}}
                   heading="Ready to make it?"
+                  after={selling
+                    ? <YourProjects compact signedIn={signedIn} onSignIn={onSignIn} />
+                    : null}
                 />
               }
               trailing={
-                <Handoff
-                  route={route} signedIn={signedIn} onSignIn={onSignIn}
-                  formatId={format}
-                />
+                <Handoff route={route} />
               }
             />
           </div>
         </section>
+      )}
+
+      {/* ── Questions, at the foot of the page ──
+          The proof requirement and the Instant Store's product limits used
+          to be two panels beside the steps. Both are rules of the channel
+          rather than of the book, and at the point of choosing a paper they
+          are more than the step needs (Ana, DES-482). They keep their place
+          on the page, one scroll further down, where somebody who has just
+          seen what they would earn goes looking for the catch. */}
+      {selling && format && (
+        <Faq
+          heading={<>Before you sell it,<br />two things to know.</>}
+          items={[
+            ["Do I have to order a copy before I can sell?",
+             <p style={{ margin: 0 }}>
+               Blurb has always asked authors to order and review a copy before a book goes on sale. Your
+               Instant Store can go live straight away; buyers just cannot buy until your proof is on file.
+               A discounted copy or a PDF proof, either one.
+             </p>],
+            ["What can an Instant Store sell?", <SellableAnswer formatId={format} />],
+          ]}
+        />
       )}
 
     </div>

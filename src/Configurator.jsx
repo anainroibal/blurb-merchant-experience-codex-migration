@@ -1,8 +1,10 @@
 import React from "react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.js";
 import SummaryPanel from "./SummaryPanel.jsx";
+import { photoFor } from "./photos.js";
 import {
-  CATALOG, pageLimit, reconcile, availableFor, derivedSteps,
+  CATALOG, pageLimit, reconcile, availableFor, derivedSteps, priceFor, money,
+  FULFILMENT_FACTOR,
 } from "./catalog.js";
 
 /* ────────────────────────────────────────────────────────────────
@@ -46,7 +48,7 @@ export function StepHeading({ n, children }) {
 
    The live page is the source for all three: its size row is thumbnails and
    its paper row is text, on the same screen. */
-export function OptionCard({ title, sub, spec, note, selected, onClick, disabled, variant = "default" }) {
+export function OptionCard({ title, sub, spec, note, delta, photo, selected, onClick, disabled, variant = "default" }) {
   const thumb = variant === "thumb";
   const text = variant === "text";
   /* The default card is the product card's geometry (FormatCards.jsx): the
@@ -86,13 +88,29 @@ export function OptionCard({ title, sub, spec, note, selected, onClick, disabled
           borderRadius: card ? 0 : R.sm,
           /* A square swatch, as on the live PDP. A fixed height inside a
              flexible card gave a squat rectangle that read as a cropped
-             image rather than a sample. */
-          aspectRatio: thumb ? "1 / 1" : "16 / 11",
-          display: "grid", placeItems: "center",
+             image rather than a sample.
+
+             Square everywhere now, not just on the thumbnails: every one of
+             Blurb's option photographs is square, and the product sits in
+             the middle of it with air around it. A 16:11 tile cropped the
+             top and bottom off the very thing the picture is of. */
+          aspectRatio: "1 / 1",
+          display: "grid", placeItems: "center", overflow: "hidden",
         }}>
-          <span className="ms" style={{ fontSize: thumb ? 26 : 40, color: card ? C.gray400 : (selected ? C.blue600 : C.gray400) }}>
-            menu_book
-          </span>
+          {/* Blurb's own photograph of this option where one exists, and the
+              icon tile only where none does — see photos.js. A paper is a
+              thing you can see; choosing between five of them by reading
+              five names is the part of the live calculator this page is
+              meant to fix. */}
+          {photo
+            ? <img
+                src={photo.img} alt={photo.alt} loading="lazy"
+                /* contain, not cover: the whole product, never a crop of it. */
+                style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
+              />
+            : <span className="ms" style={{ fontSize: thumb ? 26 : 40, color: card ? C.gray400 : (selected ? C.blue600 : C.gray400) }}>
+                menu_book
+              </span>}
         </div>
       )}
       <span style={card ? { display: "grid", gap: 6, padding: "14px 12px 18px" } : { display: "grid", gap: text ? 2 : 8 }}>
@@ -111,6 +129,18 @@ export function OptionCard({ title, sub, spec, note, selected, onClick, disabled
       </div>
       {sub && <div style={{ fontSize: TYPE.sm, color: T.textSubtle }}>{sub}</div>}
       {spec && <div style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>{spec}</div>}
+      {/* What switching to this option would add to, or take off, the book
+          as it stands — so the choice can be costed here rather than by
+          watching the total in the panel change afterwards. Darker than the
+          spec line: it is a price, not a description. */}
+      {delta && (
+        <div style={{
+          fontSize: TYPE.sm, fontWeight: 700, lineHeight: 1.4,
+          color: card ? C.gray950 : (selected ? C.blue950 : T.textNeutral),
+        }}>
+          {delta}
+        </div>
+      )}
       {note && (
         <div style={{ fontSize: TYPE.sm, fontWeight: 700, color: card ? T.textSubtle : (selected ? C.blue600 : T.textSubtle) }}>
           {note}
@@ -246,37 +276,79 @@ export default function Configurator({
           <p style={{ fontSize: TYPE.lg, lineHeight: 1.6, color: T.textSubtle, margin: 0, textAlign: "center" }}>{f.note}</p>
         )}
 
-        {f.groups.map((g, i) => (
-          <section key={g.id}>
-            <StepHeading n={stepOffset + i + 1}>{g.label}</StepHeading>
-            <div style={stepGrid(g.options.length)}>
-              {g.options.map(o => {
-                const ok = availableFor(formatId, state, g.id).has(o.id);
-                return (
-                  <OptionCard
-                    key={o.id}
-                    title={o.label}
-                    sub={o.dims}
-                    spec={o.spec ? `${o.spec}${o.maxPages ? ` · up to ${o.maxPages} pages` : ""}` : null}
-                    note={ok ? null : "Not in this combination"}
-                    selected={state[g.id] === o.id}
-                    disabled={!ok}
-                    onClick={() => set(g.id, o.id)}
-                  />
-                );
-              })}
-            </div>
+        {f.groups.map((g, i) => {
+          const avail = availableFor(formatId, state, g.id);
+          /* Each option priced as the book it would make: the rest of the
+             specification held where it is, and the same page-count repair
+             the picker itself performs.
 
-            {g.note && <StepNote>{g.note}</StepNote>}
-          </section>
-        ))}
+             Measured against THE BOOK IN FRONT OF YOU, not against the
+             cheapest option in the step. Every card then answers one
+             question — what does switching to this cost me, from where I am
+             now? — and the answer is always true of the book on screen.
+
+             Measuring from the cheapest option instead makes the baseline
+             float: the same size reads "+US $9.00" on one paper and nothing
+             on another, and no card says which book its zero belongs to.
+             This version costs nothing in comprehension and cannot go stale,
+             because the number moves as the specification does. */
+          const prices = {};
+          g.options.forEach(o => {
+            if (!avail.has(o.id)) return;
+            const next = reconcile(formatId, { ...state, [g.id]: o.id }, g.id);
+            const cap = pageLimit(formatId, next);
+            if (next.pages > cap) next.pages = cap;
+            prices[o.id] = priceFor(formatId, next).unit;
+          });
+          const base = prices[state[g.id]];
+          /* On the selling path the panel counts in the seller's cost, not
+             the retail price, so the step has to as well: a delta that does
+             not move the total by the amount it names is worse than none. */
+          const scale = mode === "sell" ? FULFILMENT_FACTOR : 1;
+          return (
+            <section key={g.id}>
+              <StepHeading n={stepOffset + i + 1}>{g.label}</StepHeading>
+              <div style={stepGrid(g.options.length)}>
+                {g.options.map(o => {
+                  const ok = avail.has(o.id);
+                  /* Both directions: a cheaper option says so, rather than
+                     going quiet and leaving the saving to be discovered. The
+                     option you are on is the baseline and says nothing. */
+                  const d = ok && base != null ? (prices[o.id] - base) * scale : 0;
+                  const up = Math.abs(d) >= 0.005
+                    ? `${d > 0 ? "+" : "−"}${money(Math.abs(d))}` : null;
+                  return (
+                    <OptionCard
+                      key={o.id}
+                      title={o.label}
+                      sub={o.dims}
+                      spec={o.spec ? `${o.spec}${o.maxPages ? ` · up to ${o.maxPages} pages` : ""}` : null}
+                      delta={up}
+                      photo={photoFor(formatId, o.id)}
+                      note={ok ? null : "Not in this combination"}
+                      selected={state[g.id] === o.id}
+                      disabled={!ok}
+                      onClick={() => set(g.id, o.id)}
+                    />
+                  );
+                })}
+              </div>
+
+              {g.note && <StepNote>{g.note}</StepNote>}
+            </section>
+          );
+        })}
 
         {/* Steps that follow from a choice rather than offering one. */}
         {derived.map((d, i) => (
           <section key={d.id}>
             <StepHeading n={stepOffset + f.groups.length + i + 1}>{d.label}</StepHeading>
             <div style={stepGrid(1)}>
-              <OptionCard title={d.option.label} spec={d.option.spec} selected onClick={() => {}} />
+              <OptionCard
+                title={d.option.label} spec={d.option.spec}
+                photo={photoFor(formatId, d.option.id ?? d.id)}
+                selected onClick={() => {}}
+              />
             </div>
             {d.note && <StepNote>{d.note}</StepNote>}
           </section>

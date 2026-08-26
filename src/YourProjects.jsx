@@ -93,7 +93,73 @@ function ProjectCard({ p }) {
   );
 }
 
-export default function YourProjects({ signedIn, onSignIn }) {
+/* ── The same fork, sized for the summary panel ──
+   The log-in and the project list are a NEXT STEP rather than a section of
+   their own (Ana, DES-482), so they sit under "Ready to make it?" at the
+   foot of the panel — beside the tools, which are the other way to arrive
+   at a book. That panel is 310px wide, and the full-width card and the
+   340px project cards do not fit in it, so the compact form is a list of
+   rows: what it is, whether it can be bought yet, and a way in. */
+function CompactProject({ p }) {
+  return (
+    <button
+      style={{
+        font: "inherit", textAlign: "left", cursor: "pointer", width: "100%",
+        background: T.bgNeutral, border: `1px solid ${T.border}`, borderRadius: R.md,
+        padding: "10px 12px", display: "flex", gap: 10, alignItems: "center", minWidth: 0,
+      }}
+    >
+      <span className="ms" style={{ fontSize: 20, color: C.gray400, flex: "0 0 auto" }}>{p.icon}</span>
+      <span style={{ display: "grid", gap: 3, minWidth: 0, flex: "1 1 auto" }}>
+        <span style={{
+          fontSize: TYPE.base, fontWeight: 600, color: T.textNeutral,
+          overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+        }}>
+          {p.title}
+        </span>
+        <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
+          {p.selling ? "Already selling" : p.hasProof ? "Proof on file" : "Needs a proof"}
+        </span>
+      </span>
+      <span className="ms" style={{ fontSize: 20, color: T.textBrand, flex: "0 0 auto" }}>chevron_right</span>
+    </button>
+  );
+}
+
+export default function YourProjects({ signedIn, onSignIn, compact = false }) {
+  if (compact) {
+    return (
+      <div style={{ display: "grid", gap: 10, fontFamily: FONT_BODY, minWidth: 0 }}>
+        <div style={{ display: "grid", gap: 4 }}>
+          <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>
+            Or sell one you have already made
+          </span>
+          <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>
+            {signedIn
+              ? "It keeps the size, paper and cover you chose. All that is left is the price, the link and your payout."
+              : "Log in and a finished book keeps the size, paper and cover you chose. All that is left is the price, the link and your payout."}
+          </span>
+        </div>
+
+        {signedIn
+          ? PROJECTS.map(p => <CompactProject key={p.id} p={p} />)
+          : (
+            <button
+              onClick={onSignIn}
+              style={{
+                font: "inherit", fontSize: TYPE.base, fontWeight: 600, minHeight: 44, padding: "0 18px",
+                borderRadius: R.md, background: "transparent", color: T.textBrand,
+                border: `1px solid ${T.borderBrand}`, cursor: "pointer", width: "100%",
+              }}
+            >
+              Log in
+            </button>
+          )}
+      </div>
+    );
+  }
+
+
   /* Signed out — offer it, but do not claim they have projects. */
   if (!signedIn) {
     return (

@@ -135,7 +135,7 @@ function primaryTool(formatId) {
   return { label: "Upload your PDF", hint: "Bring a print-ready file and order it." };
 }
 
-export default function CreateActions({ formatId, sel, onGo, onBuild, showLearnMore = true, heading }) {
+export default function CreateActions({ formatId, sel, onGo, onBuild, showLearnMore = true, heading, after }) {
   const [toolsOpen, setToolsOpen] = useState(false);
   const primary = primaryTool(formatId);
   const pdp = pdpName(formatId, sel);
@@ -214,6 +214,16 @@ export default function CreateActions({ formatId, sel, onGo, onBuild, showLearnM
             you pick.
           </div>
         </div>
+      )}
+
+      {/* The other way to arrive at a book you can sell: one you have already
+          finished. A next step among next steps, so it sits inside this block
+          rather than in a section of its own (Ana, DES-482). */}
+      {after && (
+        <>
+          <div style={{ borderTop: `1px solid ${T.border}`, marginTop: 4 }} />
+          {after}
+        </>
       )}
 
       {showLearnMore && pdp && (

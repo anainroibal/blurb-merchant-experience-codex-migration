@@ -47,7 +47,7 @@ function Cell({ label, sub, children, tone = "quiet", onClick, compact }) {
   );
 }
 
-/* A number you are reading, not typing. Clicking it takes control. */
+/* A number you are reading, not typing. */
 function Figure({ value, loud, compact }) {
   return (
     <span style={{
@@ -61,8 +61,27 @@ function Figure({ value, loud, compact }) {
   );
 }
 
-/* A number you are typing. Chevrons stack to the field height, Codex
-   borders, matching the steppers elsewhere in the prototype. */
+/* ── The number you are typing ──
+   Codex's Quantity Selector (Single-page Checkout 12442:88383), the same
+   control Pages and Copies use in this panel: three segments joined into
+   one object, borders collapsed with a −1px margin, #989898, and 4px on
+   the OUTER corners only. Vertical chevrons hung off the side of the field
+   were ours, not the system's.
+
+   Two departures, both to keep it a price rather than a count. The value
+   segment grows to fill the column instead of sitting at 48px, because it
+   holds "US $12.99" and not "12". And it keeps the ladder's display type:
+   this is the number the page exists to produce, and 18px regular would
+   make the seller's profit the quietest figure in the panel.
+
+   ±1 a click. Cents are typed. */
+const SEG_H = compact => (compact ? 38 : 42);
+const seg = compact => ({
+  height: SEG_H(compact), flex: "0 0 auto", width: 44,
+  background: T.bgNeutral, border: `1px solid ${T.borderStrong}`,
+  display: "grid", placeItems: "center", color: T.textNeutral, cursor: "pointer",
+});
+
 function Entry({ value, min, onChange, compact }) {
   const [raw, setRaw] = useState(value.toFixed(2));
   const [editing, setEditing] = useState(false);
@@ -83,21 +102,26 @@ function Entry({ value, min, onChange, compact }) {
     onChange(next);
   };
 
-  const chevron = {
-    width: 30, height: compact ? 17 : 19, padding: 0,
-    border: `1px solid ${T.borderStrong}`, background: T.bgNeutral,
-    display: "grid", placeItems: "center", color: T.textNeutral,
-  };
+  const S = seg(compact);
   const atMin = value <= min;
 
   return (
-    <span style={{ display: "flex", alignItems: "stretch", gap: 6, minWidth: 0 }}>
+    <span style={{ display: "flex", alignItems: "stretch", minWidth: 0 }}>
+      <button
+        style={{ ...S, borderRadius: "4px 0 0 4px", marginRight: -1,
+                 opacity: atMin ? 0.35 : 1, cursor: atMin ? "not-allowed" : "pointer" }}
+        onClick={() => step(-1)} disabled={atMin} aria-label="Less"
+      >
+        <span className="ms" style={{ fontSize: 22 }}>remove</span>
+      </button>
+
       <span style={{
-        flex: 1, minWidth: 0, minHeight: compact ? 38 : 42,
+        flex: "1 1 auto", minWidth: 0, height: SEG_H(compact), marginRight: -1,
         display: "flex", alignItems: "center", gap: 6, padding: "0 10px",
-        border: `2px solid ${T.borderBrand}`, borderRadius: R.md, background: T.bgNeutral,
+        border: `1px solid ${T.borderStrong}`, background: T.bgNeutral,
       }}>
-        <span style={{ fontSize: TYPE.base, color: T.textSubtle }}>US $</span>
+        {/* One line. "US $" broke over two the moment the field narrowed. */}
+        <span style={{ fontSize: TYPE.base, color: T.textSubtle, whiteSpace: "nowrap", flex: "0 0 auto" }}>US $</span>
         <input
           type="text" inputMode="decimal" value={raw}
           onFocus={e => { setEditing(true); e.target.select(); }}
@@ -117,16 +141,51 @@ function Entry({ value, min, onChange, compact }) {
           }}
         />
       </span>
-      <span style={{ display: "grid", gap: 2, alignSelf: "center", flex: "0 0 auto" }}>
-        <button style={{ ...chevron, borderRadius: "4px 4px 0 0", marginBottom: -1 }}
-          onClick={() => step(1)} aria-label="More">
-          <span className="ms" style={{ fontSize: 16 }}>keyboard_arrow_up</span>
-        </button>
-        <button
-          style={{ ...chevron, borderRadius: "0 0 4px 4px", opacity: atMin ? 0.35 : 1, cursor: atMin ? "not-allowed" : "pointer" }}
-          onClick={() => step(-1)} disabled={atMin} aria-label="Less">
-          <span className="ms" style={{ fontSize: 16 }}>keyboard_arrow_down</span>
-        </button>
+
+      <button style={{ ...S, borderRadius: "0 4px 4px 0" }} onClick={() => step(1)} aria-label="More">
+        <span className="ms" style={{ fontSize: 22 }}>add</span>
+      </button>
+    </span>
+  );
+}
+
+/* ── The number you could be typing, but are not ──
+   Three numbers, three states, and until now only two treatments: the one
+   being typed was a field, and the other two were the same plain figure. So
+   half of what a seller can change looked as fixed as the one thing they
+   cannot (Ana, DES-482).
+
+   Cost keeps the plain figure — it has no box, because there is nothing to
+   type into. Price and profit are always a field: the one driving the
+   ladder wears the whole quantity selector, the other is its value segment
+   alone, with the pencil in place of the two buttons. Taking it over gives
+   it the buttons back. */
+function Ghost({ value, compact, loud }) {
+  const [hot, setHot] = useState(false);
+  return (
+    <span
+      onMouseEnter={() => setHot(true)}
+      onMouseLeave={() => setHot(false)}
+      style={{
+        display: "flex", alignItems: "center", gap: 6, minWidth: 0,
+        height: SEG_H(compact), padding: "0 10px",
+        border: `1px solid ${hot ? T.borderBrand : T.borderStrong}`,
+        borderRadius: 4, background: T.bgNeutral,
+        transition: "border-color 120ms ease",
+      }}
+    >
+      <span style={{ fontSize: TYPE.base, color: T.textSubtle, whiteSpace: "nowrap", flex: "0 0 auto" }}>US $</span>
+      <span style={{
+        flex: 1, minWidth: 0,
+        /* Blue where this is the number the ladder just worked out, so the
+           answer still reads as the answer inside its field. */
+        fontFamily: FONT_DISPLAY, fontWeight: 700, color: loud ? C.blue600 : T.textNeutral,
+        fontSize: compact ? TYPE["3xl"] : TYPE["4xl"],
+      }}>
+        {value.toFixed(2)}
+      </span>
+      <span className="ms" style={{ fontSize: 18, color: hot ? T.textBrand : T.textSubtle, flex: "0 0 auto" }}>
+        edit
       </span>
     </span>
   );
@@ -187,7 +246,7 @@ export default function MarginLadder({ cost, price, onPrice, floor, compact, pla
     );
     return (
       <div style={{ fontFamily: FONT_BODY, display: "grid" }}>
-        <Row label="Your cost" sub="What Blurb charges you to print it">{amount(cost)}</Row>
+        <Row label="Your cost" sub="What Blurb charges you to print it. Set by your specification.">{amount(cost)}</Row>
 
         <Row
           label="Your price"
@@ -196,7 +255,7 @@ export default function MarginLadder({ cost, price, onPrice, floor, compact, pla
         >
           {driver === "price"
             ? <Entry value={price} min={floor} onChange={onPrice} compact />
-            : amount(price)}
+            : <Ghost value={price} compact />}
         </Row>
 
         <Row
@@ -207,7 +266,7 @@ export default function MarginLadder({ cost, price, onPrice, floor, compact, pla
         >
           {driver === "profit"
             ? <Entry value={profit} min={0} onChange={p => onPrice(Math.round((cost + p) * 100) / 100)} compact />
-            : amount(profit)}
+            : <Ghost value={profit} compact />}
         </Row>
 
         <p style={{ margin: "12px 0 0", fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.55 }}>
@@ -226,7 +285,7 @@ export default function MarginLadder({ cost, price, onPrice, floor, compact, pla
         gridTemplateColumns: compact ? "1fr" : "repeat(auto-fit, minmax(190px, 1fr))",
         alignItems: "start",
       }}>
-        <Cell label="Your cost" sub="What Blurb charges you" compact={compact}>
+        <Cell label="Your cost" sub="What Blurb charges you. Set by your specification." compact={compact}>
           <Figure value={cost} compact={compact} />
         </Cell>
 
@@ -239,7 +298,7 @@ export default function MarginLadder({ cost, price, onPrice, floor, compact, pla
         >
           {driver === "price"
             ? <Entry value={price} min={floor} onChange={onPrice} compact={compact} />
-            : <Figure value={price} loud compact={compact} />}
+            : <Ghost value={price} loud compact={compact} />}
         </Cell>
 
         <Cell
@@ -251,7 +310,7 @@ export default function MarginLadder({ cost, price, onPrice, floor, compact, pla
         >
           {driver === "profit"
             ? <Entry value={profit} min={0} onChange={p => onPrice(Math.round((cost + p) * 100) / 100)} compact={compact} />
-            : <Figure value={profit} loud compact={compact} />}
+            : <Ghost value={profit} loud compact={compact} />}
         </Cell>
       </div>
 
