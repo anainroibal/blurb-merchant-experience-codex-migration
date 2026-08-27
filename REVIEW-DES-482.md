@@ -320,3 +320,21 @@ Two consequences worth seeing on the page:
 
 Placement in the IA — nav and PDP now, or linked from the Instant Store landing
 page for this phase — is item 22 and still open.
+
+## 19. Is a rebuild of the pricing page required for launch? — ANSWERED IN THE PROTOTYPE
+
+No, and the prototype now shows both answers rather than arguing for one.
+
+- **Minimum effort** (`?stage=pricing&version=lean`) is the page as it is today:
+  the live heading and lede, the format cards, all five price tables and the
+  volume bands, the live FAQ questions — and **one addition**, the Instant Store
+  lane after the tables. That is the entire ask of engineering on this surface.
+- **Recommended** (`?stage=pricing`) still replaces the page with the calculator.
+
+The tables are not retyped. They read the same `PRICING` matrix the calculators
+use, which was extracted from that page's own payload, so the two cannot drift
+apart and the lean page is a fair likeness rather than an impression of one.
+
+The lean shipping page is built the same way: today's page, calculator included,
+plus the lane. The recommended one drops the calculator, because by then both
+calculators price delivery where the book is.

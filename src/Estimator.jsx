@@ -3,6 +3,7 @@ import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.
 import SummaryPanel from "./SummaryPanel.jsx";
 import ProductOptions from "./ProductOptions.jsx";
 import ShippingSection, { Field, control } from "./ShippingSection.jsx";
+import InstantStoreLane from "./InstantStoreLane.jsx";
 import CreateActions from "./CreateActions.jsx";
 import FormatCards from "./FormatCards.jsx";
 import {
@@ -390,90 +391,24 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
 
 
           {/* ── What the number is FOR (Anain, 2026-08-27) ──
-              The page had three ways out and none of them was the thing it
-              had just been arguing for. A seller who has watched a profit
-              add up is at the point of wanting the shop, and until now the
-              only doors were "make the book", "compare the routes" and
-              "you wanted the other calculator".
+              The page argued for an Instant Store and then offered no way
+              into one: the exits were "make the book", "compare the
+              routes" and "you wanted the other calculator". This closes it
+              on the shop, after the arithmetic rather than before it,
+              because the number is the argument.
 
-              ── Codex's split panel, measured off /photo-books ──
-              The "BookWright Online by Blurb" block on that page: two equal
-              columns that stack under lg, the photograph filling its half
-              with object-cover, and the copy on light-foam-50 (#f9f6f3).
-              8px radius on the outer corners only, so the two halves read
-              as one object — left corners on the image, right corners on
-              the panel, and all four when they stack. The panel is 40px
-              padded (p-10) with 24px between its parts (md:gap-6), the
-              heading is futura-pt at 32/1 (h3, --text-5xl), the body is
-              proxima-nova at 18/1.4 (--text-lg) in #282828, and the button
-              is the Codex one at 4px radius, 8px by 24px.
-
-              No NEW pill — that badge is for someone meeting the idea cold,
-              not for someone who has just priced a sale through it. And one
-              button, because the catalogue's other one led here.
-
-              No figures on it. The ladder above is the figure. */}
+              Written for a reader who has already priced a sale, so it
+              assumes the decision instead of asking about it. Same panel
+              as the catalogue's, different words. */}
           {selling && (
-            <section className="split-panel" style={{
-              display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 380px), 1fr))",
-              alignItems: "stretch", borderRadius: R.lg, overflow: "hidden",
-            }}>
-              {/* ── The artwork, cut out ──
-                  Blurb's hp-selling.webp bakes its own pale card in behind
-                  the book, and the book overhangs that card, so there is no
-                  crop of it that fills a panel: object-cover left
-                  transparent bands top and bottom, and the baked card ended
-                  short of the copy beside it with a visible seam.
-
-                  public/assets/instant-store-lane.png is that same artwork
-                  with the card keyed out — flood-filled from the edges,
-                  stopping at anything that is not pale and near-neutral, so
-                  the book, its shadow, the storefront mark and the dotted
-                  leaders all survive — then cropped to what is left. It
-                  sits on the panel's own gradient, which is the card's
-                  colours sampled from the original, and the two halves meet
-                  with no seam at any height. */}
-              <div style={{
-                background: "linear-gradient(135deg, #f3f5f9 0%, #e3e9f0 100%)",
-                display: "grid", placeItems: "center", minHeight: 280, padding: 24,
-              }}>
-                <img
-                  src="/assets/instant-store-lane.png"
-                  alt="A photo book beside a storefront mark, the sign of an Instant Store."
-                  loading="lazy"
-                  style={{ width: "100%", height: "auto", maxHeight: "100%", objectFit: "contain", display: "block" }}
-                />
-              </div>
-
-              <div style={{
-                background: "#f9f6f3", padding: 40,
-                display: "flex", flexDirection: "column", alignItems: "flex-start",
-                justifyContent: "center", gap: 24,
-              }}>
-                <h2 style={{
-                  fontFamily: FONT_DISPLAY, fontWeight: 400, fontSize: "2rem", lineHeight: 1.1,
-                  margin: 0, color: C.gray950,
-                }}>
-                  Making it to sell? Open an Instant Store
-                </h2>
-
-                <p style={{ margin: 0, fontSize: "1.125rem", lineHeight: 1.4, color: "#282828" }}>
-                  Any book you price here can be sold from one link you share. You set the price, we print
-                  and ship every order, and there is no shopfront to run.
-                </p>
-
-                <button
-                  onClick={() => onGo?.("instantstore")}
-                  style={{
-                    fontFamily: FONT_BODY, fontSize: "1rem", lineHeight: 1.5, fontWeight: 400,
-                    padding: "8px 24px", minWidth: 100, borderRadius: R.sm, border: 0, cursor: "pointer",
-                    background: T.bgBrand, color: T.textInverse, whiteSpace: "nowrap",
-                  }}
-                >
-                  Learn more about Instant Stores
-                </button>
-              </div>
-            </section>
+            <InstantStoreLane
+              title="Next, the shop it sells from"
+              onGo={() => onGo?.("instantstore")}
+            >
+              An Instant Store is one link for this book, set up in minutes. Share it wherever your readers
+              already are, and we print and ship every order as it comes in. Nothing to build, and no
+              shopfront to run.
+            </InstantStoreLane>
           )}
 
           {/* ── The other page ──

@@ -9,6 +9,7 @@ import Home from "./Home.jsx";
 import ProductCatalog from "./ProductCatalog.jsx";
 import InstantStorePage from "./InstantStorePage.jsx";
 import ShippingPage from "./ShippingPage.jsx";
+import PricingToday from "./PricingToday.jsx";
 
 /* ────────────────────────────────────────────────────────────────
    Blurb — Merchant Experience prototypes
@@ -145,7 +146,7 @@ const VERSIONS = [
 
 /* The lean set, in journey order. Anything not listed here is a page the
    minimum-effort version does not touch. */
-const LEAN_STAGES = ["home", "catalog", "product", "seller", "instantstore"];
+const LEAN_STAGES = ["home", "catalog", "product", "pricing", "shipping", "seller", "instantstore"];
 
 const stagesFor = version =>
   version === "lean" ? STAGES.filter(s => LEAN_STAGES.includes(s.id)) : STAGES;
@@ -419,9 +420,17 @@ export default function App() {
           />
         )}
         {stage === "seller"     && <SellerLanding onGo={go} lean={lean} />}
-        {stage === "pricing"    && <Estimator mode="make" onGo={go} seed={entry?.seed} />}
+        {/* ── Two versions of this page, chosen by scope ──
+            RECOMMENDED replaces /pricing with the calculator. LEAN keeps
+            the page as it is today, tables and all, and adds one Instant
+            Store lane to it — which is Ana's point on DES-482 #19: a whole
+            rebuild is a nice to have, and the Instant Store does not need
+            it. Both are here so the choice can be made by looking. */}
+        {stage === "pricing"    && (lean
+          ? <PricingToday onGo={go} />
+          : <Estimator mode="make" onGo={go} seed={entry?.seed} />)}
         {stage === "margin"     && <Estimator mode="sell" onGo={go} seed={entry?.seed} />}
-        {stage === "shipping"   && <ShippingPage onGo={go} />}
+        {stage === "shipping"   && <ShippingPage onGo={go} lean={lean} />}
       </div>
       <SiteFooter />
     </div>

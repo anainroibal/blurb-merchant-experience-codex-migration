@@ -1,6 +1,8 @@
 import React from "react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import Faq from "./Faq.jsx";
+import ShippingSection from "./ShippingSection.jsx";
+import InstantStoreLane from "./InstantStoreLane.jsx";
 import { SHIPPING, PRINT_DAYS, PRINT_RANGE, shippingFor, speedDays, money } from "./catalog.js";
 
 /* ────────────────────────────────────────────────────────────────
@@ -118,8 +120,14 @@ function Lane({ heading, body, action, onClick }) {
   );
 }
 
-export default function ShippingPage({ onGo }) {
+export default function ShippingPage({ onGo, lean }) {
   const speeds = SHIPPING.speeds;
+  /* The lean page keeps the calculator, so it needs a destination to
+     price against. The recommended page has none: the calculating moved
+     to the two pages that price a book. */
+  const [ship, setShip] = React.useState({
+    country: "US", postal: "", state: "California", speed: "economy", poBox: false,
+  });
 
   return (
     <div style={{ fontFamily: FONT_BODY, color: T.textNeutral }}>
@@ -141,6 +149,22 @@ export default function ShippingPage({ onGo }) {
           </p>
         </div>
       </section>
+
+      {/* ── The calculator, in the LEAN scope only ──
+          Minimum effort means this page is not rebuilt: it keeps the
+          shipping calculator it has today, and the one change is the
+          Instant Store lane at the foot of it (Anain, 2026-08-27). The
+          recommended scope takes the calculator out, because by then both
+          the pricing calculator and the profit calculator price delivery
+          where the book is — and a third copy of the same sum is a third
+          place for it to disagree. */}
+      {lean && (
+        <section style={{ padding: "clamp(40px, 6vw, 72px) 24px 0" }}>
+          <div style={{ maxWidth: 900, margin: "0 auto" }}>
+            <ShippingSection selling={false} ship={ship} setShip={setShip} qty={1} price={0} />
+          </div>
+        </section>
+      )}
 
       {/* ── Print time first, because it is the part nobody counts ── */}
       <Section
@@ -267,6 +291,23 @@ export default function ShippingPage({ onGo }) {
           />
         </div>
       </Section>
+
+      {/* ── The one change the lean scope makes here ──
+          After the page's own content, as on the catalogue and the price
+          list: someone reading about delivery is working out what an order
+          costs, and selling is the second question. */}
+      <section style={{ padding: "clamp(40px, 6vw, 72px) 24px 0" }}>
+        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+          <InstantStoreLane
+            title="Selling your book? We ship to your buyers"
+            isNew
+            onGo={() => onGo?.("instantstore")}
+          >
+            An Instant Store is one link you share, and every order is printed and posted to the buyer for
+            you, wherever they are. They pay the delivery, so it never comes out of what you earn.
+          </InstantStoreLane>
+        </div>
+      </section>
 
       <Faq
         heading={<>Have a question?<br />Here are answers.</>}
