@@ -338,3 +338,31 @@ apart and the lean page is a fair likeness rather than an impression of one.
 The lean shipping page is built the same way: today's page, calculator included,
 plus the lane. The recommended one drops the calculator, because by then both
 calculators price delivery where the book is.
+
+## 17. No selling of wall art or notebooks and journals — DONE
+
+Wall art was already withdrawn from every channel, so that half of the note
+matched the prototype already. Notebooks were not: `/self-publish` lists
+"notebooks and journals" under the Bookstore, and this repo took that as
+confirmation on 2026-08-19. They are now withdrawn from every channel too.
+
+**This leaves the live page wrong.** `/self-publish` still tells a seller they can
+sell notebooks through the Bookstore. A decision made with engineering beats a
+marketing page, so the rule stands here — but that page needs correcting, and it
+is somebody's to own.
+
+Notebooks stay fully priced and orderable for yourself. Only selling is withdrawn.
+The product row narrows on its own: under "to Sell" both products simply are not
+offered, which is how the PDF exclusion already worked.
+
+## 18. Pin the "What you'd earn" panel — NO CHANGE (Anain, 2026-08-27)
+
+The panel stays sticky, which it already is: `SummaryPanel` pins by default,
+clear of the header at whatever height that is, and nothing overrides it on
+either calculator or on `/getting-started`.
+
+If the awkward scrolling Ana describes persists, the likely cause is height
+rather than behaviour — the panel is tall enough that its lower half, the ladder
+and "Ready to make it?", can sit below the fold on a laptop even while the panel
+is pinned. Sticky holds the top in place, not the bottom. The fix for that would
+be trimming what the panel carries, not changing how it sticks.

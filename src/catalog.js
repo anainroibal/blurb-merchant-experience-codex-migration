@@ -228,9 +228,21 @@ export const CATALOG = {
     ],
     tiers: [{ min: 50, pct: 0.25 }, { min: 20, pct: 0.20 }, { min: 10, pct: 0.20 }],
     addons: ["whitelabel"],
-    /* CONFIRMED by /self-publish 2026-08-19: the Bookstore takes
-       "notebooks and journals". No longer the open question it was. */
-    sellChannels: ["bookstore"],
+    /* ── Not sold through any channel (Ana + engineering, 2026-08-25) ──
+       "We won't allow selling of wall art or notebooks and journals. The
+       principle is we only allow selling of what is currently allowed in
+       the bookstore, to avoid additional scope."
+
+       This overrides what /self-publish says. That page lists "notebooks
+       and journals" under the Bookstore, and this repo took it as
+       confirmation on 2026-08-19. A decision made with engineering beats a
+       marketing page, so the rule stands and the page is what is wrong —
+       worth raising with whoever owns it, because a seller reading it
+       today is being told they can sell something they cannot.
+
+       Notebooks stay fully priced and orderable for yourself. What is
+       withdrawn is selling them. */
+    sellChannels: [],
   },
 
   /* Wall Art. Priced material × size — a shape no other product here
@@ -252,7 +264,9 @@ export const CATALOG = {
     ],
     tiers: [],
     addons: [],
-    /* Wall art appears on no channel list anywhere on /self-publish. */
+    /* Wall art appears on no channel list anywhere on /self-publish, and
+       Ana confirmed with engineering on 2026-08-25 that it is not sold
+       through any route. Two sources agreeing, for once. */
     sellChannels: [],
   },
 
