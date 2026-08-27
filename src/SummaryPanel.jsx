@@ -455,13 +455,21 @@ export default function SummaryPanel({
         )}
       </aside>
 
-      <p style={{ fontSize: TYPE.sm, color: T.textSubtle, margin: 0, lineHeight: 1.5 }}>
-        {selling
-          ? "Cost and margin are placeholders — Blurb publishes no fulfilment pricing."
-          : p.anyGuess
+      {/* ── No provenance line on the selling side (Anain, 2026-08-27) ──
+          It said the cost and the margin were placeholders, on the panel
+          that exists to show a seller their margin: a caveat under the
+          answer undercuts the thing being reviewed, and every figure in
+          this prototype is a placeholder anyway. Where it survives is the
+          maker's side, which quotes real matrix prices and therefore has a
+          real distinction to draw. The blanket statement lives in
+          CLAUDE.md and the board's provenance panel. */}
+      {!selling && (
+        <p style={{ fontSize: TYPE.sm, color: T.textSubtle, margin: 0, lineHeight: 1.5 }}>
+          {p.anyGuess
             ? "Some option prices are placeholders. Sizes, per-page rate, paper specs and tiers are real."
             : "Sizes, per-page rate, paper specs and volume tiers are real."}
-      </p>
+        </p>
+      )}
     </div>
   );
 }
