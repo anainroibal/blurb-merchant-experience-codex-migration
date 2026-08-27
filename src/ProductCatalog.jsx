@@ -1,6 +1,6 @@
 import React from "react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
-import { variantFromPrice, money } from "./catalog.js";
+import { variantFromPrice, money , sellableSentence } from "./catalog.js";
 
 /* ────────────────────────────────────────────────────────────────
    blurb.com/formats — Shop All Products
@@ -212,8 +212,10 @@ export default function ProductCatalog({ onGo, lean }) {
 
       {/* ── The selling lane ──
           After the products, not above them: someone on a catalogue is
-          choosing a product, and this is the second question. Every product
-          above can be sold, and nothing on the live page says so.
+          choosing a product, and this is the second question. Not every
+          product above can be sold — notebooks and wall art cannot, since
+          2026-08-25 — so the copy names the ones that can, from the
+          catalogue rather than from memory.
 
           No figures. This is a retail page — what a seller keeps depends on
           the book, and that arithmetic lives on the estimator, behind the
@@ -254,8 +256,8 @@ export default function ProductCatalog({ onGo, lean }) {
             </h2>
 
             <p style={{ margin: 0, fontSize: TYPE.lg, lineHeight: 1.6, color: T.textNeutral }}>
-              Any of these products can be sold from one link you share. You set the price, we print and ship
-              every order, and there is no shopfront to run.
+              {sellableSentence()} can be sold from one link you share. You set the price, we print and
+              ship every order, and there is no shopfront to run.
             </p>
 
             {/* Two doors in the recommended scope — the number, then the

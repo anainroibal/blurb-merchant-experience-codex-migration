@@ -2,6 +2,7 @@ import React from "react";
 import { C, T, TYPE, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import FormatCards from "./FormatCards.jsx";
 import PricingTables from "./PricingTables.jsx";
+import { sellableSentence } from "./catalog.js";
 import InstantStoreLane from "./InstantStoreLane.jsx";
 import Faq from "./Faq.jsx";
 
@@ -101,7 +102,7 @@ export default function PricingToday({ onGo }) {
             isNew
             onGo={() => onGo?.("instantstore")}
           >
-            Any book on this page can be sold from one link you share. You set the price, we print and ship
+            {sellableSentence()} can be sold from one link you share. You set the price, we print and ship
             every order, and there is no shopfront to run.
           </InstantStoreLane>
         </div>

@@ -349,6 +349,26 @@ export const formatsWithTool = (tool, route, use) =>
    forks to the other channels, this stops being a constant. */
 export const SELLING_CHANNEL = "checkout_link";
 
+/* What a channel actually sells, named for copy rather than for a table:
+   "Photo books, trade books and magazines". Read off `sellChannels`, so a
+   product leaving a channel — as notebooks did on 2026-08-25 — rewrites
+   every sentence built on this at once, and no page can promise something
+   the catalogue does not. Sentence case, because it lands mid-sentence. */
+export const sellableIn = (channel = SELLING_CHANNEL) =>
+  Object.values(CATALOG)
+    .filter(f => (f.sellChannels || []).includes(channel))
+    .map(f => f.label.toLowerCase());
+
+export const sellableSentence = (channel = SELLING_CHANNEL) => {
+  const names = sellableIn(channel);
+  if (!names.length) return "";
+  const list = names.length === 1
+    ? names[0]
+    : `${names.slice(0, -1).join(", ")} and ${names[names.length - 1]}`;
+  return list.charAt(0).toUpperCase() + list.slice(1);
+};
+
+
 /* ── The three routes ──
    What the headline dropdown asks is where the copies END UP, and who
    pays for them. The three answers are parallel, exclusive and complete:

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
-import { CATALOG, SELL_CHANNELS } from "./catalog.js";
+import { CATALOG, SELL_CHANNELS , sellableSentence } from "./catalog.js";
 
 const ILLUS = "https://assets.blurb.com/_astro/";
 
@@ -155,11 +155,7 @@ const ROUTE_PAGE = {
    Family level on purpose: the exceptions are per configuration (Amazon
    excludes layflat and the 5×5) and they belong in the caveat under the
    table, not in a cell. */
-const productsFor = channelId =>
-  Object.values(CATALOG)
-    .filter(f => (f.sellChannels || []).includes(channelId))
-    .map(f => f.label)
-    .join(", ");
+const productsFor = channelId => sellableSentence(channelId);
 
 /* ── Table styling, read off blurb.com/bookmaking-tools ──
    16px cells, 16px/1.4 text, labels bold, zebra starting white, a #d1d1d1
@@ -253,7 +249,12 @@ const SELL_CARDS = [
     img: ILLUS + "share-books-1.BHcvSHBn_2rGILu.webp",
     alt: "An illustration of a person holding out a book to share, beside a shelf of books.",
     line: "A listing you do not have to run, in a shop readers already browse.",
-    facts: ["No listing fee", "Takes the widest range of products"],
+    /* "Takes the widest range of products" was true while the Bookstore
+       took notebooks and journals. It no longer does (Ana + engineering,
+       2026-08-25), so its range is now exactly the Instant Store's and
+       the claim distinguishes nothing. What actually separates this route
+       is who finds the buyer, which is also what separates the margin. */
+    facts: ["No listing fee", "Blurb's readers find it, not just yours"],
   },
   {
     id: "amazon", name: "Sell on Amazon", href: "https://www.blurb.com/amazon", cta: "Sell on Amazon",
