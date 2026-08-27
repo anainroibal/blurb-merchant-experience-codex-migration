@@ -182,7 +182,12 @@ export function FormatRow({ ids, formatId, onPick, badgeFor }) {
   );
 }
 
-export default function FormatCards({ formatId, onPick }) {
+/* The line under the heading belongs to the PAGE, not to the row. On the
+   pricing calculator it is the volume discount; on the profit calculator
+   it is where the other selling routes live (Anain, 2026-08-27). Passing
+   it in stops one screen's footnote appearing on the other, which is what
+   put "save more when you print in bulk" above a seller's margin. */
+export default function FormatCards({ formatId, onPick, note }) {
   return (
     <div style={{ display: "grid", gap: 28 }}>
       <div style={{ textAlign: "center" }}>
@@ -192,10 +197,11 @@ export default function FormatCards({ formatId, onPick }) {
         }}>
           Select a format to see size and paper options
         </h2>
-        <p style={{ margin: "12px 0 0", fontSize: TYPE.base, color: T.textNeutral }}>
-          Save more when you print in bulk. Learn about{" "}
-          <span style={{ color: T.textBrand, textDecoration: "underline" }}>volume discounts</span>.
-        </p>
+        {note && (
+          <div style={{ margin: "12px 0 0", fontSize: TYPE.base, color: T.textNeutral }}>
+            {note}
+          </div>
+        )}
       </div>
 
       <FormatRow ids={FORMAT_CARDS.map(c => c.id)} formatId={formatId} onPick={onPick} />

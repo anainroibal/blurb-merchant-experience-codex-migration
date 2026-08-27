@@ -27,7 +27,7 @@ const EXPECTED = [
   ["What it is", "One link, shared anywhere, that sells a printed book. We print and ship every order.",
    "Said on the Sell page and the home page's Selling tab."],
   ["What you keep", "You set the price; the margin is the difference between it and your cost.",
-   "In the recommended scope the margin estimator prices this route, and only this route."],
+   "In the recommended scope the Instant Store profit calculator prices this route, and only this route."],
   ["What you can sell", "Printed books and magazines. A PDF cannot be sold through an Instant Store.",
    "Held in the catalogue as `sellChannels`, and stated on /getting-started."],
   ["Setting one up", "Agent-led, with variants rather than the book as the unit.",
@@ -105,7 +105,7 @@ export default function InstantStorePage({ onGo, lean = false }) {
               <p style={{ margin: "6px 0 0", fontSize: TYPE.base, lineHeight: 1.65, color: T.textNeutral }}>
                 {lean
                   ? "The Sell page compares this route against the other three — who each one reaches, what it takes, and when it pays."
-                  : "The Sell page compares this route against the other three, and the margin estimator prices a sale through it — cost, price, profit, against a real specification."}
+                  : "The Sell page compares this route against the other three, and the Instant Store profit calculator prices a sale through it: cost, price, profit, against a real specification."}
               </p>
             </div>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
@@ -128,7 +128,7 @@ export default function InstantStorePage({ onGo, lean = false }) {
                     background: T.bgBrand, color: T.textInverse,
                   }}
                 >
-                  Margin estimator
+                  Profit calculator
                 </button>
               )}
             </div>

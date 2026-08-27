@@ -248,6 +248,7 @@ export function Divider() {
 
 export default function Configurator({
   formatId, state, onChange, mode, sellPrice, onSellPrice,
+  ship, setShip, onGo,
   stepOffset = 1, leading, trailing, actions,
 }) {
   /* Everything the price depends on — the arithmetic, the shipping quote,
@@ -365,6 +366,9 @@ export default function Configurator({
         mode={mode}
         sellPrice={sellPrice}
         onSellPrice={onSellPrice}
+        ship={ship}
+        setShip={setShip}
+        onGo={onGo}
         actions={actions}
       />
 

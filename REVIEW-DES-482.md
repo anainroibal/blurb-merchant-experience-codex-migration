@@ -128,3 +128,195 @@ Now:
   answer.
 
 This is the treatment on both the panel ladder and the plain summary rows.
+
+## 5b. Show the buyer's shipping, or link out to it
+
+Done, and it turned up a gap wider than the one you spotted: `/getting-started`
+had **no shipping control at all**. The panel could always price delivery — its
+maker total even said "add a postcode to include delivery" — but there was no
+postcode field anywhere on the page, so a maker could not add one and a seller
+could not answer the first question a buyer asks them.
+
+The estimator's shipping section is now a shared component and sits on both
+pages, keeping its two defaults:
+
+- **Making it** — "Ship to" plus a postcode, and once there is a destination,
+  every speed priced and dated together ("arrives 3–6 Sep"), not counted in
+  business days. Shipping joins the total.
+- **Selling it** — off, and optional. One checkbox, *Show what a buyer pays with
+  delivery*, opens a country and state and then a single line: *a buyer in
+  California pays US $32.00 for the book and US $5.99 to have it sent, US $37.99
+  in all.* Underneath it, in as many words: your cost, your price and your profit
+  are unchanged.
+
+That last part is why this is a checkbox rather than a permanent block. A
+delivery figure sitting beside the margin is exactly the misreading the pricing
+model exists to prevent, so the seller asks for it, it appears with the control
+that asked, and it never enters the ladder or the panel.
+
+**Your question — is the shipping calculator page being removed?** No, and that
+should be explicit rather than implied. See item 20.
+
+## 20 / 5b. The shipping calculator page
+
+**Decided (Anain, 2026-08-27): it stays, and stops being a calculator.** It
+becomes an informational page — how long printing takes, what each speed costs
+by region, what changes a delivery date — because the calculating now happens
+where the book is being priced: at product level for a maker, and inside the
+margin estimator for a seller, where it can sit beside the margin without
+entering it.
+
+That is the same direction as Crometrics' proposal ("make the shipping page more
+educational rather than a standalone calculator"), and this prototype already
+implements the two halves it hands off to (see item 5b).
+
+**Three things in that proposal cannot ship as drawn**, and all three are the
+same mistake — something true, said in a way that publishes Blurb's margin:
+
+1. **"Wholesale pricing. Retail margins."** `/ingram` already uses *wholesale*
+   for the trade discount a retailer takes. One word, two meanings, one site.
+2. **"up to 70% below the retail maker price"**, and the fulfilment price list
+   that strikes through `$10.99` next to `$4.50`. That is retail and fulfilment
+   side by side with the subtraction already done for the reader.
+3. **"Retail price for reference — $18.99"** inside the calculator panel. Same
+   thing again, in the exact place the rule was written for.
+
+The sanctioned way to say it is the change of role — *you're the customer* →
+*we're your printer* — and the margin as payment for work the seller does:
+running the shop, marketing, traffic. It explains the whole difference without
+quoting a number that belongs to Blurb.
+
+**Worth keeping from the proposal:** the region × speed table ("Ship in 3–5 days.
+Worldwide.") is exactly what an informational shipping page is for. The platform
+comparison is a good idea whose figures — Amazon KDP, IngramSpark and Lulu rates,
+"Blurb keeps 0% of your revenue" — need a source before they go on a live page.
+
+## 5c. "Why you pay less when you sell" could clarify the cost per channel
+
+Done, as far as it can go without contradicting the page above it.
+
+The explainer now ends by saying where its own explanation stops being true:
+
+> It works this way in your Instant Store, where you bring the buyer. Sell
+> through the Blurb Bookstore, Amazon or Ingram and they bring the buyer
+> instead, so your price sits on top of a base price and the channel takes its
+> cut of the sale.
+
+Then a link: **Compare all four routes**, which opens the Sell page.
+
+**Why a sentence and a door rather than the figures.** The ladder above this
+explainer prices an Instant Store sale and nothing else — that is the note above
+the calculator, and it is the reason the three rungs are honest. Putting per
+channel costs inside the same panel would put figures next to a ladder that does
+not apply to them, which is the misreading the note exists to prevent. The four
+routes are compared in one place, on the Sell page, where a reader can take one
+fact across all four; a second comparison in the panel would be a third answer to
+a question already answered twice.
+
+What the explainer gains is the *shape* of the difference, which is the part a
+seller needs here: in an Instant Store you bring the buyer, so the margin is
+yours; everywhere else the channel brings the buyer and prices accordingly.
+
+---
+
+# From the design review, 2026-08-26
+
+[2026-08-26 Design Review – Product + Design Teams](https://blurb-books.atlassian.net/wiki/spaces/DTS/pages/4450844673)
+
+Only what lands on this prototype. Two of Ana's open items were settled in the
+room; six new pieces of work came out of it.
+
+## Settled in the room
+
+**5e — RPI Print API pricing. Answered: it stays on rpiprint.com.** There will be
+no single calculator covering both, because the SKUs are not the same. Pritam's
+reasoning for starting narrow: the Instant Store is the first of the seller
+tools, more will follow with different margins, and *"focusing on checkout links
+seems like the least one-way door-ish approach, given what we know right now."*
+Melissa raised joining them up in a later iteration once the framework supports
+it, informed by user outreach. Parked, not rejected.
+
+**16 — rename the margin estimator. Confirmed: it is the Instant Store profit
+calculator.** With one instruction about *how* to say it, which changes what we
+built: frame it **positively, as applying to the Instant Store**, rather than as
+a caveat that it does not apply to the other routes. Our note above the controls
+is currently the caveat version. → **item 21.**
+
+**5d / 5c — the channel comparison stays out of the calculator this phase** and
+lives on the selling page. That is what item 5c already did.
+
+**20 — the shipping calculator becomes an information page.** Built.
+
+**The governing rule was restated as a decision:** retail and fulfilment prices
+are never shown side by side, because a creator does not need to see what a
+seller will charge.
+
+## New work
+
+**21. Say what the calculator IS, not what it isn't.** Rewrite the note above the
+margin estimator so it opens by naming the Instant Store as what it prices,
+rather than listing the routes it excludes. Same fact, and the seller meets it as
+a scope rather than a warning. The exclusions still have to be findable — the
+ladder is wrong for the other routes — so they follow the positive statement
+rather than leading it.
+
+**22. Settle where the profit calculator sits in the IA.** Action item from the
+meeting. Hierarchically it sits below the Instant Store, so one reading is to
+link it only from the Instant Store landing page and take it off the PDP and out
+of the nav for this phase. Against that: the scale of the price reduction
+warrants prominence, and a **featured entry under Sell** — "calculate the profit
+you could make with your Instant Store" — was floated, with hero copy as an
+alternative. Held open. This prototype currently surfaces it in the nav *and* on
+the PDP, so it is the maximal version and can be dialled back once decided.
+
+**23. The comparison table should compare RPI too, and list RPI and volume order
+as seller tools.** Today ours compares four routes. RPI Print API and Large Order
+Services are both things a seller can use, so they belong in the comparison and
+on a larger selling overview. Note this overlaps Ana's nav item 9, which asks for
+the same two under both Sell and Services.
+
+**24. Ownership: the selling overview page is CRO Metrics' work,** per the brief
+given to them. Ours is a reworked version of the page that exists today. Worth
+deciding explicitly whether our Sell page continues as a design or becomes
+reference handed to CRO, the way the Instant Store page already is.
+
+**25. Confirm with engineering whether Get started can lead straight into
+creation.** The direct-to-creation path is what "Ready to make it?" assumes. If
+it cannot, that block needs a different destination.
+
+**26. Who owns the get-started modules if the online editor landing page reuses
+them?** Josh's option 3 repurposes this page's size / cover / paper steps as a
+three-step row into the editor. Two surfaces would then share one component, and
+Josh noted our designs are not final. Also relevant to the meeting's reuse
+decision: existing components from the PDP, shipping and pricing calculator get
+reused rather than new ones built, which is the same principle the shared
+`Faq` and `ShippingSection` follow here.
+
+**27. RPI is described as orchestration at scale, not fulfilment** — and RPI is
+the outer layer with Blurb inside it, not the reverse. That wording affects the
+nav copy in Ana's item 12 ("Change to RPI Print API") and anywhere this prototype
+describes RPI.
+
+## 16. Rename the calculator for the route it prices — DONE
+
+It is the **Instant Store profit calculator**, in the wording the design review
+settled on. Renamed everywhere a reader meets it: the page heading, its tab and
+lede, the Pricing menu in the nav, the Sell page, the Instant Store page, the
+shipping page and the demo bar.
+
+Copy only. The stage id stays `margin` and the file stays `Estimator.jsx`, for the
+same reason the checkout link rename left its ids alone: renaming them touches
+every surface for no gain.
+
+Two consequences worth seeing on the page:
+
+- The h1 now carries the route — **"See what you keep on an Instant Store sale"** —
+  so the scope arrives before the first control, which is what you were asking for.
+- The notice above the controls therefore **lost its title**, which had become a
+  second copy of the heading. What is left is the half a heading cannot carry:
+  the other three routes work on different terms and are compared on the Sell
+  page. It is now Codex's Alert L at Type=Info, the system's own component for a
+  title-message-action panel, rather than the hand-built blue box it was.
+
+Placement in the IA — nav and PDP now, or linked from the Instant Store landing
+page for this phase — is item 22 and still open.

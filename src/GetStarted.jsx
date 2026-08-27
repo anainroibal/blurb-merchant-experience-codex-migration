@@ -6,6 +6,7 @@ import ProductTypes from "./ProductTypes.jsx";
 import Handoff, { SellableAnswer } from "./Handoff.jsx";
 import Faq from "./Faq.jsx";
 import YourProjects from "./YourProjects.jsx";
+import ShippingSection from "./ShippingSection.jsx";
 import {
   CATALOG, formatsFor, defaultSelection, minSellPrice, sellerCost,
   PROJECT_KINDS, seedFor, BULK_MIN,
@@ -207,6 +208,15 @@ function InlineSelect({ value, options, onChange }) {
 
 export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSeed, onGo }) {
   const [format, setFormat] = useState(null);
+  /* ── Shipping lives on this page too (Ana, DES-482) ──
+     The panel has always been able to price delivery; nothing on this page
+     asked for a destination, so the maker's total said "add a postcode"
+     with no postcode to add, and a seller could not answer the first
+     question a buyer asks them. Same control the estimator uses, same two
+     defaults: in the total for a maker, off and optional for a seller. */
+  const [ship, setShip] = useState({
+    country: "US", postal: "", state: "California", speed: "economy", poBox: false, show: false,
+  });
   /* Defaults to Project + to Sell. Note this is a prototype default, chosen so
      reviewers land on the selling path — not a recommendation for production,
      where keepsake is the live default and most traffic is makers.
@@ -413,6 +423,9 @@ export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSe
               sellPrice={sellPrice}
               onSellPrice={setSellPrice}
               stepOffset={0}
+              ship={ship}
+              setShip={setShip}
+              onGo={onGo}
               /* The same "Ready to make it?" block the calculators carry, in
                  the same place — the foot of the summary panel. It used to be
                  three large cards at the bottom of this page, which is a
@@ -435,7 +448,14 @@ export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSe
                 />
               }
               trailing={
-                <Handoff route={route} />
+                <div style={{ display: "grid", gap: 24 }}>
+                  <ShippingSection
+                    selling={selling}
+                    ship={ship} setShip={setShip}
+                    qty={state.qty} price={sellPrice}
+                  />
+                  <Handoff route={route} />
+                </div>
               }
             />
           </div>

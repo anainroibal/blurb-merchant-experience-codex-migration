@@ -41,9 +41,18 @@ import { C, T, TYPE, R, FONT_BODY } from "./tokens.js";
    Same reason the repo rule says the fulfilment price is a line in a
    calculation and never a price tag.
 
+   ⚠️ IT NAMES THE OTHER ROUTES, AND COMPARES NONE OF THEM (Ana,
+   DES-482). The ladder above it prices an Instant Store sale and nothing
+   else, so an explanation of why the seller keeps the margin has to say
+   where that stops being true: through the Bookstore, Amazon or Ingram
+   the buyer's price is not the seller's to set and the channel takes its
+   cut. One sentence, then a door to the Sell page, which is the one
+   place the four routes are compared. Rebuilding any part of that table
+   here would be a third answer to a question already answered twice.
+
    Closed by default: it should not lecture anyone who never wondered.
    ──────────────────────────────────────────────────────────────── */
-export default function CostExplainer({ compact }) {
+export default function CostExplainer({ compact, onCompare }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -90,6 +99,30 @@ export default function CostExplainer({ compact }) {
           <p style={{ margin: 0, fontSize: TYPE.sm, lineHeight: 1.6, color: T.textSubtle }}>
             We print. You publish. Nobody takes a cut of your audience.
           </p>
+
+          {/* Where this stops being true. The other three routes find the
+              buyer for you, which is the work the margin pays for, so they
+              price the other way round: the channel sets what the buyer
+              pays and takes its cut from it. */}
+          <p style={{ margin: 0, fontSize: TYPE.sm, lineHeight: 1.65, color: T.textNeutral }}>
+            It works this way in your Instant Store, where you bring the buyer. Sell through the Blurb
+            Bookstore, Amazon or Ingram and they bring the buyer instead, so your price sits on top of a
+            base price and the channel takes its cut of the sale.
+          </p>
+
+          {onCompare && (
+            <button
+              onClick={onCompare}
+              style={{
+                justifySelf: "start", font: "inherit", fontSize: TYPE.sm, fontWeight: 700,
+                color: T.textBrand, background: "transparent", border: 0, padding: 0, cursor: "pointer",
+                display: "inline-flex", alignItems: "center", gap: 4,
+              }}
+            >
+              Compare all four routes
+              <span className="ms" style={{ fontSize: 18 }}>arrow_forward</span>
+            </button>
+          )}
         </div>
       )}
     </div>

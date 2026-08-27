@@ -70,7 +70,7 @@ const ILLUS = "https://assets.blurb.com/_astro/";
    answer or a demand that someone configure a book twice.
 
    The fix is not a smaller form. It is to stop asking this page to do two
-   jobs: here you choose a ROUTE, on the margin estimator you price a
+   jobs: here you choose a ROUTE, in the profit calculator you price a
    BOOK. So the table compares what the routes actually differ on —
    who they reach, what they take, when they pay, what they ask of you —
    and the page hands over to the estimator for the number, where the
@@ -817,7 +817,7 @@ export default function SellerLanding({ onGo, lean = false }) {
               <>Every one of them starts with a book, and the table above is how the four compare.</>
             ) : (
               <>
-                Every one of them starts with a book. The margin estimator prices an{" "}
+                Every one of them starts with a book. The Instant Store profit calculator prices an{" "}
                 <strong style={{ color: T.textNeutral }}>Instant Store sale</strong>; for the other three,
                 the table above is the comparison.
               </>

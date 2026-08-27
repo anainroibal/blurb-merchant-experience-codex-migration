@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.js";
 import SummaryPanel from "./SummaryPanel.jsx";
 import ProductOptions from "./ProductOptions.jsx";
+import ShippingSection, { Field, control } from "./ShippingSection.jsx";
 import CreateActions from "./CreateActions.jsx";
 import FormatCards from "./FormatCards.jsx";
 import {
@@ -45,45 +46,49 @@ const MODES = {
     sub: "What it costs to make",
     h1: "Compare products & pricing",
     lede: "Whatever your vision or budget, we have a format that fits.",
-    cta: "Estimate cost",
     other: "sell",
     swap: "Looking to sell, and want to see what it would earn you?",
-    swapBody: "The margin estimator shows what a copy costs you, what to charge, and what you keep on an Instant Store sale.",
+    swapBody: "The Instant Store profit calculator shows what a copy costs you, what to charge, and what you keep on a sale.",
   },
   sell: {
     id: "sell",
-    tab: "Margin estimator",
-    sub: "What you'd earn selling it",
-    h1: "See what you would keep",
-    /* Names the route, because the arithmetic only holds for one of them.
-       See the note above the calculator. */
-    lede: "Set your price against a real book and see what a copy costs you and what is left — on a sale through your Instant Store.",
-    cta: "Estimate your margin",
+    /* ── Named for the route it prices (Ana DES-482 #16; design review
+         2026-08-26) ── It was the "margin estimator", a generic name that
+         then needed a notice to say what it did not cover. Ana's point was
+         that the notice was evidence of a misnamed page: "there are so
+         many exceptions that it would be clearer to name what it actually
+         applies to." The room agreed and settled the wording — this is the
+         Instant Store profit calculator, framed as applying to that route
+         rather than as a caveat about the others.
+
+         Copy only. The stage id stays `margin` and the file stays
+         Estimator.jsx, for the same reason the checkout link rename left
+         its ids alone: renaming them touches every surface for no gain. */
+    tab: "Instant Store profit calculator",
+    sub: "What you'd earn on a sale",
+    /* ── The hero sells the idea; the page explains itself ──
+       It used to describe the controls below it ("set your price and see
+       the profit"), which is a caption on a page the reader can already
+       see. A hero on a marketing site is the pitch, and it is the part
+       search engines read: what a seller gets, in the words they would
+       have typed to find it. The mechanics are discovered in the ladder,
+       which invites them.
+
+       Claims kept to what this project can stand behind: you set the
+       price, you print only what sells, and the margin is yours because
+       you brought the buyer. Nothing about fees or commission, which is
+       the unsourced claim in Crometrics' mock. */
+    h1: "Sell your book. Keep more of what it earns.",
+    /* "The rest of YOUR PRICE", never "the rest of what your buyer pays":
+       the buyer pays the price plus delivery, and delivery is not the
+       seller's to keep. Shipping stays outside the margin everywhere on
+       this site, and a hero is no place to start blurring it. */
+    lede: "Set your own price in your Instant Store. We print each copy as it sells, you pay us for the printing, and the rest of your price is yours.",
     other: "make",
     swap: "Just making it for yourself?",
     swapBody: "The pricing calculator gives you the price, your copies, and when it would arrive — no margin, nothing to set up.",
   },
 };
-
-const control = {
-  height: 40, width: "100%", minWidth: 0,
-  border: `1px solid ${T.borderStrong}`, borderRadius: 4, background: T.bgNeutral,
-  padding: "0 10px", fontFamily: FONT_BODY, fontSize: TYPE.base, color: T.textNeutral,
-};
-
-function Field({ label, hint, children }) {
-  return (
-    <label style={{ display: "grid", gap: 6, minWidth: 0 }}>
-      <span style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
-        <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>
-          {label}
-        </span>
-        {hint && <span style={{ fontSize: TYPE.sm, color: T.textSubtle, whiteSpace: "nowrap" }}>{hint}</span>}
-      </span>
-      {children}
-    </label>
-  );
-}
 
 /* The kind picker, offered rather than imposed. */
 function HelpMeDecide({ open, onToggle, kindId, onKind, why }) {
@@ -127,139 +132,6 @@ function HelpMeDecide({ open, onToggle, kindId, onKind, why }) {
           )}
         </div>
       )}
-    </div>
-  );
-}
-
-/* ── Two destinations, two questions ──
-   The maker is receiving the box, so the calculator asks precisely where
-   — a ZIP or postcode — and puts the shipping in the total, because it
-   is money they will actually pay.
-
-   The seller is not receiving anything. Their buyers are many and
-   everywhere, so a street-level destination is meaningless; what they
-   need is an illustration of what a buyer SOMEWHERE pays, kept firmly
-   outside the margin. Country, then. The state is there because a seller
-   pictures people, not parcels — it changes who the sentence is about.
-   It does not change the rate, and the panel says so rather than
-   implying a precision the placeholder data does not have. */
-function ShipTo({ selling, shipping, ship, setShip }) {
-  const country = SHIPPING.countries.find(c => c.id === ship.country);
-  return (
-    <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))" }}>
-      <Field label={selling ? "Your buyer is in" : "Ship to"}>
-        <select
-          style={control}
-          value={ship.country}
-          onChange={e => setShip({ ...ship, country: e.target.value, postal: "", state: "California" })}
-        >
-          {SHIPPING.countries.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
-        </select>
-      </Field>
-
-      {selling ? (
-        ship.country === "US" && (
-          <Field label="State" hint="tax varies">
-            <select style={control} value={ship.state} onChange={e => setShip({ ...ship, state: e.target.value })}>
-              {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
-          </Field>
-        )
-      ) : (
-        <Field label={country?.postal ?? "Postal code"}>
-          <input
-            style={control}
-            value={ship.postal}
-            placeholder={country?.example}
-            onChange={e => setShip({ ...ship, postal: e.target.value })}
-          />
-        </Field>
-      )}
-
-      {!shipping && (
-        <Field label="Speed">
-          <select style={control} value={ship.speed} onChange={e => setShip({ ...ship, speed: e.target.value })}>
-            {SHIPPING.speeds.map(s => <option key={s.id} value={s.id}>{s.label} — {speedDays(s)}</option>)}
-          </select>
-        </Field>
-      )}
-
-      {shipping && (
-        /* A real constraint, and the reason express can vanish below. */
-        <Field label="Delivery point">
-          <label style={{ ...control, display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
-            <input
-              type="checkbox"
-              checked={ship.poBox}
-              onChange={e => setShip({ ...ship, poBox: e.target.checked })}
-            />
-            <span style={{ fontSize: TYPE.base }}>This is a P.O. Box</span>
-          </label>
-        </Field>
-      )}
-    </div>
-  );
-}
-
-/* ── The shipping answer: dates, not day-counts ──
-   The live /shipping page tells you printing takes "4-5 business days"
-   in a paragraph, then quotes speeds in more business days, and leaves
-   the arithmetic — and the weekends — to you. Nobody plans around
-   "7–10 business days"; they plan around whether it arrives before the
-   wedding. So every speed is priced AND dated, side by side, and the
-   print time is shown as the leading segment it actually is.
-
-   Express disappears for a P.O. Box rather than being quoted and
-   refused later, because couriers do not deliver to one. */
-function DeliveryTable({ qty, country, poBox, chosen, onChoose }) {
-  const speeds = SHIPPING.speeds.filter(s => !poBox || s.poBox);
-
-  return (
-    <div style={{ display: "grid", gap: 10 }}>
-      {speeds.map(s => {
-        const quote = shippingFor(country, s.id, qty);
-        const w = arrivalWindow(s);
-        const on = chosen === s.id;
-        return (
-          <button
-            key={s.id}
-            onClick={() => onChoose(s.id)}
-            aria-pressed={on}
-            className="card-move"
-            style={{
-              textAlign: "left", width: "100%", padding: 16, borderRadius: R.md,
-              background: T.bgNeutral,
-              border: on ? `2px solid ${T.borderBrand}` : `1px solid ${T.border}`,
-              margin: on ? 0 : 1,
-              display: "grid", gap: 10, alignItems: "center",
-              gridTemplateColumns: "minmax(0,1fr) auto auto", fontFamily: FONT_BODY,
-            }}
-          >
-            <span style={{ display: "grid", gap: 2, minWidth: 0 }}>
-              <span style={{ fontSize: TYPE.lg, fontWeight: 700, color: on ? C.blue950 : T.textNeutral }}>
-                {s.label}
-              </span>
-              <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
-                {PRINT_RANGE[0]}–{PRINT_RANGE[1]} days printing, then {speedDays(s)}
-              </span>
-            </span>
-
-            <span style={{ display: "grid", gap: 2, justifyItems: "end", whiteSpace: "nowrap" }}>
-              <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>Arrives</span>
-              <span style={{ fontSize: TYPE.base, fontWeight: 700 }}>
-                {formatDay(w.earliest)} – {formatDay(w.latest)}
-              </span>
-            </span>
-
-            <span style={{
-              fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 700,
-              color: on ? C.blue600 : T.textNeutral, whiteSpace: "nowrap", paddingLeft: 8,
-            }}>
-              {quote ? money(quote.cost) : "—"}
-            </span>
-          </button>
-        );
-      })}
     </div>
   );
 }
@@ -311,19 +183,6 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
   const margin = shown > 0 ? Math.round((profit / shown) * 100) : 0;
   const limit = pageLimit(formatId, state);
 
-  /* The maker's quote waits for a postal code, because it is a real
-     delivery. The seller's is an illustration, so a country is enough
-     and it is always shown — and it is priced for ONE copy, since that
-     is what a buyer orders. */
-  const hasDestination = ship.postal.trim().length > 1;
-  const makerShip = hasDestination
-    ? shippingFor(ship.country, ship.speed, state.qty)
-    : null;
-  const buyerShip = shippingFor(ship.country, ship.speed, 1);
-  /* The shipping calculator prices every speed at once, so it needs no
-     single quote — the table does the work. */
-  const shipSpeed = SHIPPING.speeds.find(s => s.id === ship.speed);
-
   const changeFormat = id => {
     setFormatId(id);
     setState(defaultSelection(id));
@@ -348,11 +207,18 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
     <div style={{ fontFamily: FONT_BODY, color: T.textNeutral }}>
 
       {/* ── The hero, as /pricing has it ──
-          A banded intro over a soft gradient: heading, one line, and a
-          single filled button. Both calculators use it — the pattern is the
-          page's, the words are the mode's. The button jumps to the
-          calculator rather than opening a modal, because here the
-          calculator is the page rather than something layered over it. */}
+          A banded intro over a soft gradient: heading and one line. Both
+          calculators use it; the pattern is the page's, the words are the
+          mode's.
+
+          NO BUTTON (Anain, 2026-08-27). It read "See what you'd keep" and
+          scrolled to the controls a screen below, which is a call to
+          action for something the reader is already doing: they came to
+          the calculator, and the calculator is this page rather than
+          something layered over it. A button that only scrolls asks for a
+          decision it cannot reward. The format cards do the work instead
+          — picking one is the real first step, and it is visible without
+          being announced. */}
       <section style={{
         background: "linear-gradient(100deg, #e9ecef 0%, #f6f3ef 45%, #ebebeb 100%)",
         borderBottom: `1px solid ${T.border}`,
@@ -370,16 +236,6 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
           <p style={{ fontSize: TYPE.base, color: C.gray950, lineHeight: 1.6, margin: "14px auto 0", maxWidth: 640 }}>
             {m.lede}
           </p>
-          <button
-            onClick={() => document.getElementById("calculator")?.scrollIntoView({ behavior: "smooth", block: "start" })}
-            style={{
-              marginTop: 28, height: 44, padding: "0 22px", borderRadius: R.md, border: 0,
-              background: C.blue600, color: "#fff", cursor: "pointer",
-              fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 600,
-            }}
-          >
-            {m.cta}
-          </button>
         </div>
       </section>
 
@@ -403,35 +259,50 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
 
               Said before the controls rather than under them. Someone who
               reads this after setting a price has already been misled, and
-              the mistake is silent — the figures look just as plausible for
+              the mistake is silent: the figures look just as plausible for
               the wrong route. It carries the way out with it, because the
-              honest answer to "what about Amazon?" is another page. */}
-          {selling && (
-            <div style={{
-              background: C.blue50, border: `1px solid ${C.blue100}`, borderRadius: R.md,
-              padding: "14px 16px", display: "flex", gap: 12, alignItems: "flex-start", flexWrap: "wrap",
-            }}>
-              <span className="ms" style={{ fontSize: 22, color: C.blue600, flex: "0 0 auto" }}>info</span>
-              <span style={{ minWidth: 240, flex: "1 1 420px", fontSize: TYPE.base, lineHeight: 1.6 }}>
-                <strong>These numbers are for an Instant Store sale</strong> — you set the price, and what
-                is left after your cost is yours. The Bookstore, Amazon and Ingram each work on different
-                terms, so those are compared on the Sell page rather than priced here.
-              </span>
-              <button
-                onClick={() => onGo?.("seller")}
-                style={{
-                  fontFamily: FONT_BODY, fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.5,
-                  textTransform: "uppercase", minHeight: 40, padding: "0 16px", borderRadius: R.sm,
-                  cursor: "pointer", whiteSpace: "nowrap", flex: "0 0 auto",
-                  background: "transparent", color: T.textBrand, border: `1px solid ${T.borderBrand}`,
-                }}
-              >
-                Compare the routes
-              </button>
-            </div>
-          )}
+              honest answer to "what about Amazon?" is another page.
 
-          <FormatCards formatId={formatId} onPick={changeFormat} />
+              ── A SCOPE, NOT A WARNING, AND NOT AN ALERT ──
+              Three passes to get here. It began as a hand-built blue box
+              with an info icon, which is the shape this site uses to say
+              something has gone wrong. Then Codex's Alert L at Type=Info,
+              which is the right component for a title, a message and an
+              action — but an alert is for STATE, and state changes. This
+              copy is identical on every visit forever, and a permanent
+              alert wears out: people stop seeing the colour, and it is
+              then missing on the day something really is wrong.
+
+              So the naming does the work (Ana DES-482 #16). The heading
+              says which route this prices, the lede says what you get, and
+              all that is left for this line is the half neither can carry:
+              the other three routes exist and are compared elsewhere. One
+              sentence and a door, in the page's own voice. */}
+          <FormatCards
+            formatId={formatId}
+            onPick={changeFormat}
+            note={selling ? (
+              <>
+                The Bookstore, Amazon and Ingram each work on different terms.{" "}
+                <button
+                  onClick={() => onGo?.("seller")}
+                  style={{
+                    font: "inherit", fontWeight: 700, color: T.textBrand, background: "transparent",
+                    border: 0, padding: 0, cursor: "pointer",
+                    display: "inline-flex", alignItems: "center", gap: 4, verticalAlign: "baseline",
+                  }}
+                >
+                  Compare the routes
+                  <span className="ms" style={{ fontSize: 18 }}>arrow_forward</span>
+                </button>
+              </>
+            ) : (
+              <>
+                Save more when you print in bulk. Learn about{" "}
+                <span style={{ color: T.textBrand, textDecoration: "underline" }}>volume discounts</span>.
+              </>
+            )}
+          />
 
           {/* ── The get-started layout: choices on one side, the running
                  total on the other ──
@@ -468,100 +339,11 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
             />
           </div>
 
-          {/* ── Shipping ──
-              Two different jobs, so two different defaults.
-
-              THE MAKER is buying the copies, so shipping is part of what
-              they pay: enter a postcode and it joins the total.
-
-              THE SELLER never pays it. It is not in their price and not in
-              their margin, and a delivery figure sitting beside the margin
-              invites exactly the misreading the whole pricing model exists
-              to prevent. So for them it is off, and it is a variable they
-              can switch on to answer one question: what does the buyer see
-              at checkout? Turning it on changes nothing in the ladder. */}
-          <div style={{
-            background: T.bgNeutral, border: `1px solid ${T.border}`, borderRadius: R.lg,
-            padding: 24, display: "grid", gap: 16,
-          }}>
-            <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>
-              Shipping{selling ? " — optional" : ""}
-            </span>
-
-            {selling ? (
-              <>
-                <label style={{ display: "grid", gap: 6, cursor: "pointer" }}>
-                  <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    <input
-                      type="checkbox"
-                      checked={!!ship.show}
-                      onChange={e => setShip({ ...ship, show: e.target.checked })}
-                      style={{ width: 18, height: 18, accentColor: C.blue600, flex: "0 0 auto" }}
-                    />
-                    <span style={{ fontSize: TYPE.base, fontWeight: 700 }}>
-                      Show what a buyer pays with delivery
-                    </span>
-                  </span>
-                  <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.55, paddingLeft: 28 }}>
-                    Your buyer pays shipping, so it is never part of your price or your profit. This only adds
-                    a line showing what they would see at checkout.
-                  </span>
-                </label>
-
-                {ship.show && (
-                  <div className="fade-in" style={{ display: "grid", gap: 14, borderTop: `1px solid ${T.border}`, paddingTop: 16 }}>
-                    <ShipTo selling shipping={false} ship={ship} setShip={setShip} />
-
-                    {/* ── The buyer's total, where the question was asked ──
-                        One line, in the section with the checkbox, rather
-                        than three lines in the panel. The panel is the
-                        seller's numbers and nothing else; this is the
-                        buyer's, so it lives with the control that reveals
-                        it and stays the size of an aside. */}
-                    {buyerShip && (
-                      <div style={{
-                        background: C.gray50, border: `1px solid ${T.border}`, borderRadius: R.md,
-                        padding: "12px 14px", display: "grid", gap: 4,
-                      }}>
-                        <span style={{ fontSize: TYPE.base, lineHeight: 1.55 }}>
-                          A buyer in{" "}
-                          {ship.country === "US"
-                            ? ship.state
-                            : SHIPPING.countries.find(c => c.id === ship.country)?.label}{" "}
-                          pays <strong>{money(shown)}</strong> for the book and{" "}
-                          <strong>{money(buyerShip.cost)}</strong> to have it sent —{" "}
-                          <strong>{money(shown + buyerShip.cost)}</strong> in all.
-                        </span>
-                        <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>
-                          Your cost, your price and your profit are unchanged — none of this is yours to pay.
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                )}
-              </>
-            ) : (
-              <>
-                <ShipTo selling={false} shipping ship={ship} setShip={setShip} />
-
-                {/* Arrival dates wait for a postcode. Rates and dates mean
-                    nothing without a destination, and a table that cannot be
-                    right yet invites someone to plan around figures that will
-                    move the moment they type. */}
-                {hasDestination && (
-                  <div className="fade-in" style={{ display: "grid", gap: 10, borderTop: `1px solid ${T.border}`, paddingTop: 16 }}>
-                    <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>
-                      When it would arrive
-                    </span>
-                    <DeliveryTable
-                      qty={state.qty} country={ship.country} poBox={ship.poBox}
-                      chosen={ship.speed} onChoose={id => setShip({ ...ship, speed: id })}
-                    />
-                  </div>
-                )}
-              </>
-            )}
-          </div>
+          <ShippingSection
+            selling={selling}
+            ship={ship} setShip={setShip}
+            qty={state.qty} price={shown}
+          />
 
           {/* The channel comparison used to sit here. It belongs on the
               seller landing page and only there — that page's one goal is
@@ -591,6 +373,7 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
               onSellPrice={setPrice}
               ship={ship}
               setShip={setShip}
+              onGo={onGo}
               actions={
                 <CreateActions
                   formatId={formatId}

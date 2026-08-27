@@ -255,7 +255,7 @@ export const exactPdpName = (formatId, sel) => PDP_NAME[formatId]?.[sel?.cover] 
 
 export default function SummaryPanel({
   formatId, state, onChange, mode, sellPrice, onSellPrice,
-  sticky = true, ship: shipProp, setShip: setShipProp, actions,
+  sticky = true, ship: shipProp, setShip: setShipProp, actions, onGo,
 }) {
   const selling = mode === "sell";
   const bulk = mode === "distribute";
@@ -407,7 +407,7 @@ export default function SummaryPanel({
                 for it, where it belongs: with its own control, and out of
                 the seller's numbers. */}
 
-            <CostExplainer compact />
+            <CostExplainer compact onCompare={onGo ? () => onGo("seller") : undefined} />
           </>
         ) : (
           <>

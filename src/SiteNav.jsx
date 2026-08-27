@@ -138,7 +138,7 @@ const NAV = [
       ["Store integrations", "Connect Shopify, Etsy and more.", "Coming soon"],
     ]},
     { heading: "Pricing and products", items: [
-      ["Margin estimator", "Set a price and see what you keep per copy.", null, "margin"],
+      ["Instant Store profit calculator", "Set a price and see what you keep per copy.", null, "margin"],
       /* The crossover. A seller whose question is "what can I sell?" is
          asking about products, and the Products menu answers what we print
          rather than what is sellable. One link, to the seller page where
@@ -169,10 +169,12 @@ const NAV = [
   { label: "Pricing", href: "/pricing", columns: [
     { heading: "Pricing", items: [
       ["Pricing Calculator", "Price a specific book by size, pages and paper.", null, "pricing"],
-      /* Shipping lives inside the pricing calculator now — the destination
-         and the arrival dates are a section of that page, so this opens the
-         same screen rather than pretending to a page of its own. */
-      ["Shipping Calculator", "Estimate delivery cost and time.", null, "pricing"],
+      /* Not "Shipping Calculator" any more (2026-08-27). The calculating
+         happens where the book is priced — a postcode and dated speeds in
+         the pricing calculator, what the buyer pays in the profit calculator
+         — so the page it opens explains delivery rather than computing it,
+         and the nav says which of the two this is. */
+      ["Shipping & Delivery", "How long printing and delivery take, and what it costs where.", null, "shipping"],
     ]},
   ], featured: {
     heading: "Featured",

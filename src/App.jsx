@@ -8,6 +8,7 @@ import Estimator from "./Estimator.jsx";
 import Home from "./Home.jsx";
 import ProductCatalog from "./ProductCatalog.jsx";
 import InstantStorePage from "./InstantStorePage.jsx";
+import ShippingPage from "./ShippingPage.jsx";
 
 /* ────────────────────────────────────────────────────────────────
    Blurb — Merchant Experience prototypes
@@ -102,9 +103,12 @@ const STAGES = [
      seller's margin sits under Sell & Self-Publish, which is what keeps
      the public pricing pages retail-only. */
   { id: "pricing",    short: "Pricing",      label: "Pricing calculator — under Pricing" },
-  { id: "margin",     short: "Margin",       label: "Margin estimator — under Sell & Self-Publish" },
+  { id: "margin",     short: "Profit",       label: "Instant Store profit calculator — under Sell & Self-Publish" },
   /* Crometrics' page. A placeholder so the links into it can be reviewed. */
   { id: "instantstore", short: "Instant Store", label: "The Instant Store page — placeholder, built by Crometrics" },
+  /* /shipping, after both calculators, because what it now does is explain
+     what they compute — 2026-08-27. */
+  { id: "shipping",   short: "Shipping",     label: "/shipping — informational, now that both calculators price delivery" },
 ];
 
 /* ────────────────────────────────────────────────────────────────
@@ -417,6 +421,7 @@ export default function App() {
         {stage === "seller"     && <SellerLanding onGo={go} lean={lean} />}
         {stage === "pricing"    && <Estimator mode="make" onGo={go} seed={entry?.seed} />}
         {stage === "margin"     && <Estimator mode="sell" onGo={go} seed={entry?.seed} />}
+        {stage === "shipping"   && <ShippingPage onGo={go} />}
       </div>
       <SiteFooter />
     </div>
