@@ -366,3 +366,52 @@ rather than behaviour — the panel is tall enough that its lower half, the ladd
 and "Ready to make it?", can sit below the fold on a laptop even while the panel
 is pinned. Sticky holds the top in place, not the bottom. The fix for that would
 be trimming what the panel carries, not changing how it sticks.
+
+## 6. Seller pricing in the "What changes the price?" modal — DONE
+
+That link used to leave the catalogue for the calculator. It now opens the modal
+the live page opens, rebuilt: five steps in blurb.com's own copy — Cover options,
+Size, Paper, Number of pages, Binding — each with its Tip, one at a time.
+
+Then **a sixth step, "And if you are selling it"**:
+
+> Everything above is what a copy costs you to buy. Sell the book instead and your
+> role changes: you are not our customer any more, we are your printer. You set
+> what your buyer pays, you pay us to print each copy as it sells, and the rest of
+> your price is yours.
+
+Underneath it, in place of the Tip, the **Why**: the margin is payment for work
+the seller has taken on, because a retail price also pays for running the shop.
+Then one action, **See what you would keep**, into the profit calculator.
+
+You are right that this is the place for it: it is the one spot on a retail page
+where somebody has *asked* to be told how pricing works, so it costs nothing and
+nobody who did not ask is shown it.
+
+**No figure on that step, deliberately.** The five steps above it are full of
+retail prices, and a fulfilment number beside them is the one pairing this
+project forbids — it publishes the margin with the arithmetic already done.
+
+## 7. The banner copy should reference the difference — DONE
+
+> Photo books, trade books and magazines can be sold from one link you share, and
+> **the prices on this page are not the ones you would pay. They are what a copy
+> costs to buy; when you sell, we are your printer instead, so it costs you less
+> and you set what your buyer pays.**
+
+Said as a direction and a change of role rather than as a sum, for the reason
+above. The product list writes itself from the catalogue, so it cannot promise a
+product that is not sellable.
+
+## 8. Move the "Selling this?" note beside the price — DONE
+
+Moved: it now sits directly under the price and the per-page line, above the
+create actions.
+
+It is a better place, and worth saying why: the line's job is to tell a seller
+that the number above it is not theirs, so it belongs with that number. Below the
+buttons it read as a fourth call to action arguing with Create now.
+
+Still deliberately quiet — body text, no panel, no icon, no border — so a maker
+reads "selling this?" and moves on having lost nothing. It still carries the
+configuration, so the calculator opens on the book being looked at.

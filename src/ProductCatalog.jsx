@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import PriceModal from "./PriceModal.jsx";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { variantFromPrice, money , sellableSentence } from "./catalog.js";
 
@@ -149,8 +150,14 @@ function PromoTile({ item }) {
 }
 
 export default function ProductCatalog({ onGo, lean }) {
+  /* The live page opens a modal here rather than leaving for the
+     calculator, and that is the right shape: someone asking what moves a
+     price has not finished choosing a product. */
+  const [priceOpen, setPriceOpen] = useState(false);
+
   return (
     <div style={{ fontFamily: FONT_BODY, color: C.gray950 }}>
+      <PriceModal open={priceOpen} onClose={() => setPriceOpen(false)} onGo={onGo} />
       <section style={{ padding: "0 24px 80px" }}>
         <div style={{ maxWidth: 1280, margin: "0 auto" }}>
 
@@ -179,7 +186,7 @@ export default function ProductCatalog({ onGo, lean }) {
                 whole control put a line under the ⓘ, which reads as a typo
                 rather than a link. */}
             <button
-              onClick={() => onGo?.("pricing")}
+              onClick={() => setPriceOpen(true)}
               style={{
                 display: "inline-flex", alignItems: "center", gap: 4, font: "inherit",
                 fontSize: TYPE.base, fontWeight: 500, color: C.blue600,
@@ -255,9 +262,22 @@ export default function ProductCatalog({ onGo, lean }) {
               Making it to sell? Open an Instant Store
             </h2>
 
+            {/* ── It says the prices above are not a seller's (Ana, #6/#7) ──
+                "The copy will have to reference the difference in price,
+                i.e. the prices listed on this page are higher than if you
+                were going to sell it."
+
+                Said as a DIRECTION and a change of role, never as a sum.
+                Every price on this page is a retail one; naming the
+                fulfilment figure beside them, or the gap between them,
+                publishes Blurb's margin with the arithmetic already done.
+                "You are buying a copy / we are your printer" gives a
+                seller the whole of what they need to know here, which is
+                that these are not their numbers and where theirs live. */}
             <p style={{ margin: 0, fontSize: TYPE.lg, lineHeight: 1.6, color: T.textNeutral }}>
-              {sellableSentence()} can be sold from one link you share. You set the price, we print and
-              ship every order, and there is no shopfront to run.
+              {sellableSentence()} can be sold from one link you share, and the prices on this page are not
+              the ones you would pay. They are what a copy costs to buy; when you sell, we are your printer
+              instead, so it costs you less and you set what your buyer pays.
             </p>
 
             {/* Two doors in the recommended scope — the number, then the

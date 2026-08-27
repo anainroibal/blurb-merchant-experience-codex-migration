@@ -34,8 +34,13 @@ import {
    stays retail-only, and no second number appears on it. The line is
    self-selecting: a maker reads "selling this?" and moves on, having
    lost nothing, while a seller recognises themselves. And it hands the
-   CONFIGURATION over, not just the destination, so the estimator opens
+   CONFIGURATION over, not just the destination, so the calculator opens
    on the book they were looking at rather than an empty form.
+
+   It sits UNDER THE PRICE, not under the buttons (Ana, DES-482 #8). Its
+   job is to say that the number above it is not a seller's, so it
+   belongs with that number; below the actions it read as a fourth call
+   to action arguing with Create now.
 
    The live page tags each size with a "+US $0.00"-style modifier. This
    one does not, as of 2026-08-24: the baseline moves with the rest of the
@@ -319,38 +324,29 @@ export default function ProductPage({ onGo, seed = null, lean = false }) {
             <div style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
               {pages}-page minimum, +{money(perPage)} for each additional page
             </div>
-            {/* The shared create actions — same component the calculators
-                use, so "Create online" cannot mean one thing here and
-                another there. showLearnMore is off: this IS the product
-                page. */}
-            <CreateActions
-              formatId={formatId}
-              sel={{ cover, size, paper, pages }}
-              onGo={onGo}
-              showLearnMore={false}
-            />
 
-            {/* THE DOORWAY.
-                Under the two real calls to action, deliberately quieter than
-                both: body-size text, no panel, no icon, no border. It has to
-                be findable by someone who intends to sell and ignorable by
-                everyone else — a maker who reads "selling this?" and moves on
-                has lost nothing, and nothing here competes with Create now.
+            {/* ── THE DOORWAY, beside the price it qualifies (Ana, DES-482 #8) ──
+                "Have you considered having the 'selling this?' note by the
+                price, rather than below the CTA? Wonder if that's a more
+                logical place for it."
 
-                Worth knowing the cost of this placement: the configurator is
-                long, so this line sits around 1560px down at 1440 wide —
-                below the fold, exactly like the live page's own Create now.
-                A seller who never scrolls to the price never meets the door.
-                That is the trade for keeping it quiet, and it is the thing to
-                watch if the doorway does not earn its clicks.
+                It is, and for a reason worth stating: this line's job is to
+                tell a seller that the number above is not theirs. Under the
+                buttons it read as a fourth call to action competing with
+                Create now; here it reads as a footnote on the price, which
+                is what it actually is.
+
+                Still deliberately quiet — body-size text, no panel, no icon,
+                no border. Findable by someone who intends to sell, ignorable
+                by everyone else: a maker who reads "selling this?" and moves
+                on has lost nothing.
 
                 It carries the CONFIGURATION, not just the destination, so the
-                estimator opens on this book rather than an empty form. */}
-            {/* In the lean scope there is no estimator, so the door leads to
-                the Instant Store page instead — and the words have to change
-                with it: "see your price" promises a number, and that version
-                does not have one to show. */}
-            <div style={{ marginTop: 14, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.6 }}>
+                calculator opens on this book rather than an empty form. In
+                the lean scope there is no calculator, so the door leads to
+                the Instant Store page and the words change with it: "see
+                your price" promises a number that version cannot show. */}
+            <div style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.6 }}>
               Selling this?{" "}
               <button
                 onClick={() =>
@@ -365,6 +361,17 @@ export default function ProductPage({ onGo, seed = null, lean = false }) {
                 {lean ? "Open an Instant Store" : "See your price"}
               </button>
             </div>
+            {/* The shared create actions — same component the calculators
+                use, so "Create online" cannot mean one thing here and
+                another there. showLearnMore is off: this IS the product
+                page. */}
+            <CreateActions
+              formatId={formatId}
+              sel={{ cover, size, paper, pages }}
+              onGo={onGo}
+              showLearnMore={false}
+            />
+
           </div>
         </div>
       </section>
