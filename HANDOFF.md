@@ -150,8 +150,6 @@ or not-doing-and-why — written to be quoted back into the ticket.
 - npm blocks install scripts, so `esbuild` and `fsevents` warn. The build works;
   expected.
 - **No push-to-deploy.** `vercel` for a preview, `vercel --prod --yes` to promote.
-- The **WIP chip** reads the branch from a build-time define; anything not `main`
-  shows "not approved".
 - Typekit (futura-pt, proxima-nova) is domain-locked; the fallbacks in `tokens.js`
   are load-bearing.
 - **Screenshots**: `playwright-core` drives the cached Chromium at

@@ -93,7 +93,7 @@ Always verify with a local `npm run build` (~1s) rather than pushing and reading
 
 Vercel project lives in the **RPI Print** team (scope `rpi-print-daf707f9`), not a personal account. Deployed from the CLI rather than a GitHub integration, so there is no push-to-deploy — run `vercel` for a preview, `vercel --prod` to promote.
 
-Any build whose branch is not `main` shows a **"Work in progress — not approved"** chip on every screen (`WipChip`). The branch name comes from a build-time define in `vite.config.js` — Vercel's `VERCEL_GIT_COMMIT_REF`, falling back to the local git branch. Don't hardcode it per branch; it conflicts on every merge.
+**There is no "work in progress" chip any more** *(Anain, 2026-08-28)*. Builds off `main` used to carry one, fed by a branch name from a build-time define. The chip, the define and the only `__BRANCH__` reference went together — nothing else read the branch, so don't reintroduce one expecting it to be there. The demo bar's Scope and Session controls already say this is a prototype.
 
 ## Conventions
 

@@ -41,17 +41,11 @@ const T = {
   radius:     8,
 };
 
-/* Branch name comes from a build-time define — Vercel's VERCEL_GIT_COMMIT_REF,
-   falling back to the local git branch. See vite.config.js. */
-const BRANCH = typeof __BRANCH__ !== "undefined" ? __BRANCH__ : "local";
-const IS_WIP = BRANCH !== "main";
-
-/* Warm outline chip, same treatment as the checkout prototype: brown ink on a
-   light warm ground. It must survive being screenshotted into a deck, so it
-   never hides — not even when the demo controls are hidden. */
-const WIP_INK    = "#7a4b12";
-const WIP_BG     = "#fdf6ec";
-const WIP_BORDER = "#e6c9a0";
+/* ── The "work in progress — not approved" chip is gone (Anain, 2026-08-28) ──
+   It rode on the branch name from a build-time define, so every build that was
+   not `main` carried it. Removed at the top of the file, in vite.config.js and
+   from the demo bar together; nothing else read the branch. The demo bar's own
+   Scope and Session controls already say this is a prototype. */
 
 function useViewport() {
   const [w, setW] = useState(typeof window === "undefined" ? 1280 : window.innerWidth);
@@ -61,25 +55,6 @@ function useViewport() {
     return () => window.removeEventListener("resize", on);
   }, []);
   return { width: w, isMobile: w < 768, isTablet: w >= 768 && w < 1024, isDesktop: w >= 1024 };
-}
-
-function WipChip() {
-  if (!IS_WIP) return null;
-  const { width } = useViewport();
-  const narrow = width < 560;
-  return (
-    <span
-      style={{
-        display: "inline-flex", alignItems: "center", gap: 6,
-        padding: "4px 10px", borderRadius: 999,
-        border: `1px solid ${WIP_BORDER}`, background: WIP_BG, color: WIP_INK,
-        fontSize: 12, fontWeight: 600, whiteSpace: "nowrap",
-      }}
-    >
-      <span className="ms" style={{ fontSize: 14 }}>warning</span>
-      {narrow ? "Not approved" : `Work in progress — not approved · ${BRANCH}`}
-    </span>
-  );
 }
 
 /* ── Stages. One linear journey, same idea as the checkout stepper. ── */
@@ -308,7 +283,6 @@ function DemoBar({ stage, onJump, signedIn, onSignedIn, version, onVersion }) {
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-        <WipChip />
         <SessionSwitch signedIn={signedIn} onSignedIn={onSignedIn} />
         <VersionSwitch version={version} onVersion={onVersion} />
       </div>
