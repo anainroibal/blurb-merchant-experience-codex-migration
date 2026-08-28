@@ -618,7 +618,23 @@ exists, and a landing page that never says so sends people into a surprise. It i
 Codex's **Alert L** at Type=Info — the one thing on this page that is state, which
 is what that component is for, and what `Alert.jsx` was built for.
 
-**Every block is an existing component.** The gradient hero the seller pages
+**The POC's screens are on the page** *(2026-08-28)*. The section claiming the
+link opens a real product page was illustrated with Material Symbols, which is the
+wrong instinct on the one section whose whole argument is *the page is real* — an
+icon of a book is a drawing of a promise. It now carries the POC's own screens of
+`blurb.com/c/36690`: the store page entire, at 760px, captioned "What your link
+opens. Your buyer never leaves this page," and then the four parts a seller is
+being sold on — the interactive preview, the author panel with its links, "More
+from Paige Hazelwood", and the buy block with its payment marks. Two across, not
+four: these are screens with type in them and a quarter of 1240 cannot be read.
+
+They are screenshots of a **buyer's** page, so the $32.00 in them is the seller's
+own asking price as their buyer sees it. That is not the pairing this project
+forbids — there is no fulfilment figure anywhere near it, and the ladder stays at
+`$X`. The five files are committed to `public/assets/` rather than hotlinked,
+because the MCP asset URLs expire in about a week.
+
+**Every other block is an existing component.** The gradient hero the seller pages
 share, the Sell page's icon grid, the Codex split panel already used as the
 Instant Store lane, Alert L, and the shared `Faq`. Nothing new was invented, and
 "what you can sell" is written by `sellableSentence` rather than typed.

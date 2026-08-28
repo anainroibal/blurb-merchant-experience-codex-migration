@@ -62,19 +62,38 @@ import Faq from "./Faq.jsx";
    ──────────────────────────────────────────────────────────────── */
 
 /* ── What the link OPENS, which is the argument ──
-   Five proofs rather than one claim. The POC is right that this is what
-   separates an Instant Store from a payment link, and right to give it
-   the weight: everything else on this page is true of any competitor. */
+   Four proofs and a photograph of the thing itself. The POC is right
+   that this is what separates an Instant Store from a payment link, and
+   right to give it the weight: everything else on this page is true of
+   any competitor.
+
+   ── SHOW IT, do not assert it (2026-08-28) ──
+   These were Material Symbols, which is the wrong instinct on the one
+   section whose whole claim is "the page is real". An icon of a book is
+   a drawing of a promise; the buyer's page is the evidence. The images
+   are the POC's own screens of blurb.com/c/36690 — the store page
+   entire, then the four parts of it a seller is being sold on.
+
+   They are screenshots of a BUYER's page, so the $32.00 in them is the
+   seller's own asking price as their buyer sees it. That is not the
+   pairing this project forbids: there is no fulfilment figure anywhere
+   near it, and the ladder on this page stays at $X. */
 const PRODUCT_PAGE = [
-  ["menu_book", "A real page, not a payment box",
-   "Cover, description, format and price — everything a buyer needs to decide, in one place."],
-  ["auto_stories", "A look inside before they buy",
+  ["/assets/store-preview.png",
+   "Book preview, open at a spread, with page 1 of 15 below it and a fullscreen control.",
+   "A look inside before they buy",
    "An interactive preview turns real pages, so a buyer sees the book rather than trusting a thumbnail."],
-  ["person", "They meet you first",
+  ["/assets/store-author.png",
+   "An “About the author” panel with a portrait, a biography, and links to a website, Facebook, Instagram, X, TikTok and Substack.",
+   "They meet you first",
    "Your photo, your bio and your links sit on every page you sell from."],
-  ["collections_bookmark", "Your other work, on every page",
+  ["/assets/store-more-from.png",
+   "A “More from Paige Hazelwood” row of three other books, each with its cover, title, first line and starting price.",
+   "Your other work, on every page",
    "“More from you” appears automatically, so one sale is a way into everything else you have made."],
-  ["shopping_cart_checkout", "No account for your buyer",
+  ["/assets/store-buy.png",
+   "A price, a quantity stepper, Buy now and Add to cart buttons, and the accepted payment marks.",
+   "No account for your buyer",
    "They buy and go. Nothing to sign up for, which is one fewer reason to leave."],
 ];
 
@@ -175,21 +194,48 @@ export default function InstantStorePage({ onGo, lean = false }) {
             </p>
           </div>
 
-          {/* 200px, not the 240 the Sell page uses for four: five of these
-              fit across 1240 at 200 and only four at 240, which left the
-              fifth alone on a row of its own. They are one set and should
-              read as one row. */}
+          {/* The whole page first, at the size it deserves — it is the
+              claim, and everything under it is a detail of this. */}
+          <figure style={{ margin: 0, display: "grid", gap: 12, justifyItems: "center" }}>
+            <img
+              src="/assets/store-page.png"
+              alt="An Instant Store page at blurb.com: the book's cover beside its title, author, description, cover and dedication options, a $32.00 price, a quantity stepper and Buy now, with a badge reading Printed and shipped by Blurb."
+              loading="lazy"
+              style={{
+                width: "100%", maxWidth: 760, height: "auto", display: "block",
+                borderRadius: R.lg,
+              }}
+            />
+            <figcaption style={{ fontSize: TYPE.sm, color: T.textSubtle, textAlign: "center" }}>
+              What your link opens. Your buyer never leaves this page.
+            </figcaption>
+          </figure>
+
+          {/* Then the four parts of it, each with the part itself beside
+              the claim. Two across rather than four: these are screens
+              with type in them, and a quarter of 1240 is too narrow to
+              read one. */}
           <div style={{
-            display: "grid", gap: 32,
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+            display: "grid", gap: 40,
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 400px), 1fr))",
           }}>
-            {PRODUCT_PAGE.map(([icon, title, body]) => (
-              <div key={title} style={{ display: "grid", gap: 12, alignContent: "start" }}>
-                <span className="ms" style={{ fontSize: 40, color: C.blue600, lineHeight: 1 }}>{icon}</span>
-                <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 500, lineHeight: 1.2 }}>
-                  {title}
+            {PRODUCT_PAGE.map(([img, alt, title, body]) => (
+              <div key={title} style={{ display: "grid", gap: 16, alignContent: "start" }}>
+                <img
+                  src={img}
+                  alt={alt}
+                  loading="lazy"
+                  style={{
+                    width: "100%", height: "auto", display: "block",
+                    borderRadius: R.lg, border: `1px solid ${T.border}`, background: "#fff",
+                  }}
+                />
+                <div style={{ display: "grid", gap: 8 }}>
+                  <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 500, lineHeight: 1.2 }}>
+                    {title}
+                  </div>
+                  <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.6, color: T.textSubtle }}>{body}</p>
                 </div>
-                <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.6, color: T.textSubtle }}>{body}</p>
               </div>
             ))}
           </div>
