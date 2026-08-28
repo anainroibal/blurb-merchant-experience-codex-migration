@@ -253,7 +253,8 @@ seller will charge.
 
 ## New work
 
-**21. Say what the calculator IS, not what it isn't.** Rewrite the note above the
+**21. Say what the calculator IS, not what it isn't.** *(Done — see below.)*
+Rewrite the note above the
 margin estimator so it opens by naming the Instant Store as what it prices,
 rather than listing the routes it excludes. Same fact, and the seller meets it as
 a scope rather than a warning. The exclusions still have to be findable — the
@@ -415,3 +416,165 @@ buttons it read as a fourth call to action arguing with Create now.
 Still deliberately quiet — body text, no panel, no icon, no border — so a maker
 reads "selling this?" and moves on having lost nothing. It still carries the
 configuration, so the calculator opens on the book being looked at.
+
+## 21. Say what the calculator IS, not what it isn't — DONE
+
+The line above the format cards on the profit calculator was the exclusions
+alone:
+
+> The Bookstore, Amazon and Ingram each work on different terms.
+> **Compare the routes →**
+
+It now opens with what the figures are for, and the other routes follow:
+
+> These figures are for a sale through your Instant Store, where you set the
+> price and what is left after your cost is yours. The Bookstore, Amazon and
+> Ingram each work on different terms. **Compare the routes →**
+
+Same fact, same door, same two sentences; the order is the whole change. The
+opening clause is the ladder's own terms — *your cost → your price → your
+profit* — so it says why the scope holds rather than asserting it, and it does
+that without putting a figure on the page.
+
+The exclusions stay, because the ladder really is wrong for the other three and
+a seller who never meets that is worse off. They now read as where to go next
+rather than as what this page cannot do.
+
+# The nav — Ana's review of 24 Aug (items 9–15)
+
+Applied 2026-08-28. Her list is the whole of what changed, except where noted.
+
+## 9. Volume orders and RPI Print API belong under Sell as well as Services — DONE
+
+Both now appear in both menus, in a second Sell column headed **Seller tools**.
+They are things a seller uses, and a seller who needs 500 copies or their own
+storefront integration was being sent to a menu called Services to find out.
+The same page answering to two jobs is not duplication when the two jobs are
+real; these two are. Overlaps design review item 23, which asks for the same
+two in the comparison table — still open.
+
+## 10. Switch to Blurb — OUT of both menus
+
+Ana: it is a good idea but belongs with store integrations, and there is no
+proposal for the page. That is the stronger version of the warning already
+written above the nav data: it comes from Deb's drafts and appears in no source
+we hold — not the DES-469 audit, not Stacey's files. Nav is a commitment
+surface. It goes, and comes back when there is something behind it.
+
+Store integrations stays, tagged Coming soon, because it is the thing Switch to
+Blurb was waiting for rather than a second guess at the same page.
+
+## 11. "Seller hub" — GONE
+
+It was the heading on Sell's first column, and it named an internal construct.
+There is no seller hub; a visitor reading it cannot tell whether it is a page
+they have failed to find. The column is **Ways to sell**, which is what it
+holds.
+
+The phrase also sat in this file's nav rationale — "seller pricing sits behind
+the seller hub" — which was the load-bearing use. Rewritten: the public pricing
+pages stay retail-only, seller pricing is featured under Sell, and the guardrail
+is that the two prices are never shown together.
+
+## 12. "API Printing" → "RPI Print API" — DONE
+
+Renamed, and re-described per design review item 27: orchestration at scale, not
+fulfilment, with RPI as the outer layer and Blurb inside it.
+
+> Print and delivery orchestrated at scale. Send orders from your own system and
+> RPI's network prints, packs and ships them.
+
+"Print as infrastructure" was closer to a slogan than to what it does.
+
+## 13. Pricing defaults to maker pricing — DONE, as one cross-link
+
+The Pricing menu now carries **"Selling instead? — See what you keep on an
+Instant Store sale."**
+
+Ana's observation is right: that menu answers one of two pricing questions, and
+a seller looking for prices looks there. Her two options were a link or moving
+the calculator under Products; a link is the smaller move and the truer one,
+because the calculator is a seller tool and belongs under Sell, where it is now
+the featured card.
+
+**It does not breach the retail-only rule.** That rule forbids showing the two
+prices together, and a link shows neither. What it does is say there is a second
+question, in wording that cannot be read as a second price for the first one.
+
+## 14. Services and Resources feel similar — PARTLY. The labels were the problem
+
+**Not merged.** Services are things you buy — a 500-copy run, a print API.
+Resources are things you read. Merging them puts a quotable print job next to a
+blog post, and the menu stops being able to say what either is for.
+
+**The naming is fixed, which is what the confusion was.** Tools / Services /
+Resources were three words for the same drawer, and only one of them had an
+adjective available: **Creation Tools**. Confirmed over "Design Tools", the live
+label — PDF to Book and the templates are not design tools, and the menu holds
+both (Anain, 2026-08-28).
+
+## 15. Sell and Creation Tools need a way through to an overview — DONE
+
+Ana: it is not always clear you can tap the main nav item. Both menus now end in
+a **See all …** link across the foot, under a rule.
+
+This was briefly the first item in the list, which is how Products does it with
+"Shop All". Ana's own mock (item 28) does it better: among five siblings an
+overview reads as a sixth destination competing with them, and the eye has to
+work out that one of them contains the rest. Across the foot it reads as the way
+out of the menu, which is what it is.
+
+Products keeps "Shop All" in the list. That one is a destination people ask for
+by name, not a fallback for a nav that will not admit it is clickable.
+
+## 28. Ana's selling-overview mock (2026-08-28) — THREE THINGS ADOPTED
+
+Posted as a treatment she liked for a selling overview page; it is drawn as a
+Sell mega menu, and three things in it beat what was built.
+
+**Retail distribution is one item, not three.** The Bookstore, Amazon and Ingram
+were three lines. They are one decision — somebody else brings the buyer, lists
+the book in their shop and takes a cut, and the seller does not set the price. A
+reader choosing between the three has already made that decision; a reader still
+making it does not need the shortlist. The item goes to the comparison, which is
+where the three are actually told apart. "Retail distribution" is also Ana's own
+word for the group in item 5d, which is a good sign it reads.
+
+**See all across the foot** — item 15.
+
+**Five items, not seven.** The consequence of the first two, and it matches her
+mock exactly.
+
+**Two things in the mock are superseded, not rejected:** it says "Checkout
+links" with a **NEW** badge. It is the Instant Store now, and the NEW badges
+went on 2026-08-24 — they spoke to reviewers rather than to visitors.
+
+**Still open from this comment:** whether the selling overview page stays ours
+or goes to CRO Metrics with the brief, the way the Instant Store landing page
+has. That is design review item 24.
+
+## 5d, first half — an option per channel in the "to…" dropdown — NO CHANGE
+
+The comparison-table half was settled in the room and lives on the Sell page.
+The dropdown half was never answered, so: three of Ana's four options are
+already there under different names. **to Sell** is the Instant Store, **to
+Keep** is personal use, **to Distribute** is the bulk order.
+
+**Retail distribution is the one left out, deliberately.** Adding it would make
+the page price a route where *your cost → your price → your profit* is not true:
+the buyer's price is not the seller's to set, and the channel takes a cut. The
+page would have to either quote figures that are wrong or carry a fourth option
+that computes nothing. It is compared on the Sell page instead — which is the
+same conclusion the room reached about the comparison table.
+
+## Ana's note that "pricing calculator" is not clear enough — ANSWERED BY THE RENAME
+
+Her question was what a reader makes of *pricing* calculator versus *margin*
+calculator. The rename (item 16) fixed half of it, and the handover banner
+between the two now leads with the reader's question rather than the product
+name:
+
+> **Just making it for yourself?** The pricing calculator gives you the price,
+> your copies, and when it would arrive — no margin, nothing to set up.
+
+Nobody has to know which calculator they are on to know which one they want.

@@ -280,13 +280,27 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
               says which route this prices, the lede says what you get, and
               all that is left for this line is the half neither can carry:
               the other three routes exist and are compared elsewhere. One
-              sentence and a door, in the page's own voice. */}
+              sentence and a door, in the page's own voice.
+
+              ── SCOPE FIRST, EXCLUSIONS AFTER (design review 2026-08-26,
+                 item 21) ──
+              The line was the exclusions alone — "the Bookstore, Amazon and
+              Ingram each work on different terms" — which is the same fact
+              read as a warning, and it made the reader assemble the scope
+              from what was missing. It now opens by naming what these
+              figures ARE for, in the ladder's own terms, and the other
+              routes follow as where to go next rather than as what this
+              page cannot do. Same two sentences, same door; the order is
+              the whole change, and it is the order that decides whether a
+              seller meets a scope or a caveat. */}
           <FormatCards
             formatId={formatId}
             onPick={changeFormat}
             note={selling ? (
               <>
-                The Bookstore, Amazon and Ingram each work on different terms.{" "}
+                These figures are for a sale through your Instant Store, where you
+                set the price and what is left after your cost is yours. The
+                Bookstore, Amazon and Ingram each work on different terms.{" "}
                 <button
                   onClick={() => onGo?.("seller")}
                   style={{

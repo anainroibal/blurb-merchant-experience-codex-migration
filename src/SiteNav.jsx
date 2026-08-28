@@ -51,9 +51,11 @@ import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.
      2. Services exists at all — LOS ("Volume orders", Deb's rename, and
         the clearer word) and API printing stop being smuggled into a
         selling menu.
-     3. Seller pricing does NOT appear under Pricing. It sits behind the
-        seller hub, which is what keeps the public pricing pages
-        retail-only and the maker guardrail intact.
+     3. The public pricing pages stay retail-only. Seller pricing lives
+        under Sell — featured there, not listed under Pricing — and
+        Pricing carries one cross-link to it, worded as a different
+        question (Ana, DES-482). The guardrail is that the two prices are
+        never shown together, and a link shows neither.
    ──────────────────────────────────────────────────────────────── */
 
 /* Brand mark, copied from Blurb Checkout Prototypes so the two prototypes
@@ -119,7 +121,14 @@ const NAV = [
      Templates comes here from Resources, because a template is a tool, not
      reading material. The live site agrees: its Design Tools menu carries
      BookWright, Adobe Tools, PDF to Book and BookWright Templates. */
-  { label: "Tools", href: "/bookmaking-tools", columns: [
+  /* "Creation Tools", not "Tools" (Ana, DES-482). Tools, Services and
+     Resources read as three words for the same drawer; only this one has
+     an adjective available that says what is inside, and the live site
+     already uses one ("Design Tools"). Creation over design, because
+     PDF to Book and the templates are not design tools.
+
+     Its overview link leads, for the reason Sell's does. */
+  { label: "Creation Tools", href: "/bookmaking-tools", columns: [
     { heading: "Creative tools", items: [
       ["Blurb online editor", "Design in your browser. Nothing to download."],
       ["BookWright", "Blurb's own book-making software."],
@@ -127,54 +136,94 @@ const NAV = [
       ["Adobe software", "InDesign plugin and Lightroom Book Module."],
       ["Templates", "Layouts sized to every format Blurb prints."],
     ]},
-  ]},
+  ], seeAll: ["See all creation tools"]},
 
+  /* ── Ana's nav review, DES-482 (applied 2026-08-28) ──
+     Four changes to this menu, all hers:
+
+     "Blurb seller hub" is gone as a heading. It named an internal
+     construct — there is no seller hub, and a visitor cannot tell whether
+     it is a page they are missing. "Ways to sell" says what the column
+     holds.
+
+     The overview comes first, because the top-level word is a link and
+     nothing in a mega menu says so. Products already had "Shop All"; Sell
+     now has its equivalent, and it replaces the "What you can sell" link
+     that sat in the second column pointing at the same page.
+
+     Volume orders and RPI Print API join it. Both are things a seller can
+     use, and a seller who needs 500 copies or their own storefront
+     integration was being sent to a menu called Services to find out. They
+     stay under Services too — the same page can answer to two jobs, and
+     these two genuinely do (design review item 23).
+
+     Switch to Blurb is out, here and under Services. It appears in no
+     source we hold, and Ana's reasoning is the stronger version of the
+     warning already written above this list: it is a proposition about
+     store integrations, and it should wait until there are any. */
   { label: "Sell", href: "/self-publish", columns: [
-    { heading: "Blurb seller hub", items: [
+    { heading: "Ways to sell", items: [
       ["Instant Store", "Share a link or embed a button. We print and ship each order.", null, "instantstore"],
-      ["Sell on Blurb's Bookstore", "List in Blurb's own storefront."],
-      ["Sell on Amazon", "Reach the largest book audience."],
-      ["Ingram Distribution", "Distribute to bookstores and libraries."],
+      /* ── Three channels, one item (Ana's mock, 2026-08-28) ──
+         The Bookstore, Amazon and Ingram were three lines. They are one
+         decision: somebody else brings the buyer, lists the book in their
+         shop and takes a cut, and the seller does not set the price. A
+         reader choosing between the three has already made that decision;
+         a reader still making it does not need the shortlist yet. The item
+         goes to the comparison, which is where the three are actually told
+         apart. "Retail distribution" is Ana's own word for the group
+         (DES-482 #5d), which is a good sign it reads. */
+      ["Retail distribution", "List on Amazon, Ingram and the Blurb Bookstore.", null, "seller"],
       ["Store integrations", "Connect Shopify, Etsy and more.", "Coming soon"],
     ]},
-    { heading: "Pricing and products", items: [
-      ["Instant Store profit calculator", "Set a price and see what you keep per copy.", null, "margin"],
-      /* The crossover. A seller whose question is "what can I sell?" is
-         asking about products, and the Products menu answers what we print
-         rather than what is sellable. One link, to the seller page where
-         the two axes meet. */
-      ["What you can sell", "Which formats sell through which route, and what each one asks of you.", null, "seller"],
+    { heading: "Seller tools", items: [
+      ["Volume orders", "Volume discounts start at 100 copies. We quote the run and handle the logistics."],
+      ["RPI Print API", "Send orders from your own system and we print, pack and ship them."],
     ]},
   ], featured: {
+    /* The featured slot Switch to Blurb vacated goes to the profit
+       calculator — the option floated at the design review (item 22), and
+       the reason to give it prominence is the size of the number it
+       shows. It is a seller tool, so it is featured under Sell rather than
+       listed under Pricing, and Pricing carries one cross-link to it. */
     heading: "Featured",
-    title: "Switch to Blurb",
-    tag: "Concept",
-    body: "Already selling books elsewhere? Move your titles across.",
-    cta: "See how it works",
-  }},
+    title: "Instant Store profit calculator",
+    body: "Set your price and see what you keep on every copy you sell.",
+    cta: "Open the calculator",
+    stage: "margin",
+  }, seeAll: ["See all selling options", "seller"]},
 
   { label: "Services", href: "/large-order-services", columns: [
     { heading: "Services", items: [
       ["Volume orders", "Volume discounts start at 100 copies. We quote the run and handle the logistics."],
-      ["Switch to Blurb", "Already selling books elsewhere? Move your titles across.", "Concept"],
     ]},
   ], featured: {
+    /* "RPI Print API", the name Ana asked for, and described as the design
+       review described it (item 27): orchestration at scale, not
+       fulfilment, with RPI as the outer layer and Blurb inside it. "Print
+       as infrastructure" was closer to a slogan than to what it does. */
     heading: "Featured",
-    title: "API Printing",
-    body: "Print as infrastructure. Send orders from your own system and we print and ship them.",
-    cta: "RPI Print",
+    title: "RPI Print API",
+    body: "Print and delivery orchestrated at scale. Send orders from your own system and RPI's network prints, packs and ships them.",
+    cta: "Go to RPI Print",
     external: true,
   }},
 
   { label: "Pricing", href: "/pricing", columns: [
     { heading: "Pricing", items: [
-      ["Pricing Calculator", "Price a specific book by size, pages and paper.", null, "pricing"],
+      ["Pricing Calculator", "Price a specific book by size, pages and paper.", null, "pricing", true],
       /* Not "Shipping Calculator" any more (2026-08-27). The calculating
          happens where the book is priced — a postcode and dated speeds in
          the pricing calculator, what the buyer pays in the profit calculator
          — so the page it opens explains delivery rather than computing it,
          and the nav says which of the two this is. */
       ["Shipping & Delivery", "How long printing and delivery take, and what it costs where.", null, "shipping"],
+      /* Ana: this menu defaults to maker pricing, and a seller looking for
+         prices looks here. One cross-link, worded so it is plainly a
+         different question rather than a second price for the same one.
+         It does not breach the retail-only rule — that rule is about
+         showing the two prices together, and a link is not a price. */
+      ["Selling instead?", "See what you keep on an Instant Store sale.", null, "margin"],
     ]},
   ], featured: {
     heading: "Featured",
@@ -287,7 +336,7 @@ function Tag({ children }) {
    THE DESCRIPTIONS ARE STILL IN THE DATA, unused by this renderer. If they
    are wanted back, it is one `body &&` away — see the commented line
    below. What is genuinely parked by this style: Products' wall-art note,
-   and the Switch to Blurb and API Printing promo panels. Those need a
+   and the profit calculator and RPI Print API promo panels. Those need a
    layout with room for a picture, which this one does not have.
 
    Items flow DOWN each column and then across, in columns of at most five,
@@ -319,7 +368,7 @@ const reachable = (stage, lean) => (lean && LEAN_MISSING.includes(stage) ? null 
 
 function MenuLink({ item, onClose, onGo, lean }) {
   const [hot, setHot] = useState(false);
-  const [label, body, tag, rawStage] = item;
+  const [label, body, tag, rawStage, arrow] = item;
   const stage = reachable(rawStage, lean);
   return (
     <a
@@ -351,7 +400,15 @@ function MenuLink({ item, onClose, onGo, lean }) {
         transition: "color var(--nav-hover) var(--nav-ease), background-color var(--nav-hover) var(--nav-ease)",
       }}
     >
-      <span style={{ display: "block", fontWeight: 700 }}>{label}<Tag>{tag}</Tag></span>
+      {/* ── The chevron marks a TOOL, not a page ──
+          Everything else in a menu is somewhere to read; the calculator is
+          something to use, and it opens straight into a working screen.
+          The chevron is the same one the "See all …" link carries, so the
+          menu has one arrow meaning one thing: this goes somewhere now. */}
+      <span style={{ display: "block", fontWeight: 700 }}>
+        {label}<Tag>{tag}</Tag>
+        {arrow && <span className="ms" aria-hidden style={{ fontSize: 16, verticalAlign: "-3px", marginLeft: 2 }}>chevron_right</span>}
+      </span>
       {body && (
         <span style={{
           display: "block", marginTop: 3, fontWeight: 400,
@@ -401,7 +458,7 @@ function MegaMenu({ group, isOpen, onClose, onGo, lean }) {
         borderRadius: "0 0 6px 6px",
         boxShadow: "0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1)",
         padding: "16px 8px",
-        display: "flex", gap: 8, alignItems: "flex-start",
+        display: "flex", flexDirection: "column", alignItems: "stretch",
         fontFamily: FONT_BODY, whiteSpace: "nowrap",
         opacity: isOpen ? 1 : 0,
         visibility: isOpen ? "visible" : "hidden",
@@ -414,6 +471,7 @@ function MegaMenu({ group, isOpen, onClose, onGo, lean }) {
             : "opacity var(--menu) var(--nav-ease), transform var(--menu) var(--nav-ease), visibility 0s var(--menu)",
       }}
     >
+      <div style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
       {group.columns.map(col => (
         <div key={col.heading} style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
           {/* A long set breaks into columns of five, which is how the live
@@ -465,6 +523,36 @@ function MegaMenu({ group, isOpen, onClose, onGo, lean }) {
           <FeaturedCard card={group.featured} onClose={onClose} onGo={onGo} />
         </div>
       )}
+      </div>
+
+      {/* ── "See all …", across the foot of the menu (Ana's mock, 2026-08-28) ──
+          Ana's point was that nothing tells you the top-level word is
+          itself a link, so Sell and Creation Tools had no way through to
+          their overview page. This was briefly the first item in the list,
+          which is how Products does it with "Shop All" — but among five
+          siblings an overview reads as a sixth destination competing with
+          them, and the eye has to work out that one of them contains the
+          rest. Across the foot, under a rule, it reads as the way out of
+          the menu instead, which is what it is. Products keeps "Shop All"
+          in the list: that one is a real destination people ask for by
+          name, not a fallback for a nav that will not admit it is
+          clickable. */}
+      {group.seeAll && (
+        <div style={{ margin: "12px 8px 0", paddingTop: 10, borderTop: `1px solid ${C.gray100}` }}>
+        <a
+          href="#"
+          onClick={e => { e.preventDefault(); onClose(); if (group.seeAll[1]) onGo?.(group.seeAll[1]); }}
+          style={{
+            display: "inline-flex", alignItems: "center", gap: 4,
+            padding: "4px 8px",
+            fontSize: TYPE.sm, fontWeight: 700, color: C.blue600, textDecoration: "none",
+          }}
+        >
+          {group.seeAll[0]}
+          <span className="ms" aria-hidden style={{ fontSize: 16 }}>chevron_right</span>
+        </a>
+        </div>
+      )}
     </div>
   );
 }
@@ -508,7 +596,9 @@ function FeaturedCard({ card, onClose, onGo }) {
         transition: "color var(--nav-hover) var(--nav-ease)",
       }}>
         {card.cta}
-        {card.external && <span className="ms" aria-hidden style={{ fontSize: 16 }}>open_in_new</span>}
+        <span className="ms" aria-hidden style={{ fontSize: 16 }}>
+          {card.external ? "open_in_new" : "chevron_right"}
+        </span>
       </span>
     </a>
   );
