@@ -1,137 +1,344 @@
 import React from "react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
+import { sellableSentence } from "./catalog.js";
+import InstantStoreLane from "./InstantStoreLane.jsx";
+import Alert from "./Alert.jsx";
+import Faq from "./Faq.jsx";
 
 /* ────────────────────────────────────────────────────────────────
-   The Instant Store product page — a PLACEHOLDER, on purpose.
+   The Instant Store landing page.
 
-   Crometrics is building this page (Anain, 2026-08-24). It is not ours
-   to design, and a prototype that guessed at it would be the worst
-   outcome of all: a screen that looks finished, gets screenshotted into
-   a deck, and quietly becomes the spec for somebody else's work.
+   ── This was a placeholder until 2026-08-28 ──
+   It stood in because Crometrics owns the live page and a prototype
+   that guessed at it would become somebody else's spec by accident.
+   What changed is that there is now a second placeholder to work from:
+   the Figma Make POC (260824 POC — Instant Store LP), which was written
+   against a brief and carries the argument this project had not made
+   anywhere. Anain's call (2026-08-28) is to build it here rather than
+   leave a link pointing at an apology.
 
-   So this stands in. It exists because three surfaces now point at it —
-   the catalogue's selling lane, the Sell page and the nav — and a link
-   that goes nowhere is harder to review than a link that arrives
-   somewhere honest. It says who owns the page, what belongs on it, and
-   where the parts that DO exist already live.
+   OWNERSHIP HAS NOT CHANGED. Crometrics still builds the live page, and
+   design review item 24 — whether our version stays a design or becomes
+   reference handed over — is still open. This is the reference.
 
-   When the real page lands, this file goes; the routes into it do not
-   have to change.
+   ── What is taken from the POC, and what is not ──
+   Taken: the differentiator, which is the best thing in it. The link
+   opens a REAL PRODUCT PAGE — preview, description, bio, the seller's
+   other work — not a payment box. Also the three steps, the fulfilment
+   band, and "works anywhere a link goes" said in places rather than in
+   the abstract.
+
+   Not taken, and each for a reason:
+
+     · "Earn more per sale than anywhere else" and "no platform cut —
+       ever". Unsourced comparative claims, the same class as
+       Crometrics' "Blurb keeps 0% of your revenue", and "ever" is a
+       forward commitment nobody in the room can make.
+     · The POC's worked figures. They contradict each other — $22.40 is
+       the print cost in one section and the seller's profit in another,
+       and $22.40 + $25.60 does not make the $35 sale it sits under. The
+       ladder here carries $X, which is honest about being a shape
+       rather than a sum (Anain, 2026-08-28), and the calculator is one
+       click away for the real one.
+     · The AI description writer. That is the walled-off side project.
+     · "A whole store in one link", which overclaims in exactly the way
+       the POC's own brief warns against.
+
+   ── And one thing the POC leaves out ──
+   The proof requirement. A seller can set a store up and share it, but
+   nobody can buy until a proof exists — and a landing page that never
+   says so sends people into a surprise. It is on the page, in Codex's
+   Alert L, which is the component that was built for it.
+
+   ── Components ──
+   Nothing here is a new pattern. The hero is the gradient one /pricing,
+   /bookmaking-tools and the Sell page share; the proof notice is Codex's
+   Alert L; the fulfilment band is the Codex split panel already used as
+   the Instant Store lane; the questions are the shared Faq. The icon
+   grid is the Sell page's "Why choose Blurb?" treatment.
+
+   NO RETAIL PRICE ANYWHERE ON THIS PAGE, and no fulfilment figure beside
+   one. The margin is explained by the change of role, as everywhere else.
    ──────────────────────────────────────────────────────────────── */
 
-const OWNED_BY = "Crometrics";
+/* ── What the link OPENS, which is the argument ──
+   Five proofs rather than one claim. The POC is right that this is what
+   separates an Instant Store from a payment link, and right to give it
+   the weight: everything else on this page is true of any competitor. */
+const PRODUCT_PAGE = [
+  ["menu_book", "A real page, not a payment box",
+   "Cover, description, format and price — everything a buyer needs to decide, in one place."],
+  ["auto_stories", "A look inside before they buy",
+   "An interactive preview turns real pages, so a buyer sees the book rather than trusting a thumbnail."],
+  ["person", "They meet you first",
+   "Your photo, your bio and your links sit on every page you sell from."],
+  ["collections_bookmark", "Your other work, on every page",
+   "“More from you” appears automatically, so one sale is a way into everything else you have made."],
+  ["shopping_cart_checkout", "No account for your buyer",
+   "They buy and go. Nothing to sign up for, which is one fewer reason to leave."],
+];
 
-/* What a reader arriving here needs, so whoever builds it can see what
-   this prototype already answers and what it does not. */
-const EXPECTED = [
-  ["What it is", "One link, shared anywhere, that sells a printed book. We print and ship every order.",
-   "Said on the Sell page and the home page's Selling tab."],
-  ["What you keep", "You set the price; the margin is the difference between it and your cost.",
-   "In the recommended scope the Instant Store profit calculator prices this route, and only this route."],
-  ["What you can sell", "Printed books and magazines. A PDF cannot be sold through an Instant Store.",
-   "Held in the catalogue as `sellChannels`, and stated on /getting-started."],
-  ["Setting one up", "Agent-led, with variants rather than the book as the unit.",
-   "Stacey's Checkout Link file. Deliberately not prototyped here."],
-  ["The proof rule", "A seller can go live with no proof; buyers cannot buy until one exists.",
-   "Stacey's Proof Requirement file, and the quality-gate decision."],
+/* ── The three steps ──
+   The POC's, in its order, because the order is right: the project
+   exists before the price, and the price before the link. */
+const STEPS = [
+  ["Pick a project", "Anything already in your Blurb account, or something you make today."],
+  ["Set your price", "You choose what your buyer pays. Your cost is what we charge to print that book."],
+  ["Share your link", "In a bio, a newsletter, a talk, a stall — or behind a button on a site you already have."],
 ];
 
 export default function InstantStorePage({ onGo, lean = false }) {
+  /* Written from the catalogue rather than typed, so a product leaving
+     the channel rewrites this sentence too. It arrives sentence-cased,
+     which is why nothing here capitalises it again. */
+  const sellable = sellableSentence("checkout_link");
+
+  const primaryBtn = {
+    fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 700, minHeight: 44, padding: "0 24px",
+    borderRadius: R.md, border: 0, cursor: "pointer", whiteSpace: "nowrap",
+    background: T.bgBrand, color: T.textInverse,
+    display: "inline-flex", alignItems: "center",
+  };
+  const quietBtn = {
+    ...primaryBtn, fontWeight: 600,
+    background: "#fff", color: T.textBrand, border: `1px solid ${T.borderBrand}`,
+  };
+
   return (
     <div style={{ fontFamily: FONT_BODY, color: C.gray950 }}>
+
+      {/* ── Hero ── the gradient the seller pages share. */}
       <section style={{
         background: "linear-gradient(100deg, #e9ecef 0%, #f6f3ef 45%, #ebebeb 100%)",
         padding: "clamp(56px, 8vw, 96px) 24px",
       }}>
         <div style={{ maxWidth: 860, margin: "0 auto", textAlign: "center", display: "grid", gap: 20, justifyItems: "center" }}>
-          <span style={{
-            padding: "4px 12px", borderRadius: 999, background: C.gray950, color: "#fff",
-            fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.5, textTransform: "uppercase",
-          }}>
-            Placeholder
-          </span>
-
           <h1 style={{
             fontFamily: FONT_DISPLAY, fontWeight: 500, letterSpacing: "-0.01em",
             fontSize: "clamp(2rem, 4.6vw, 2.75rem)", lineHeight: 1.2, margin: 0,
           }}>
-            The Instant Store page
+            Sell your work with a link.<br />No store to build.
           </h1>
 
+          {/* "Keep more" is the POC's phrase and it survives, because it
+              is a direction rather than a comparison — unlike "earn more
+              than anywhere else", which needs a source we do not have. */}
           <p style={{ fontSize: TYPE.xl, lineHeight: 1.55, color: T.textNeutral, margin: 0, maxWidth: 640 }}>
-            {OWNED_BY} is building this one. It is not prototyped here — the links that point at it are, so
-            the journey can be reviewed end to end without anyone mistaking a sketch for the design.
+            Turn any project into a page people can buy from, and share it anywhere. We print, pack and
+            ship every order. You set the price, and what is left after your printing cost is yours.
+          </p>
+
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
+            <button style={primaryBtn}>Create your Instant Store</button>
+            {!lean && (
+              <button style={quietBtn} onClick={() => onGo?.("margin")}>See what you would keep</button>
+            )}
+          </div>
+
+          <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle }}>
+            Free to create. No listing fees. Works with the projects already in your account.
           </p>
         </div>
       </section>
 
-      <section style={{ padding: "clamp(48px, 6vw, 72px) 24px" }}>
-        <div style={{ maxWidth: 900, margin: "0 auto", display: "grid", gap: 32 }}>
-          <div style={{ display: "grid", gap: 8 }}>
+      {/* ── The statement ──
+          The POC's one device: a muted lead-in running straight into the
+          answer. It earns its size because it is the only place the whole
+          idea is said in one breath. */}
+      <section style={{ padding: "clamp(56px, 7vw, 88px) 24px" }}>
+        <div style={{ maxWidth: 980, margin: "0 auto" }}>
+          <p style={{
+            fontFamily: FONT_DISPLAY, fontWeight: 400, margin: 0,
+            fontSize: "clamp(1.75rem, 3.8vw, 2.75rem)", lineHeight: 1.22, letterSpacing: "-0.01em",
+          }}>
+            <span style={{ color: T.textSubtle }}>What is an Instant Store? </span>
+            <span>One link that turns a project into a page people can buy from. Share it anywhere, and
+            we print, ship and take the payment. Nothing to build, and no code.</span>
+          </p>
+        </div>
+      </section>
+
+      {/* ── The differentiator ──
+          The Sell page's icon grid, because this is the same job: several
+          parallel things, one line each, scanned rather than read. */}
+      <section style={{ background: C.gray50, padding: "clamp(56px, 7vw, 80px) 24px" }}>
+        <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 40 }}>
+          <div style={{ display: "grid", gap: 10, maxWidth: 720 }}>
             <h2 style={{
-              fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.375rem, 2.6vw, 1.75rem)",
+              fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
               lineHeight: 1.25, margin: 0,
             }}>
-              What this page has to answer
+              More than a checkout
             </h2>
-            <p style={{ margin: 0, fontSize: TYPE.base, color: T.textSubtle, lineHeight: 1.65 }}>
-              Every line below is already decided somewhere in this project. Whoever builds the page should
-              not have to rediscover any of it — and where a surface here already says it, that is the
-              wording to match.
+            <p style={{ margin: 0, fontSize: TYPE.xl, lineHeight: 1.55, color: T.textNeutral }}>
+              A payment link takes the money. Your link opens the whole book — and the person who made it.
             </p>
           </div>
 
-          <div style={{ display: "grid", gap: 0 }}>
-            {EXPECTED.map(([title, what, where]) => (
-              <div key={title} style={{
-                borderTop: `1px solid ${T.border}`, padding: "20px 0",
-                display: "grid", gap: 6, gridTemplateColumns: "minmax(140px, 200px) 1fr", alignItems: "start",
-              }}>
-                <div style={{ fontSize: TYPE.base, fontWeight: 700 }}>{title}</div>
-                <div style={{ display: "grid", gap: 4, minWidth: 0 }}>
-                  <div style={{ fontSize: TYPE.base, lineHeight: 1.6 }}>{what}</div>
-                  <div style={{ fontSize: TYPE.sm, lineHeight: 1.5, color: T.textSubtle }}>{where}</div>
+          {/* 200px, not the 240 the Sell page uses for four: five of these
+              fit across 1240 at 200 and only four at 240, which left the
+              fifth alone on a row of its own. They are one set and should
+              read as one row. */}
+          <div style={{
+            display: "grid", gap: 32,
+            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+          }}>
+            {PRODUCT_PAGE.map(([icon, title, body]) => (
+              <div key={title} style={{ display: "grid", gap: 12, alignContent: "start" }}>
+                <span className="ms" style={{ fontSize: 40, color: C.blue600, lineHeight: 1 }}>{icon}</span>
+                <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 500, lineHeight: 1.2 }}>
+                  {title}
                 </div>
+                <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.6, color: T.textSubtle }}>{body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Three steps, and the shape of the money ── */}
+      <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
+        <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 40 }}>
+          <h2 style={{
+            fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
+            lineHeight: 1.25, margin: 0,
+          }}>
+            Set up in minutes, not days
+          </h2>
+
+          <div style={{ display: "grid", gap: 32, gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}>
+            {STEPS.map(([title, body], i) => (
+              <div key={title} style={{ display: "grid", gap: 12, alignContent: "start" }}>
+                <span style={{
+                  fontFamily: FONT_DISPLAY, fontSize: 40, fontWeight: 500, lineHeight: 1, color: C.blue600,
+                }}>
+                  {i + 1}
+                </span>
+                <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 500, lineHeight: 1.2 }}>
+                  {title}
+                </div>
+                <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.6, color: T.textSubtle }}>{body}</p>
               </div>
             ))}
           </div>
 
+          {/* ── The ladder, as a SHAPE ──
+              $X on purpose. The POC printed worked figures and they did
+              not agree with each other; any number here would be invented
+              anyway, and a made-up sum on a marketing page gets quoted.
+              What a reader needs from this block is the arithmetic — that
+              profit is what is left, and that nothing else is taken off —
+              and the calculator does it properly one click away. */}
           <div style={{
-            background: C.blue50, border: `1px solid ${C.blue100}`, borderRadius: R.lg, padding: 20,
-            display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap",
+            border: `1px solid ${T.border}`, borderRadius: R.lg, padding: 24,
+            display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, flexWrap: "wrap",
           }}>
-            <div style={{ minWidth: 0, maxWidth: 620 }}>
-              <div style={{ fontSize: TYPE.base, fontWeight: 700 }}>The parts that do exist</div>
-              <p style={{ margin: "6px 0 0", fontSize: TYPE.base, lineHeight: 1.65, color: T.textNeutral }}>
-                {lean
-                  ? "The Sell page compares this route against the other three — who each one reaches, what it takes, and when it pays."
-                  : "The Sell page compares this route against the other three, and the Instant Store profit calculator prices a sale through it: cost, price, profit, against a real specification."}
-              </p>
+            <div style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
+              {[
+                ["Your cost", "$X", "What we charge to print it"],
+                ["Your price", "$X", "You set this"],
+                ["Your profit", "$X", "What is left, and it is yours"],
+              ].map(([label, figure, hint], i) => (
+                <React.Fragment key={label}>
+                  {i > 0 && (
+                    <span className="ms" aria-hidden style={{ fontSize: 24, color: T.textSubtle }}>arrow_forward</span>
+                  )}
+                  <div style={{ display: "grid", gap: 2 }}>
+                    <div style={{ fontSize: TYPE.sm, fontWeight: 700, color: T.textSubtle }}>{label}</div>
+                    <div style={{
+                      fontFamily: FONT_DISPLAY, fontSize: "1.75rem", fontWeight: 500, lineHeight: 1.1,
+                      color: i === 2 ? C.blue600 : C.gray950,
+                    }}>
+                      {figure}
+                    </div>
+                    <div style={{ fontSize: TYPE.sm, color: T.textSubtle }}>{hint}</div>
+                  </div>
+                </React.Fragment>
+              ))}
             </div>
-            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-              <button
-                onClick={() => onGo?.("seller")}
-                style={{
-                  fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 600, minHeight: 44, padding: "0 18px",
-                  borderRadius: R.md, cursor: "pointer", whiteSpace: "nowrap",
-                  background: "#fff", color: T.textBrand, border: `1px solid ${T.borderBrand}`,
-                }}
-              >
-                The Sell page
-              </button>
-              {!lean && (
-                <button
-                  onClick={() => onGo?.("margin")}
-                  style={{
-                    fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 600, minHeight: 44, padding: "0 18px",
-                    borderRadius: R.md, border: 0, cursor: "pointer", whiteSpace: "nowrap",
-                    background: T.bgBrand, color: T.textInverse,
-                  }}
-                >
-                  Profit calculator
-                </button>
-              )}
-            </div>
+
+            {!lean && (
+              <button style={quietBtn} onClick={() => onGo?.("margin")}>Put your book's numbers in</button>
+            )}
+          </div>
+
+          {/* Why the seller pays less than a shopper does — the change of
+              role, never the two prices. */}
+          <p style={{ margin: 0, maxWidth: 720, fontSize: TYPE.base, lineHeight: 1.65, color: T.textNeutral }}>
+            Buying a copy for yourself makes you our customer. Selling one makes us your printer: you bring
+            the buyer, you do the promoting, and you keep what a shop would otherwise have been paid for it.
+          </p>
+        </div>
+      </section>
+
+      {/* ── Fulfilment ── the Codex split panel, already in use as the lane. */}
+      <section style={{ padding: "0 24px clamp(56px, 7vw, 80px)" }}>
+        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+          <InstantStoreLane
+            title="Printed, packed and shipped on every order"
+            cta="Printing and delivery times"
+            onGo={() => onGo?.("shipping")}
+          >
+            Every order goes straight to print and ships to your buyer with tracking. No stock to buy up
+            front, no boxes to pack, no carrier account to open — and your buyer pays the delivery, so it
+            never comes out of what you keep.
+          </InstantStoreLane>
+        </div>
+      </section>
+
+      {/* ── Two rules a seller meets whether or not we mention them ── */}
+      <section style={{ padding: "0 24px clamp(56px, 7vw, 80px)" }}>
+        <div style={{ maxWidth: 880, margin: "0 auto", display: "grid", gap: 16 }}>
+          {/* Codex Alert L, Info. The proof requirement is state — it
+              clears itself the moment a proof exists — which is the one
+              thing on this page an alert is the right component for. */}
+          <Alert
+            type="info"
+            title="See it before your buyers do"
+            action={lean ? undefined : "Price a proof copy"}
+            onAction={lean ? undefined : () => onGo?.("pricing")}
+          >
+            You can set your store up and share the link straight away. Buyers cannot order until you have
+            approved a copy yourself — a PDF proof or a discounted printed one, either is enough. Until
+            then the page says the book is coming soon.
+          </Alert>
+
+          <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.65, color: T.textNeutral }}>
+            <strong style={{ fontWeight: 700 }}>What you can sell.</strong>{" "}
+            {sellable} can be sold from an Instant Store. A PDF
+            cannot — an Instant Store sells a printed book.
+          </p>
+        </div>
+      </section>
+
+      <Faq
+        heading={<>Before you<br />set one up</>}
+        items={[
+          ["What does it cost to have one?",
+           "Nothing to create, nothing to keep open, and no listing fee. You pay us to print each copy as it sells, out of what your buyer paid you."],
+          ["Where can I share the link?",
+           "Anywhere a link goes — a social bio, a newsletter, a talk, a QR code on a stall — or behind a button on a site you already run. There is no code to add."],
+          ["Do my buyers need a Blurb account?",
+           "No. They open the page, buy, and we ship it to them."],
+          ["Can I sell more than one book?",
+           "Yes. Each project you sell gets its own link, and every one of those pages carries your bio and the rest of your work."],
+          ["How is this different from the Bookstore, Amazon or Ingram?",
+           "Here you bring the buyer and you set the price, so what is left after your printing cost is yours. On the other three the channel brings the buyer, and prices accordingly. The Sell page compares all four."],
+        ]}
+      />
+
+      {/* ── Close ── */}
+      <section style={{ background: C.gray50, padding: "clamp(56px, 7vw, 88px) 24px" }}>
+        <div style={{ maxWidth: 760, margin: "0 auto", textAlign: "center", display: "grid", gap: 20, justifyItems: "center" }}>
+          <h2 style={{
+            fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
+            lineHeight: 1.25, margin: 0,
+          }}>
+            Made with Blurb.<br />Sold with your Instant Store.
+          </h2>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
+            <button style={primaryBtn}>Create your Instant Store</button>
+            <button style={quietBtn} onClick={() => onGo?.("seller")}>Compare every way to sell</button>
           </div>
         </div>
       </section>

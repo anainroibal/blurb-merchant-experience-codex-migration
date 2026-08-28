@@ -578,3 +578,50 @@ name:
 > your copies, and when it would arrive — no margin, nothing to set up.
 
 Nobody has to know which calculator they are on to know which one they want.
+
+## 29. The Instant Store landing page is built — REVERSES THE PLACEHOLDER DECISION
+
+*(Anain, 2026-08-28.)* It stood empty since 24 Aug because Crometrics owns the
+live page and a prototype that guessed at it would have been screenshotted into
+a deck and become somebody else's spec. What changed is that there is now a POC
+to work from — **260824 POC — Instant Store LP**, a Figma Make file written
+against a brief — so ours is a reading of that rather than a guess.
+
+**Ownership has not changed.** Crometrics still builds the live page. Whether
+ours stays a design or is handed over as reference is item 24, still open.
+
+**Taken from the POC.** The differentiator, which is the best thing in it and
+the argument this project had never made anywhere: the link opens a *real
+product page*, not a payment box — cover and description, an interactive preview,
+the seller's bio, "More from you" surfacing their whole catalogue, and no account
+for the buyer. Five proofs instead of one claim. Also its three steps, its
+fulfilment band, and "works anywhere a link goes" said in places (a bio, a
+newsletter, a talk, a stall) rather than in the abstract.
+
+**Refused, and why.**
+
+- **"Earn more per sale than anywhere else"** and **"no platform cut — ever."**
+  Unsourced comparative claims — the same class as Crometrics' "Blurb keeps 0% of
+  your revenue" — and "ever" is a forward commitment nobody in the room can make.
+- **The worked figures.** They contradict each other: $22.40 is the print cost in
+  one section and the seller's profit in another, and $22.40 + $25.60 does not
+  make the $35 sale it sits under. The ladder here carries **`$X`** instead, which
+  is honest about being a shape rather than a sum, and the calculator is one click
+  away for the real one. A made-up figure on a marketing page gets quoted.
+- **The AI description writer**, which is the walled-off side project.
+- **"A whole store in one link"**, which overclaims in exactly the way the POC's
+  own brief warns against ("never call a single page a store or shop").
+
+**Added, because the POC leaves it out.** The proof requirement. A seller can set
+a store up and share the link immediately, but nobody can buy until a proof
+exists, and a landing page that never says so sends people into a surprise. It is
+Codex's **Alert L** at Type=Info — the one thing on this page that is state, which
+is what that component is for, and what `Alert.jsx` was built for.
+
+**Every block is an existing component.** The gradient hero the seller pages
+share, the Sell page's icon grid, the Codex split panel already used as the
+Instant Store lane, Alert L, and the shared `Faq`. Nothing new was invented, and
+"what you can sell" is written by `sellableSentence` rather than typed.
+
+**Nav decisions are untouched.** The POC's nav is two items and labelled a
+placeholder; none of it was read as a proposal.
