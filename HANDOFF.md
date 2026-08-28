@@ -16,6 +16,7 @@ behind anything Ana asked for.
 | Vercel | project `blurb-merchant-experience`, **RPI Print** team (`rpi-print-daf707f9`). CLI deploys only — no push-to-deploy |
 | Local | `npm run dev` (5173 upward; it walks to the first free port) |
 | Board | [Merchant Pricing and Experience](https://www.figma.com/board/yh0flPHiAUhrALmaT1H8Xk/Merchant-Pricing-and-Experience) |
+| Instant Store LP | [260824 POC — Instant Store LP](https://www.figma.com/make/vvCuAgnIuUxg1nXhkpwQHj/260824-POC---Instant-Store-LP) — Figma Make placeholder. **Not ours to design**; read it before claiming anything about that page |
 | Jira | [DES-469](https://blurb-books.atlassian.net/browse/DES-469) (audit) · [DES-482](https://blurb-books.atlassian.net/browse/DES-482) (dual pricing — Ana's review lives in the comments) |
 
 **Not part of this work:** the AI listing-assist prototype at
@@ -63,7 +64,7 @@ Switchable from the demo bar, or via `?stage=<id>`.
 | `pricing` | ✅ Pricing calculator (`?mode=make`). `&version=lean` gives today's page instead |
 | `margin` | ✅ **Instant Store profit calculator** (`?mode=sell`). Scope named above the controls, positively |
 | `shipping` | ✅ Informational — rates, speeds, what moves a date. No calculator |
-| `instantstore` | ⛔ **Placeholder — Crometrics is building this.** Do not design it |
+| `instantstore` | ⛔ **Placeholder — Crometrics is building this.** Do not design it. A second POC placeholder exists in Figma Make — see the table at the top |
 
 ---
 
