@@ -195,11 +195,20 @@ export default function InstantStorePage({ onGo, lean = false }) {
           </div>
 
           {/* The whole page first, at the size it deserves — it is the
-              claim, and everything under it is a detail of this. */}
+              claim, and everything under it is a detail of this.
+
+              ── The POC's "Printed and shipped by Blurb" badge is painted
+                 out of this screenshot (Anain, 2026-08-28) ──
+              RPI Print does the printing. The badge stamped an attribution
+              on a buyer-facing page that is not accurate, and an image is
+              quoted as readily as a sentence, so it could not stay in a
+              screenshot we publish. Removed from the asset itself rather
+              than cropped, because the badge overhangs the browser mock
+              and no crop takes it without taking the book with it. */}
           <figure style={{ margin: 0, display: "grid", gap: 12, justifyItems: "center" }}>
             <img
               src="/assets/store-page.png"
-              alt="An Instant Store page at blurb.com: the book's cover beside its title, author, description, cover and dedication options, a $32.00 price, a quantity stepper and Buy now, with a badge reading Printed and shipped by Blurb."
+              alt="An Instant Store page at blurb.com: the book's cover beside its title, author, description, cover and dedication options, a $32.00 price, a quantity stepper and Buy now."
               loading="lazy"
               style={{
                 width: "100%", maxWidth: 760, height: "auto", display: "block",
