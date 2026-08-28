@@ -41,7 +41,9 @@ export default function SiteFooter() {
           fontSize: 12, lineHeight: 1.4,
         }}
       >
-        <span style={{ whiteSpace: "nowrap" }}>©2015–2026 RPI Print, Inc.</span>
+        {/* Blurb, not RPI (Anain, 2026-08-28). These are blurb.com pages, and
+            the mark in the footer names whoever the visitor is dealing with. */}
+        <span style={{ whiteSpace: "nowrap" }}>© 2026 Blurb, Inc. All rights reserved.</span>
 
         <span style={{ display: "flex", alignItems: "center", gap: 24, flexWrap: "wrap", marginLeft: 24 }}>
           {LINKS.map(l => (
