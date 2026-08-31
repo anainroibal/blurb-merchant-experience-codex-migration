@@ -1,6 +1,6 @@
 # Handoff — Blurb Merchant Experience
 
-Updated **2026-08-28**, end of session. Start here, then read `CLAUDE.md` for
+Updated **2026-08-31**, covering the session of 28 August. Start here, then read `CLAUDE.md` for
 conventions and the decision log, and `REVIEW-DES-482.md` for the reasoning
 behind anything Ana asked for.
 
@@ -11,8 +11,8 @@ behind anything Ana asked for.
 | Where | What |
 |---|---|
 | Repo | `~/Documents/Claude/Projects/Blurb Merchant Experience` — **local only, no remote** |
-| Branch | **`v2`** ← you are here, at `f4b2a88`. `v1-home-pdp` is the frozen fallback (tag `snapshot-2026-08-24-home-pdp`); `main` still holds the 8/24 morning state |
-| Live | **https://blurb-merchant-experience.vercel.app** — production. **Last promoted 2026-08-24, so it is nine commits behind `v2`.** Deploy before sending anyone the link |
+| Branch | **`v2`** ← you are here, at `80249a6`. `v1-home-pdp` is the frozen fallback (tag `snapshot-2026-08-24-home-pdp`); `main` still holds the 8/24 morning state |
+| Live | **https://blurb-merchant-experience.vercel.app** — production, **current with `v2`** (promoted 2026-08-28). Verified in a browser, not just built |
 | Vercel | project `blurb-merchant-experience`, **RPI Print** team (`rpi-print-daf707f9`). CLI deploys only — no push-to-deploy |
 | Local | `npm run dev` (5173 upward; it walks to the first free port) |
 | Board | [Merchant Pricing and Experience](https://www.figma.com/board/yh0flPHiAUhrALmaT1H8Xk/Merchant-Pricing-and-Experience) |
@@ -68,9 +68,10 @@ Switchable from the demo bar, or via `?stage=<id>`.
 
 ---
 
-## What changed since the 8/24 handoff
+## What changed on 28 August
 
-Nine commits, almost all of it Ana's DES-482 review. **Every bullet of her four
+Fifteen commits. The first two thirds are Ana's DES-482 review; the last third is
+the Instant Store landing page. **Every bullet of her four
 comments now has an entry in `REVIEW-DES-482.md`** saying done, done-differently,
 or not-doing-and-why — written to be quoted back into the ticket.
 
@@ -94,6 +95,43 @@ or not-doing-and-why — written to be quoted back into the ticket.
   item, "See all …" across the foot of Sell and Creation Tools, one cross-link
   from Pricing to the profit calculator, chevrons on the calculator link and the
   featured cards.
+- **The Instant Store landing page is built** — see below. This **reverses the
+  8/24 placeholder decision**.
+- **The footer names Blurb**, not RPI Print: `© 2026 Blurb, Inc. All rights
+  reserved.`
+- **The work-in-progress chip is gone.** It rode on the branch name; the chip, the
+  `__BRANCH__` define and `vite.config.js`'s branch lookup came off together.
+  Nothing marks a build as unapproved now — the demo bar's own controls are the
+  only signal that this is a prototype.
+
+---
+
+## The Instant Store landing page — new, and the thing most likely to be misread
+
+`?stage=instantstore` was a placeholder saying "Crometrics owns this". It is now a
+full landing page, built from the Figma Make POC. **Ownership did not change** —
+Crometrics still builds the live page, and whether ours stays a design or is handed
+over is item 24. Read `REVIEW-DES-482.md` item 29 before touching it; the short
+version:
+
+- **What it argues.** The link opens a *real product page*, not a payment box. Four
+  proofs under a screenshot of the whole page — the interactive preview, the author
+  panel, "More from you", and the buy block.
+- **The images are the POC's own screens of `blurb.com/c/36690`**, committed to
+  `public/assets/store-*.png` rather than hotlinked: the MCP asset URLs expire in
+  about a week.
+- **`store-page.png` is edited.** The POC's *"Printed and shipped by Blurb"* badge
+  is painted out, because **RPI Print does the printing** (Anain, 2026-08-28). If
+  you ever re-export that asset from the POC, the badge comes back — patch it again.
+- **The ladder carries `$X`, deliberately.** The POC's worked figures contradict
+  each other; any number here is invented, and an invented sum on a marketing page
+  gets quoted.
+- **Three claims from the POC are refused**: "earn more per sale than anywhere
+  else", "no platform cut — ever", and "a whole store in one link". Unsourced,
+  unpromiseable, and overclaiming in the way the POC's own brief warns against.
+- **Every block is an existing component** — the shared gradient hero, the Sell
+  page's icon grid, the Codex split panel, **Alert L** (its first appearance on a
+  screen, carrying the proof requirement) and the shared `Faq`.
 
 ---
 
@@ -152,9 +190,16 @@ or not-doing-and-why — written to be quoted back into the ticket.
 - **No push-to-deploy.** `vercel` for a preview, `vercel --prod --yes` to promote.
 - Typekit (futura-pt, proxima-nova) is domain-locked; the fallbacks in `tokens.js`
   are load-bearing.
-- **Screenshots**: `playwright-core` drives the cached Chromium at
-  `~/Library/Caches/ms-playwright/chromium-1234/...`, falling back to Chrome.
-  Scroll before capturing — lazy images come out blank.
+- **Screenshots**: `playwright-core` is **not installed** anywhere — not in this
+  project, not globally — so a script that imports it fails. What works is driving
+  the cached binary directly:
+  `~/Library/Caches/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-mac-x64/chrome-headless-shell`
+  with `--headless --virtual-time-budget=9000 --window-size=W,H --screenshot=... --dump-dom`.
+  Note the app bundle under `chromium-1234/` is *Google Chrome for Testing.app*,
+  not `Chromium.app`, so the obvious glob misses it. `--screenshot` captures the
+  window, not the full page: set a tall `--window-size` and crop with `sips`.
+- **`--dump-dom` is the render test.** The build passing proves nothing — a page
+  that throws still bundles. Dump the DOM and assert the headings are in it.
 - **Sharing for review**: comments only work on **preview** deployments. Dashboard
   → deployment → Share → "Anyone with the link" → Copy Link. Reviewers need a free
   Vercel account to comment, not a seat.
@@ -165,28 +210,38 @@ or not-doing-and-why — written to be quoted back into the ticket.
 
 **Ours to close:**
 
-1. **Deploy.** Production is nine commits behind; nobody reviewing the link has
-   seen the nav work or the profit calculator rename.
+1. **Post the reply to Ana on DES-482.** Drafted and agreed, not sent — Anain is
+   handling it. It covers the nav changes, the one push-back (Services and
+   Resources are not merged), and the two pieces of her feedback nothing had
+   answered: the per-channel option in the "to…" dropdown, and whether "pricing
+   calculator" is clear enough.
 2. **Sweep the FigJam board for "checkout links" → Instant Store**, and add the
    scope rule. Correct the board, don't annotate it.
 3. **Get Ana's copy** onto the route cards and the Instant Store lane; ours is
    drafted, not hers.
 4. **Data check**: `TOOLS` grants InDesign to wall art only, while `/pdf-to-book`
    advertises an InDesign plug-in for photo books. One of the two is wrong.
+5. **Decide whether "we print" needs to become RPI anywhere in the copy.** The
+   badge came out of the screenshot because RPI does the printing, but the pages
+   still speak in Blurb's first person — "we print, pack and ship" — which is the
+   live site's voice everywhere. If the distinction has to reach the copy, it is a
+   deliberate sweep across the Sell page and both calculators, not a one-page edit.
+   **Raised, not decided.**
 
 **Waiting on a decision (all in `REVIEW-DES-482.md`):**
 
-5. **Item 22 — where the profit calculator sits in the IA.** This build is the
+6. **Item 22 — where the profit calculator sits in the IA.** This build is the
    maximal version: featured under Sell, cross-linked from Pricing, and on the
    PDP. Easy to dial back, impossible to guess.
-6. **Item 23** — RPI Print API and Large Order Services belong in the comparison
+7. **Item 23** — RPI Print API and Large Order Services belong in the comparison
    table, not just the nav.
-7. **Item 24** — does the Sell page stay ours, or go to CRO Metrics with the
-   brief, the way the Instant Store page has? Ana's 8/28 note about a selling
-   overview page is the same question.
-8. **Item 25** — confirm with engineering that Get started can lead straight into
+8. **Item 24 — now the sharper question.** Does the Sell page stay ours or go to
+   CRO Metrics with the brief? The Instant Store page is no longer a placeholder
+   deferring to them, so the same question applies to it too, and Ana's 8/28 note
+   about a selling overview page is a third instance of it.
+9. **Item 25** — confirm with engineering that Get started can lead straight into
    creation. "Ready to make it?" assumes it can.
-9. **Item 26** — who owns the get-started modules if the editor landing page
+10. **Item 26** — who owns the get-started modules if the editor landing page
    reuses them.
-10. **Settle the calculator/agent overlap with Stacey** — still the largest
+11. **Settle the calculator/agent overlap with Stacey** — still the largest
     duplicated-effort risk.
