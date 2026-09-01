@@ -1,21 +1,22 @@
 import React from "react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import Faq from "./Faq.jsx";
-import ShippingSection from "./ShippingSection.jsx";
+import ShippingSection, { control, Field } from "./ShippingSection.jsx";
 import InstantStoreLane from "./InstantStoreLane.jsx";
+import { FORMAT_CARDS } from "./FormatCards.jsx";
 import { SHIPPING, PRINT_DAYS, PRINT_RANGE, shippingFor, speedDays, money } from "./catalog.js";
 
 /* ────────────────────────────────────────────────────────────────
-   /shipping — informational, not a calculator.
+   /shipping — a calculator again, without a postcode or a date.
 
-   DECIDED 2026-08-27 (Anain), answering Ana's question on DES-482 and
-   agreeing with Crometrics' direction: the calculating moved to where
-   the book is being priced. A maker gets a postcode, dated speeds and a
-   total on /getting-started and the pricing calculator; a seller gets
-   what their buyer pays inside the profit calculator, beside the margin
-   without entering it. What is left for this page is what neither of
-   those can hold: how long it takes, what it costs where, and what
-   moves a date.
+   REVISED 2026-09-01 (Ana): this page went informational-only on
+   2026-08-27 because the real calculating lives on /getting-started and
+   the profit calculator. Ana asked for a product + country picker back,
+   so it calculates again — but it still can't hold what those two pages
+   can: no postcode (this page doesn't know a street), and no calendar
+   date (it doesn't know an order date). What it can honestly show is a
+   cost and a business-day range for a single copy. Precise dates stay
+   on the two pages that price a real order.
 
    Three things in Crometrics' mock are NOT rebuilt here, and the reason
    is a rule rather than a preference:
@@ -47,28 +48,6 @@ import { SHIPPING, PRINT_DAYS, PRINT_RANGE, shippingFor, speedDays, money } from
    Every rate here is a placeholder: Blurb publishes no shipping prices.
    The destinations and the print time are real, from blurb.com.
    ──────────────────────────────────────────────────────────────── */
-
-/* The four zones the rate table bands by, named as a reader would name
-   them rather than by the ids the data uses. One country stands for each
-   so the figures come from `shippingFor` and not from a second copy of
-   the rate card. */
-const ZONES = [
-  ["United States", "US"],
-  ["Canada, Mexico and the Caribbean", "CA"],
-  ["Europe", "DE"],
-  ["Rest of the world", "AU"],
-];
-
-const ROW_BG = i => (i % 2 === 0 ? "#fff" : C.gray50);
-
-const cellBase = {
-  padding: 16, fontSize: TYPE.base, lineHeight: 1.4,
-  color: C.gray950, textAlign: "left", verticalAlign: "top", background: "inherit",
-};
-const labelCell = { ...cellBase, fontWeight: 700, width: 260, minWidth: 180 };
-const stickyCell = { position: "sticky", left: 0, zIndex: 1, boxShadow: `inset -1px 0 0 0 ${C.charcoal200}` };
-const lastCol = (i, n) => (i === n - 1 ? { borderRight: 0 } : null);
-const dataCell = { ...cellBase, minWidth: 180, borderRight: `1px solid ${C.charcoal200}`, scrollSnapAlign: "end" };
 
 function Section({ title, lede, children, id, tinted }) {
   return (
@@ -128,6 +107,7 @@ export default function ShippingPage({ onGo, lean }) {
   const [ship, setShip] = React.useState({
     country: "US", postal: "", state: "California", speed: "economy", poBox: false,
   });
+  const [format, setFormat] = React.useState("photo");
 
   return (
     <div style={{ fontFamily: FONT_BODY, color: T.textNeutral }}>
@@ -150,14 +130,13 @@ export default function ShippingPage({ onGo, lean }) {
         </div>
       </section>
 
-      {/* ── The calculator, in the LEAN scope only ──
-          Minimum effort means this page is not rebuilt: it keeps the
-          shipping calculator it has today, and the one change is the
-          Instant Store lane at the foot of it (Anain, 2026-08-27). The
-          recommended scope takes the calculator out, because by then both
-          the pricing calculator and the profit calculator price delivery
-          where the book is — and a third copy of the same sum is a third
-          place for it to disagree. */}
+      {/* ── The postcode calculator, in the LEAN scope only ──
+          This is the heavier calculator: postcode, quantity and an exact
+          arrival date, the same one /getting-started uses. The recommended
+          scope below (product + country, no postcode, a day range instead
+          of a date) is the lighter version that replaced it on 2026-08-27
+          and was brought back on 2026-09-01 — this block stays lean-only
+          so the two don't stack. */}
       {lean && (
         <section style={{ padding: "clamp(40px, 6vw, 72px) 24px 0" }}>
           <div style={{ maxWidth: 900, margin: "0 auto" }}>
@@ -171,6 +150,9 @@ export default function ShippingPage({ onGo, lean }) {
         title="How it works"
         lede="Once you've uploaded and ordered your custom project, the printing process begins right away. Printing and binding requires 4 to 5 business days, and expedited printing is not available. You choose your delivery speed when placing your order."
       >
+        <p style={{ margin: 0, fontSize: TYPE.base, color: T.textSubtle, lineHeight: 1.55 }}>
+          Printing takes {PRINT_DAYS.label} for every order — the same whichever speed you choose below.
+        </p>
         <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
           {speeds.map(s => (
             <div key={s.id} style={{
@@ -179,11 +161,7 @@ export default function ShippingPage({ onGo, lean }) {
             }}>
               <span style={{ fontSize: TYPE.lg, fontWeight: 700 }}>{s.label}</span>
               <span style={{ fontSize: TYPE.base, color: T.textSubtle, lineHeight: 1.5 }}>
-                {speedDays(s)} once it's on its way
-              </span>
-              <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>
-                Add {PRINT_RANGE[0]}–{PRINT_RANGE[1]} days to print it, so {s.days[0] + PRINT_RANGE[0]}–
-                {s.days[1] + PRINT_RANGE[1]} days from order to doorstep
+                {speedDays(s)} once it ships — {s.days[0] + PRINT_RANGE[0]}–{s.days[1] + PRINT_RANGE[1]} days total
               </span>
               {!s.poBox && (
                 <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>
@@ -194,59 +172,65 @@ export default function ShippingPage({ onGo, lean }) {
           ))}
         </div>
         <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.55 }}>
-          Printing takes {PRINT_DAYS.label}. All the figures here are business days, so weekends don't count.
+          All the figures here are business days, so weekends don't count.
         </p>
       </Section>
 
-      {/* ── The rate table ──
-          The one thing worth keeping from Crometrics' proposal: a region
-          by speed grid. Built like the comparison table on the Sell page,
-          which is the site's own pattern for reading one fact across
-          several columns. Priced for a single copy, because that is the
-          unit a reader can scale in their head. */}
+      {/* ── What it costs, for the book and the country you pick ──
+          Was a static region-by-speed table; now a product and a country
+          choose the row, so what's on screen is a real quote rather than
+          a grid to scan. No postcode, because the print time doesn't
+          change with it — only the country does — and no calendar date,
+          because this page doesn't know when the order is placed.
+          A range in business days is what it can honestly say. */}
       <Section
         title="What it costs, wherever it's going"
-        lede="For a single copy to a home address. Order more than one and they travel together, which costs less than sending them one at a time."
+        lede="Pick a product and a country to see delivery priced and timed for a single copy. Order more than one and they travel together, which costs less than sending them one at a time."
         tinted
       >
-        <div style={{
-          overflowX: "auto", scrollSnapType: "x proximity",
-          border: `1px solid ${C.charcoal200}`, borderRadius: R.md, background: "#fff",
-        }}>
-          <table style={{ borderCollapse: "collapse", width: "100%", minWidth: 260 + speeds.length * 180 }}>
-            <tbody>
-              <tr style={{ background: ROW_BG(0), borderBottom: `1px solid ${C.charcoal200}` }}>
-                <th style={{ ...labelCell, ...stickyCell }}>Going to</th>
-                {speeds.map((s, i) => (
-                  <th key={s.id} style={{ ...dataCell, ...lastCol(i, speeds.length), fontWeight: 700 }}>
-                    {s.label}
-                    <span style={{ display: "block", marginTop: 6, fontSize: TYPE.sm, color: T.textSubtle, fontWeight: 400 }}>
-                      {speedDays(s)}
-                    </span>
-                  </th>
-                ))}
-              </tr>
-
-              {ZONES.map(([label, id], row) => (
-                <tr key={id} style={{ background: ROW_BG(row + 1), borderBottom: row === ZONES.length - 1 ? 0 : `1px solid ${C.charcoal200}` }}>
-                  <th style={{ ...labelCell, ...stickyCell }}>{label}</th>
-                  {speeds.map((s, i) => {
-                    const quote = shippingFor(id, s.id, 1);
-                    return (
-                      <td key={s.id} style={{ ...dataCell, ...lastCol(i, speeds.length) }}>
-                        {quote ? money(quote.cost) : "—"}
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
+          <Field label="Product">
+            <select style={control} value={format} onChange={e => setFormat(e.target.value)}>
+              {FORMAT_CARDS.map(f => <option key={f.id} value={f.id}>{f.title}</option>)}
+            </select>
+          </Field>
+          <Field label="Going to">
+            <select style={control} value={ship.country} onChange={e => setShip({ ...ship, country: e.target.value })}>
+              {SHIPPING.countries.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
+            </select>
+          </Field>
         </div>
+
+        <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
+          Printing takes {PRINT_RANGE[0]}–{PRINT_RANGE[1]} days, whichever speed you choose below — then:
+        </span>
+
+        <div style={{ display: "grid", gap: 10 }}>
+          {speeds.map(s => {
+            const quote = shippingFor(ship.country, s.id, 1);
+            return (
+              <div key={s.id} style={{
+                background: "#fff", border: `1px solid ${C.charcoal200}`, borderRadius: R.md,
+                padding: 16, display: "grid", gap: 10, alignItems: "center",
+                gridTemplateColumns: "minmax(0,1fr) auto auto",
+              }}>
+                <span style={{ fontSize: TYPE.lg, fontWeight: 700 }}>{s.label}</span>
+                <span style={{ fontSize: TYPE.base, color: T.textSubtle, whiteSpace: "nowrap" }}>
+                  {s.days[0] + PRINT_RANGE[0]}–{s.days[1] + PRINT_RANGE[1]} business days
+                </span>
+                <span style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 700, whiteSpace: "nowrap" }}>
+                  {quote ? money(quote.cost) : "—"}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+
         <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.55 }}>
           We deliver to {SHIPPING.countries.length} countries and territories. The rates on this page are
           placeholders: Blurb publishes no shipping prices, so read the shape as real and the figures as an
-          illustration.
+          illustration. For a calendar date rather than a range, price the book itself — that's where the
+          order date joins in.
         </p>
       </Section>
 

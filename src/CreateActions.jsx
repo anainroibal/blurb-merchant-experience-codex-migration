@@ -213,6 +213,17 @@ export default function CreateActions({ formatId, sel, onGo, onBuild, showLearnM
             Every one of these makes the book you have priced, and the price does not change with the tool
             you pick.
           </div>
+          <a
+            href="https://www.blurb.com/bookmaking-tools"
+            target="_blank" rel="noreferrer"
+            style={{
+              fontSize: TYPE.sm, fontWeight: 600, color: T.textBrand, textDecoration: "none",
+              display: "inline-flex", alignItems: "center", gap: 4, justifySelf: "start",
+            }}
+          >
+            More on Creation Tools
+            <span className="ms" style={{ fontSize: 16 }}>open_in_new</span>
+          </a>
         </div>
       )}
 

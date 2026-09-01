@@ -52,7 +52,7 @@ import { C, T, TYPE, R, FONT_BODY } from "./tokens.js";
 
    Closed by default: it should not lecture anyone who never wondered.
    ──────────────────────────────────────────────────────────────── */
-export default function CostExplainer({ compact, onCompare }) {
+export default function CostExplainer({ compact }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -74,7 +74,7 @@ export default function CostExplainer({ compact, onCompare }) {
         }}
       >
         <span style={{ fontSize: TYPE.sm, fontWeight: 700, lineHeight: 1.4 }}>
-          Why you pay less when you sell
+          Why you pay less on your Instant Store
         </span>
         <span className="ms turn" style={{ fontSize: 20, transform: open ? "rotate(180deg)" : "none" }}>
           expand_more
@@ -109,20 +109,6 @@ export default function CostExplainer({ compact, onCompare }) {
             Bookstore, Amazon or Ingram and they bring the buyer instead, so your price sits on top of a
             base price and the channel takes its cut of the sale.
           </p>
-
-          {onCompare && (
-            <button
-              onClick={onCompare}
-              style={{
-                justifySelf: "start", font: "inherit", fontSize: TYPE.sm, fontWeight: 700,
-                color: T.textBrand, background: "transparent", border: 0, padding: 0, cursor: "pointer",
-                display: "inline-flex", alignItems: "center", gap: 4,
-              }}
-            >
-              Compare all four routes
-              <span className="ms" style={{ fontSize: 18 }}>arrow_forward</span>
-            </button>
-          )}
         </div>
       )}
     </div>

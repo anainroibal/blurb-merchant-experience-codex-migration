@@ -30,25 +30,28 @@ const ILLUS = "https://assets.blurb.com/_astro/";
      · what you earn
      · when you get paid
 
-   ── API printing came off this page, 2026-08-24 ──
+   ── RPI Print API came off the CARD GRID, 2026-08-24 — table only now ──
    The 8/21 pod said "API printing is not included in the selling tool"
-   and it is now decided: it is not a route to market on this page. That
-   REVERSES the 2026-08-18 note, which argued it was — a business's own
-   store is where the selling happens and Blurb only prints behind it.
-   Both readings are defensible; the room chose. What made the difference
-   is nav option D: API printing is a SERVICE, and a page whose one goal
-   is "which route is mine?" should not answer with an engineering
-   integration.
+   and the room read that as: not a route to market on this page's card
+   grid. A business's own store is where the selling happens and RPI's
+   network only prints behind it, so a card promising four seller facts
+   cannot fill them in for an engineering integration. Large Order Services
+   was never on the card grid for the same reason: you buy the stock and
+   distribute it yourself.
 
-   The 8/18 reasoning is kept beside the api channel in catalog.js rather
-   than deleted, because the argument is still the argument if this ever
-   comes back. Large Order Services was never on this page for the same
-   reason: you buy the stock and distribute it yourself.
+   RESETTLED, design review 2026-08-26 (item 23): "not included" only ever
+   meant the card grid. Ana asked for RPI Print API and Large Order
+   Services in the COMPARISON TABLE too, since a seller can use either —
+   they belong beside the four routes on the one fact a card set cannot
+   show: how they read across the same six rows. So the table now compares
+   six; the card grid still shows four. The 8/18 reasoning is kept beside
+   the `api` channel in catalog.js — the argument for keeping it off the
+   card grid is still the argument.
 
-   So four routes, not five. Store integrations — Shopify, Etsy — would be
-   the fifth when they exist, which is why they are named under the cards
-   rather than compared beside them: a card here promises four facts, and
-   we cannot fill them in for something unbuilt.
+   So four cards, not six. Store integrations — Shopify, Etsy — would be a
+   fifth or seventh card when it exists, which is why it is named under the
+   cards rather than compared: unbuilt, so there is nothing to fill six
+   facts in with.
 
    ONE PAGE, ONE GOAL (8/21 rule): the goal is "which route is mine?".
    Everything here serves the comparison, and the page ends with the one
@@ -107,19 +110,31 @@ const PROPS = {
   bookstore: "Put your book somewhere readers are already browsing.",
   amazon: "Reach the readers who would never think to look for you.",
   ingram: "Get your book onto the shelves of bookshops and libraries.",
+  /* Drafted, like the four above — Ana's to overwrite (item 23 added these
+     two to the table; it did not supply their copy). */
+  api: "Plug your own store into Blurb's print network and let it handle fulfilment.",
+  bulk: "Buy the stock, then sell or hand it out anywhere you like.",
 };
 
-/* The four routes, in the order a seller meets them: the one they control
-   entirely, then the two Blurb runs, then the one that reaches everyone
-   else. API printing and Large Order Services are not here — they are
-   services, not routes.
+/* Six routes now, in the order a seller meets them on the comparison table:
+   the four print-on-demand routes first (the one they control entirely,
+   then the two Blurb runs, then the one that reaches everyone else), then
+   the two seller TOOLS — RPI Print API and Large Order Services — added by
+   design review item 23 (2026-08-26). They stay off the SELL_CARDS grid
+   below; see the note at the top of this file for why the table compares
+   six while the cards still show four.
 
    The two id sets do not match, and that is a real trap: SELL_CHANNELS
    calls it `link` while a product's `sellChannels` calls it
    `checkout_link` (the Instant Store's key). Comparing them directly silently reports every channel
    as unavailable, which is exactly what it did on first run. Mapped here
-   rather than papered over, because the mismatch is worth seeing. */
-const ROUTE_IDS = ["link", "bookstore", "amazon", "ingram"];
+   rather than papered over, because the mismatch is worth seeing.
+
+   `api` and `bulk` have no entry in CATALOG_ID: neither is gated by
+   product the way the four checkout-based routes are (a product's
+   `sellChannels` never lists them), so `cellFor` answers their "Products
+   it takes" row directly rather than through `sellableSentence`. */
+const ROUTE_IDS = ["link", "bookstore", "amazon", "ingram", "api", "bulk"];
 const CATALOG_ID = { link: "checkout_link", bookstore: "bookstore", amazon: "amazon", ingram: "ingram" };
 
 /* The decisive line for each route, written as a situation rather than a
@@ -129,6 +144,8 @@ const PICK_IF = {
   bookstore: "You want a listing you do not have to run, and you are happy for readers to find it by browsing.",
   amazon: "Reach matters more than margin, and the book is a photo book you are happy to sell at Amazon's terms.",
   ingram: "You want the book orderable anywhere books are — bookshops, libraries, and the retailers Amazon among them.",
+  api: "You already have a storefront and want RPI's network to print and ship behind it.",
+  bulk: "You need copies in hand — for an event, a launch, a stall, or to sell or distribute yourself outside Blurb's channels.",
 };
 
 const ROWS = [
@@ -139,23 +156,32 @@ const ROWS = [
   { key: "paid",      label: "When you are paid" },
 ];
 
-/* Each route's own page. Three of them exist on blurb.com and open there;
-   the fourth does not exist at all, which is worth showing rather than
-   hiding — the Instant Store is the one route with no landing page, and
-   whoever writes it will need to know that. */
+/* Each route's own page. Three of the four PoD routes exist on blurb.com
+   and open there; the Instant Store does not exist at all, which is worth
+   showing rather than hiding — it is the one route with no landing page,
+   and whoever writes it will need to know that. RPI Print API and Large
+   Order Services each have a page too, off blurb.com for the first. */
 const ROUTE_PAGE = {
   link: null,
   bookstore: "https://www.blurb.com/sell-through-blurb",
   amazon: "https://www.blurb.com/amazon",
   ingram: "https://www.blurb.com/ingram",
+  api: "https://www.rpiprint.com",
+  bulk: "https://www.blurb.com/large-order-services",
 };
 
 /* Which products each route takes, read off the catalogue rather than
    typed — so this can never claim a channel a product does not have.
    Family level on purpose: the exceptions are per configuration (Amazon
    excludes layflat and the 5×5) and they belong in the caveat under the
-   table, not in a cell. */
+   table, not in a cell.
+
+   RPI Print API and Large Order Services are not in this lookup — neither
+   is gated by product the way the four checkout-based routes are, so
+   `cellFor` answers their row directly instead of calling this. */
 const productsFor = channelId => sellableSentence(channelId);
+
+const ANY_PRODUCT = "Any product in the catalogue — not limited by format.";
 
 /* ── Table styling, read off blurb.com/bookmaking-tools ──
    16px cells, 16px/1.4 text, labels bold, zebra starting white, a #d1d1d1
@@ -318,7 +344,9 @@ export default function SellerLanding({ onGo, lean = false }) {
 
   const cellFor = (route, row) => {
     if (row.key === "pick") return PICK_IF[route.id];
-    if (row.key === "products") return productsFor(CATALOG_ID[route.id]);
+    if (row.key === "products") {
+      return CATALOG_ID[route.id] ? productsFor(CATALOG_ID[route.id]) : ANY_PRODUCT;
+    }
     return route[row.key];
   };
 
@@ -663,10 +691,12 @@ export default function SellerLanding({ onGo, lean = false }) {
               reading for facts that qualify a table. They are one line each
               now, under the thing they qualify. */}
           <p style={{ margin: 0, fontSize: TYPE.sm, lineHeight: 1.7, color: T.textSubtle, maxWidth: 900 }}>
-            True of every route: a US $25 payout minimum, a proof before the book goes on sale, and volume
-            discounts that are retail-only. A route can also fall away once the book is specified — Amazon
-            takes photo books but not layflat ones or the 5×5. Store integrations (Shopify, Etsy) would be
-              the fifth route; unbuilt, so not compared.
+            True of the four print-on-demand routes: a US $25 payout minimum, a proof before the book goes on
+            sale, and volume discounts that are retail-only. Neither applies to RPI Print API or Large Order
+            Services — you deal with the buyer directly on both, so there is no Blurb payout to hold a minimum
+            or a gate on. A route can also fall away once the book is specified — Amazon takes photo books but
+            not layflat ones or the 5×5. Store integrations (Shopify, Etsy) would be a future card; unbuilt, so
+            not compared.
             </p>
           </div>
         </div>

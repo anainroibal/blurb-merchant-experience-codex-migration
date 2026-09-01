@@ -89,7 +89,7 @@ const MODES = {
     lede: "Set your own price in your Instant Store. We print each copy as it sells, you pay us for the printing, and the rest of your price is yours.",
     other: "make",
     swap: "Just making it for yourself?",
-    swapBody: "The pricing calculator gives you the price, your copies, and when it would arrive — no margin, nothing to set up.",
+    swapBody: "The pricing calculator gives you the price, your copies, and when it would arrive — no margin, nothing to set up. It's also where you'll see the volume discounts on a bigger print run.",
   },
 };
 
@@ -347,7 +347,7 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
             {/* The PDP's own option component, not a row of selects. Same
                 questions, same treatment, and the size modifiers are
                 visible where a dropdown hid them. */}
-            <ProductOptions formatId={formatId} state={state} onChange={setState} />
+            <ProductOptions formatId={formatId} state={state} onChange={setState} mode={mode} />
 
             {/* ── Only for the person who wants it ── */}
             <HelpMeDecide

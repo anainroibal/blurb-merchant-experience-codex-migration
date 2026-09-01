@@ -221,7 +221,32 @@ function Row({ label, sub, children, onClick, last }) {
   );
 }
 
-export default function MarginLadder({ cost, price, onPrice, floor, compact, plain }) {
+/* "Instant Store" links out to the page that explains the thing itself
+   (Anain, 2026-09-01) — someone reading this ladder may not know what an
+   Instant Store is yet, and the cost line is where that question first
+   comes up. A plain string elsewhere in this component; JSX only where
+   `onGo` makes the link possible. */
+function CostSub({ onGo }) {
+  return (
+    <>
+      What Blurb charges you for your{" "}
+      {onGo ? (
+        <button
+          onClick={() => onGo("instantstore")}
+          style={{
+            font: "inherit", color: "inherit", textDecoration: "underline",
+            background: "transparent", border: 0, padding: 0, cursor: "pointer",
+          }}
+        >
+          Instant Store
+        </button>
+      ) : "Instant Store"}
+      . Set by your specification.
+    </>
+  );
+}
+
+export default function MarginLadder({ cost, price, onPrice, floor, compact, plain, onGo }) {
   const [driver, setDriver] = useState("profit");
   const profit = Math.max(0, price - cost);
 
@@ -246,11 +271,10 @@ export default function MarginLadder({ cost, price, onPrice, floor, compact, pla
     );
     return (
       <div style={{ fontFamily: FONT_BODY, display: "grid" }}>
-        <Row label="Your cost" sub="What Blurb charges you to print it. Set by your specification.">{amount(cost)}</Row>
+        <Row label="Your cost" sub={<CostSub onGo={onGo} />}>{amount(cost)}</Row>
 
         <Row
-          label="Your price"
-          sub={driver === "price" ? "You set this" : "Click to set it instead"}
+          label="Your listing price"
           onClick={driver === "price" ? undefined : () => take("price")}
         >
           {driver === "price"
@@ -260,7 +284,6 @@ export default function MarginLadder({ cost, price, onPrice, floor, compact, pla
 
         <Row
           label="Your profit"
-          sub={driver === "profit" ? "You set this" : "Click to set it instead"}
           onClick={driver === "profit" ? undefined : () => take("profit")}
           last
         >
@@ -268,12 +291,6 @@ export default function MarginLadder({ cost, price, onPrice, floor, compact, pla
             ? <Entry value={profit} min={0} onChange={p => onPrice(Math.round((cost + p) * 100) / 100)} compact />
             : <Ghost value={profit} compact />}
         </Row>
-
-        <p style={{ margin: "12px 0 0", fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.55 }}>
-          {driver === "profit"
-            ? "Set what you need to earn and we work out the price. Change the paper and your earnings hold — your buyer pays the difference."
-            : "Set what your buyer pays and we work out the rest. Change the paper and the price holds — the difference comes out of your profit."}
-        </p>
       </div>
     );
   }
@@ -285,13 +302,12 @@ export default function MarginLadder({ cost, price, onPrice, floor, compact, pla
         gridTemplateColumns: compact ? "1fr" : "repeat(auto-fit, minmax(190px, 1fr))",
         alignItems: "start",
       }}>
-        <Cell label="Your cost" sub="What Blurb charges you. Set by your specification." compact={compact}>
+        <Cell label="Your cost" sub={<CostSub onGo={onGo} />} compact={compact}>
           <Figure value={cost} compact={compact} />
         </Cell>
 
         <Cell
-          label="Your price"
-          sub={driver === "price" ? "You set this" : "Click to set it instead"}
+          label="Your listing price"
           tone={driver === "profit" ? "loud" : "quiet"}
           onClick={driver === "price" ? undefined : () => take("price")}
           compact={compact}
@@ -303,7 +319,6 @@ export default function MarginLadder({ cost, price, onPrice, floor, compact, pla
 
         <Cell
           label="Your profit"
-          sub={driver === "profit" ? "You set this" : "Click to set it instead"}
           tone={driver === "price" ? "loud" : "quiet"}
           onClick={driver === "profit" ? undefined : () => take("profit")}
           compact={compact}
@@ -313,12 +328,6 @@ export default function MarginLadder({ cost, price, onPrice, floor, compact, pla
             : <Ghost value={profit} loud compact={compact} />}
         </Cell>
       </div>
-
-      <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.55 }}>
-        {driver === "profit"
-          ? "Set what you need to earn and we work out the price. Change the paper and your earnings hold — your buyer pays the difference."
-          : "Set what your buyer pays and we work out the rest. Change the paper and the price holds — the difference comes out of your profit."}
-      </p>
     </div>
   );
 }

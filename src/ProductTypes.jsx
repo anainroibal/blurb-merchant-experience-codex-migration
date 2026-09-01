@@ -51,6 +51,10 @@ export default function ProductTypes({ format, route, use, onSelect, recommended
         formatId={format}
         onPick={onSelect}
         badgeFor={id => (id === recommended ? "Recommended" : null)}
+        /* A bulk run is quoted, not priced from this per-copy ladder — a
+           "From $X" caption here would read as the bulk price (Anain,
+           2026-09-01). */
+        hidePrice={route === "distribute"}
       />
 
       {why && (

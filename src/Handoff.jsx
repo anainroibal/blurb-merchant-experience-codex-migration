@@ -70,8 +70,11 @@ const list = items =>
     : `${items.slice(0, -1).join(", ")} and ${items[items.length - 1]}`;
 
 export default function Handoff({ route }) {
-  const bulk = route === "distribute";
-
+  /* "Buy in bulk" no longer reaches this component (Anain, 2026-09-01) —
+     that route renders BulkQuotePanel in GetStarted.jsx instead of the
+     calculator this sits under, because a bulk run is quoted by Large
+     Order Services, not priced by this page. What's left here is the
+     sell/keep fork this component was always really about. */
   return (
     <section>
       {/* The tools used to be three large cards here — Upload your PDF,
@@ -80,65 +83,13 @@ export default function Handoff({ route }) {
           the same one the calculators carry: one primary tool chosen by
           the catalogue, the rest behind "Other tools". Asking the same
           question twice on one page, in two different shapes, was the
-          thing to fix.
-
-          The selling fork went the same way, into that block. What is left
-          under the steps is the bulk route alone, where the honest end of
-          the page is not a next step but a conversation. */}
+          thing to fix. */}
       {/* ── No "Ready to sell it?" ──
           It was a heading, a paragraph and a project list sitting under the
           steps, and every one of those is a next step rather than a section
           (Ana, DES-482). The fork now lives where the other next steps are:
           under "Ready to make it?" at the foot of the summary panel, tools
-          on one side of the rule and a finished book on the other. The bulk
-          route keeps a heading here, because what follows it is not a next
-          step but a different way of being priced. */}
-      {bulk && (
-        <div style={{ textAlign: "center", marginBottom: 8 }}>
-          <h2 style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["7xl"], fontWeight: 500, margin: 0, lineHeight: 1.2 }}>
-            Ready to order the run?
-          </h2>
-          <p style={{ fontSize: TYPE.lg, color: T.textSubtle, marginTop: 10, maxWidth: 620, marginLeft: "auto", marginRight: "auto", lineHeight: 1.6 }}>
-            The book comes first, then the quote. Make one with the tools in the panel or bring a finished
-            PDF, and we'll price the run properly.
-          </p>
-        </div>
-      )}
-
-      {/* The bulk route's whole destination. It does not compare channels,
-          because there is only one — you — and the price is quoted rather
-          than listed, so the honest end of this page is a conversation. */}
-      {bulk && (
-        <div
-          className="stack-md"
-          style={{
-            marginTop: 20, background: C.blue50, border: `1px solid ${C.blue100}`,
-            borderRadius: R.lg, padding: 24,
-            display: "grid", gap: 16, gridTemplateColumns: "1fr auto", alignItems: "center",
-          }}
-        >
-          <div style={{ minWidth: 0 }}>
-            <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["4xl"], fontWeight: 500, lineHeight: 1.2, color: C.blue950 }}>
-              Get it priced properly
-            </div>
-            <p style={{ fontSize: TYPE.base, lineHeight: 1.65, color: T.textNeutral, margin: "8px 0 0", maxWidth: 680 }}>
-              The figures above come off the self-serve ladder, which stops discounting at fifty copies.
-              Large Order Services quotes past that and arranges delivery in bulk — so treat the estimate
-              as a ceiling, not a price.
-            </p>
-          </div>
-          <button
-            style={{
-              height: BUTTON_HEIGHT, padding: "0 24px", borderRadius: R.md,
-              fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 700,
-              letterSpacing: 0.6, textTransform: "uppercase", whiteSpace: "nowrap",
-              background: "transparent", color: T.textBrand, border: `1px solid ${T.borderBrand}`,
-            }}
-          >
-            Get a bulk quote
-          </button>
-        </div>
-      )}
+          on one side of the rule and a finished book on the other. */}
 
       {/* No channel comparison here either — it is the seller landing
           page's job. This page hands off to a tool or a project; choosing a

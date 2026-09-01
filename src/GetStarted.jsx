@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
+import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.js";
 import Configurator from "./Configurator.jsx";
 import CreateActions from "./CreateActions.jsx";
 import ProductTypes from "./ProductTypes.jsx";
@@ -38,17 +38,18 @@ import {
 
 /* ── The three routes ──
    One question — where do the copies end up, and who pays? — asked once.
-   Three parallel infinitives, each of which changes what the page DOES:
-   which products are offered, what the calculator computes, and what the
-   foot of the page hands off to.
+   Three plain labels (Ana, 2026-09-01; the static "to" now lives in the
+   heading itself, not the option), each of which changes what the page
+   DOES: which products are offered, what the calculator computes, and
+   what the foot of the page hands off to.
 
-   "to Distribute" is the one that is not self-evident, and it is easily
+   "Buy in bulk" is the one that is not self-evident, and it is easily
    misread as a distribution service like Ingram — which is the opposite,
    and lives under Sell. Hence the gloss. */
 const ROUTES = [
-  { id: "sell",       label: "to Sell",       hint: "People buy it from you, one copy at a time" },
-  { id: "keep",       label: "to Keep",       hint: "For yourself — to hold on to, display or give" },
-  { id: "distribute", label: "to Distribute", hint: "Buy in bulk, then sell or hand them out yourself" },
+  { id: "sell",       label: "Sell",         hint: "People buy it from you, one copy at a time" },
+  { id: "keep",       label: "Keep",         hint: "For yourself — to hold on to, display or give" },
+  { id: "distribute", label: "Buy in bulk",  hint: "Then sell or hand them out yourself" },
 ];
 
 /* ── And, under "to Keep" only, what it is for ──
@@ -206,6 +207,57 @@ function InlineSelect({ value, options, onChange }) {
   );
 }
 
+/* ── "Buy in bulk" is a prompt, not a calculator (Anain, 2026-09-01) ──
+   This used to run the full per-copy calculator, seeded at BULK_MIN, and
+   hand off to Large Order Services at the foot of the page with a "treat
+   the estimate as a ceiling, not a price" caveat. Reworked because that
+   caveat was doing too much: a self-serve total that isn't the real price
+   reads as a price anyway. A bulk run is quoted by a person, not priced by
+   this page, so the page's job is to name what they're making and get them
+   to that person — the way blurb.com/large-order-services itself opens
+   with "Get a Quote", not a calculator. */
+function BulkQuotePanel({ kindLabel, formatLabel }) {
+  const what = kindLabel || formatLabel
+    ? ` for your ${(kindLabel || formatLabel).toLowerCase()}`
+    : "";
+  return (
+    <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+      <div
+        className="stack-md"
+        style={{
+          background: C.blue50, border: `1px solid ${C.blue100}`, borderRadius: R.lg,
+          padding: "clamp(28px, 4vw, 40px)", display: "grid", gap: 16,
+          gridTemplateColumns: "1fr auto", alignItems: "center",
+        }}
+      >
+        <div style={{ minWidth: 0 }}>
+          <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["5xl"], fontWeight: 500, lineHeight: 1.2, color: C.blue950 }}>
+            Your partner in print
+          </div>
+          <p style={{ fontSize: TYPE.lg, lineHeight: 1.65, color: T.textNeutral, margin: "10px 0 0", maxWidth: 680 }}>
+            A run of 100 copies or more{what} is quoted by a person, not this calculator. Large Order
+            Services' dedicated team prices the run and arranges delivery in bulk, and gets back to you
+            within two business days.
+          </p>
+        </div>
+        <a
+          href="https://www.blurb.com/large-order-services"
+          target="_blank" rel="noreferrer"
+          style={{
+            height: BUTTON_HEIGHT, padding: "0 24px", borderRadius: R.md,
+            fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 700,
+            letterSpacing: 0.6, textTransform: "uppercase", whiteSpace: "nowrap",
+            background: T.bgBrand, color: T.textInverse, border: "1px solid transparent",
+            display: "inline-flex", alignItems: "center", textDecoration: "none",
+          }}
+        >
+          Get a Quote
+        </a>
+      </div>
+    </div>
+  );
+}
+
 export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSeed, onGo }) {
   const [format, setFormat] = useState(null);
   /* ── Shipping lives on this page too (Ana, DES-482) ──
@@ -278,6 +330,11 @@ export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSe
   const changeRoute = id => {
     setRoute(id);
     if (kind) { changeKind(kind, id, use); return; }
+    /* Every product leads to the same quote prompt under "Buy in bulk" —
+       there's nothing here for a format choice to change — so pick one
+       rather than making someone click a card to reach a panel that
+       doesn't depend on which one they picked (Anain, 2026-09-01). */
+    if (id === "distribute" && !format) { changeFormat("photo"); return; }
     if (format && !formatsFor(id, use).includes(format)) changeFormat(null);
   };
 
@@ -303,6 +360,16 @@ export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSe
     priceFrom(id, next);
   }, []);
 
+  /* Arriving already on "Buy in bulk" (a lane elsewhere on the site, say)
+     skips the same click a manual switch skips in `changeRoute` — see the
+     comment there. Only fires when nothing has set a format yet. */
+  useEffect(() => {
+    if (initialRoute === "distribute" && !initialSeed?.formatId && !kind && !format) {
+      changeFormat("photo");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div style={{ fontFamily: FONT_BODY, color: T.textNeutral }}>
       {/* ── Hero ── */}
@@ -316,6 +383,7 @@ export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSe
         >
           Start Your{" "}
           <InlineSelect value={kind} options={kindOptions()} onChange={changeKind} />{" "}
+          to{" "}
           <InlineSelect value={route} options={ROUTES} onChange={changeRoute} />
         </h1>
 
@@ -400,8 +468,19 @@ export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSe
         </div>
       </section>
 
-      {/* ── The options it feeds, with the calculator pinned alongside ── */}
-      {format && (
+      {/* ── The options it feeds, with the calculator pinned alongside ──
+          Not for "Buy in bulk": that route isn't priced here at all, so it
+          gets the quote prompt below instead of the calculator. */}
+      {format && bulk && (
+        <section style={{ borderTop: `1px solid ${T.border}`, padding: "clamp(28px, 4vw, 44px) 16px 72px" }}>
+          <BulkQuotePanel
+            kindLabel={PROJECT_KINDS.find(k => k.id === kind)?.label}
+            formatLabel={CATALOG[format]?.label}
+          />
+        </section>
+      )}
+
+      {format && !bulk && (
         <section
           /* White, as the calculators are. The grey ground this section used
              to carry put a grey card on a grey page the moment the option

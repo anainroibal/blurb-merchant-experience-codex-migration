@@ -63,9 +63,12 @@ step version was built first and works. This is a comprehension argument, and if
 the checkout link setup page is going to ship the other version we should pick
 one and use it in both places rather than have the same figure mean two things.
 
-**Open:** currently applied on `/getting-started` only. The estimator uses a
-different picker and still shows no deltas. Worth doing there too once the
-version is settled.
+**DONE (2026-08-31):** the estimator's picker (`ProductOptions.jsx`, shared by
+both calculators) now computes the same delta, the same way — measured
+against the book on screen, scaled by `FULFILMENT_FACTOR` on the sell path so
+the figure moves the panel total by exactly what it names. Same logic as
+`Configurator.jsx`, just threaded through a `mode` prop since this picker
+serves both `/getting-started` and the two calculators.
 
 ## 3. "See it before your buyers do" and "What a checkout link can sell" — too much detail here
 
@@ -271,10 +274,17 @@ alternative. Held open. This prototype currently surfaces it in the nav *and* on
 the PDP, so it is the maximal version and can be dialled back once decided.
 
 **23. The comparison table should compare RPI too, and list RPI and volume order
-as seller tools.** Today ours compares four routes. RPI Print API and Large Order
-Services are both things a seller can use, so they belong in the comparison and
-on a larger selling overview. Note this overlaps Ana's nav item 9, which asks for
-the same two under both Sell and Services.
+as seller tools.** DONE (2026-08-31). The table on the Sell page now compares six
+— the four print-on-demand routes plus RPI Print API and Large Order Services —
+reading their facts off `SELL_CHANNELS` in `catalog.js`, which already carried
+both entries. The card grid above the table stays at four: a card promises four
+seller facts (who it suits, what the buyer pays, what you earn, when you're
+paid) and neither RPI Print API nor Large Order Services fits that shape — you
+deal with the buyer directly on both, so there's no Blurb payout to report. The
+caveat under the table ("a US $25 payout minimum, a proof before the book goes
+on sale…") now says explicitly that it applies to the four print-on-demand
+routes only. Note this overlaps Ana's nav item 9, which asks for the same two
+under both Sell and Services — done there too.
 
 **24. Ownership: the selling overview page is CRO Metrics' work,** per the brief
 given to them. Ours is a reworked version of the page that exists today. Worth

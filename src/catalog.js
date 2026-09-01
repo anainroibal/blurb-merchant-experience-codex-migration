@@ -217,6 +217,10 @@ export const CATALOG = {
        a book, which is why the page stepper opens where it does. */
     basePages: 72,
     intentions: ["keepsake", "gift"],
+    /* Not offered under "Buy in bulk" — unconfirmed whether Large Order
+       Services quotes notebooks at all (Anain, 2026-09-01). See
+       `formatsFor`'s distribute branch. */
+    bulk: false,
     groups: [
       { id: "size",  label: "Choose your notebook size", options: mk(TRADE_SIZES, Object.keys(TRADE_SIZES)) },
       { id: "cover", label: "Choose your cover",         options: mk(COVERS, ["softcover", "softcover_wireo", "imagewrap", "dustjacket"]) },
@@ -247,9 +251,17 @@ export const CATALOG = {
 
   /* Wall Art. Priced material × size — a shape no other product here
      uses, so it carries its own availability and lookup. There are no
-     pages, and nothing to bind. Displaying and gifting are the whole
-     point of it; you cannot sell one through an Instant Store, and
-     "keepsake" is a book word. */
+     pages, and nothing to bind.
+
+     STAYS under Keep — keepsake, display and gift alike (Anain,
+     2026-09-01: "wall art can stay in keepsake too", overriding the
+     earlier "keepsake is a book word" rule) — GOES from Sell and Buy in
+     bulk only. Not `offered: false`, which pulled it out of Keep too and
+     was too broad. `sellChannels: []` below already withdraws it from
+     Sell; `bulk: false` does the same for Buy in bulk, which otherwise
+     ignores `intentions` entirely and was still surfacing it there. It's
+     also left off the profit/pricing calculator's own curated card row
+     in FormatCards.jsx. */
   wallart: {
     fam: "wall_art",
     label: "Wall Art",
@@ -257,7 +269,8 @@ export const CATALOG = {
     blurb: "Gallery-quality wall décor, featuring your favorite photos or custom designs.",
     basePages: 0,
     pageless: true,
-    intentions: ["display", "gift"],
+    bulk: false,
+    intentions: ["keepsake", "display", "gift"],
     groups: [
       { id: "material", label: "Choose your material", options: mk(WALL_MATERIALS, Object.keys(WALL_MATERIALS)) },
       { id: "size",     label: "Choose your size",     options: mk(WALL_SIZES, Object.keys(WALL_SIZES)) },
@@ -449,8 +462,14 @@ export const BULK_MIN = 100;
      · KEEP narrows by what the product IS. Wall art is for hanging and
        for giving — "keepsake" is a book word. A notebook is a book you
        write in, so it is a keepsake or a gift and nothing else.
-     · DISTRIBUTE narrows to what can be printed in numbers, which is
-       everything physical. A PDF cannot be handed out in a box.
+     · DISTRIBUTE narrows to what can be printed in numbers AND what Large
+       Order Services actually quotes. Everything physical passes the
+       first test — a PDF cannot be handed out in a box — but wall art
+       isn't sold at all (see `sellChannels` above) and notebooks are
+       unconfirmed on the second (Anain, 2026-09-01: "not sure we sell
+       those in LOS"), so `bulk: false` withdraws both here specifically,
+       the same shape as `sellChannels` narrowing SELL. The notebook case
+       is unconfirmed rather than decided — flip it once someone checks.
 
    Order follows CATALOG, so the everyday products stay first. */
 export const formatsFor = (route, use = "keepsake", channel = SELLING_CHANNEL) => {
@@ -462,7 +481,7 @@ export const formatsFor = (route, use = "keepsake", channel = SELLING_CHANNEL) =
     return offered.filter(id => (CATALOG[id].sellChannels || []).includes(channel));
   }
   if (route === "distribute") {
-    return offered.filter(id => !CATALOG[id].digital);
+    return offered.filter(id => !CATALOG[id].digital && CATALOG[id].bulk !== false);
   }
   return offered.filter(id => {
     const only = CATALOG[id].intentions;
@@ -475,14 +494,19 @@ export const formatsFor = (route, use = "keepsake", channel = SELLING_CHANNEL) =
    rather than pays to take away. It matches the "white label packaging"
    language already in the seller brief. Naming sits with Ana's copy work.
 
+   NOT CHARGED FOR (Ana, 2026-09-01): there is no Instant Store upcharge for
+   white label, so `value` is 0 rather than the live page's +25%. It stayed
+   `kind: "pct"` so a real markup can come back here without touching the
+   pricing math elsewhere.
+
    End sheets are deliberately NOT here. They are a finishing choice, not a
    variable that shapes the decision on this page, so they belong in Add to
    Cart. (blurb.com prices them at US $3.00, and charcoal linen at $6.00.) */
 export const ADDONS = [
   {
-    id: "whitelabel", label: "White label", detail: "+25%",
+    id: "whitelabel", label: "White label", detail: "Included",
     benefit: "The finished book carries only your brand.",
-    kind: "pct", value: 0.25, src: "live",
+    kind: "pct", value: 0, src: "product",
   },
 ];
 
@@ -938,26 +962,26 @@ export const SELL_CHANNELS = [
     net: (price, cost) => price * 0.45 - cost,
   },
   {
-    id: "api", name: "API printing", mode: "pod",
-    /* SETTLED 2026-08-18: API printing is a way to sell, not a candidate
-       for one. It is how a business connects its own store to Blurb's print
-       service. Large Order Services is a separate route — you buy the stock
-       and distribute it — and the two were never alternatives for the same
-       slot.
+    id: "api", name: "RPI Print API", mode: "pod",
+    /* SETTLED 2026-08-18: a way to sell, not a candidate for one — how a
+       business connects its own store to Blurb's print service, distinct
+       from Large Order Services (you buy the stock and distribute it).
 
-       Kept here deliberately. This note used to live on the API card in
-       WaysToSell.jsx; that screen was removed on 2026-08-24, and the
-       feedback log warned that deleting it would silently delete the
-       decision. The 8/21 pod said "API printing is not included in the
-       selling tool", which either reverses this or means something narrower
-       than a way to sell — unresolved, so nothing here has changed. Whoever
-       settles it should answer the reasoning above rather than overwrite
-       it, and /print-api-software supports it: the page makes the same
-       only-pay-for-printing promise an Instant Store does. */
+       RESETTLED, design review 2026-08-26 (item 23): the 8/21 pod's "not
+       included in the selling tool" only ever meant it stays off the SELL
+       CARD GRID (still true — see SELL_CARDS below), not off the
+       comparison table. Ana asked for both this and Large Order Services in
+       the comparison and on a larger selling overview, so both are compared
+       here now. The card grid stays at four; the table compares six.
+
+       Renamed to match the nav (item 12/27): RPI is the outer layer, Blurb
+       the print network inside it, not the reverse. Pricing stays on
+       rpiprint.com (item 5e) — there is no single calculator covering both,
+       so nothing here computes a number for it. */
     buyerPays: "Whatever your own store charges",
-    takes: "Nothing — you pay Blurb to print",
+    takes: "Nothing — you pay RPI to print, not a per-sale cut",
     paid: "Through your own store",
-    suits: "You already have a storefront and want Blurb to print behind it.",
+    suits: "You already have a storefront and want RPI's network to print behind it.",
     src: "live",
     net: () => null,   // no list price to work from
   },
@@ -970,7 +994,10 @@ export const SELL_CHANNELS = [
     src: "guess",
     /* Quoted, not listed. The self-serve ladder ends at 100+ copies and
        hands over, so there is no rate here to compute from — and a number
-       would be worse than none: it would imply the discount is fixed. */
+       would be worse than none: it would imply the discount is fixed.
+
+       In the comparison table now too (design review item 23, 2026-08-26) —
+       see the note on the "api" entry above. */
     net: () => null,
   },
 ];

@@ -39,7 +39,7 @@ import { CATALOG, fromPrice, sizeCount, money } from "./catalog.js";
    the catalogue, and still priced, for the pages that do. */
 const IMG = "https://assets.blurb.com/_astro/";
 
-const FORMAT_CARDS = [
+export const FORMAT_CARDS = [
   { id: "photo", title: "Photo Book", badge: "Most Popular",
     desc: "Premium books made for visual storytelling.",
     img: IMG + "photo-book.GsE6vVn8.png",
@@ -56,10 +56,6 @@ const FORMAT_CARDS = [
     desc: "Blank, lined, dotted or grid pages made for sketching, planning, and day-dreaming.",
     img: IMG + "notebooks-and-journals.BGE8TXbz.png",
     alt: "Dark green ImageWrap hardcover notebook with yellow 'Today is the Day' text on cover." },
-  { id: "wallart", title: "Wall Art",
-    desc: "Gallery-quality wall décor, featuring your favorite photos or custom designs.",
-    img: IMG + "wall-art.BcVC7rDx.png",
-    alt: "Three examples of wall art featuring landscape imagery of mountains, and waterways" },
 ];
 
 /* /pricing has no PDF card because /pricing does not sell one. The other
@@ -68,8 +64,20 @@ const FORMAT_CARDS = [
    edges, so the row stays level until real photography exists. */
 const STANDIN = { pdf: "tablet_mac" };
 
+/* Cards for products that never join /pricing's or the calculators' own
+   grid (see FORMAT_CARDS above) but still need a real photo somewhere
+   else it's chosen — right now just Wall Art, under Keep. Kept out of
+   FORMAT_CARDS itself so it can never be enumerated back into a row that
+   deliberately excludes it. */
+const OTHER_CARDS = [
+  { id: "wallart", title: "Wall Art",
+    desc: "Gallery-quality wall décor, featuring your favorite photos or custom designs.",
+    img: "https://www.blurb.com/pages/ad-hoc-assets/newnewwall/03c1_Material_448x376_v1-Metal01-dfe422eb19340f856829299342ebb84a9cb7624782ad89e707a0ed2a7e7a7b6f.jpg",
+    alt: "A metal print of a landscape photograph, an example of Blurb wall art." },
+];
+
 export const cardFor = id => {
-  const card = FORMAT_CARDS.find(c => c.id === id);
+  const card = FORMAT_CARDS.find(c => c.id === id) ?? OTHER_CARDS.find(c => c.id === id);
   if (card) return card;
   const f = CATALOG[id];
   return f && { id, title: f.short ?? f.label, desc: f.blurb, img: null, alt: "" };
@@ -77,7 +85,7 @@ export const cardFor = id => {
 
 /* `badge` overrides the card's own — step one uses it for the
    recommendation, /pricing for "Most Popular". Same chip either way. */
-export function FormatCard({ id, selected, onPick, badge, icon }) {
+export function FormatCard({ id, selected, onPick, badge, icon, hidePrice }) {
   const card = cardFor(id);
   if (!card) return null;
   const from = fromPrice(id);
@@ -141,11 +149,13 @@ export function FormatCard({ id, selected, onPick, badge, icon }) {
         }}>
           {card.desc}
         </span>
-        <span style={{
-          display: "block", marginTop: 12, fontSize: TYPE.sm, fontWeight: 700, color: C.gray950,
-        }}>
-          {count} {count === 1 ? "size" : "sizes"} - {from == null ? "price on request" : `From ${money(from)}`}
-        </span>
+        {!hidePrice && (
+          <span style={{
+            display: "block", marginTop: 12, fontSize: TYPE.sm, fontWeight: 700, color: C.gray950,
+          }}>
+            {count} {count === 1 ? "size" : "sizes"} - {from == null ? "price on request" : `From ${money(from)}`}
+          </span>
+        )}
       </span>
     </button>
   );
@@ -162,7 +172,7 @@ const GAP = 28;
    simply centres a shorter row. */
 const CARD_MAX = 232;
 
-export function FormatRow({ ids, formatId, onPick, badgeFor }) {
+export function FormatRow({ ids, formatId, onPick, badgeFor, hidePrice }) {
   return (
     <div style={{
       display: "grid", gap: GAP, gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
@@ -176,6 +186,7 @@ export function FormatRow({ ids, formatId, onPick, badgeFor }) {
           selected={id === formatId}
           onPick={onPick}
           badge={badgeFor ? badgeFor(id) : undefined}
+          hidePrice={hidePrice}
         />
       ))}
     </div>

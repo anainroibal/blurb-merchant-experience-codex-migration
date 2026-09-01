@@ -126,6 +126,9 @@ function DeliveryTable({ qty, country, poBox, chosen, onChoose }) {
 
   return (
     <div style={{ display: "grid", gap: 10 }}>
+      <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
+        Printing takes {PRINT_RANGE[0]}–{PRINT_RANGE[1]} days, whichever speed you choose below — then:
+      </span>
       {speeds.map(s => {
         const quote = shippingFor(country, s.id, qty);
         const w = arrivalWindow(s);
@@ -150,7 +153,7 @@ function DeliveryTable({ qty, country, poBox, chosen, onChoose }) {
                 {s.label}
               </span>
               <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
-                {PRINT_RANGE[0]}–{PRINT_RANGE[1]} days printing, then {speedDays(s)}
+                {speedDays(s)} once it ships
               </span>
             </span>
 

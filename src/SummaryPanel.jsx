@@ -262,8 +262,12 @@ export default function SummaryPanel({
   const f = CATALOG[formatId];
   const p = priceFor(formatId, state);
   const limit = pageLimit(formatId, state);
-  const cost = sellerCost(formatId, state);
-  const floor = minSellPrice(formatId, state);
+  /* White label is never charged for on the Instant Store, so a seller's
+     cost can't be affected by it even if it rode in on a seeded spec — the
+     addon isn't offered as a toggle here at all (see `addons` below). */
+  const sellerSel = selling ? { ...state, addons: state.addons.filter(id => id !== "whitelabel") } : state;
+  const cost = sellerCost(formatId, sellerSel);
+  const floor = minSellPrice(formatId, sellerSel);
   const derived = derivedSteps(formatId, state);
   const profit = Math.max(0, sellPrice - cost);
 
@@ -313,7 +317,14 @@ export default function SummaryPanel({
     onChange({ ...state, addons: on ? state.addons.filter(a => a !== id) : [...state.addons, id] });
   };
 
-  const addons = (f.addons || []).map(id => ADDONS.find(a => a.id === id)).filter(Boolean);
+  /* White label is not an option on the profit calculator (Ana, 2026-09-01):
+     there's nothing to toggle when it's already free, so the choice is
+     removed rather than shown as a free checkbox. It still appears as a
+     real upgrade wherever a maker is pricing a copy for themselves. */
+  const addons = (f.addons || [])
+    .filter(id => !(selling && id === "whitelabel"))
+    .map(id => ADDONS.find(a => a.id === id))
+    .filter(Boolean);
 
   return (
     /* Clear of the sticky header, whatever height it is at this width —
@@ -395,7 +406,7 @@ export default function SummaryPanel({
 
         {selling ? (
           <>
-            <MarginLadder cost={cost} price={sellPrice} onPrice={onSellPrice} floor={floor} compact />
+            <MarginLadder cost={cost} price={sellPrice} onPrice={onSellPrice} floor={floor} compact onGo={onGo} />
             <p style={{ fontSize: TYPE.sm, color: T.textSubtle, margin: 0, lineHeight: 1.5 }}>
               Your buyer pays shipping, so your margin is the same wherever they live.
             </p>
@@ -407,7 +418,40 @@ export default function SummaryPanel({
                 for it, where it belongs: with its own control, and out of
                 the seller's numbers. */}
 
-            <CostExplainer compact onCompare={onGo ? () => onGo("seller") : undefined} />
+            {/* Standalone and always visible (Ana; Anain, 2026-09-01) — this
+                used to live only inside CostExplainer's collapsed body,
+                which meant seeing it took two clicks nobody made. A plain
+                text link directly under that toggle read as one of its
+                bullet points rather than its own control, and wrapped
+                awkwardly in the 310px panel — so this is its own tinted
+                card instead, same shape as the doorways elsewhere in the
+                prototype (BulkQuotePanel, the Sell/Pricing swap banner).
+                Placed above CostExplainer (Anain, 2026-09-01): the fact
+                that the other three routes price differently comes first,
+                the explanation of why second. */}
+            {onGo && (
+              <div style={{
+                background: C.blue50, border: `1px solid ${C.blue100}`, borderRadius: R.md,
+                padding: 14, display: "grid", gap: 8,
+              }}>
+                <span style={{ fontSize: TYPE.sm, color: T.textNeutral, lineHeight: 1.5 }}>
+                  Amazon, Ingram and the Bookstore each price differently.
+                </span>
+                <button
+                  onClick={() => onGo("seller")}
+                  style={{
+                    justifySelf: "start", font: "inherit", fontSize: TYPE.sm, fontWeight: 700,
+                    color: T.textBrand, background: "transparent", border: 0, padding: 0, cursor: "pointer",
+                    display: "inline-flex", alignItems: "center", gap: 4,
+                  }}
+                >
+                  Compare all four routes
+                  <span className="ms" style={{ fontSize: 18 }}>arrow_forward</span>
+                </button>
+              </div>
+            )}
+
+            <CostExplainer compact />
           </>
         ) : (
           <>

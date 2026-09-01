@@ -228,14 +228,21 @@ version:
    deliberate sweep across the Sell page and both calculators, not a one-page edit.
    **Raised, not decided.**
 
+**Closed since (2026-08-31):**
+
+- **Item 2 — deltas on the estimator.** Done on `/getting-started` since 8/28;
+  the estimator's picker (`ProductOptions.jsx`) now computes the same delta,
+  shared by both calculators via a `mode` prop.
+- **Item 23 — RPI Print API and Large Order Services in the comparison table.**
+  Done. The Sell page table now compares six; the card grid stays at four
+  (see `REVIEW-DES-482.md` for why). The nav already had both under Sell.
+
 **Waiting on a decision (all in `REVIEW-DES-482.md`):**
 
 6. **Item 22 — where the profit calculator sits in the IA.** This build is the
    maximal version: featured under Sell, cross-linked from Pricing, and on the
    PDP. Easy to dial back, impossible to guess.
-7. **Item 23** — RPI Print API and Large Order Services belong in the comparison
-   table, not just the nav.
-8. **Item 24 — now the sharper question.** Does the Sell page stay ours or go to
+7. **Item 24 — now the sharper question.** Does the Sell page stay ours or go to
    CRO Metrics with the brief? The Instant Store page is no longer a placeholder
    deferring to them, so the same question applies to it too, and Ana's 8/28 note
    about a selling overview page is a third instance of it.

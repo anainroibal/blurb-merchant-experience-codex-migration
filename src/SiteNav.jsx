@@ -232,8 +232,13 @@ const NAV = [
     cta: "Learn more",
   }},
 
-  { label: "Resources", href: "/blog", columns: [
-    { heading: "Resources", items: [
+  /* Renamed from "Resources" (Ana, 2026-09-01): with Services (things you
+     buy — Large Order Services, RPI Print API) and Creation Tools (things
+     you make with) both live in the nav, "Resources" read as a third
+     synonym for the same idea. This one is content you read, so it's
+     named for that instead. */
+  { label: "Help & Support", href: "/blog", columns: [
+    { heading: "Help & Support", items: [
       ["Blog", "Craft, printing and selling, from Blurb and its makers."],
       ["Events", "Workshops, talks and book fairs."],
       ["Help Center", "Guides, specs and answers."],

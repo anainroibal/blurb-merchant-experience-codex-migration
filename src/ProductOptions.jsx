@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { C, T, TYPE, R, FONT_BODY } from "./tokens.js";
 import { OptionCard } from "./Configurator.jsx";
 import Modal from "./Modal.jsx";
-import { CATALOG, availableFor, reconcile, derivedSteps } from "./catalog.js";
+import { CATALOG, availableFor, reconcile, derivedSteps, pageLimit, priceFor, money, FULFILMENT_FACTOR } from "./catalog.js";
 
 /* ────────────────────────────────────────────────────────────────
    Product options, the way the PDP asks them.
@@ -71,7 +71,7 @@ export function Field({ label, value, children, detailsOpen, onDetails, note }) 
    bigger than a 7×7, and an 8×10 reads taller than it is wide. That is
    the whole point of showing a shape rather than a glyph — the control
    answers "what will this look like" before the label does. */
-function SizeSwatch({ option, selected, disabled, onClick, maxDim }) {
+function SizeSwatch({ option, selected, disabled, onClick, maxDim, delta }) {
   const [w, h] = (option.dims?.match(/[\d.]+/g) || [1, 1]).slice(0, 2).map(Number);
   const scale = 0.78 / (maxDim || Math.max(w, h));
   return (
@@ -102,6 +102,14 @@ function SizeSwatch({ option, selected, disabled, onClick, maxDim }) {
       <span style={{ fontSize: TYPE.sm, color: C.gray950, lineHeight: 1.3, textAlign: "center" }}>
         {option.dims ? option.dims.split(" (")[0] : option.label}
       </span>
+      {/* What switching to this size would add to, or take off, the book as
+          configured now — see the note on OptionGroup below for why this is
+          measured against the current specification, not the cheapest size. */}
+      {delta && (
+        <span style={{ fontSize: TYPE.sm, fontWeight: 700, color: C.gray950, lineHeight: 1.3 }}>
+          {delta}
+        </span>
+      )}
     </button>
   );
 }
@@ -111,7 +119,7 @@ function SizeSwatch({ option, selected, disabled, onClick, maxDim }) {
    and gets a text button. */
 export function OptionGroup({
   label, value, options, selected, onPick, available, variant = "text",
-  detailsOpen, onDetails, note, footer, trayNote,
+  detailsOpen, onDetails, note, footer, trayNote, deltas,
 }) {
   const thumb = variant === "thumb";
   const chosen = options.find(o => o.id === selected);
@@ -137,6 +145,7 @@ export function OptionGroup({
               disabled={available ? !available.has(o.id) : false}
               onClick={() => onPick(o.id)}
               maxDim={maxDim}
+              delta={deltas?.[o.id]}
             />
           ))
         : options.map(o => (
@@ -144,6 +153,7 @@ export function OptionGroup({
               key={o.id}
               variant="text"
               title={o.label}
+              delta={deltas?.[o.id]}
               selected={o.id === selected}
               disabled={available ? !available.has(o.id) : false}
               onClick={() => onPick(o.id)}
@@ -212,7 +222,7 @@ export function OptionGroup({
 }
 
 /* Every group a format has, in the catalogue's order. */
-export default function ProductOptions({ formatId, state, onChange }) {
+export default function ProductOptions({ formatId, state, onChange, mode = "make" }) {
   const f = CATALOG[formatId];
   const derived = derivedSteps(formatId, state);
   const [details, setDetails] = useState(() => new Set());
@@ -227,16 +237,40 @@ export default function ProductOptions({ formatId, state, onChange }) {
     onChange(next);
   };
 
-  /* ── No "+US $0.00" on the options ──
-     Every group used to name its choice as "Mini Square (+US $0.00)", a
-     modifier measured against the cheapest option in that group. It reads
-     as precision and is not: the baseline moves with the rest of the
-     specification, so the same size can be +$0.00 on one paper and +$9.00
-     on another, and nothing on screen says which book the zero belongs to.
+  /* ── "+US $3" per option, measured from the book on screen ──
+     This used to be "no deltas anywhere" — every group named its choice in
+     words alone, because a modifier measured against the cheapest option in
+     the group floats: the same size reads "+US $9.00" on one paper and
+     nothing on another, and no card says which book its zero belongs to.
 
-     The price it actually affects is in the panel, and it updates as the
-     choice is made. That is the honest version of the same information —
-     one number, always for the book in front of you. */
+     Ana's review (DES-482 #2) asked for the number back, so it returns here
+     the way Configurator.jsx already does it for Get Started — measured
+     against THE BOOK IN FRONT OF YOU, not the cheapest option in the step.
+     Every option then answers one question, what does switching to this
+     cost me from where I am now, and the option you are already on carries
+     no figure. On the selling path the delta counts in the seller's cost,
+     not the retail price, so it moves the panel total by exactly what it
+     names. */
+  const scale = mode === "sell" ? FULFILMENT_FACTOR : 1;
+  const deltasFor = g => {
+    const avail = availableFor(formatId, state, g.id);
+    const prices = {};
+    g.options.forEach(o => {
+      if (!avail.has(o.id)) return;
+      const next = reconcile(formatId, { ...state, [g.id]: o.id }, g.id);
+      const cap = pageLimit(formatId, next);
+      if (next.pages > cap) next.pages = cap;
+      prices[o.id] = priceFor(formatId, next).unit;
+    });
+    const base = prices[state[g.id]];
+    const out = {};
+    g.options.forEach(o => {
+      if (!avail.has(o.id) || base == null) return;
+      const d = (prices[o.id] - base) * scale;
+      if (Math.abs(d) >= 0.005) out[o.id] = `${d > 0 ? "+" : "−"}${money(Math.abs(d))}`;
+    });
+    return out;
+  };
 
   return (
     <div style={{ display: "grid", gap: 24, fontFamily: FONT_BODY }}>
@@ -258,6 +292,7 @@ export default function ProductOptions({ formatId, state, onChange }) {
             detailsOpen={details.has(g.id)}
             onDetails={() => toggle(g.id)}
             note={g.note}
+            deltas={deltasFor(g)}
             trayNote={isSize
               ? "Select sizes have been rounded for uniformity. Refer to exact dimensions if needed."
               : null}
