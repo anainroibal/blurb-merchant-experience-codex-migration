@@ -1,6 +1,6 @@
 # Handoff — Blurb Merchant Experience
 
-Updated **2026-08-31**, covering the session of 28 August. Start here, then read `CLAUDE.md` for
+Updated **2026-09-01**, covering the session of 1 September. Start here, then read `CLAUDE.md` for
 conventions and the decision log, and `REVIEW-DES-482.md` for the reasoning
 behind anything Ana asked for.
 
@@ -11,8 +11,8 @@ behind anything Ana asked for.
 | Where | What |
 |---|---|
 | Repo | `~/Documents/Claude/Projects/Blurb Merchant Experience` — **local only, no remote** |
-| Branch | **`v2`** ← you are here, at `80249a6`. `v1-home-pdp` is the frozen fallback (tag `snapshot-2026-08-24-home-pdp`); `main` still holds the 8/24 morning state |
-| Live | **https://blurb-merchant-experience.vercel.app** — production, **current with `v2`** (promoted 2026-08-28). Verified in a browser, not just built |
+| Branch | **`v2`** ← you are here, at `95f75f2`. `v1-home-pdp` is the frozen fallback (tag `snapshot-2026-08-24-home-pdp`); `main` still holds the 8/24 morning state |
+| Live | **https://blurb-merchant-experience.vercel.app** — production, **current with `v2`** (promoted 2026-09-01). Verified in a browser, not just built |
 | Vercel | project `blurb-merchant-experience`, **RPI Print** team (`rpi-print-daf707f9`). CLI deploys only — no push-to-deploy |
 | Local | `npm run dev` (5173 upward; it walks to the first free port) |
 | Board | [Merchant Pricing and Experience](https://www.figma.com/board/yh0flPHiAUhrALmaT1H8Xk/Merchant-Pricing-and-Experience) |
@@ -106,6 +106,53 @@ or not-doing-and-why — written to be quoted back into the ticket.
 
 ---
 
+## What changed on 1 September
+
+One commit (`95f75f2`), working through Ana's list of reactions to the 8/31
+profit calculator and shipping page, plus a live-in-session redesign of
+"Buy in bulk" once Anain looked at it. Promoted to production.
+
+- **"Buy in bulk" is no longer a calculator.** It used to run the full
+  per-copy configurator, seeded at 100 copies, with a "treat the estimate as
+  a ceiling, not a price" caveat and two dead "Get a bulk quote" buttons.
+  Now it goes straight to a **quote prompt** — `BulkQuotePanel` in
+  `GetStarted.jsx` — with a real external link to
+  `blurb.com/large-order-services`, Photo Book preselected (every product
+  leads to the same prompt, so there's nothing to choose), and **no price
+  anywhere on the page**. `Handoff.jsx`'s bulk-only branch is gone with it.
+- **Wall Art and Notebooks & Journals are withdrawn from Buy in bulk**,
+  via a new `bulk: false` flag in `catalog.js` (`formatsFor`'s distribute
+  branch previously ignored `intentions` entirely). Notebooks' exclusion is
+  **unconfirmed, not decided** — nobody has checked whether LOS quotes them.
+  Wall Art's own scope changed too: it now appears under **all three** Keep
+  uses (keepsake, display, gift — "keepsake is a book word" is no longer
+  the rule) and carries a real photo again, via a new lookup in
+  `FormatCards.jsx` kept separate from the curated grid `/pricing` and the
+  calculators enumerate, so it can't leak back into either.
+- **White label is free on the Instant Store**, not a checkbox — `ADDONS`
+  in `catalog.js` prices it at 0, and it's hidden entirely in sell mode
+  (`SummaryPanel.jsx`) rather than shown as a free toggle. It still appears,
+  priced, wherever a maker is pricing a copy for themselves.
+- **The Amazon/Ingram/Bookstore comparison is a standalone card**, above
+  "Why you pay less on your Instant Store", not a link buried inside its
+  collapsed body — that link existed but nobody found it. "Instant Store"
+  in the cost line now also links to the page that explains what one is.
+- **Quick-start routes are Sell / Keep / Buy in bulk**, with the static
+  "to" moved into the heading text instead of living in each option label.
+- **Resources renamed to Help & Support** — with Services (Large Order
+  Services, RPI Print API) and Creation Tools both live in the nav,
+  "Resources" read as a third name for the same idea.
+- **The shipping page's rate table is a calculator again**, reversing part
+  of 8/27: product + country dropdowns, no postcode, a business-day range
+  instead of a date. Still can't show a calendar date — that stays on the
+  two pages that price a real order. Production time is now stated once
+  instead of repeated on every speed card, here and in `ShippingSection.jsx`.
+
+Every item Ana raised got an answer in the conversation, not written back
+to `REVIEW-DES-482.md` this time — that file still ends at 8/31.
+
+---
+
 ## The Instant Store landing page — new, and the thing most likely to be misread
 
 `?stage=instantstore` was a placeholder saying "Crometrics owns this". It is now a
@@ -150,6 +197,9 @@ version:
    page, never inside a calculator that prices one of them.
 7. **Say the scope before the controls, and say it positively.** A caveat read
    after the figures has already failed.
+8. **"Buy in bulk" is a prompt to Large Order Services, not a calculator**
+   (2026-09-01). It doesn't price a run, so it must never show a number
+   that looks like it does.
 
 ---
 
@@ -252,3 +302,6 @@ version:
    reuses them.
 11. **Settle the calculator/agent overlap with Stacey** — still the largest
     duplicated-effort risk.
+12. **Confirm whether Large Order Services quotes notebooks.** `bulk: false`
+    withdrew them from "Buy in bulk" on a guess ("not sure we sell those in
+    LOS") — flip it in `catalog.js` once someone checks.
