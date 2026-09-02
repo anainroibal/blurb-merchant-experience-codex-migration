@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@base-ui/react": "^1.7.0",
+    "@blurb/codex-react": "file:./vendor/blurb-codex-react-0.5.6.tgz",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
