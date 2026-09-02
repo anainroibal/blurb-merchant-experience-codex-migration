@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Button } from "@blurb/codex-react";
+import { Modal, ModalContent, ModalClose, Button } from "@blurb/codex-react";
+import { CloseIcon } from "@blurb/codex-react/icons";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
-import Modal from "./Modal.jsx";
 
 /* ────────────────────────────────────────────────────────────────
    "What changes the price?" — the live /formats modal, rebuilt.
@@ -79,8 +79,18 @@ export default function PriceModal({ open, onClose, onGo }) {
   React.useEffect(() => { if (open) setI(0); }, [open]);
 
   return (
-    <Modal open={open} onClose={onClose} title="What changes the price?">
-      <div style={{ display: "grid", gap: 20, fontFamily: FONT_BODY, maxWidth: 620 }}>
+    <Modal open={open} onOpenChange={o => !o && onClose()}>
+      <ModalContent title="What changes the price?" size="large">
+      <ModalClose
+        aria-label="Close"
+        style={{
+          position: "absolute", top: 16, right: 16, background: "transparent", border: 0,
+          padding: 0, cursor: "pointer", color: T.textSubtle, lineHeight: 0,
+        }}
+      >
+        <CloseIcon size="lg" aria-hidden />
+      </ModalClose>
+      <div style={{ display: "grid", gap: 20, fontFamily: FONT_BODY }}>
         {/* Where you are, as dots rather than "3 of 6": the steps are a
             tour, not a form, and any of them can be jumped to. */}
         <div style={{ display: "flex", gap: 6 }}>
@@ -145,6 +155,7 @@ export default function PriceModal({ open, onClose, onGo }) {
           )}
         </div>
       </div>
+      </ModalContent>
     </Modal>
   );
 }

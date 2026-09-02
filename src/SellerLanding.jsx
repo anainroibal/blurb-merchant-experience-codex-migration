@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button } from "@blurb/codex-react";
+import { Button, ComparisonTable } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { CATALOG, SELL_CHANNELS , sellableSentence } from "./catalog.js";
 
@@ -183,40 +183,6 @@ const ROUTE_PAGE = {
 const productsFor = channelId => sellableSentence(channelId);
 
 const ANY_PRODUCT = "Any product in the catalogue — not limited by format.";
-
-/* ── Table styling, read off blurb.com/bookmaking-tools ──
-   16px cells, 16px/1.4 text, labels bold, zebra starting white, a #d1d1d1
-   rule under each row and between the columns — but never between the label
-   and the first column, where the sticky cell's inset shadow does that job
-   so the rule travels with it while the rest scrolls. */
-const ROW_BG = i => (i % 2 === 0 ? "#fff" : C.gray50);
-
-const cellBase = {
-  padding: 16, fontSize: TYPE.base, lineHeight: 1.4,
-  color: C.gray950, textAlign: "left", verticalAlign: "top",
-  background: "inherit",
-};
-
-const labelCell = { ...cellBase, fontWeight: 700, width: 200, minWidth: 160 };
-
-const stickyCell = {
-  position: "sticky", left: 0, zIndex: 1,
-  boxShadow: `inset -1px 0 0 0 ${C.charcoal200}`,
-};
-
-/* The frame draws the outermost rules now, so the last column and the last
-   row must not draw them again — two 1px lines a pixel apart read as a
-   thicker, slightly wrong border. */
-const lastCol = (i, n) => (i === n - 1 ? { borderRight: 0 } : null);
-
-const dataCell = {
-  ...cellBase, minWidth: 250,
-  /* Right, not left: the label column's inset shadow already draws the first
-     rule, and a left border here would double it. Exactly what the live
-     table does — border-r on the data cells, shadow on the sticky one. */
-  borderRight: `1px solid ${C.charcoal200}`,
-  scrollSnapAlign: "end",
-};
 
 /* ── The four routes as cards ──
    Rewritten shorter, 2026-08-24. Each card carried a "Best for" line, a
@@ -581,110 +547,42 @@ export default function SellerLanding({ onGo, lean = false }) {
           <div style={{ display: "grid", gap: 20, marginTop: 8 }}>
 
           {/* ── The comparison ──
-              Built like the tool comparison on blurb.com/bookmaking-tools,
-              which is the site's own pattern for exactly this job — one
-              column per option, one labelled row per thing they differ on.
-              Values read off the live table rather than eyeballed: zebra
-              rows (#fff / #f5f5f5) with the header row counted as the first
-              stripe, a 1px #d1d1d1 rule under every row, a vertical rule
-              between the columns but not against the labels, 16px cells at
-              16px/1.4, and the labels bold.
+              Codex's own ComparisonTable — the real component the styling
+              notes above (zebra rows, the #d1d1d1 rule, the sticky label
+              column, snapping columns) were describing all along, confirmed
+              token-for-token: --codex-color-primitive-light-charcoal-200
+              IS #d1d1d1.
 
-              Two things that table does and this one has to: the label
-              column STICKS while the columns scroll, because a value with
-              its label off-screen is unreadable, and the columns snap, so a
-              horizontal drag lands on a route rather than between two.
-
-              The one departure is the button row. The live table uses solid
-              near-black buttons; ours are the outlined secondary, matching
-              the rest of the prototype. */}
-          {/* Outlined all the way round now that the section is grey: the
-              internal rules alone left the table's edges open, and on a
-              coloured ground an open-sided table reads as text that happens
-              to line up rather than as one object. The frame is the same
-              #d1d1d1 as the rules inside it, so it belongs to the table
-              rather than boxing it. */}
-          <div
-            className="cmp-scroll"
-            style={{
-              background: "#fff", overflowX: "auto", scrollSnapType: "x mandatory",
-              border: `1px solid ${C.charcoal200}`, borderRadius: R.md,
-            }}
-          >
-            <table style={{ borderCollapse: "collapse", width: "100%", minWidth: 200 + routes.length * 250 }}>
-              <tbody>
-                {/* The header row is a row, not a thead: it takes the first
-                    zebra stripe like every other row on the live table. */}
-                <tr style={{ background: ROW_BG(0), borderBottom: `1px solid ${C.charcoal200}` }}>
-                  <th style={{ ...labelCell, ...stickyCell }}>Route</th>
-                  {routes.map((r, i) => (
-                    <th key={r.id} style={{ ...dataCell, ...lastCol(i, routes.length), fontWeight: 700, verticalAlign: "middle" }}>
-                      <span style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-                        <span style={{ fontSize: TYPE.base, fontWeight: 700, color: C.gray950 }}>{r.name}</span>
-                        {r.isNew && <Chip solid>New</Chip>}
-                      </span>
-                      <span style={{
-                        display: "block", marginTop: 6, fontSize: TYPE.sm,
-                        color: T.textSubtle, lineHeight: 1.4, fontWeight: 400,
-                      }}>
-                        {PROPS[r.id]}
-                      </span>
-                    </th>
-                  ))}
-                </tr>
-
-                {ROWS.map((row, i) => (
-                  <tr key={row.key} style={{ background: ROW_BG(i + 1), borderBottom: `1px solid ${C.charcoal200}` }}>
-                    <th style={{ ...labelCell, ...stickyCell }}>{row.label}</th>
-                    {routes.map((r, i) => (
-                      <td key={r.id} style={{ ...dataCell, ...lastCol(i, routes.length), fontWeight: row.strong ? 600 : 400 }}>
-                        {cellFor(r, row)}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-
-                {/* ── Each column ends in its own way out ──
-                    A table that compares four things should let you leave by
-                    any of the four, and the button belongs at the foot of its
-                    own column rather than beside the route name, where it
-                    would compete for the first read. */}
-                {/* No bottom rule on the last row: the frame is that line. */}
-                <tr style={{ background: ROW_BG(ROWS.length + 1) }}>
-                  <th style={{ ...labelCell, ...stickyCell }} />
-                  {routes.map((r, i) => {
-                    const href = ROUTE_PAGE[r.id];
-                    return (
-                      <td key={r.id} style={{ ...dataCell, ...lastCol(i, routes.length), verticalAlign: "middle" }}>
-                        {href ? (
-                          <a
-                            href={href}
-                            target="_blank"
-                            rel="noreferrer"
-                            style={{
-                              display: "flex", alignItems: "center", justifyContent: "center", gap: 5,
-                              width: "100%", minHeight: 40, padding: "0 16px", borderRadius: R.sm,
-                              fontFamily: FONT_BODY, fontSize: TYPE.sm, fontWeight: 700,
-                              letterSpacing: 0.5, textTransform: "uppercase", textDecoration: "none",
-                              background: "transparent", color: T.textBrand, border: `1px solid ${T.borderBrand}`,
-                            }}
-                          >
-                            How this works
-                            <span className="ms" style={{ fontSize: 16 }}>open_in_new</span>
-                          </a>
-                        ) : (
-                          <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.45, fontStyle: "italic" }}>
-                            No page for this route yet — the newest one, and the only one without a page of
-                            its own.
-                          </span>
-                        )}
-                      </td>
-                    );
-                  })}
-                </tr>
-              </tbody>
-            </table>
-          </div>
+              Its data shape is column headers + rows of plain Markdown
+              strings, which the "Pick this if" / "Products it takes" /
+              "Your buyer pays" / "What the channel takes" / "When you are
+              paid" rows already are. Two things aren't: the header's Chip
+              "New" badge (no badge slot in a plain string) and the closing
+              "how this works" links (no interactive-content slot either).
+              Building separate strips outside the table to hold them was
+              tried and dropped — Codex's column widths are responsive and
+              content-driven, so an external strip cannot reliably line up
+              with them across breakpoints and horizontal scroll. Folded
+              into ordinary rows instead: "New" as a plain-text suffix on
+              the header, the route's one-sentence description as its own
+              row (the only home left for the two routes — RPI Print API,
+              Large Order Services — that have no card above and so no
+              other place this sentence lives), and the closing links as a
+              row of Markdown links, which Codex's own Markdown renderer
+              turns into its real Link component. */}
+          <ComparisonTable
+            columnHeaders={["Route", ...routes.map(r => r.isNew ? `${r.name} (New)` : r.name)]}
+            rows={[
+              { header: "About this route", cells: routes.map(r => PROPS[r.id]) },
+              ...ROWS.map(row => ({ header: row.label, cells: routes.map(r => cellFor(r, row)) })),
+              {
+                header: "Learn more",
+                cells: routes.map(r => ROUTE_PAGE[r.id]
+                  ? `[How this works](${ROUTE_PAGE[r.id]})`
+                  : "No page for this route yet — the newest one, and the only one without a page of its own."),
+              },
+            ]}
+          />
 
           {/* ── The small print, once ──
               Three cards of prose used to sit here — what is true of every

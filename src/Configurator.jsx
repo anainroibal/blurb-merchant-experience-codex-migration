@@ -242,10 +242,6 @@ export function StepNote({ children }) {
 /* `accent` is for the one number the page exists to produce — the seller's
    profit. Brand blue rather than the near-black used for a plain total, so
    it reads as the answer and not just the last row. */
-export function Divider() {
-  return <div style={{ borderTop: `1px solid ${T.border}` }} />;
-}
-
 export default function Configurator({
   formatId, state, onChange, mode, sellPrice, onSellPrice,
   ship, setShip, onGo,

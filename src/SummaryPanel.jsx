@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Button } from "@blurb/codex-react";
+import { Button, Divider } from "@blurb/codex-react";
 import { ArrowForwardIcon } from "@blurb/codex-react/icons";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import WhiteLabelTip from "./WhiteLabelTip.jsx";
 import CostExplainer from "./CostExplainer.jsx";
 import MarginLadder from "./MarginLadder.jsx";
-import { MiniStepper, Divider } from "./Configurator.jsx";
+import { MiniStepper } from "./Configurator.jsx";
 import {
   CATALOG, ADDONS, SHIPPING, PRINT_DAYS,
   priceFor, selectedOption, pageLimit, shippingFor, money,

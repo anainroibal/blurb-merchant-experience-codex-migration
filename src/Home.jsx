@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Input } from "@blurb/codex-react";
+import { Button, Input, Tabs } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { CATALOG, fromPrice, money } from "./catalog.js";
 
@@ -62,7 +62,6 @@ const HERO_ART = IMG + "hero-image-011226.DnTBrpcB_Zp8W1e.webp";
 const CREAM = "#f5f0ea";   // --color-light-foam-100
 const SUBTLE = "#464646";  // --color-blurb-text-subtle
 const GROUND = "#f2f1ef";  // the image ground on a card
-const TAB_ON = "#f1f8fd";  // the selected tab's ground
 
 const PAGE = { maxWidth: 1280, margin: "0 auto" };
 const section = { padding: "80px", width: "100%" };
@@ -294,28 +293,12 @@ export default function Home({ onGo, lean }) {
         <div style={{ ...PAGE, display: "grid", gap: 40, justifyItems: "center" }}>
           <H2 center>Tools and resources for makers, sellers, and businesses</H2>
 
-          <div role="tablist" style={{ display: "inline-flex", alignItems: "center", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
-            {TABS.map(t => {
-              const on = t.id === tab;
-              return (
-                <button
-                  key={t.id}
-                  role="tab"
-                  aria-selected={on}
-                  onClick={() => setTab(t.id)}
-                  style={{
-                    font: "inherit", fontSize: TYPE.base, fontWeight: on ? 700 : 400, cursor: "pointer",
-                    padding: "8px 16px 12px", color: C.gray950,
-                    background: on ? TAB_ON : "transparent",
-                    border: 0, borderBottom: `2px solid ${on ? C.blue600 : "transparent"}`,
-                    borderRadius: `${R.sm}px ${R.sm}px 0 0`,
-                  }}
-                >
-                  {t.label}
-                </button>
-              );
-            })}
-          </div>
+          <Tabs
+            aria-label="Tools and resources"
+            items={TABS.map(t => ({ value: t.id, label: t.label }))}
+            value={tab}
+            onValueChange={setTab}
+          />
 
           <p style={{
             margin: 0, maxWidth: 672, textAlign: "center",

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
+import { Divider, Tabs } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
-import { OptionCard, Divider } from "./Configurator.jsx";
+import { OptionCard } from "./Configurator.jsx";
 import { Field, OptionGroup } from "./ProductOptions.jsx";
 import CreateActions from "./CreateActions.jsx";
 import {
@@ -224,22 +225,15 @@ export default function ProductPage({ onGo, seed = null, lean = false }) {
           </div>
 
           <div>
-            <div style={{ display: "flex", gap: 18, borderBottom: `1px solid ${T.border}` }}>
-              {[["description", "Description"], ["recommended", "Recommended for"]].map(([id, label]) => (
-                <button
-                  key={id}
-                  onClick={() => setTab(id)}
-                  style={{
-                    font: "inherit", fontSize: TYPE.base, fontWeight: tab === id ? 700 : 500,
-                    background: "transparent", border: 0, cursor: "pointer", padding: "0 0 8px",
-                    color: tab === id ? T.textNeutral : T.textSubtle,
-                    borderBottom: `2px solid ${tab === id ? T.bgBrand : "transparent"}`,
-                  }}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
+            <Tabs
+              aria-label="Product information"
+              items={[
+                { value: "description", label: "Description" },
+                { value: "recommended", label: "Recommended for" },
+              ]}
+              value={tab}
+              onValueChange={setTab}
+            />
             <p style={{ margin: "12px 0 0", fontSize: TYPE.base, lineHeight: 1.6, color: T.textSubtle }}>
               {tab === "description" ? COPY.description : COPY.recommended}
             </p>
