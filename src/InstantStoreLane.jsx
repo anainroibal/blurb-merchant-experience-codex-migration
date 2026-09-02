@@ -1,4 +1,6 @@
 import React from "react";
+import { Button } from "@blurb/codex-react";
+import { ArrowForwardIcon } from "@blurb/codex-react/icons";
 import { C, T, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 
 /* ────────────────────────────────────────────────────────────────
@@ -77,17 +79,9 @@ export default function InstantStoreLane({ title, children, cta = "Learn more ab
 
         {/* A link, not a filled button: every page this appears on has its
             own action, and this one leads to reading rather than doing. */}
-        <button
-          onClick={onGo}
-          style={{
-            font: "inherit", fontFamily: FONT_BODY, fontSize: "1rem", fontWeight: 700,
-            color: T.textBrand, background: "transparent", border: 0, padding: 0, cursor: "pointer",
-            display: "inline-flex", alignItems: "center", gap: 6,
-          }}
-        >
+        <Button variant="text" iconRight={<ArrowForwardIcon />} onClick={onGo} style={{ padding: 0 }}>
           {cta}
-          <span className="ms" style={{ fontSize: 20 }}>arrow_forward</span>
-        </button>
+        </Button>
       </div>
     </section>
   );

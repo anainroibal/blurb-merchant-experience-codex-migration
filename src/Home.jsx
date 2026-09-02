@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Button } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { CATALOG, fromPrice, money } from "./catalog.js";
 
@@ -152,21 +153,6 @@ const FAQS = [
 ];
 
 /* Their button: 16/24, 8px 24px, 4px radius, #107eb1. */
-function Btn({ children, onClick, href, tone = "brand" }) {
-  const style = {
-    display: "inline-flex", alignItems: "center", justifyContent: "center",
-    fontFamily: FONT_BODY, fontSize: TYPE.base, lineHeight: 1.5, fontWeight: 400,
-    padding: "8px 24px", borderRadius: R.sm, cursor: "pointer", textDecoration: "none",
-    background: tone === "brand" ? C.blue600 : "transparent",
-    color: tone === "brand" ? "#fff" : C.blue600,
-    border: tone === "brand" ? "1px solid transparent" : `1px solid ${C.blue600}`,
-    whiteSpace: "nowrap",
-  };
-  return href
-    ? <a href={href} target="_blank" rel="noreferrer" style={style}>{children}</a>
-    : <button onClick={onClick} style={style}>{children}</button>;
-}
-
 function H2({ children, center, style }) {
   return (
     <h2 style={{
@@ -232,7 +218,7 @@ export default function Home({ onGo, lean }) {
           </div>
 
           {/* Live: /formats. Ours: the page that prices what you pick. */}
-          <Btn onClick={() => onGo(start)}>Get started</Btn>
+          <Button onClick={() => onGo(start)}>Get started</Button>
 
           <img
             src={HERO_ART}
@@ -340,8 +326,8 @@ export default function Home({ onGo, lean }) {
           </p>
 
           {active.stage
-            ? <Btn onClick={() => onGo(active.stage === "getstarted" ? start : active.stage)}>{active.cta}</Btn>
-            : <Btn href={active.href}>{active.cta}</Btn>}
+            ? <Button onClick={() => onGo(active.stage === "getstarted" ? start : active.stage)}>{active.cta}</Button>
+            : <Button as="a" href={active.href} target="_blank">{active.cta}</Button>}
 
           <img
             key={active.id}
@@ -397,7 +383,7 @@ export default function Home({ onGo, lean }) {
                   padding: "0 12px", fontFamily: FONT_BODY, fontSize: TYPE.base, background: "#fff",
                 }}
               />
-              <Btn>Join us</Btn>
+              <Button>Join us</Button>
             </div>
             <p style={{ margin: 0, fontSize: TYPE.sm, color: "#fff", lineHeight: 1.5 }}>
               By continuing, you agree to our <span style={{ textDecoration: "underline" }}>Terms of Service</span>{" "}
@@ -412,7 +398,7 @@ export default function Home({ onGo, lean }) {
         <div style={{ ...PAGE, display: "grid", gap: 40 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, flexWrap: "wrap" }}>
             <H2>Inspiring examples made with Blurb</H2>
-            <Btn onClick={() => onGo(start)}>Start a project</Btn>
+            <Button onClick={() => onGo(start)}>Start a project</Button>
           </div>
 
           <div style={{ display: "grid", gap: 24, gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
@@ -472,7 +458,7 @@ export default function Home({ onGo, lean }) {
       <section style={{ ...section, paddingTop: 40 }}>
         <div style={{ ...PAGE, display: "grid", gap: 24, justifyItems: "center", textAlign: "center" }}>
           <H2 center>Ready to get started?</H2>
-          <Btn onClick={() => onGo(start)}>Start your project</Btn>
+          <Button onClick={() => onGo(start)}>Start your project</Button>
         </div>
       </section>
     </div>

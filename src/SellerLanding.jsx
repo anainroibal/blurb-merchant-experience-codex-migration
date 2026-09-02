@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Button } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { CATALOG, SELL_CHANNELS , sellableSentence } from "./catalog.js";
 
@@ -855,29 +856,15 @@ export default function SellerLanding({ onGo, lean = false }) {
             )}
           </p>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center", marginTop: 8 }}>
-            <button
-              onClick={() => onGo?.(lean ? "instantstore" : "margin")}
-              style={{
-                fontFamily: FONT_BODY, fontSize: TYPE.lg, fontWeight: 600, minHeight: 48, padding: "0 26px",
-                borderRadius: R.md, border: 0, cursor: "pointer",
-                background: T.bgBrand, color: T.textInverse, whiteSpace: "nowrap",
-              }}
-            >
+            <Button onClick={() => onGo?.(lean ? "instantstore" : "margin")}>
               {lean ? "About Instant Stores" : "See what you would keep"}
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="outlined"
               onClick={() => onGo?.(lean ? "catalog" : "getstarted", lean ? null : { route: "sell" })}
-              style={{
-                fontFamily: FONT_BODY, fontSize: TYPE.lg, fontWeight: 600, minHeight: 48, padding: "0 26px",
-                borderRadius: R.md, cursor: "pointer", whiteSpace: "nowrap",
-                /* White rather than transparent: on the gradient a
-                   transparent button reads as a hole in the band. The live
-                   page's secondary is white too. */
-                background: "#fff", color: T.textBrand, border: `1px solid ${T.borderBrand}`,
-              }}
             >
               {lean ? "Shop all products" : "Start a book to sell"}
-            </button>
+            </Button>
           </div>
         </div>
       </section>

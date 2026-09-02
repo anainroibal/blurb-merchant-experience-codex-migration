@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Button } from "@blurb/codex-react";
 import PriceModal from "./PriceModal.jsx";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { variantFromPrice, money , sellableSentence } from "./catalog.js";
@@ -285,29 +286,16 @@ export default function ProductCatalog({ onGo, lean }) {
                 to, so the page is the only door and takes the primary. */}
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 4 }}>
               {!lean && (
-                <button
-                  onClick={() => onGo?.("margin")}
-                  style={{
-                    fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 600, minHeight: 44, padding: "0 20px",
-                    borderRadius: R.md, border: 0, cursor: "pointer",
-                    background: T.bgBrand, color: T.textInverse, whiteSpace: "nowrap",
-                  }}
-                >
+                <Button onClick={() => onGo?.("margin")}>
                   See what you would keep
-                </button>
+                </Button>
               )}
-              <button
+              <Button
+                variant={lean ? "filled" : "outlined"}
                 onClick={() => onGo?.("instantstore")}
-                style={{
-                  fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 600, minHeight: 44, padding: "0 20px",
-                  borderRadius: R.md, cursor: "pointer", whiteSpace: "nowrap",
-                  ...(lean
-                    ? { background: T.bgBrand, color: T.textInverse, border: 0 }
-                    : { background: "#fff", color: T.textBrand, border: `1px solid ${T.borderBrand}` }),
-                }}
               >
                 About Instant Stores
-              </button>
+              </Button>
             </div>
           </div>
         </div>

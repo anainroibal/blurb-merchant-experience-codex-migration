@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { Button } from "@blurb/codex-react";
+import { ArrowForwardIcon } from "@blurb/codex-react/icons";
 import { C, T, TYPE, R, FONT_BODY } from "./tokens.js";
 import { CATALOG, hasTool } from "./catalog.js";
 import { pdpName } from "./SummaryPanel.jsx";
@@ -161,16 +163,9 @@ export default function CreateActions({ formatId, sel, onGo, onBuild, showLearnM
           live in a 310px sticky panel now, not across the width of a
           product page. */}
       <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-        <button
-          onClick={build}
-          style={{
-            font: "inherit", fontSize: TYPE.base, fontWeight: 600, minHeight: 44, padding: "0 18px",
-            borderRadius: R.md, background: T.bgBrand, color: T.textInverse, border: 0, cursor: "pointer",
-            flex: "1 1 auto", whiteSpace: "nowrap",
-          }}
-        >
+        <Button onClick={build} style={{ flex: "1 1 auto" }}>
           {primary.label}
-        </button>
+        </Button>
         <button
           onClick={() => setToolsOpen(o => !o)}
           aria-expanded={toolsOpen}
@@ -238,17 +233,15 @@ export default function CreateActions({ formatId, sel, onGo, onBuild, showLearnM
       )}
 
       {showLearnMore && pdp && (
-        <button
+        <Button
+          variant="text"
+          size="small"
+          iconRight={<ArrowForwardIcon />}
           onClick={() => onGo("product", { seed: { formatId, sel } })}
-          style={{
-            font: "inherit", fontSize: TYPE.sm, fontWeight: 600, color: T.textBrand,
-            background: "transparent", border: 0, padding: 0, cursor: "pointer",
-            justifySelf: "start", display: "inline-flex", alignItems: "center", gap: 4,
-          }}
+          style={{ justifySelf: "start", padding: 0 }}
         >
           Learn more about this product
-          <span className="ms" style={{ fontSize: 18 }}>arrow_forward</span>
-        </button>
+        </Button>
       )}
     </div>
   );

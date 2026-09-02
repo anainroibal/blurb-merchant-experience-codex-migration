@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { Button } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.js";
 
 /* ────────────────────────────────────────────────────────────────
@@ -1031,17 +1032,9 @@ export default function SiteNav({ signedIn, onSignedIn, onGo, lean = false }) {
               the live site this is the header's most prominent action and it
               opens /my/account/register — an account form before a price,
               which is the identity gate the audit argues against. */}
-          <button
-            onClick={() => onGo?.("getstarted")}
-            style={{
-              height: BUTTON_HEIGHT, padding: "0 18px", borderRadius: R.md, border: 0,
-              background: C.blue600, color: "#fff", cursor: "pointer",
-              fontFamily: FONT_BODY, fontSize: TYPE.sm, fontWeight: 700,
-              letterSpacing: 0.6, textTransform: "uppercase", whiteSpace: "nowrap",
-            }}
-          >
+          <Button size="small" onClick={() => onGo?.("getstarted")}>
             Start Project
-          </button>
+          </Button>
         </div>
       </div>
 

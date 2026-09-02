@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Button } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import Modal from "./Modal.jsx";
 
@@ -126,41 +127,21 @@ export default function PriceModal({ open, onClose, onGo }) {
 
         <div style={{ display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
           {i > 0 && (
-            <button
-              onClick={() => setI(i - 1)}
-              style={{
-                font: "inherit", fontSize: TYPE.base, fontWeight: 600, color: T.textBrand,
-                background: "transparent", border: 0, padding: 0, cursor: "pointer",
-              }}
-            >
+            <Button variant="text" onClick={() => setI(i - 1)} style={{ padding: 0 }}>
               Back
-            </button>
+            </Button>
           )}
 
           <span style={{ flex: 1 }} />
 
           {step.action ? (
-            <button
-              onClick={() => { onClose(); onGo?.(step.action.stage); }}
-              style={{
-                font: "inherit", fontSize: TYPE.base, fontWeight: 600, minHeight: 44, padding: "0 20px",
-                borderRadius: R.md, border: 0, cursor: "pointer",
-                background: T.bgBrand, color: T.textInverse,
-              }}
-            >
+            <Button onClick={() => { onClose(); onGo?.(step.action.stage); }}>
               {step.action.label}
-            </button>
+            </Button>
           ) : (
-            <button
-              onClick={() => setI(i + 1)}
-              style={{
-                font: "inherit", fontSize: TYPE.base, fontWeight: 600, minHeight: 44, padding: "0 20px",
-                borderRadius: R.md, cursor: "pointer",
-                background: "transparent", color: T.textBrand, border: `1px solid ${T.borderBrand}`,
-              }}
-            >
+            <Button variant="outlined" onClick={() => setI(i + 1)}>
               Next: {STEPS[i + 1].title}
-            </button>
+            </Button>
           )}
         </div>
       </div>

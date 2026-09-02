@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { Button } from "@blurb/codex-react";
+import { ArrowForwardIcon } from "@blurb/codex-react/icons";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import WhiteLabelTip from "./WhiteLabelTip.jsx";
 import CostExplainer from "./CostExplainer.jsx";
@@ -48,14 +50,9 @@ function BulkHandoff({ qty }) {
         distribute somewhere our own channels do not reach. Large Order Services quotes better than this
         calculator can, and handles delivery in bulk.
       </p>
-      <button style={{
-        justifySelf: "start", height: 36, padding: "0 16px", borderRadius: R.sm,
-        background: "transparent", color: T.textBrand, border: `1px solid ${T.borderBrand}`,
-        fontFamily: FONT_BODY, fontSize: TYPE.sm, fontWeight: 700,
-        letterSpacing: 0.5, textTransform: "uppercase",
-      }}>
+      <Button variant="outlined" size="small" style={{ justifySelf: "start" }}>
         Get a bulk quote
-      </button>
+      </Button>
     </div>
   );
 }
@@ -437,17 +434,15 @@ export default function SummaryPanel({
                 <span style={{ fontSize: TYPE.sm, color: T.textNeutral, lineHeight: 1.5 }}>
                   Amazon, Ingram and the Bookstore each price differently.
                 </span>
-                <button
+                <Button
+                  variant="text"
+                  size="small"
+                  iconRight={<ArrowForwardIcon />}
                   onClick={() => onGo("seller")}
-                  style={{
-                    justifySelf: "start", font: "inherit", fontSize: TYPE.sm, fontWeight: 700,
-                    color: T.textBrand, background: "transparent", border: 0, padding: 0, cursor: "pointer",
-                    display: "inline-flex", alignItems: "center", gap: 4,
-                  }}
+                  style={{ justifySelf: "start", padding: 0 }}
                 >
                   Compare all four routes
-                  <span className="ms" style={{ fontSize: 18 }}>arrow_forward</span>
-                </button>
+                </Button>
               </div>
             )}
 

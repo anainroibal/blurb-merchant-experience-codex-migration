@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { Button } from "@blurb/codex-react";
+import { ArrowForwardIcon } from "@blurb/codex-react/icons";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.js";
 import SummaryPanel from "./SummaryPanel.jsx";
 import ProductOptions from "./ProductOptions.jsx";
@@ -301,17 +303,15 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
                 These figures are for a sale through your Instant Store, where you
                 set the price and what is left after your cost is yours. The
                 Bookstore, Amazon and Ingram each work on different terms.{" "}
-                <button
+                <Button
+                  variant="text"
+                  size="small"
+                  iconRight={<ArrowForwardIcon />}
                   onClick={() => onGo?.("seller")}
-                  style={{
-                    font: "inherit", fontWeight: 700, color: T.textBrand, background: "transparent",
-                    border: 0, padding: 0, cursor: "pointer",
-                    display: "inline-flex", alignItems: "center", gap: 4, verticalAlign: "baseline",
-                  }}
+                  style={{ padding: 0, verticalAlign: "baseline" }}
                 >
                   Compare the routes
-                  <span className="ms" style={{ fontSize: 18 }}>arrow_forward</span>
-                </button>
+                </Button>
               </>
             ) : (
               <>
@@ -445,17 +445,9 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
                 {m.swapBody}
               </p>
             </div>
-            <button
-              onClick={() => onGo && onGo(m.other === "sell" ? "margin" : "pricing")}
-              style={{
-                height: BUTTON_HEIGHT, padding: "0 22px", borderRadius: R.md,
-                background: T.bgBrand, color: T.textInverse, border: "1px solid transparent",
-                fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 700,
-                letterSpacing: 0.6, textTransform: "uppercase", whiteSpace: "nowrap",
-              }}
-            >
+            <Button onClick={() => onGo && onGo(m.other === "sell" ? "margin" : "pricing")}>
               {MODES[m.other].tab}
-            </button>
+            </Button>
           </div>
 
         </div>

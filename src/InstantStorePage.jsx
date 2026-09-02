@@ -1,4 +1,5 @@
 import React from "react";
+import { Button } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { sellableSentence } from "./catalog.js";
 import InstantStoreLane from "./InstantStoreLane.jsx";
@@ -112,16 +113,6 @@ export default function InstantStorePage({ onGo, lean = false }) {
      which is why nothing here capitalises it again. */
   const sellable = sellableSentence("checkout_link");
 
-  const primaryBtn = {
-    fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 700, minHeight: 44, padding: "0 24px",
-    borderRadius: R.md, border: 0, cursor: "pointer", whiteSpace: "nowrap",
-    background: T.bgBrand, color: T.textInverse,
-    display: "inline-flex", alignItems: "center",
-  };
-  const quietBtn = {
-    ...primaryBtn, fontWeight: 600,
-    background: "#fff", color: T.textBrand, border: `1px solid ${T.borderBrand}`,
-  };
 
   return (
     <div style={{ fontFamily: FONT_BODY, color: C.gray950 }}>
@@ -148,9 +139,9 @@ export default function InstantStorePage({ onGo, lean = false }) {
           </p>
 
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
-            <button style={primaryBtn}>Create your Instant Store</button>
+            <Button>Create your Instant Store</Button>
             {!lean && (
-              <button style={quietBtn} onClick={() => onGo?.("margin")}>See what you would keep</button>
+              <Button variant="outlined" onClick={() => onGo?.("margin")}>See what you would keep</Button>
             )}
           </div>
 
@@ -313,7 +304,7 @@ export default function InstantStorePage({ onGo, lean = false }) {
             </div>
 
             {!lean && (
-              <button style={quietBtn} onClick={() => onGo?.("margin")}>Put your book's numbers in</button>
+              <Button variant="outlined" onClick={() => onGo?.("margin")}>Put your book's numbers in</Button>
             )}
           </div>
 
@@ -392,8 +383,8 @@ export default function InstantStorePage({ onGo, lean = false }) {
             Made with Blurb.<br />Sold with your Instant Store.
           </h2>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
-            <button style={primaryBtn}>Create your Instant Store</button>
-            <button style={quietBtn} onClick={() => onGo?.("seller")}>Compare every way to sell</button>
+            <Button>Create your Instant Store</Button>
+            <Button variant="outlined" onClick={() => onGo?.("seller")}>Compare every way to sell</Button>
           </div>
         </div>
       </section>

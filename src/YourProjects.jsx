@@ -1,4 +1,5 @@
 import React from "react";
+import { Button } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.js";
 import { PROJECTS } from "./projects.js";
 
@@ -144,16 +145,9 @@ export default function YourProjects({ signedIn, onSignIn, compact = false }) {
         {signedIn
           ? PROJECTS.map(p => <CompactProject key={p.id} p={p} />)
           : (
-            <button
-              onClick={onSignIn}
-              style={{
-                font: "inherit", fontSize: TYPE.base, fontWeight: 600, minHeight: 44, padding: "0 18px",
-                borderRadius: R.md, background: "transparent", color: T.textBrand,
-                border: `1px solid ${T.borderBrand}`, cursor: "pointer", width: "100%",
-              }}
-            >
+            <Button variant="outlined" onClick={onSignIn} fullWidth>
               Log in
-            </button>
+            </Button>
           )}
       </div>
     );
@@ -180,17 +174,9 @@ export default function YourProjects({ signedIn, onSignIn, compact = false }) {
             so there is nothing to set up again — just the price, the link and your payout.
           </p>
         </div>
-        <button
-          onClick={onSignIn}
-          style={{
-            height: BUTTON_HEIGHT, padding: "0 24px", borderRadius: R.md,
-            fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 700,
-            letterSpacing: 0.6, textTransform: "uppercase", whiteSpace: "nowrap",
-            background: "transparent", color: T.textBrand, border: `1px solid ${T.borderBrand}`,
-          }}
-        >
+        <Button variant="outlined" onClick={onSignIn}>
           Log in
-        </button>
+        </Button>
       </div>
     );
   }

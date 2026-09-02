@@ -1,4 +1,5 @@
 import React from "react";
+import { Button } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import Faq from "./Faq.jsx";
 import ShippingSection, { control, Field } from "./ShippingSection.jsx";
@@ -85,16 +86,9 @@ function Lane({ heading, body, action, onClick }) {
         {heading}
       </span>
       <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.65, color: T.textSubtle }}>{body}</p>
-      <button
-        onClick={onClick}
-        style={{
-          justifySelf: "start", marginTop: 4, font: "inherit", fontSize: TYPE.base, fontWeight: 600,
-          minHeight: 44, padding: "0 18px", borderRadius: R.md, cursor: "pointer",
-          background: "transparent", color: T.textBrand, border: `1px solid ${T.borderBrand}`,
-        }}
-      >
+      <Button variant="outlined" onClick={onClick} style={{ justifySelf: "start", marginTop: 4 }}>
         {action}
-      </button>
+      </Button>
     </div>
   );
 }
