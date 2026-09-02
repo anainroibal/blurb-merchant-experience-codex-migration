@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, ComparisonTable } from "@blurb/codex-react";
+import { Button, ComparisonTable, CardList, Card } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { CATALOG, SELL_CHANNELS , sellableSentence } from "./catalog.js";
 
@@ -471,69 +471,46 @@ export default function SellerLanding({ onGo, lean = false }) {
             </p>
           </div>
 
-          <div style={{ display: "grid", gap: 32, gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
+          <CardList layout={{ mobile: 1, tablet: 2, desktop: 4 }}>
             {SELL_CARDS.map(card => (
-              <div key={card.id} style={{ display: "grid", gap: 16, alignContent: "start", minWidth: 0 }}>
-                {/* The illustration sits on the same cream tile the product
-                    cards use, so a route card and a product card are
-                    recognisably the same kind of object. */}
-                <div style={{
-                  position: "relative", background: "#f5f0ea", borderRadius: R.lg,
-                  aspectRatio: "4 / 3", display: "grid", placeItems: "center", overflow: "hidden",
-                }}>
-                  <img
-                    src={card.img}
-                    alt={card.alt}
-                    loading="lazy"
-                    /* The illustrations ship on a white ground, which read as
-                       a white square pasted on the cream tile. Multiply drops
-                       the white out and leaves the drawing. */
-                    style={{ width: "78%", height: "auto", display: "block", mixBlendMode: "multiply" }}
-                  />
-                  {card.isNew && (
-                    <span style={{ position: "absolute", top: 12, left: 12 }}><Chip solid>New</Chip></span>
-                  )}
-                </div>
-
-                <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["4xl"], fontWeight: 500, lineHeight: 1.2 }}>
-                  {card.name}
-                </div>
-
-                <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.6, color: T.textSubtle }}>{card.line}</p>
-
-                <ul style={{ margin: 0, paddingLeft: 18, display: "grid", gap: 4, fontSize: TYPE.sm, lineHeight: 1.5, color: T.textSubtle }}>
-                  {card.facts.map(f => <li key={f}>{f}</li>)}
-                </ul>
-
-                {card.stage ? (
-                  <button
-                    onClick={() => onGo?.(lean && card.leanStage ? card.leanStage : card.stage)}
-                    style={{
-                      justifySelf: "start", fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 700,
-                      color: T.textBrand, background: "transparent", border: 0, padding: 0, cursor: "pointer",
-                      textDecoration: "underline", textUnderlineOffset: 4,
-                    }}
-                  >
-                    {lean && card.leanCta ? card.leanCta : card.cta}
-                  </button>
-                ) : (
-                  <a
-                    href={card.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    style={{
-                      justifySelf: "start", fontSize: TYPE.base, fontWeight: 700, color: T.textBrand,
-                      display: "inline-flex", alignItems: "center", gap: 5,
-                      textDecoration: "underline", textUnderlineOffset: 4,
-                    }}
-                  >
-                    {card.cta}
-                    <span className="ms" style={{ fontSize: 16 }}>open_in_new</span>
-                  </a>
-                )}
-              </div>
+              <Card
+                key={card.id}
+                icon={
+                  /* The illustration sits on the same cream tile the product
+                      cards use, so a route card and a product card are
+                      recognisably the same kind of object. Kept as our own
+                      markup — Card's icon slot renders whatever it's given
+                      unstyled, so the tile, the aspect ratio and the New
+                      chip all carry over exactly. */
+                  <div style={{
+                    position: "relative", width: "100%", background: "#f5f0ea", borderRadius: R.lg,
+                    aspectRatio: "4 / 3", display: "grid", placeItems: "center", overflow: "hidden",
+                  }}>
+                    <img
+                      src={card.img}
+                      alt={card.alt}
+                      loading="lazy"
+                      /* The illustrations ship on a white ground, which read as
+                         a white square pasted on the cream tile. Multiply drops
+                         the white out and leaves the drawing. */
+                      style={{ width: "78%", height: "auto", display: "block", mixBlendMode: "multiply" }}
+                    />
+                    {card.isNew && (
+                      <span style={{ position: "absolute", top: 12, left: 12 }}><Chip solid>New</Chip></span>
+                    )}
+                  </div>
+                }
+                title={card.name}
+                description={`${card.line}\n\n${card.facts.map(f => `- ${f}`).join("\n")}`}
+                {...(card.stage
+                  ? { cta: {
+                      variant: "text", onClick: () => onGo?.(lean && card.leanStage ? card.leanStage : card.stage),
+                      children: lean && card.leanCta ? card.leanCta : card.cta,
+                    } }
+                  : { link: { href: card.href, openInNewTab: true, children: card.cta } })}
+              />
             ))}
-          </div>
+          </CardList>
 
           {/* ── …and the same four, side by side ──
               One section, not two (2026-08-24). The cards and the table are
@@ -638,30 +615,22 @@ export default function SellerLanding({ onGo, lean = false }) {
 
       {/* ── Why choose Blurb ── four columns, a line each. */}
       <section style={{ background: T.bgSubtle, borderTop: `1px solid ${T.border}`, padding: "clamp(56px, 7vw, 80px) 24px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 48 }}>
-          <div style={{ textAlign: "center", display: "grid", gap: 12, justifyItems: "center" }}>
-            <h2 style={{
-              fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
-              lineHeight: 1.25, margin: 0,
-            }}>
-              Why choose Blurb?
-            </h2>
-            <p style={{ fontSize: TYPE.lg, color: T.textSubtle, margin: 0, lineHeight: 1.6 }}>
-              Creative freedom, premium quality, and full control — all in one platform.
-            </p>
-          </div>
-
-          <div style={{ display: "grid", gap: 32, gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
+        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+          <CardList
+            heading="Why choose Blurb?"
+            subheading="Creative freedom, premium quality, and full control — all in one platform."
+            headingAlign="center"
+            layout={{ mobile: 1, tablet: 2, desktop: 4 }}
+          >
             {WHY.map(([icon, title, body]) => (
-              <div key={title} style={{ display: "grid", gap: 12, alignContent: "start" }}>
-                <span className="ms" style={{ fontSize: 40, color: C.blue600, lineHeight: 1 }}>{icon}</span>
-                <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 500, lineHeight: 1.2 }}>
-                  {title}
-                </div>
-                <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.6, color: T.textSubtle }}>{body}</p>
-              </div>
+              <Card
+                key={title}
+                icon={<span className="ms" style={{ fontSize: 40, color: C.blue600, lineHeight: 1 }}>{icon}</span>}
+                title={title}
+                description={body}
+              />
             ))}
-          </div>
+          </CardList>
         </div>
       </section>
 

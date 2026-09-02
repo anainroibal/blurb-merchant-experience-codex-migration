@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Input, Tabs } from "@blurb/codex-react";
+import { Button, Input, Tabs, CardList, Card, CallToAction } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { CATALOG, fromPrice, money } from "./catalog.js";
 
@@ -324,19 +324,17 @@ export default function Home({ onGo, lean }) {
 
       {/* ── The Blurb Difference ── their section, their words. */}
       <section style={section}>
-        <div style={{ ...PAGE, display: "grid", gap: 48 }}>
-          <H2>The Blurb Difference</H2>
-          <div style={{ display: "grid", gap: 24, gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}>
+        <div style={PAGE}>
+          <CardList heading="The Blurb Difference" layout={{ mobile: 1, tablet: 2, desktop: 4 }}>
             {DIFFERENCE.map(([icon, title, body]) => (
-              <div key={title} style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                <span className="ms" style={{ fontSize: 48, color: C.blue600, lineHeight: 1 }}>{icon}</span>
-                <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 600, lineHeight: 1.2 }}>
-                  {title}
-                </div>
-                <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.5 }}>{body}</p>
-              </div>
+              <Card
+                key={title}
+                icon={<span className="ms" style={{ fontSize: 48, color: C.blue600, lineHeight: 1 }}>{icon}</span>}
+                title={title}
+                description={body}
+              />
             ))}
-          </div>
+          </CardList>
         </div>
       </section>
 
@@ -437,12 +435,10 @@ export default function Home({ onGo, lean }) {
           order, not the user. So it closes on the project, and log-in waits
           until there is something to save, which is where
           /getting-started puts it. */}
-      <section style={{ ...section, paddingTop: 40 }}>
-        <div style={{ ...PAGE, display: "grid", gap: 24, justifyItems: "center", textAlign: "center" }}>
-          <H2 center>Ready to get started?</H2>
-          <Button onClick={() => onGo(start)}>Start your project</Button>
-        </div>
-      </section>
+      <CallToAction
+        heading="Ready to get started?"
+        ctas={[{ children: "Start your project", onClick: () => onGo(start) }]}
+      />
     </div>
   );
 }

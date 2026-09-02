@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "@blurb/codex-react";
+import { Button, CardList, Card } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { sellableSentence } from "./catalog.js";
 import InstantStoreLane from "./InstantStoreLane.jsx";
@@ -215,58 +215,52 @@ export default function InstantStorePage({ onGo, lean = false }) {
               the claim. Two across rather than four: these are screens
               with type in them, and a quarter of 1240 is too narrow to
               read one. */}
-          <div style={{
-            display: "grid", gap: 40,
-            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 400px), 1fr))",
-          }}>
+          <CardList layout={{ mobile: 1, tablet: 2, desktop: 2 }}>
             {PRODUCT_PAGE.map(([img, alt, title, body]) => (
-              <div key={title} style={{ display: "grid", gap: 16, alignContent: "start" }}>
-                <img
-                  src={img}
-                  alt={alt}
-                  loading="lazy"
-                  style={{
-                    width: "100%", height: "auto", display: "block",
-                    borderRadius: R.lg, border: `1px solid ${T.border}`, background: "#fff",
-                  }}
-                />
-                <div style={{ display: "grid", gap: 8 }}>
-                  <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 500, lineHeight: 1.2 }}>
-                    {title}
-                  </div>
-                  <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.6, color: T.textSubtle }}>{body}</p>
-                </div>
-              </div>
+              <Card
+                key={title}
+                /* A plain <img> in the icon slot, not Codex's OverlayCard/
+                   StackedCard — those absolutely-position the image and
+                   need an explicit aspect ratio to avoid collapsing to
+                   zero height, and these four screenshots don't have a
+                   known, consistent one. A normal flow image sized the
+                   way it already was carries no such risk. */
+                icon={
+                  <img
+                    src={img}
+                    alt={alt}
+                    loading="lazy"
+                    style={{
+                      width: "100%", height: "auto", display: "block",
+                      borderRadius: R.lg, border: `1px solid ${T.border}`, background: "#fff",
+                    }}
+                  />
+                }
+                title={title}
+                description={body}
+              />
             ))}
-          </div>
+          </CardList>
         </div>
       </section>
 
       {/* ── Three steps, and the shape of the money ── */}
       <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 40 }}>
-          <h2 style={{
-            fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
-            lineHeight: 1.25, margin: 0,
-          }}>
-            Set up in minutes, not days
-          </h2>
-
-          <div style={{ display: "grid", gap: 32, gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))" }}>
+          <CardList heading="Set up in minutes, not days" layout={{ mobile: 1, tablet: 3, desktop: 3 }}>
             {STEPS.map(([title, body], i) => (
-              <div key={title} style={{ display: "grid", gap: 12, alignContent: "start" }}>
-                <span style={{
-                  fontFamily: FONT_DISPLAY, fontSize: 40, fontWeight: 500, lineHeight: 1, color: C.blue600,
-                }}>
-                  {i + 1}
-                </span>
-                <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 500, lineHeight: 1.2 }}>
-                  {title}
-                </div>
-                <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.6, color: T.textSubtle }}>{body}</p>
-              </div>
+              <Card
+                key={title}
+                icon={
+                  <span style={{ fontFamily: FONT_DISPLAY, fontSize: 40, fontWeight: 500, lineHeight: 1, color: C.blue600 }}>
+                    {i + 1}
+                  </span>
+                }
+                title={title}
+                description={body}
+              />
             ))}
-          </div>
+          </CardList>
 
           {/* ── The ladder, as a SHAPE ──
               $X on purpose. The POC printed worked figures and they did
