@@ -82,6 +82,18 @@
           transform        var(--slow) var(--ease);
       }
 
+      /* Codex's RadioCard pads, grounds and borders every instance the same
+         way (12px, white, 1px border-subtle, always — even unselected) —
+         right for the thumb/text option variants, wrong for an image-led
+         card whose swatch must run to its own edges with no frame until
+         it's chosen. This is unlayered, so it beats @layer
+         codex.components without needing !important. */
+      .radiocard-flush {
+        padding: 0;
+        background: transparent;
+        border: none;
+      }
+
       /* Menus and popovers: fade up from just below their trigger. */
       .pop-in {
         animation: pop-in var(--slow) var(--ease) both;

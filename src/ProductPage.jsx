@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Divider, Tabs } from "@blurb/codex-react";
+import { Divider, Tabs, RadioCardGroup } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { OptionCard } from "./Configurator.jsx";
 import { Field, OptionGroup } from "./ProductOptions.jsx";
@@ -294,18 +294,23 @@ export default function ProductPage({ onGo, seed = null, lean = false }) {
               as everything else, and the ceiling is still the paper's: any
               value the paper cannot take is refused rather than shown. */}
           <Field label="Starting page count" note={[COPY.pagesRemove, ...COPY.pagesNote].join(" · ")}>
-            <div style={{ display: "grid", gap: 12, gridTemplateColumns: "repeat(4, minmax(0, 1fr))" }}>
+            <RadioCardGroup
+              value={pages}
+              onValueChange={setPages}
+              aria-label="Starting page count"
+              style={{ display: "grid", gap: 12, gridTemplateColumns: "repeat(4, minmax(0, 1fr))" }}
+            >
               {PAGE_STARTS.map(n => (
                 <OptionCard
                   key={n}
+                  value={n}
                   variant="text"
                   title={String(n)}
                   selected={n === pages}
                   disabled={n > limit}
-                  onClick={() => setPages(n)}
                 />
               ))}
-            </div>
+            </RadioCardGroup>
           </Field>
 
           {/* ── The price. Retail, per copy, exactly as the live page frames

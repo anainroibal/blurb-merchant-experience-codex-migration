@@ -1,4 +1,5 @@
 import React from "react";
+import { RadioCard, RadioCardGroup } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.js";
 import SummaryPanel from "./SummaryPanel.jsx";
 import { photoFor } from "./photos.js";
@@ -48,37 +49,41 @@ export function StepHeading({ n, children }) {
 
    The live page is the source for all three: its size row is thumbnails and
    its paper row is text, on the same screen. */
-export function OptionCard({ title, sub, spec, note, delta, photo, selected, onClick, disabled, variant = "default" }) {
+export function OptionCard({ value, title, sub, spec, note, delta, photo, selected, disabled, variant = "default" }) {
   const thumb = variant === "thumb";
   const text = variant === "text";
   /* The default card is the product card's geometry (FormatCards.jsx): the
      swatch runs to the card's edges, only the caption is inset, and there is
-     no frame until the card is chosen — 2px transparent rather than absent,
-     so choosing one cannot shift the row. One way of showing a choice across
-     the whole prototype; the boxed, inset, always-bordered version this
-     replaced made the same act look like a different control on every page. */
+     no frame until the card is chosen — RadioCard's own selected ring is an
+     absolutely-positioned overlay, so it never shifts the row either. One
+     way of showing a choice across the whole prototype; the boxed, inset,
+     always-bordered version this replaced made the same act look like a
+     different control on every page. */
   const card = !thumb && !text;
   return (
-    <button
-      onClick={onClick}
+    <RadioCard
+      value={value}
       disabled={disabled}
-      aria-pressed={selected}
-      className="card-move"
+      className={card ? "card-move radiocard-flush" : "card-move"}
       title={disabled ? "Not available with the rest of your selection" : undefined}
       style={{
         textAlign: "center", minWidth: 0, opacity: disabled ? 0.4 : 1,
         cursor: disabled ? "not-allowed" : "pointer",
         fontFamily: FONT_BODY, display: "grid", alignContent: "start",
         ...(card ? {
-          background: "transparent", padding: 0, overflow: "hidden", borderRadius: 10, gap: 0,
+          borderRadius: 10, gap: 0, overflow: "hidden",
+          /* RadioCard's own selected ring is a ::before overlaid at
+             inset: -1px — this card also needs overflow: hidden so the
+             image's square corners clip to the card's round ones, and
+             that overflow clips the ring wherever it crosses the image,
+             breaking it instead of drawing a clean rectangle. So the
+             ring is switched off here and the border goes back to being
+             real, exactly as it was before RadioCard. */
           border: selected ? `2px solid ${C.gray950}` : "2px solid transparent",
-          transition: "border-color var(--nav-hover) var(--nav-ease)",
+          "--codex-color-semantic-border-link-active": "transparent",
         } : {
-          background: T.bgNeutral, borderRadius: R.md,
-          padding: thumb ? 8 : "10px 12px",
+          borderRadius: R.md,
           gap: thumb ? 6 : 2,
-          border: selected ? `2px solid ${T.borderBrand}` : `1px solid ${T.border}`,
-          margin: selected ? 0 : 1,
         }),
       }}
     >
@@ -147,7 +152,7 @@ export function OptionCard({ title, sub, spec, note, delta, photo, selected, onC
         </div>
       )}
       </span>
-    </button>
+    </RadioCard>
   );
 }
 
@@ -305,7 +310,12 @@ export default function Configurator({
           return (
             <section key={g.id}>
               <StepHeading n={stepOffset + i + 1}>{g.label}</StepHeading>
-              <div style={stepGrid(g.options.length)}>
+              <RadioCardGroup
+                value={state[g.id]}
+                onValueChange={v => set(g.id, v)}
+                aria-label={g.label}
+                style={stepGrid(g.options.length)}
+              >
                 {g.options.map(o => {
                   const ok = avail.has(o.id);
                   /* Both directions: a cheaper option says so, rather than
@@ -317,6 +327,7 @@ export default function Configurator({
                   return (
                     <OptionCard
                       key={o.id}
+                      value={o.id}
                       title={o.label}
                       sub={o.dims}
                       spec={o.spec ? `${o.spec}${o.maxPages ? ` · up to ${o.maxPages} pages` : ""}` : null}
@@ -325,11 +336,10 @@ export default function Configurator({
                       note={ok ? null : "Not in this combination"}
                       selected={state[g.id] === o.id}
                       disabled={!ok}
-                      onClick={() => set(g.id, o.id)}
                     />
                   );
                 })}
-              </div>
+              </RadioCardGroup>
 
               {g.note && <StepNote>{g.note}</StepNote>}
             </section>
@@ -340,13 +350,17 @@ export default function Configurator({
         {derived.map((d, i) => (
           <section key={d.id}>
             <StepHeading n={stepOffset + f.groups.length + i + 1}>{d.label}</StepHeading>
-            <div style={stepGrid(1)}>
+            {/* Nothing to choose — one option, always on — so a trivial
+                single-value group stands in for the RadioCardGroup a real
+                choice would need. */}
+            <RadioCardGroup value={d.id} style={stepGrid(1)}>
               <OptionCard
+                value={d.id}
                 title={d.option.label} spec={d.option.spec}
                 photo={photoFor(formatId, d.option.id ?? d.id)}
-                selected onClick={() => {}}
+                selected
               />
-            </div>
+            </RadioCardGroup>
             {d.note && <StepNote>{d.note}</StepNote>}
           </section>
         ))}

@@ -1,4 +1,5 @@
 import React from "react";
+import { RadioCard, RadioCardGroup } from "@blurb/codex-react";
 import { C, T, TYPE, FONT_DISPLAY } from "./tokens.js";
 import { CATALOG, fromPrice, sizeCount, money } from "./catalog.js";
 
@@ -85,7 +86,7 @@ export const cardFor = id => {
 
 /* `badge` overrides the card's own — step one uses it for the
    recommendation, /pricing for "Most Popular". Same chip either way. */
-export function FormatCard({ id, selected, onPick, badge, icon, hidePrice }) {
+export function FormatCard({ id, selected, badge, icon, hidePrice }) {
   const card = cardFor(id);
   if (!card) return null;
   const from = fromPrice(id);
@@ -93,16 +94,18 @@ export function FormatCard({ id, selected, onPick, badge, icon, hidePrice }) {
   const chip = badge === undefined ? card.badge : badge;
 
   return (
-    <button
-      onClick={() => onPick(id)}
-      aria-pressed={selected}
+    <RadioCard
+      value={id}
+      className="radiocard-flush"
       style={{
         textAlign: "left", font: "inherit", cursor: "pointer", minWidth: 0,
-        background: "transparent", padding: 0, overflow: "hidden",
-        borderRadius: 10,
+        overflow: "hidden", borderRadius: 10, display: "block",
+        /* Same as OptionCard's image variant: overflow: hidden (needed to
+           clip the photo's corners) breaks RadioCard's own ::before ring
+           where it crosses the image, so the ring is switched off and the
+           border is real again. */
         border: selected ? `2px solid ${C.gray950}` : "2px solid transparent",
-        display: "block",
-        transition: "border-color var(--nav-hover) var(--nav-ease)",
+        "--codex-color-semantic-border-link-active": "transparent",
       }}
     >
       <span style={{ position: "relative", display: "block" }}>
@@ -157,7 +160,7 @@ export function FormatCard({ id, selected, onPick, badge, icon, hidePrice }) {
           </span>
         )}
       </span>
-    </button>
+    </RadioCard>
   );
 }
 
@@ -174,22 +177,26 @@ const CARD_MAX = 232;
 
 export function FormatRow({ ids, formatId, onPick, badgeFor, hidePrice }) {
   return (
-    <div style={{
-      display: "grid", gap: GAP, gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
-      alignItems: "start",
-      maxWidth: ids.length * CARD_MAX + (ids.length - 1) * GAP, margin: "0 auto", width: "100%",
-    }}>
+    <RadioCardGroup
+      value={formatId}
+      onValueChange={onPick}
+      aria-label="Format"
+      style={{
+        display: "grid", gap: GAP, gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
+        alignItems: "start",
+        maxWidth: ids.length * CARD_MAX + (ids.length - 1) * GAP, margin: "0 auto", width: "100%",
+      }}
+    >
       {ids.map(id => (
         <FormatCard
           key={id}
           id={id}
           selected={id === formatId}
-          onPick={onPick}
           badge={badgeFor ? badgeFor(id) : undefined}
           hidePrice={hidePrice}
         />
       ))}
-    </div>
+    </RadioCardGroup>
   );
 }
 

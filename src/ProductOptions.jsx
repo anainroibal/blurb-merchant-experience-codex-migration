@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { RadioCard, RadioCardGroup } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_BODY } from "./tokens.js";
 import { OptionCard } from "./Configurator.jsx";
 import Modal from "./Modal.jsx";
@@ -71,19 +72,23 @@ export function Field({ label, value, children, detailsOpen, onDetails, note }) 
    bigger than a 7×7, and an 8×10 reads taller than it is wide. That is
    the whole point of showing a shape rather than a glyph — the control
    answers "what will this look like" before the label does. */
-function SizeSwatch({ option, selected, disabled, onClick, maxDim, delta }) {
+function SizeSwatch({ option, selected, disabled, maxDim, delta }) {
   const [w, h] = (option.dims?.match(/[\d.]+/g) || [1, 1]).slice(0, 2).map(Number);
   const scale = 0.78 / (maxDim || Math.max(w, h));
   return (
-    <button
-      onClick={onClick}
+    <RadioCard
+      value={option.id}
       disabled={disabled}
-      aria-pressed={selected}
+      className="radiocard-flush"
       title={disabled ? "Not available with the rest of your selection" : option.label}
       style={{
-        background: "transparent", border: 0, padding: 0, cursor: disabled ? "not-allowed" : "pointer",
+        cursor: disabled ? "not-allowed" : "pointer",
         display: "grid", justifyItems: "center", gap: 8, minWidth: 0,
         opacity: disabled ? 0.4 : 1, fontFamily: FONT_BODY,
+        /* The ring this option needs rings the swatch tile below, not the
+           whole card — RadioCard's own ring would sit around the label and
+           delta too, so it's switched off here rather than recoloured. */
+        "--codex-color-semantic-border-link-active": "transparent",
       }}
     >
       <span style={{
@@ -110,7 +115,7 @@ function SizeSwatch({ option, selected, disabled, onClick, maxDim, delta }) {
           {delta}
         </span>
       )}
-    </button>
+    </RadioCard>
   );
 }
 
@@ -131,11 +136,16 @@ export function OptionGroup({
      tray. Reading about a paper and choosing it are the same gesture there,
      so the tray holds the real control rather than a picture of it. */
   const controls = (
-    <div style={
-      thumb
-        ? { display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(74px, 84px))" }
-        : { display: "grid", gap: 10, gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))" }
-    }>
+    <RadioCardGroup
+      value={selected}
+      onValueChange={onPick}
+      aria-label={label}
+      style={
+        thumb
+          ? { display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(74px, 84px))" }
+          : { display: "grid", gap: 10, gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))" }
+      }
+    >
       {thumb
         ? options.map(o => (
             <SizeSwatch
@@ -143,7 +153,6 @@ export function OptionGroup({
               option={o}
               selected={o.id === selected}
               disabled={available ? !available.has(o.id) : false}
-              onClick={() => onPick(o.id)}
               maxDim={maxDim}
               delta={deltas?.[o.id]}
             />
@@ -151,15 +160,15 @@ export function OptionGroup({
         : options.map(o => (
             <OptionCard
               key={o.id}
+              value={o.id}
               variant="text"
               title={o.label}
               delta={deltas?.[o.id]}
               selected={o.id === selected}
               disabled={available ? !available.has(o.id) : false}
-              onClick={() => onPick(o.id)}
             />
           ))}
-    </div>
+    </RadioCardGroup>
   );
 
   return (
