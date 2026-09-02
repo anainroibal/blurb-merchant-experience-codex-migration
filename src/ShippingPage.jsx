@@ -1,8 +1,8 @@
 import React from "react";
-import { Button } from "@blurb/codex-react";
+import { Button, Select } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import Faq from "./Faq.jsx";
-import ShippingSection, { control, Field } from "./ShippingSection.jsx";
+import ShippingSection from "./ShippingSection.jsx";
 import InstantStoreLane from "./InstantStoreLane.jsx";
 import { FORMAT_CARDS } from "./FormatCards.jsx";
 import { SHIPPING, PRINT_DAYS, PRINT_RANGE, shippingFor, speedDays, money } from "./catalog.js";
@@ -183,16 +183,18 @@ export default function ShippingPage({ onGo, lean }) {
         tinted
       >
         <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
-          <Field label="Product">
-            <select style={control} value={format} onChange={e => setFormat(e.target.value)}>
-              {FORMAT_CARDS.map(f => <option key={f.id} value={f.id}>{f.title}</option>)}
-            </select>
-          </Field>
-          <Field label="Going to">
-            <select style={control} value={ship.country} onChange={e => setShip({ ...ship, country: e.target.value })}>
-              {SHIPPING.countries.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
-            </select>
-          </Field>
+          <Select
+            label="Product"
+            options={FORMAT_CARDS.map(f => ({ value: f.id, label: f.title }))}
+            value={format}
+            onValueChange={setFormat}
+          />
+          <Select
+            label="Going to"
+            options={SHIPPING.countries.map(c => ({ value: c.id, label: c.label }))}
+            value={ship.country}
+            onValueChange={v => setShip({ ...ship, country: v })}
+          />
         </div>
 
         <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>

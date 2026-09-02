@@ -1,4 +1,5 @@
 import React from "react";
+import { Select, Checkbox, Input } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import {
   SHIPPING, US_STATES, PRINT_RANGE, shippingFor, arrivalWindow, formatDay,
@@ -18,24 +19,15 @@ import {
    people, and the whole design rests on never confusing the two.
    ──────────────────────────────────────────────────────────────── */
 
-export const control = {
-  height: 40, width: "100%", minWidth: 0,
-  border: `1px solid ${T.borderStrong}`, borderRadius: 4, background: T.bgNeutral,
-  padding: "0 10px", fontFamily: FONT_BODY, fontSize: TYPE.base, color: T.textNeutral,
-};
-
-
-export function Field({ label, hint, children }) {
+/* A category label above a control that doesn't carry its own label row
+   (Codex's Select/Input/Checkbox already render label + hint natively —
+   see below). Kept only for the one spot that needs a heading over a
+   single checkbox: "Delivery point" over "This is a P.O. Box". */
+function GroupLabel({ children }) {
   return (
-    <label style={{ display: "grid", gap: 6, minWidth: 0 }}>
-      <span style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
-        <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>
-          {label}
-        </span>
-        {hint && <span style={{ fontSize: TYPE.sm, color: T.textSubtle, whiteSpace: "nowrap" }}>{hint}</span>}
-      </span>
+    <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>
       {children}
-    </label>
+    </span>
   );
 }
 
@@ -56,55 +48,51 @@ function ShipTo({ selling, shipping, ship, setShip }) {
   const country = SHIPPING.countries.find(c => c.id === ship.country);
   return (
     <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))" }}>
-      <Field label={selling ? "Your buyer is in" : "Ship to"}>
-        <select
-          style={control}
-          value={ship.country}
-          onChange={e => setShip({ ...ship, country: e.target.value, postal: "", state: "California" })}
-        >
-          {SHIPPING.countries.map(c => <option key={c.id} value={c.id}>{c.label}</option>)}
-        </select>
-      </Field>
+      <Select
+        label={selling ? "Your buyer is in" : "Ship to"}
+        options={SHIPPING.countries.map(c => ({ value: c.id, label: c.label }))}
+        value={ship.country}
+        onValueChange={v => setShip({ ...ship, country: v, postal: "", state: "California" })}
+      />
 
       {selling ? (
         ship.country === "US" && (
-          <Field label="State" hint="tax varies">
-            <select style={control} value={ship.state} onChange={e => setShip({ ...ship, state: e.target.value })}>
-              {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
-          </Field>
+          <Select
+            label="State"
+            hint="tax varies"
+            options={US_STATES.map(s => ({ value: s, label: s }))}
+            value={ship.state}
+            onValueChange={v => setShip({ ...ship, state: v })}
+          />
         )
       ) : (
-        <Field label={country?.postal ?? "Postal code"}>
-          <input
-            style={control}
-            value={ship.postal}
-            placeholder={country?.example}
-            onChange={e => setShip({ ...ship, postal: e.target.value })}
-          />
-        </Field>
+        <Input
+          label={country?.postal ?? "Postal code"}
+          value={ship.postal}
+          placeholder={country?.example}
+          onChange={e => setShip({ ...ship, postal: e.target.value })}
+        />
       )}
 
       {!shipping && (
-        <Field label="Speed">
-          <select style={control} value={ship.speed} onChange={e => setShip({ ...ship, speed: e.target.value })}>
-            {SHIPPING.speeds.map(s => <option key={s.id} value={s.id}>{s.label} — {speedDays(s)}</option>)}
-          </select>
-        </Field>
+        <Select
+          label="Speed"
+          options={SHIPPING.speeds.map(s => ({ value: s.id, label: `${s.label} — ${speedDays(s)}` }))}
+          value={ship.speed}
+          onValueChange={v => setShip({ ...ship, speed: v })}
+        />
       )}
 
       {shipping && (
         /* A real constraint, and the reason express can vanish below. */
-        <Field label="Delivery point">
-          <label style={{ ...control, display: "flex", alignItems: "center", gap: 8, cursor: "pointer" }}>
-            <input
-              type="checkbox"
-              checked={ship.poBox}
-              onChange={e => setShip({ ...ship, poBox: e.target.checked })}
-            />
-            <span style={{ fontSize: TYPE.base }}>This is a P.O. Box</span>
-          </label>
-        </Field>
+        <div style={{ display: "grid", gap: 6, minWidth: 0 }}>
+          <GroupLabel>Delivery point</GroupLabel>
+          <Checkbox
+            label="This is a P.O. Box"
+            checked={ship.poBox}
+            onCheckedChange={v => setShip({ ...ship, poBox: v })}
+          />
+        </div>
       )}
     </div>
   );
@@ -206,23 +194,17 @@ export default function ShippingSection({ selling, ship, setShip, qty, price }) 
 
       {selling ? (
         <>
-          <label style={{ display: "grid", gap: 6, cursor: "pointer" }}>
-            <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <input
-                type="checkbox"
-                checked={!!ship.show}
-                onChange={e => setShip({ ...ship, show: e.target.checked })}
-                style={{ width: 18, height: 18, accentColor: C.blue600, flex: "0 0 auto" }}
-              />
-              <span style={{ fontSize: TYPE.base, fontWeight: 700 }}>
-                Show what a buyer pays with delivery
-              </span>
-            </span>
-            <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.55, paddingLeft: 28 }}>
+          <div style={{ display: "grid", gap: 6 }}>
+            <Checkbox
+              label={<span style={{ fontWeight: 700 }}>Show what a buyer pays with delivery</span>}
+              checked={!!ship.show}
+              onCheckedChange={v => setShip({ ...ship, show: v })}
+            />
+            <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.55, paddingLeft: 32 }}>
               Your buyer pays shipping, so it is never part of your price or your profit. This only adds
               a line showing what they would see at checkout.
             </span>
-          </label>
+          </div>
 
           {ship.show && (
             <div className="fade-in" style={{ display: "grid", gap: 14, borderTop: `1px solid ${T.border}`, paddingTop: 16 }}>

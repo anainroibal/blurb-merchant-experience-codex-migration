@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button } from "@blurb/codex-react";
+import { Button, Input } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { CATALOG, fromPrice, money } from "./catalog.js";
 
@@ -371,18 +371,17 @@ export default function Home({ onGo, lean }) {
             <H2 style={{ color: "#fff" }}>Want 30% off? Sign up and save on your first book.</H2>
           </div>
           <div style={{ display: "grid", gap: 8, maxWidth: 520 }}>
+            {/* Codex's Input label always renders in --codex-color-semantic-text-bold
+                (dark) — right against a white field, wrong against this section's
+                photo. So the visible label stays ours, white, and the Input gets
+                an aria-label instead of its own. */}
             <label htmlFor="home-email" style={{ fontSize: TYPE.sm, fontWeight: 700, color: "#fff" }}>
               Email Address
             </label>
             <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-              <input
-                id="home-email"
-                type="email"
-                style={{
-                  flex: "1 1 300px", minWidth: 0, height: 40, border: "1px solid #fff", borderRadius: R.sm,
-                  padding: "0 12px", fontFamily: FONT_BODY, fontSize: TYPE.base, background: "#fff",
-                }}
-              />
+              <div style={{ flex: "1 1 300px", minWidth: 0 }}>
+                <Input id="home-email" type="email" />
+              </div>
               <Button>Join us</Button>
             </div>
             <p style={{ margin: 0, fontSize: TYPE.sm, color: "#fff", lineHeight: 1.5 }}>

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { Button } from "@blurb/codex-react";
+import { Button, Select } from "@blurb/codex-react";
 import { ArrowForwardIcon } from "@blurb/codex-react/icons";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.js";
 import SummaryPanel from "./SummaryPanel.jsx";
 import ProductOptions from "./ProductOptions.jsx";
-import ShippingSection, { Field, control } from "./ShippingSection.jsx";
+import ShippingSection from "./ShippingSection.jsx";
 import InstantStoreLane from "./InstantStoreLane.jsx";
 import CreateActions from "./CreateActions.jsx";
 import FormatCards from "./FormatCards.jsx";
@@ -125,12 +125,13 @@ function HelpMeDecide({ open, onToggle, kindId, onKind, why }) {
       {open && (
         <div className="fade-in" style={{ display: "grid", gap: 12 }}>
           <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(210px, 1fr))" }}>
-            <Field label="I'm making a">
-              <select style={control} value={kindId ?? ""} onChange={e => onKind(e.target.value || null)}>
-                <option value="">—</option>
-                {PROJECT_KINDS.map(k => <option key={k.id} value={k.id}>{k.label}</option>)}
-              </select>
-            </Field>
+            <Select
+              label="I'm making a"
+              placeholder="—"
+              options={PROJECT_KINDS.map(k => ({ value: k.id, label: k.label }))}
+              value={kindId ?? null}
+              onValueChange={v => onKind(v || null)}
+            />
           </div>
           {why && (
             <p style={{ margin: 0, fontSize: TYPE.sm, lineHeight: 1.6, color: T.textNeutral }}>{why}</p>
