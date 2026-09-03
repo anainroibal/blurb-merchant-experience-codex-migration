@@ -95,6 +95,15 @@ Vercel project lives in the **RPI Print** team (scope `rpi-print-daf707f9`), not
 
 **There is no "work in progress" chip any more** *(Anain, 2026-08-28)*. Builds off `main` used to carry one, fed by a branch name from a build-time define. The chip, the define and the only `__BRANCH__` reference went together — nothing else read the branch, so don't reintroduce one expecting it to be there. The demo bar's Scope and Session controls already say this is a prototype.
 
+## Branches
+
+**`codex-migration`** *(started 2026-09-02)* rewrites this prototype's UI onto
+`@blurb/codex-react` — Blurb's real component library — in place of the
+hand-rolled inline-style components `v2` uses. Same screens, same behavior;
+the difference is which components render them. Status, what's migrated and
+what's deliberately left custom (and why) is tracked in
+`CODEX-MIGRATION.md`, not here.
+
 ## Conventions
 
 - Inline `style={{}}` objects plus the small global `<style>` block in `index.html`. No CSS framework, no classes beyond `.ms` (Material Symbols).

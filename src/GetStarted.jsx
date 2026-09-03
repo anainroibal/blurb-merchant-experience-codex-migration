@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { RadioCard, RadioCardGroup } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.js";
 import Configurator from "./Configurator.jsx";
 import CreateActions from "./CreateActions.jsx";
@@ -396,25 +397,40 @@ export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSe
             gap: 8, flexWrap: "wrap", marginTop: 22,
           }}>
             <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>What for?</span>
-            {USES.map(u => {
-              const on = use === u.id;
-              return (
-                <button
-                  key={u.id}
-                  onClick={() => changeUse(u.id)}
-                  aria-pressed={on}
-                  style={{
-                    padding: "7px 16px", borderRadius: 999, fontFamily: FONT_BODY, fontSize: TYPE.base,
-                    background: on ? T.bgAccentSubtle : T.bgNeutral,
-                    color: on ? T.textBrand : T.textSubtle,
-                    border: on ? `1px solid ${T.borderBrand}` : `1px solid ${T.border}`,
-                    fontWeight: on ? 700 : 400,
-                  }}
-                >
-                  {u.label}
-                </button>
-              );
-            })}
+            <RadioCardGroup
+              value={use}
+              onValueChange={changeUse}
+              aria-label="What for?"
+              style={{ display: "flex", gap: 8, flexWrap: "wrap" }}
+            >
+              {USES.map(u => {
+                const on = use === u.id;
+                return (
+                  <RadioCard
+                    key={u.id}
+                    value={u.id}
+                    style={{
+                      /* RadioCard's own .card is width: 100% by default —
+                         right for a full-width row, wrong for a pill, which
+                         would otherwise fill the flex row and wrap onto its
+                         own line every time. */
+                      width: "auto",
+                      padding: "7px 16px", borderRadius: 999, fontFamily: FONT_BODY, fontSize: TYPE.base,
+                      background: on ? T.bgAccentSubtle : T.bgNeutral,
+                      color: on ? T.textBrand : T.textSubtle,
+                      border: on ? `1px solid ${T.borderBrand}` : `1px solid ${T.border}`,
+                      fontWeight: on ? 700 : 400,
+                      /* Border is fully driven by `on` above, not RadioCard's
+                         own checked state, so its own ring overlay is
+                         switched off rather than doubling up outside it. */
+                      "--codex-color-semantic-border-link-active": "transparent",
+                    }}
+                  >
+                    {u.label}
+                  </RadioCard>
+                );
+              })}
+            </RadioCardGroup>
           </div>
         )}
       </section>

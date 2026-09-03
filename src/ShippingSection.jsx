@@ -1,5 +1,5 @@
 import React from "react";
-import { Select, Checkbox, Input } from "@blurb/codex-react";
+import { Select, Checkbox, Input, RadioCard, RadioCardGroup } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import {
   SHIPPING, US_STATES, PRINT_RANGE, shippingFor, arrivalWindow, formatDay,
@@ -117,50 +117,48 @@ function DeliveryTable({ qty, country, poBox, chosen, onChoose }) {
       <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
         Printing takes {PRINT_RANGE[0]}–{PRINT_RANGE[1]} days, whichever speed you choose below — then:
       </span>
-      {speeds.map(s => {
-        const quote = shippingFor(country, s.id, qty);
-        const w = arrivalWindow(s);
-        const on = chosen === s.id;
-        return (
-          <button
-            key={s.id}
-            onClick={() => onChoose(s.id)}
-            aria-pressed={on}
-            className="card-move"
-            style={{
-              textAlign: "left", width: "100%", padding: 16, borderRadius: R.md,
-              background: T.bgNeutral,
-              border: on ? `2px solid ${T.borderBrand}` : `1px solid ${T.border}`,
-              margin: on ? 0 : 1,
-              display: "grid", gap: 10, alignItems: "center",
-              gridTemplateColumns: "minmax(0,1fr) auto auto", fontFamily: FONT_BODY,
-            }}
-          >
-            <span style={{ display: "grid", gap: 2, minWidth: 0 }}>
-              <span style={{ fontSize: TYPE.lg, fontWeight: 700, color: on ? C.blue950 : T.textNeutral }}>
-                {s.label}
+      <RadioCardGroup value={chosen} onValueChange={onChoose} aria-label="Delivery speed" style={{ display: "grid", gap: 10 }}>
+        {speeds.map(s => {
+          const quote = shippingFor(country, s.id, qty);
+          const w = arrivalWindow(s);
+          const on = chosen === s.id;
+          return (
+            <RadioCard
+              key={s.id}
+              value={s.id}
+              className="card-move"
+              style={{
+                textAlign: "left", width: "100%", padding: 16, borderRadius: R.md,
+                display: "grid", gap: 10, alignItems: "center",
+                gridTemplateColumns: "minmax(0,1fr) auto auto", fontFamily: FONT_BODY,
+              }}
+            >
+              <span style={{ display: "grid", gap: 2, minWidth: 0 }}>
+                <span style={{ fontSize: TYPE.lg, fontWeight: 700, color: on ? C.blue950 : T.textNeutral }}>
+                  {s.label}
+                </span>
+                <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
+                  {speedDays(s)} once it ships
+                </span>
               </span>
-              <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
-                {speedDays(s)} once it ships
-              </span>
-            </span>
 
-            <span style={{ display: "grid", gap: 2, justifyItems: "end", whiteSpace: "nowrap" }}>
-              <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>Arrives</span>
-              <span style={{ fontSize: TYPE.base, fontWeight: 700 }}>
-                {formatDay(w.earliest)} – {formatDay(w.latest)}
+              <span style={{ display: "grid", gap: 2, justifyItems: "end", whiteSpace: "nowrap" }}>
+                <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>Arrives</span>
+                <span style={{ fontSize: TYPE.base, fontWeight: 700 }}>
+                  {formatDay(w.earliest)} – {formatDay(w.latest)}
+                </span>
               </span>
-            </span>
 
-            <span style={{
-              fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 700,
-              color: on ? C.blue600 : T.textNeutral, whiteSpace: "nowrap", paddingLeft: 8,
-            }}>
-              {quote ? money(quote.cost) : "—"}
-            </span>
-          </button>
-        );
-      })}
+              <span style={{
+                fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 700,
+                color: on ? C.blue600 : T.textNeutral, whiteSpace: "nowrap", paddingLeft: 8,
+              }}>
+                {quote ? money(quote.cost) : "—"}
+              </span>
+            </RadioCard>
+          );
+        })}
+      </RadioCardGroup>
     </div>
   );
 }
