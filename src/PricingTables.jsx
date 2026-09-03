@@ -1,4 +1,5 @@
 import React from "react";
+import { PricingTable, ComparisonTable } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { CATALOG, money } from "./catalog.js";
 import { PRICING } from "./pricing.data.js";
@@ -31,14 +32,15 @@ const cellBase = {
   color: C.gray950, textAlign: "left", verticalAlign: "top", background: "inherit",
 };
 const labelCell = { ...cellBase, fontWeight: 700, width: 220, minWidth: 180 };
-const stickyCell = { position: "sticky", left: 0, zIndex: 1, boxShadow: `inset -1px 0 0 0 ${C.charcoal200}` };
-const lastCol = (i, n) => (i === n - 1 ? { borderRight: 0 } : null);
-const dataCell = { ...cellBase, minWidth: 150, borderRight: `1px solid ${C.charcoal200}`, scrollSnapAlign: "end" };
 
 const groupOf = (formatId, id) => CATALOG[formatId].groups.find(g => g.id === id);
-const NA = <span style={{ color: T.textSubtle }}>Not Available</span>;
+const NA = "Not Available";
 
-/* One family: sizes across the top, papers down the side, covers within. */
+/* One family: sizes across the top (Codex PricingTable's `columns`), papers
+   down the side as toggleable sections, covers (plus an "Additional pages"
+   row) nested within each — exactly PricingTable's `sections` shape, not a
+   coincidence: this table was already built to the live page's own grouped
+   layout, which is what that component models. */
 function FamilyTable({ formatId }) {
   const f = CATALOG[formatId];
   const sizes = groupOf(formatId, "size").options;
@@ -46,23 +48,15 @@ function FamilyTable({ formatId }) {
   const papers = groupOf(formatId, "paper").options;
   const prices = PRICING.families[f.fam];
 
-  /* Every row the table will draw, flattened first so the zebra runs
-     unbroken down the whole table as it does on the live page. */
-  const rows = [];
-  papers.forEach(paper => {
-    rows.push({ kind: "paper", paper });
-    covers.forEach(cover => rows.push({ kind: "cover", paper, cover }));
-    rows.push({ kind: "pages", paper });
-  });
-
-  const cell = (row, size) => {
-    const key = `${size.id}_${paperKey(formatId, row.paper.id)}`;
-    if (row.kind === "pages") {
-      const rate = PRICING.additionalPages[key];
-      return rate == null ? NA : money(rate);
-    }
-    const price = prices?.[row.cover.id]?.[key];
+  const priceFor = (paper, cover, size) => {
+    const key = `${size.id}_${paperKey(formatId, paper.id)}`;
+    const price = prices?.[cover.id]?.[key];
     return price == null ? NA : money(price);
+  };
+  const pagesRate = (paper, size) => {
+    const key = `${size.id}_${paperKey(formatId, paper.id)}`;
+    const rate = PRICING.additionalPages[key];
+    return rate == null ? NA : money(rate);
   };
 
   return (
@@ -74,65 +68,21 @@ function FamilyTable({ formatId }) {
         {f.label}
       </h3>
 
-      <div style={{
-        overflowX: "auto", scrollSnapType: "x proximity",
-        border: `1px solid ${C.charcoal200}`, borderRadius: R.md, background: "#fff",
-      }}>
-        <table style={{ borderCollapse: "collapse", width: "100%", minWidth: 220 + sizes.length * 150 }}>
-          <tbody>
-            <tr style={{ background: ROW_BG(0), borderBottom: `1px solid ${C.charcoal200}` }}>
-              <th style={{ ...labelCell, ...stickyCell }}>Size</th>
-              {sizes.map((s, i) => (
-                <th key={s.id} style={{ ...dataCell, ...lastCol(i, sizes.length), fontWeight: 700 }}>
-                  {s.label}
-                  {s.dims && (
-                    <span style={{ display: "block", marginTop: 4, fontSize: TYPE.sm, color: T.textSubtle, fontWeight: 400 }}>
-                      {s.dims}
-                    </span>
-                  )}
-                </th>
-              ))}
-            </tr>
-
-            {rows.map((row, i) => {
-              const last = i === rows.length - 1;
-              const bg = ROW_BG(i + 1);
-              if (row.kind === "paper") {
-                return (
-                  <tr key={`p-${row.paper.id}`} style={{ background: bg, borderBottom: `1px solid ${C.charcoal200}` }}>
-                    <th
-                      colSpan={sizes.length + 1}
-                      style={{ ...cellBase, fontWeight: 700, position: "sticky", left: 0 }}
-                    >
-                      {row.paper.label}
-                      {row.paper.spec && (
-                        <span style={{ marginLeft: 8, fontSize: TYPE.sm, color: T.textSubtle, fontWeight: 400 }}>
-                          {row.paper.spec}
-                        </span>
-                      )}
-                    </th>
-                  </tr>
-                );
-              }
-              return (
-                <tr
-                  key={`${row.paper.id}-${row.kind}-${row.cover?.id ?? "pages"}`}
-                  style={{ background: bg, borderBottom: last ? 0 : `1px solid ${C.charcoal200}` }}
-                >
-                  <th style={{ ...labelCell, ...stickyCell, fontWeight: row.kind === "pages" ? 400 : 700 }}>
-                    {row.kind === "pages" ? "Additional pages" : row.cover.label}
-                  </th>
-                  {sizes.map((s, k) => (
-                    <td key={s.id} style={{ ...dataCell, ...lastCol(k, sizes.length) }}>
-                      {cell(row, s)}
-                    </td>
-                  ))}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      <PricingTable
+        rowHeader="Size"
+        columns={sizes.map(s => ({ title: s.label, subtitle: s.dims }))}
+        sections={papers.map(paper => ({
+          title: paper.label,
+          subtitle: paper.spec,
+          rows: [
+            ...covers.map(cover => ({
+              label: cover.label,
+              cells: sizes.map(s => priceFor(paper, cover, s)),
+            })),
+            { label: "Additional pages", cells: sizes.map(s => pagesRate(paper, s)) },
+          ],
+        }))}
+      />
     </section>
   );
 }
@@ -143,7 +93,9 @@ function FamilyTable({ formatId }) {
    notebook's. */
 const paperKey = (formatId, paperId) => paperId;
 
-/* Wall art is priced material × size, a shape nothing else here uses. */
+/* Wall art is priced material × size, a shape nothing else here uses — a
+   flat grid, no groups, so it's Codex's ComparisonTable rather than
+   PricingTable (whose sections a one-level table doesn't need). */
 function WallArtTable() {
   const f = CATALOG.wallart;
   const materials = groupOf("wallart", "material").options;
@@ -157,39 +109,16 @@ function WallArtTable() {
       }}>
         {f.label}
       </h3>
-      <div style={{
-        overflowX: "auto", scrollSnapType: "x proximity",
-        border: `1px solid ${C.charcoal200}`, borderRadius: R.md, background: "#fff",
-      }}>
-        <table style={{ borderCollapse: "collapse", width: "100%", minWidth: 220 + sizes.length * 130 }}>
-          <tbody>
-            <tr style={{ background: ROW_BG(0), borderBottom: `1px solid ${C.charcoal200}` }}>
-              <th style={{ ...labelCell, ...stickyCell }}>Size</th>
-              {sizes.map((s, i) => (
-                <th key={s.id} style={{ ...dataCell, minWidth: 130, ...lastCol(i, sizes.length), fontWeight: 700 }}>
-                  {s.label}
-                </th>
-              ))}
-            </tr>
-            {materials.map((m, i) => (
-              <tr
-                key={m.id}
-                style={{ background: ROW_BG(i + 1), borderBottom: i === materials.length - 1 ? 0 : `1px solid ${C.charcoal200}` }}
-              >
-                <th style={{ ...labelCell, ...stickyCell }}>{m.label}</th>
-                {sizes.map((s, k) => {
-                  const price = PRICING.wallArt[m.id]?.[s.id];
-                  return (
-                    <td key={s.id} style={{ ...dataCell, minWidth: 130, ...lastCol(k, sizes.length) }}>
-                      {price == null ? NA : money(price)}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <ComparisonTable
+        columnHeaders={["Size", ...sizes.map(s => s.label)]}
+        rows={materials.map(m => ({
+          header: m.label,
+          cells: sizes.map(s => {
+            const price = PRICING.wallArt[m.id]?.[s.id];
+            return price == null ? NA : money(price);
+          }),
+        }))}
+      />
     </section>
   );
 }
@@ -252,31 +181,13 @@ function VolumeTable() {
       }}>
         Volume Discounts
       </h3>
-      <div style={{ overflowX: "auto", border: `1px solid ${C.charcoal200}`, borderRadius: R.md, background: "#fff" }}>
-        <table style={{ borderCollapse: "collapse", width: "100%", minWidth: 560 }}>
-          <tbody>
-            <tr style={{ background: ROW_BG(0), borderBottom: `1px solid ${C.charcoal200}` }}>
-              <th style={{ ...labelCell, ...stickyCell }}>Product</th>
-              {bands.map(([lo, hi], i) => (
-                <th key={lo} style={{ ...dataCell, ...lastCol(i, bands.length), fontWeight: 700 }}>
-                  {hi ? `${lo}–${hi} copies` : `${lo}+ copies`}
-                </th>
-              ))}
-            </tr>
-            {rows.map(([label, id], i) => (
-              <tr
-                key={id}
-                style={{ background: ROW_BG(i + 1), borderBottom: i === rows.length - 1 ? 0 : `1px solid ${C.charcoal200}` }}
-              >
-                <th style={{ ...labelCell, ...stickyCell }}>{label}</th>
-                {bands.map(([lo], k) => (
-                  <td key={lo} style={{ ...dataCell, ...lastCol(k, bands.length) }}>{pct(id, lo)}</td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <ComparisonTable
+        columnHeaders={["Product", ...bands.map(([lo, hi]) => (hi ? `${lo}–${hi} copies` : `${lo}+ copies`))]}
+        rows={rows.map(([label, id]) => ({
+          header: label,
+          cells: bands.map(([lo]) => pct(id, lo)),
+        }))}
+      />
       <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.55, fontFamily: FONT_BODY }}>
         Ordering a hundred copies or more? Large Order Services quotes the run rather than discounting from
         this table.

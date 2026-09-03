@@ -88,6 +88,13 @@
          card whose swatch must run to its own edges with no frame until
          it's chosen. This is unlayered, so it beats @layer
          codex.components without needing !important. */
+      /* Codex's HeroCenter has no background prop beyond a single image
+         URL (background-size: cover) — no gradient. The seller pages'
+         hero is a flat gradient, so it rides in as a scoped class instead. */
+      .hero-gradient-seller {
+        background: linear-gradient(100deg, #e9ecef 0%, #f6f3ef 45%, #ebebeb 100%);
+      }
+
       .radiocard-flush {
         padding: 0;
         background: transparent;

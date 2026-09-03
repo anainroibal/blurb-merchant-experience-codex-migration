@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, ComparisonTable, CardList, Card } from "@blurb/codex-react";
+import { Button, ComparisonTable, CardList, Card, HeroCenter } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { CATALOG, SELL_CHANNELS , sellableSentence } from "./catalog.js";
 
@@ -335,34 +335,12 @@ export default function SellerLanding({ onGo, lean = false }) {
           gradient band, 96px of air, the title and one line centred in it.
           It is the site's own way of opening a marketing page, and it puts
           some colour at the top of a page that was white to the horizon. */}
-      <section style={{
-        background: "linear-gradient(100deg, #e9ecef 0%, #f6f3ef 45%, #ebebeb 100%)",
-        padding: "clamp(56px, 8vw, 96px) 24px",
-      }}>
-        <div style={{ maxWidth: 860, margin: "0 auto", textAlign: "center", display: "grid", gap: 20, justifyItems: "center" }}>
-          <h1 style={{
-            fontFamily: FONT_DISPLAY, fontWeight: 500, letterSpacing: "-0.01em",
-            fontSize: "clamp(2rem, 4.6vw, 2.75rem)", lineHeight: 1.2, margin: 0,
-          }}>
-            Publish and sell your books on demand
-          </h1>
-          <p style={{ fontSize: TYPE.xl, lineHeight: 1.55, color: T.textNeutral, margin: 0, maxWidth: 640 }}>
-            Four ways to reach a buyer. They differ in who finds the book, what they ask of you, and what
-            the channel takes.
-          </p>
-          <a
-            href="#routes"
-            style={{
-              display: "inline-flex", alignItems: "center", minHeight: 44, padding: "0 24px",
-              borderRadius: R.md, textDecoration: "none",
-              background: T.bgBrand, color: T.textInverse,
-              fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 600,
-            }}
-          >
-            Compare the routes
-          </a>
-        </div>
-      </section>
+      <HeroCenter
+        className="hero-gradient-seller"
+        heading="Publish and sell your books on demand"
+        subheading="Four ways to reach a buyer. They differ in who finds the book, what they ask of you, and what the channel takes."
+        ctas={[{ as: "a", href: "#routes", children: "Compare the routes" }]}
+      />
 
       {/* ── How many copies ──
           Ahead of the routes, as the live page has it: the answer changes
