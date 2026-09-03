@@ -110,14 +110,22 @@ export function FormatCard({ id, selected, badge, icon, hidePrice }) {
     >
       <span style={{ position: "relative", display: "block" }}>
         {card.img ? (
-          <img
-            src={card.img}
-            alt={card.alt}
-            width={700}
-            height={700}
-            loading="lazy"
-            style={{ display: "block", width: "100%", height: "auto" }}
-          />
+          /* aspectRatio + overflow: hidden + objectFit: cover crop every
+             photo to the same square regardless of its own file's aspect
+             ratio — width:"100%" height:"auto" alone (the previous rule)
+             only fills the width; a photo shaped differently from the
+             others (the Wall Art shot is closer to portrait) shows
+             letterboxed and smaller instead of filling the tile. */
+          <span style={{ display: "block", width: "100%", aspectRatio: "1 / 1", overflow: "hidden" }}>
+            <img
+              src={card.img}
+              alt={card.alt}
+              width={700}
+              height={700}
+              loading="lazy"
+              style={{ display: "block", width: "100%", height: "100%", objectFit: "cover" }}
+            />
+          </span>
         ) : (
           <span style={{
             display: "grid", placeItems: "center",
