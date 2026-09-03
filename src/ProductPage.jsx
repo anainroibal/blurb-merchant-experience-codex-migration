@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Divider, Tabs, RadioCardGroup } from "@blurb/codex-react";
+import { Divider, Tabs, RadioCardGroup, Breadcrumbs } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { OptionCard } from "./Configurator.jsx";
 import { Field, OptionGroup } from "./ProductOptions.jsx";
@@ -144,13 +144,8 @@ export default function ProductPage({ onGo, seed = null, lean = false }) {
 
       {/* ── Breadcrumb ── */}
       <div style={{ borderBottom: `1px solid ${T.border}`, background: T.bgSubtle }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto", padding: "10px 24px", fontSize: TYPE.sm, color: T.textSubtle }}>
-          {COPY.breadcrumb.map((b, i) => (
-            <span key={b}>
-              {i > 0 && <span style={{ margin: "0 8px", color: C.gray400 }}>/</span>}
-              <span style={{ color: i === COPY.breadcrumb.length - 1 ? T.textNeutral : T.textSubtle }}>{b}</span>
-            </span>
-          ))}
+        <div style={{ maxWidth: 1240, margin: "0 auto", padding: "10px 24px" }}>
+          <Breadcrumbs variant="bare" items={COPY.breadcrumb.map(label => ({ label, href: "#" }))} />
         </div>
       </div>
 

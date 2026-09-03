@@ -57,6 +57,8 @@ Updated as the migration progresses — treat this as a snapshot, not a plan.
 - **ComparisonTable** (again) — `WallArtTable` and `VolumeTable` in
   `PricingTables.jsx` (flat matrices, no groups).
 - **Badge** — SellerLanding's subtle tier-band chip (`color="blue"`).
+- **Breadcrumbs** — `ProductPage.jsx`'s breadcrumb (`variant="bare"`,
+  embedded in our own bordered/tinted wrapper).
 
 ## Format-card image fix (not a Codex swap, a bug the migration exposed)
 
@@ -95,11 +97,33 @@ smaller and letterboxed. Fixed with `aspectRatio: 1/1` + `overflow: hidden`
 - **`PricingTables.jsx`'s `MagazineTable`** — a 2-row, 3-column table with
   no scrolling/sticky-column apparatus at all; a different, much simpler
   shape than what `PricingTable`/`ComparisonTable` are for.
+- **`WhiteLabelTip.jsx`** — a click-to-toggle popover with a title,
+  description, and an embedded SVG diagram. Codex's `Tooltip` is hover/
+  focus-triggered (a Base UI primitive) — a real interaction-model
+  mismatch, not a styling one.
+- **`CostExplainer.jsx`** — same shape as the Faq/Accordion gap above: a
+  single disclosure holding multiple styled `<p>` blocks, not plain-string
+  content.
+- **`MarginLadder.jsx`'s stepper** — already flagged in the code's own
+  comments (not newly found here): Codex's Stepper Set puts −/+ on either
+  side of the value; this one stacks them deliberately, and the comment
+  says the right fix is proposing the stacked variant to Codex rather
+  than reverting to conform now.
+- **InstantStorePage's "What is an Instant Store?" statement** — one
+  sentence with two differently-colored inline spans (a muted lead-in
+  running into the answer). Codex's `LargeTextCallout` is a separate
+  heading+subheading pair — wrong shape for one sentence with an inline
+  color shift partway through.
+- **`YourProjects.jsx`'s `ProjectCard`/`CompactProject`** — horizontal
+  row-cards (icon left, text middle, trailing chevron action). Codex's
+  `Card` is a vertical, icon-on-top stack with no row layout at all.
+
+No use found anywhere in the app for Codex's `Spinner`, `Toast`,
+`ValueProp`, or `ScrollView` — no loading states, no notifications, and
+the `ScrollView`/`ValueProp`-shaped content is already handled internally
+by `ComparisonTable`/`CardList`.
 
 ## Not yet evaluated
 
-- **Everything else largely untouched**: `GetStarted.jsx` (mostly),
-  `MarginLadder.jsx`, `CreateActions.jsx`'s remaining bits, `Faq.jsx`'s
-  internals, `YourProjects.jsx`, `CostExplainer.jsx`, `WhiteLabelTip.jsx`.
-  Codex's `Tooltip`, `Spinner`, `Toast`, `Breadcrumbs`, `LargeTextCallout`,
-  `ValueProp`, `ScrollView` haven't come up at all yet.
+- `GetStarted.jsx` (mostly) and `CreateActions.jsx`'s remaining bits
+  (`ToolRow` and others) haven't been checked in detail.
