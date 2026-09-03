@@ -256,6 +256,12 @@ export default function SummaryPanel({
 }) {
   const selling = mode === "sell";
   const bulk = mode === "distribute";
+  /* ── The phone bar's own state ──
+     Collapsed by default: a bar showing one figure, expanding into this
+     same panel as a bottom sheet only when tapped. Irrelevant above 640px,
+     where CSS never shows the bar and never hides the aside — see
+     index.html. */
+  const [expanded, setExpanded] = useState(false);
   const f = CATALOG[formatId];
   const p = priceFor(formatId, state);
   const limit = pageLimit(formatId, state);
@@ -323,19 +329,72 @@ export default function SummaryPanel({
     .map(id => ADDONS.find(a => a.id === id))
     .filter(Boolean);
 
+  /* ── The one figure the phone bar shows ──
+     Same headline the panel itself leads with, just read off the numbers
+     already computed above rather than recomputed. */
+  const barLabel = selling ? "You'd earn" : bulk ? "Run total" : "Total";
+  const barValue = selling ? profit : p.total + (quote?.cost ?? 0);
+
   return (
     /* Clear of the sticky header, whatever height it is at this width —
        App publishes it as --nav-h. The fallback matches the desktop block,
        so a panel rendered before the measurement still lands correctly. */
     <div style={{ ...(sticky ? { position: "sticky", top: "calc(var(--nav-h, 124px) + 16px)" } : null), display: "grid", gap: 12, minWidth: 0 }}>
+
+      {/* ── The phone bar ──
+          Invisible above 640px (see .cfg-bar in index.html). Below it, this
+          replaces the sticky-top panel entirely: a slim strip pinned to the
+          bottom of the viewport, one figure and a tap to open the same
+          panel as a sheet. */}
+      <button
+        className="cfg-bar"
+        onClick={() => setExpanded(true)}
+        aria-expanded={expanded}
+        style={{
+          width: "100%", alignItems: "center", justifyContent: "space-between",
+          background: T.bgNeutral, border: 0, borderTop: `1px solid ${T.border}`,
+          padding: "14px 20px", cursor: "pointer", font: "inherit", color: "inherit",
+        }}
+      >
+        <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase", color: T.textSubtle }}>
+          {barLabel}
+        </span>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+          <span style={{ fontFamily: FONT_DISPLAY, fontWeight: 700, fontSize: TYPE["2xl"], color: C.blue600 }}>
+            {money(barValue)}
+          </span>
+          <span className="ms" style={{ fontSize: 22, color: T.textSubtle }}>expand_less</span>
+        </span>
+      </button>
+
+      {/* Tapping outside the open sheet closes it, same as tapping its own
+          close row. */}
+      <div className={`cfg-bar-scrim${expanded ? " open" : ""}`} onClick={() => setExpanded(false)} aria-hidden />
+
       <aside
-        className="cfg-aside"
+        className={`cfg-aside${expanded ? " cfg-aside-open" : ""}`}
         style={{
           background: T.bgNeutral,
           border: `1px solid ${T.border}`, borderRadius: R.lg,
           padding: 22, display: "grid", gap: 14, minWidth: 0,
         }}
       >
+        {/* Only rendered as a control on a phone (.show-sm) — the sheet's
+            own way to close, since there is no outside click on a bar. */}
+        <button
+          className="show-sm"
+          onClick={() => setExpanded(false)}
+          aria-label="Close"
+          style={{
+            alignItems: "center", justifyContent: "center", gap: 6,
+            background: "transparent", border: 0, padding: 0, margin: "-6px 0 0", cursor: "pointer",
+            font: "inherit", color: T.textSubtle,
+          }}
+        >
+          <span className="ms" style={{ fontSize: 22 }}>expand_more</span>
+          <span style={{ fontSize: TYPE.sm, fontWeight: 700 }}>Close</span>
+        </button>
+
         <div style={{
           fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 700,
           letterSpacing: 0.8, textTransform: "uppercase",

@@ -566,7 +566,7 @@ export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSe
           seen what they would earn goes looking for the catch. */}
       {selling && format && (
         <Faq
-          heading={<>Before you sell it,<br />two things to know.</>}
+          heading={<>Before you sell it,<br />a few things to know.</>}
           items={[
             ["Do I have to order a copy before I can sell?",
              <p style={{ margin: 0 }}>
@@ -575,6 +575,18 @@ export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSe
                A discounted copy or a PDF proof, either one.
              </p>],
             ["What can an Instant Store sell?", <SellableAnswer formatId={format} />],
+            ["Already have your own storefront?",
+             <p style={{ margin: 0 }}>
+               An Instant Store is one link, hosted by Blurb. If you're selling through a
+               storefront you already run, the RPI Print API prints behind it instead, at
+               similar pricing. Pricing and setup are on{" "}
+               <a
+                 href="https://www.rpiprint.com" target="_blank" rel="noopener noreferrer"
+                 style={{ color: T.textBrand, textDecoration: "underline" }}
+               >
+                 rpiprint.com
+               </a>.
+             </p>],
           ]}
         />
       )}

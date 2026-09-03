@@ -165,6 +165,24 @@
         .stack-md { grid-template-columns: 1fr !important; }
       }
 
+      /* A show-only-on-phone utility, the mirror of .hide-sm — used by the
+         summary panel's mobile bar and its sheet's own close control, both
+         of which have no reason to exist above 640px. */
+      .show-sm { display: none; }
+
+      /* ── The summary panel, pinned to the bottom on a phone ──
+         Above 640px the panel stays the sticky-top aside it always was
+         (reordered above the steps at 1024px, see the block above). Below
+         640px that same box became a scrolling shelf pushed above the
+         steps — a nested scroll (the page, then the box) for a number that
+         only needs a glance most of the time. So on a phone it collapses to
+         a slim bar fixed to the bottom of the viewport (.cfg-bar) showing
+         only the headline figure, and expands into a bottom sheet
+         (.cfg-aside.cfg-aside-open) — the same markup as the desktop panel,
+         just anchored to the bottom of the screen — only when tapped. */
+      .cfg-bar { display: none; }
+      .cfg-bar-scrim { display: none; }
+
       @media (max-width: 640px) {
         /* The type scale in tokens.js is in rem, so it hangs off the root
            font size. Shrinking that once takes the whole scale down
@@ -172,13 +190,37 @@
            than overriding sizes one component at a time. */
         html { font-size: 15px; }
         .hide-sm { display: none !important; }
+        .show-sm { display: flex !important; }
         .pop-wide {
           min-width: 0 !important;
           width: calc(100vw - 24px) !important;
           max-width: calc(100vw - 24px) !important;
         }
         .pop-cols { grid-template-columns: 1fr !important; }
-        .cfg-aside { max-height: 34vh; padding: 16px !important; }
+
+        .cfg-bar {
+          display: flex !important;
+          position: fixed; left: 0; right: 0; bottom: 0; z-index: 71;
+          box-shadow: 0 -6px 18px rgba(0, 0, 0, .12);
+        }
+        /* Collapsed: out of the flow entirely, replaced by .cfg-bar above.
+           Open: the same panel, now a sheet pinned under the bar's shadow —
+           .cfg-aside-open beats the plain .cfg-aside rule regardless of
+           source order, being the more specific selector. */
+        .cfg-aside:not(.cfg-aside-open) { display: none !important; }
+        .cfg-aside.cfg-aside-open {
+          position: fixed !important; top: auto !important; bottom: 0 !important;
+          left: 0 !important; right: 0 !important;
+          max-height: 82vh !important; overflow-y: auto;
+          border-radius: 16px 16px 0 0 !important;
+          box-shadow: 0 -10px 30px rgba(0, 0, 0, .18) !important;
+          z-index: 72; padding: 16px !important;
+        }
+        .cfg-bar-scrim.open {
+          display: block !important;
+          position: fixed; inset: 0; z-index: 70;
+          background: rgba(13, 47, 68, .35);
+        }
         .demo-bar { justify-content: center !important; }
       }
 

@@ -109,12 +109,19 @@ function SizeSwatch({ option, selected, disabled, maxDim, delta }) {
       </span>
       {/* What switching to this size would add to, or take off, the book as
           configured now — see the note on OptionGroup below for why this is
-          measured against the current specification, not the cheapest size. */}
-      {delta && (
-        <span style={{ fontSize: TYPE.sm, fontWeight: 700, color: C.gray950, lineHeight: 1.3 }}>
-          {delta}
-        </span>
-      )}
+          measured against the current specification, not the cheapest size.
+
+          Always rendered, even with nothing to say — the option you've
+          already picked and any option priced the same have no delta, and
+          an omitted line there used to make those cards shorter than their
+          neighbours. A row of swatches must line up regardless of which
+          one has something to report. */}
+      <span style={{
+        fontSize: TYPE.sm, fontWeight: 700, color: C.gray950, lineHeight: 1.3,
+        visibility: delta ? "visible" : "hidden",
+      }}>
+        {delta || " "}
+      </span>
     </RadioCard>
   );
 }

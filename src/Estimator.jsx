@@ -83,7 +83,7 @@ const MODES = {
        price, you print only what sells, and the margin is yours because
        you brought the buyer. Nothing about fees or commission, which is
        the unsourced claim in Crometrics' mock. */
-    h1: "Sell your book. Keep more of what it earns.",
+    h1: "Sell your book with an Instant Store. Keep more of every sale.",
     /* "The rest of YOUR PRICE", never "the rest of what your buyer pays":
        the buyer pays the price plus delivery, and delivery is not the
        seller's to keep. Shipping stays outside the margin everywhere on
@@ -301,9 +301,9 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
             onPick={changeFormat}
             note={selling ? (
               <>
-                These figures are for a sale through your Instant Store, where you
-                set the price and what is left after your cost is yours. The
-                Bookstore, Amazon and Ingram each work on different terms.{" "}
+                These figures price a sale through your Instant Store: you set
+                the price, and what's left after your cost is yours. The
+                Bookstore, Amazon and Ingram all work on different terms.{" "}
                 <Button
                   variant="text"
                   size="small"

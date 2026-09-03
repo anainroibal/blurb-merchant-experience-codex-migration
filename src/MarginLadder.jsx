@@ -3,41 +3,28 @@ import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { money } from "./catalog.js";
 
 /* ────────────────────────────────────────────────────────────────
-   Your cost → your price → your profit.
+   Your cost → your price → your profit → your margin.
 
-   Two ways to drive it, and the switch IS the ladder rather than a
-   control beside it: the two numbers you could own are both live, and
-   clicking one hands it the input. No toggle to find, no label to read
-   first, and the relationship teaches itself — take hold of one and
-   watch the other move.
+   All three are live fields all the time (Anain, 2026-09-03) — it used
+   to be a click-to-take-over switch (one field a plain figure, the
+   other an input with a pencil), which cost an extra tap before typing
+   and swapped which DOM node rendered under the seller's finger. Now
+   every field is always the input; typing into any one of them just
+   works, and nothing jumps.
 
-   PROFIT-DRIVEN IS THE DEFAULT when selling. It is how Blurb's own
-   Bookstore works ("enter your desired profit, and we'll calculate the
-   final retail price"), and it matches what a seller has usually already
-   decided: what this needs to earn per copy. Price-driven suits the
-   opposite case — a price already announced, which cannot move.
-
-   The difference only shows when the SPEC changes, so the ladder says
-   what will happen before it happens.
+   `driver` still exists, silently: whichever field the seller last
+   typed into is the one held steady when the SPEC changes underneath
+   it (a paper upgrade, a size change) — the other two move instead.
+   PROFIT-DRIVEN IS THE DEFAULT when selling, because that's usually the
+   number a seller has already decided on.
    ──────────────────────────────────────────────────────────────── */
 
-function Cell({ label, sub, children, tone = "quiet", onClick, compact }) {
-  const loud = tone === "loud";
+function Cell({ label, sub, children, compact }) {
   return (
-    <div
-      onClick={onClick}
-      role={onClick ? "button" : undefined}
-      tabIndex={onClick ? 0 : undefined}
-      onKeyDown={onClick ? e => (e.key === "Enter" || e.key === " ") && onClick() : undefined}
-      className={onClick ? "card-move" : undefined}
-      style={{
-        display: "grid", gap: 4, minWidth: 0, padding: compact ? "2px 0" : 0,
-        cursor: onClick ? "pointer" : "default",
-      }}
-    >
+    <div style={{ display: "grid", gap: 4, minWidth: 0, padding: compact ? "2px 0" : 0 }}>
       <span style={{
         fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase",
-        color: loud ? C.blue600 : T.textSubtle,
+        color: T.textSubtle,
       }}>
         {label}
       </span>
@@ -82,28 +69,35 @@ const seg = compact => ({
   display: "grid", placeItems: "center", color: T.textNeutral, cursor: "pointer",
 });
 
-function Entry({ value, min, onChange, compact }) {
-  const [raw, setRaw] = useState(value.toFixed(2));
+/* `unit`: "currency" prefixes "US $" and steps in dollars; "percent" suffixes
+   "%" and steps in whole points, clamped below 100 since a 100% margin
+   divides the price by zero. Same field either way — the margin driver is
+   this component with a different unit, not a new one. */
+function Entry({ value, min, max = Infinity, onChange, compact, unit = "currency" }) {
+  const fmt = v => (unit === "percent" ? String(Math.round(v)) : v.toFixed(2));
+  const [raw, setRaw] = useState(fmt(value));
   const [editing, setEditing] = useState(false);
-  useEffect(() => { if (!editing) setRaw(value.toFixed(2)); }, [value, editing]);
+  useEffect(() => { if (!editing) setRaw(fmt(value)); }, [value, editing]);
 
   const parsed = parseFloat(raw);
+  const clamp = v => Math.min(max, Math.max(min, v));
   const commit = () => {
     setEditing(false);
-    const next = Number.isFinite(parsed) ? Math.max(min, parsed) : min;
-    setRaw(next.toFixed(2));
+    const next = Number.isFinite(parsed) ? clamp(parsed) : min;
+    setRaw(fmt(next));
     onChange(next);
   };
   const step = d => {
     const from = Number.isFinite(parsed) ? parsed : value;
-    const next = Math.max(min, Math.round((from + d) * 100) / 100);
+    const next = clamp(Math.round((from + d) * 100) / 100);
     setEditing(false);
-    setRaw(next.toFixed(2));
+    setRaw(fmt(next));
     onChange(next);
   };
 
   const S = seg(compact);
   const atMin = value <= min;
+  const atMax = value >= max;
 
   return (
     <span style={{ display: "flex", alignItems: "stretch", minWidth: 0 }}>
@@ -117,11 +111,13 @@ function Entry({ value, min, onChange, compact }) {
 
       <span style={{
         flex: "1 1 auto", minWidth: 0, height: SEG_H(compact), marginRight: -1,
-        display: "flex", alignItems: "center", gap: 6, padding: "0 10px",
+        display: "flex", alignItems: "center", gap: unit === "percent" ? 2 : 6, padding: "0 10px",
         border: `1px solid ${T.borderStrong}`, background: T.bgNeutral,
       }}>
         {/* One line. "US $" broke over two the moment the field narrowed. */}
-        <span style={{ fontSize: TYPE.base, color: T.textSubtle, whiteSpace: "nowrap", flex: "0 0 auto" }}>US $</span>
+        {unit === "currency" && (
+          <span style={{ fontSize: TYPE.base, color: T.textSubtle, whiteSpace: "nowrap", flex: "0 0 auto" }}>US $</span>
+        )}
         <input
           type="text" inputMode="decimal" value={raw}
           onFocus={e => { setEditing(true); e.target.select(); }}
@@ -130,7 +126,7 @@ function Entry({ value, min, onChange, compact }) {
             if (!/^\d*\.?\d*$/.test(v)) return;
             setRaw(v);
             const n = parseFloat(v);
-            if (Number.isFinite(n)) onChange(Math.max(min, n));
+            if (Number.isFinite(n)) onChange(clamp(n));
           }}
           onBlur={commit}
           onKeyDown={e => e.key === "Enter" && e.currentTarget.blur()}
@@ -138,58 +134,33 @@ function Entry({ value, min, onChange, compact }) {
             border: 0, outline: "none", width: "100%", minWidth: 0, background: "transparent",
             fontFamily: FONT_DISPLAY, fontWeight: 700, color: C.blue600,
             fontSize: compact ? TYPE["3xl"] : TYPE["4xl"],
+            /* Right-aligned in every unit, so the three cells in the ladder
+               (price, profit, margin) read as a column of numbers rather
+               than each sitting wherever its prefix happens to end. */
+            textAlign: "right",
           }}
         />
+        {/* Same size, weight and colour as the digits — a smaller, quieter
+            "%" read as a footnote next to the number it belongs to. */}
+        {unit === "percent" && (
+          <span style={{
+            fontFamily: FONT_DISPLAY, fontWeight: 700, color: C.blue600,
+            fontSize: compact ? TYPE["3xl"] : TYPE["4xl"],
+            whiteSpace: "nowrap", flex: "0 0 auto",
+          }}>%</span>
+        )}
       </span>
 
-      <button style={{ ...S, borderRadius: "0 4px 4px 0" }} onClick={() => step(1)} aria-label="More">
+      <button
+        style={{ ...S, borderRadius: "0 4px 4px 0", opacity: atMax ? 0.35 : 1, cursor: atMax ? "not-allowed" : "pointer" }}
+        onClick={() => step(1)} disabled={atMax} aria-label="More"
+      >
         <span className="ms" style={{ fontSize: 22 }}>add</span>
       </button>
     </span>
   );
 }
 
-/* ── The number you could be typing, but are not ──
-   Three numbers, three states, and until now only two treatments: the one
-   being typed was a field, and the other two were the same plain figure. So
-   half of what a seller can change looked as fixed as the one thing they
-   cannot (Ana, DES-482).
-
-   Cost keeps the plain figure — it has no box, because there is nothing to
-   type into. Price and profit are always a field: the one driving the
-   ladder wears the whole quantity selector, the other is its value segment
-   alone, with the pencil in place of the two buttons. Taking it over gives
-   it the buttons back. */
-function Ghost({ value, compact, loud }) {
-  const [hot, setHot] = useState(false);
-  return (
-    <span
-      onMouseEnter={() => setHot(true)}
-      onMouseLeave={() => setHot(false)}
-      style={{
-        display: "flex", alignItems: "center", gap: 6, minWidth: 0,
-        height: SEG_H(compact), padding: "0 10px",
-        border: `1px solid ${hot ? T.borderBrand : T.borderStrong}`,
-        borderRadius: 4, background: T.bgNeutral,
-        transition: "border-color 120ms ease",
-      }}
-    >
-      <span style={{ fontSize: TYPE.base, color: T.textSubtle, whiteSpace: "nowrap", flex: "0 0 auto" }}>US $</span>
-      <span style={{
-        flex: 1, minWidth: 0,
-        /* Blue where this is the number the ladder just worked out, so the
-           answer still reads as the answer inside its field. */
-        fontFamily: FONT_DISPLAY, fontWeight: 700, color: loud ? C.blue600 : T.textNeutral,
-        fontSize: compact ? TYPE["3xl"] : TYPE["4xl"],
-      }}>
-        {value.toFixed(2)}
-      </span>
-      <span className="ms" style={{ fontSize: 18, color: hot ? T.textBrand : T.textSubtle, flex: "0 0 auto" }}>
-        edit
-      </span>
-    </span>
-  );
-}
 
 /* ── One row of the plain summary ──
    8/21 pod: "the summary section for margin calculator — same thing without
@@ -199,17 +170,13 @@ function Ghost({ value, compact, loud }) {
    is a line in a calculation, never a price tag, and visual treatment is
    exactly what turns a number into a price tag. Plain rows keep cost → price
    → profit reading as arithmetic the seller is doing. */
-function Row({ label, sub, children, onClick, last }) {
+function Row({ label, sub, children, last }) {
   return (
     <div
-      onClick={onClick}
-      role={onClick ? "button" : undefined}
-      tabIndex={onClick ? 0 : undefined}
-      onKeyDown={onClick ? e => (e.key === "Enter" || e.key === " ") && onClick() : undefined}
       style={{
         display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16,
         padding: "10px 0", borderBottom: last ? 0 : `1px solid ${T.border}`,
-        cursor: onClick ? "pointer" : "default", minWidth: 0,
+        minWidth: 0,
       }}
     >
       <span style={{ display: "grid", gap: 2, minWidth: 0 }}>
@@ -246,22 +213,47 @@ function CostSub({ onGo }) {
   );
 }
 
+/* A margin as a percent of price, not of cost — "40% margin" means 40% of
+   what the buyer pays is profit, the way a seller already talks about
+   margin. `MARGIN_MAX` keeps the field short of 100: at 100% the price
+   would have to be infinite to leave any cost covered. */
+const MARGIN_MAX = 90;
+
 export default function MarginLadder({ cost, price, onPrice, floor, compact, plain, onGo }) {
   const [driver, setDriver] = useState("profit");
   const profit = Math.max(0, price - cost);
+  const margin = price > 0 ? Math.min(MARGIN_MAX, (profit / price) * 100) : 0;
 
   /* Profit-driven means the profit is what survives a spec change: when
-     cost moves, the price follows and the earnings hold. */
+     cost moves, the price follows and the earnings hold. Margin-driven
+     holds the same way, on the percentage instead of the dollar amount. */
   useEffect(() => {
-    if (driver !== "profit") return;
-    const next = Math.round((cost + profit) * 100) / 100;
-    if (Math.abs(next - price) > 0.005) onPrice(next);
+    if (driver === "profit") {
+      const next = Math.round((cost + profit) * 100) / 100;
+      if (Math.abs(next - price) > 0.005) onPrice(next);
+    } else if (driver === "margin") {
+      const next = Math.round((cost / (1 - margin / 100)) * 100) / 100;
+      if (Math.abs(next - price) > 0.005) onPrice(next);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cost]);
 
   useEffect(() => { if (price < floor) onPrice(floor); }, [floor, price]);
 
-  const take = next => setDriver(next);
+  /* Each field is live all the time now (Anain, 2026-09-03) — the
+     click-to-take-over step and the Ghost/Entry swap it caused were an
+     extra motion and a layout jump for a seller who just wants to type a
+     number. `driver` still exists, just silently: it is only read by the
+     effect above, to decide what a spec change should hold steady. Typing
+     into any of the three sets it without the seller doing anything to
+     "select" a field first. */
+  const setPrice = v => { setDriver("price"); onPrice(v); };
+  const setProfit = p => { setDriver("profit"); onPrice(Math.round((cost + p) * 100) / 100); };
+  const setMargin = pct => {
+    setDriver("margin");
+    const bounded = Math.min(MARGIN_MAX, Math.max(0, pct));
+    onPrice(Math.round((cost / (1 - bounded / 100)) * 100) / 100);
+  };
 
   if (plain) {
     const amount = v => (
@@ -273,23 +265,16 @@ export default function MarginLadder({ cost, price, onPrice, floor, compact, pla
       <div style={{ fontFamily: FONT_BODY, display: "grid" }}>
         <Row label="Your cost" sub={<CostSub onGo={onGo} />}>{amount(cost)}</Row>
 
-        <Row
-          label="Your listing price"
-          onClick={driver === "price" ? undefined : () => take("price")}
-        >
-          {driver === "price"
-            ? <Entry value={price} min={floor} onChange={onPrice} compact />
-            : <Ghost value={price} compact />}
+        <Row label="Your listing price">
+          <Entry value={price} min={floor} onChange={setPrice} compact />
         </Row>
 
-        <Row
-          label="Your profit"
-          onClick={driver === "profit" ? undefined : () => take("profit")}
-          last
-        >
-          {driver === "profit"
-            ? <Entry value={profit} min={0} onChange={p => onPrice(Math.round((cost + p) * 100) / 100)} compact />
-            : <Ghost value={profit} compact />}
+        <Row label="Your profit">
+          <Entry value={profit} min={0} onChange={setProfit} compact />
+        </Row>
+
+        <Row label="Your margin" last>
+          <Entry value={margin} min={0} max={MARGIN_MAX} onChange={setMargin} compact unit="percent" />
         </Row>
       </div>
     );
@@ -306,26 +291,16 @@ export default function MarginLadder({ cost, price, onPrice, floor, compact, pla
           <Figure value={cost} compact={compact} />
         </Cell>
 
-        <Cell
-          label="Your listing price"
-          tone={driver === "profit" ? "loud" : "quiet"}
-          onClick={driver === "price" ? undefined : () => take("price")}
-          compact={compact}
-        >
-          {driver === "price"
-            ? <Entry value={price} min={floor} onChange={onPrice} compact={compact} />
-            : <Ghost value={price} loud compact={compact} />}
+        <Cell label="Your listing price" compact={compact}>
+          <Entry value={price} min={floor} onChange={setPrice} compact={compact} />
         </Cell>
 
-        <Cell
-          label="Your profit"
-          tone={driver === "price" ? "loud" : "quiet"}
-          onClick={driver === "profit" ? undefined : () => take("profit")}
-          compact={compact}
-        >
-          {driver === "profit"
-            ? <Entry value={profit} min={0} onChange={p => onPrice(Math.round((cost + p) * 100) / 100)} compact={compact} />
-            : <Ghost value={profit} loud compact={compact} />}
+        <Cell label="Your profit" compact={compact}>
+          <Entry value={profit} min={0} onChange={setProfit} compact={compact} />
+        </Cell>
+
+        <Cell label="Your margin" sub="Profit as a share of your price" compact={compact}>
+          <Entry value={margin} min={0} max={MARGIN_MAX} onChange={setMargin} compact={compact} unit="percent" />
         </Cell>
       </div>
     </div>
