@@ -45,6 +45,26 @@ Updated as the migration progresses — treat this as a snapshot, not a plan.
   `ShippingSection.jsx`'s speed-picker rows, `GetStarted.jsx`'s "What for?"
   intent chips. Gained real radio-group semantics (arrow-key navigation)
   that didn't exist before.
+- **HeroCenter** — SellerLanding's hero (plain-string heading/subheading,
+  one CTA). Its gradient background rides in via a scoped
+  `.hero-gradient-seller` class, since `HeroCenter` only takes a single
+  background image.
+- **PricingTable** — `PricingTables.jsx`'s `FamilyTable` (photo books,
+  paperback/hardcover, notebooks). Its `sections` model (a toggleable
+  group header with nested rows) is exactly this table's existing
+  paper-group/cover-row structure. Sections are now collapsible — a real
+  behavior gained, not just a restyle.
+- **ComparisonTable** (again) — `WallArtTable` and `VolumeTable` in
+  `PricingTables.jsx` (flat matrices, no groups).
+- **Badge** — SellerLanding's subtle tier-band chip (`color="blue"`).
+
+## Format-card image fix (not a Codex swap, a bug the migration exposed)
+
+`FormatCard`'s photo used `width: 100%, height: auto`, scaling to each
+file's own aspect ratio rather than a fixed square — fine for four photos
+shaped close to 1:1, but the Wall Art shot (closer to portrait) rendered
+smaller and letterboxed. Fixed with `aspectRatio: 1/1` + `overflow: hidden`
++ `objectFit: cover` so every photo crops to the same square.
 
 ## Deliberately left custom (real gaps, not oversights)
 
@@ -61,15 +81,23 @@ Updated as the migration progresses — treat this as a snapshot, not a plan.
   InstantStorePage's "Made with Blurb...") — JSX headings/subheadings or a
   pinned live-page gradient background that `CallToAction`'s plain-string
   API can't hold.
+- **Home's hero** — a pixel-pinned SVG clip-path curve (copied verbatim
+  from the live site) plus a straddling foreground photo pushing the
+  section's own height. `HeroCenter` has no clip-path/curve support and no
+  secondary image slot.
+- **InstantStorePage's hero** — a JSX `<br/>` in the heading, plus a
+  footer line below the CTAs that's beyond `HeroCenter`'s heading/
+  subheading/CTA slots.
+- **SellerLanding's solid "New" chip** — Codex's `Badge` (the semantically
+  right component for a static label) has a completely closed API: no
+  `style`, no `className`, no props spread, and none of its 7 fixed colors
+  reproduce a solid blue background with white text.
+- **`PricingTables.jsx`'s `MagazineTable`** — a 2-row, 3-column table with
+  no scrolling/sticky-column apparatus at all; a different, much simpler
+  shape than what `PricingTable`/`ComparisonTable` are for.
 
 ## Not yet evaluated
 
-- **Hero sections** on Home, SellerLanding, InstantStorePage — never
-  checked against Codex's `hero/Center` or `hero/Video` patterns.
-- **`PricingTables.jsx` / `PricingToday.jsx`** — never checked against
-  Codex's `PricingTable`/`SimpleTable` patterns.
-- **SellerLanding's local `Chip`** (tier band, route-card "New" badge) —
-  never swapped for Codex's real `Chip`.
 - **Everything else largely untouched**: `GetStarted.jsx` (mostly),
   `MarginLadder.jsx`, `CreateActions.jsx`'s remaining bits, `Faq.jsx`'s
   internals, `YourProjects.jsx`, `CostExplainer.jsx`, `WhiteLabelTip.jsx`.
