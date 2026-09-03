@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, ComparisonTable, CardList, Card, HeroCenter } from "@blurb/codex-react";
+import { Button, ComparisonTable, CardList, Card, HeroCenter, Badge } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { CATALOG, SELL_CHANNELS , sellableSentence } from "./catalog.js";
 
@@ -89,13 +89,18 @@ const ILLUS = "https://assets.blurb.com/_astro/";
    ──────────────────────────────────────────────────────────────── */
 
 
-function Chip({ children, solid }) {
+/* The only remaining local chip. Its subtle sibling (the tier band, below)
+   moved to Codex's real Badge — but Badge's API is closed (no style or
+   className, no props spread at all), and none of its 7 fixed colors
+   reproduce a solid blue background with white text. So the "New" marker
+   stays custom rather than losing its own visual weight to Badge's only
+   available treatments (all pale backgrounds, or bold-gray/white text). */
+function Chip({ children }) {
   return (
     <span style={{
       padding: "2px 8px", borderRadius: 999, fontSize: TYPE.sm, fontWeight: 700,
       letterSpacing: 0.4, textTransform: "uppercase", whiteSpace: "nowrap",
-      background: solid ? C.blue600 : C.blue50,
-      color: solid ? "#fff" : C.blue950,
+      background: C.blue600, color: "#fff",
     }}>
       {children}
     </span>
@@ -376,7 +381,7 @@ export default function SellerLanding({ onGo, lean = false }) {
                   />
                 </div>
 
-                <span style={{ justifySelf: "start" }}><Chip>{tier.band}</Chip></span>
+                <span style={{ justifySelf: "start" }}><Badge color="blue" label={tier.band} /></span>
 
                 <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["4xl"], fontWeight: 500, lineHeight: 1.2 }}>
                   {tier.title}
@@ -474,7 +479,7 @@ export default function SellerLanding({ onGo, lean = false }) {
                       style={{ width: "78%", height: "auto", display: "block", mixBlendMode: "multiply" }}
                     />
                     {card.isNew && (
-                      <span style={{ position: "absolute", top: 12, left: 12 }}><Chip solid>New</Chip></span>
+                      <span style={{ position: "absolute", top: 12, left: 12 }}><Chip>New</Chip></span>
                     )}
                   </div>
                 }
