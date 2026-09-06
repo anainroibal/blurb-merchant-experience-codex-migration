@@ -97,18 +97,31 @@ const SELL_PATHS = [
   },
 ];
 
+const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
+
 /* Same product-type copy as Instant Store v2's "What can you sell"
    section — the outline writes its own descriptions rather than
    reusing FormatCards.jsx's sitewide ones; real Blurb photography
-   stays, via FORMAT_CARDS' img/alt, matched by id. */
+   stays, via FORMAT_CARDS' img/alt, matched by id.
+
+   `formats`/`papers`/`sizes` are read directly off blurb.com/pricing
+   (2026-09-06), not the local catalog matrix — CLAUDE.md already
+   documents several gaps between the two (the "T7" price gaps), and
+   the live page is what a seller actually reads.
+     formats = distinct binding rows (Paperback / Imagewrap Hardcover /
+       Dust Jacket Hardcover / Wire-O Softcover)
+     papers  = distinct paper/finish sections (Standard, Premium,
+       Mohawk Superfine, layflat variants, etc. each count once)
+     sizes   = the count /pricing itself states in each card's own
+       "X sizes" line */
 const SELL_FORMATS = [
-  { id: "photo", title: "Photo Books",
+  { id: "photo", title: "Photo Books", formats: 3, papers: 7, sizes: 6,
     desc: "From high-end photography albums to keepsake family books, photo books are our most premium format with multiple trim sizes and paper types." },
-  { id: "trade", title: "Paperback & Hardcover",
+  { id: "trade", title: "Paperback & Hardcover", formats: 3, papers: 3, sizes: 3,
     desc: "Ideal for books that combine art with text or just text alone like portfolios, cookbooks, novels, children's books and the like." },
-  { id: "magazine", title: "Magazines",
+  { id: "magazine", title: "Magazines", formats: 1, papers: 1, sizes: 1,
     desc: "Great for a series or one-off custom projects. Impressive newsstand quality and easy distribution." },
-  { id: "notebook", title: "Notebooks & Journals",
+  { id: "notebook", title: "Notebooks & Journals", formats: 4, papers: 1, sizes: 3,
     desc: "Choose from blank, lined, square, or dot-grid notebook pages, plus easily add photos or illustrations within the pages." },
 ];
 
@@ -324,7 +337,7 @@ export default function SellLandingV2({ onGo }) {
                       style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", display: "block", borderRadius: R.lg }}
                     />
                   }
-                  title={f.title}
+                  title={`${f.title} · ${plural(f.formats, "format")} · ${plural(f.papers, "paper")} · ${plural(f.sizes, "size")}`}
                   description={f.desc}
                 />
               );
