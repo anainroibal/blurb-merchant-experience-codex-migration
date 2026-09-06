@@ -35,8 +35,9 @@ import Faq from "./Faq.jsx";
    The showcase/testimonial section keeps the outline's own lorem-ipsum
    — inventing testimonial copy or stats here would be worse than a
    visible placeholder. Same for its button ("Button text" is the
-   outline's own placeholder label). "Trusted by" wordmarks are plain
-   text pending real logo assets; the five names are the outline's own.
+   outline's own placeholder label). "Trusted by" is the frame's own
+   logo lockup, exported as `public/assets/trusted-by-logos.png`
+   (Figma node 5161-15434) rather than reproduced as styled text.
 
    ── Corrected 2026-09-06 ──
    An earlier pass of this file invented body copy for the quality
@@ -277,15 +278,23 @@ export default function SellLandingV2({ onGo }) {
                   "Yes (You hold stock)",
                   "None (Print-on-demand)",
                 ] },
+                /* The outline renders these as real buttons, one per
+                   column, not a text row — but ComparisonTable's own
+                   column widths (responsive, sticky label column) can't
+                   be mirrored by a separate element, so a standalone
+                   button row never lines up under its column. A row of
+                   Markdown links, inside the same table, lines up
+                   exactly because it's the same grid — same trick
+                   SellerLanding.jsx's six-route table uses for its own
+                   "Learn more" links. */
+                { header: "", cells: [
+                  "[Get started](?stage=instantstorev2)",
+                  "[Get started](https://www.blurb.com/sell-through-blurb)",
+                  "[Get started](https://www.blurb.com/large-order-services)",
+                  "[Get started](https://www.rpiprint.com)",
+                ] },
               ]}
             />
-
-            <div style={{ display: "grid", gap: 12, gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
-              <Button onClick={() => onGo?.("instantstorev2")}>Get started</Button>
-              <Button as="a" href="https://www.blurb.com/sell-through-blurb" target="_blank" rel="noreferrer" variant="outlined">Get started</Button>
-              <Button as="a" href="https://www.blurb.com/large-order-services" target="_blank" rel="noreferrer" variant="outlined">Get started</Button>
-              <Button as="a" href="https://www.rpiprint.com" target="_blank" rel="noreferrer" variant="outlined">Get started</Button>
-            </div>
           </div>
         </div>
       </section>
@@ -364,23 +373,18 @@ export default function SellLandingV2({ onGo }) {
         </div>
       </section>
 
-      {/* ── Trusted by ── names are the outline's own (Figma comment
-          #63 confirms Canva/Minted); wordmarks are plain text pending
-          real logo assets. */}
+      {/* ── Trusted by ── the outline's actual logo lockup (Canva,
+          Minted, Treering, Storyworth, We Can Books — names confirmed
+          by Figma comment #63), exported straight off the frame rather
+          than reproduced as styled text, so the real marks show up
+          instead of a guess at their wordmarks. */}
       <section style={{ padding: "clamp(40px, 5vw, 56px) 24px" }}>
-        <div style={{
-          maxWidth: 1240, margin: "0 auto", display: "grid", gap: 24, justifyItems: "center", textAlign: "center",
-        }}>
-          <p style={{ margin: 0, fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase", color: T.textSubtle }}>
-            Trusted by
-          </p>
-          <div style={{ display: "flex", gap: 40, flexWrap: "wrap", justifyContent: "center", alignItems: "center" }}>
-            {TRUSTED_BY.map(name => (
-              <span key={name} style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], color: C.gray400 }}>
-                {name}
-              </span>
-            ))}
-          </div>
+        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+          <img
+            src="/assets/trusted-by-logos.png"
+            alt={`Trusted by ${TRUSTED_BY.join(", ")}`}
+            style={{ width: "100%", height: "auto", display: "block" }}
+          />
         </div>
       </section>
 
