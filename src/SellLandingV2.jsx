@@ -53,7 +53,7 @@ import Faq from "./Faq.jsx";
    demand renamed/rewritten to lead with "no inventory risk". */
 const QUALITY = [
   ["print", "Print on demand, no inventory",
-   "No need to hold an inventory or have upfront costs. We print and ship only when you make a sale."],
+   "No upfront costs and no need to store an inventory. We print and ship only when you make a sale."],
   ["workspace_premium", "Unmatched quality",
    "Give your audience access to Blurb's superior print quality, vast catalog of formats, and premium paper types."],
   ["precision_manufacturing", "Powered by RPI Print",
@@ -134,8 +134,8 @@ const SHOWCASE = [
 const STATS = [
   ["verified_user", "20+ Years",
    "Backed by 20 years of in-house expertise and full production control, Blurb ensures consistent quality from start to finish. No outsourcing, no compromises."],
-  ["public", "70+ Countries", "Shipped to a global network of buyers and readers."],
-  ["auto_stories", "20M+", "Unique books and products created and sold."],
+  ["public", "70+ Countries",
+   "Shipped to a global network of buyers and readers, with over 20M unique books and products created and sold."],
   ["eco", "Sustainable papers & practices",
    "Our photo books are crafted in the US with Forest Stewardship Council-certified papers and printed at the facility nearest you."],
 ];
@@ -209,19 +209,18 @@ export default function SellLandingV2({ onGo }) {
         }}
       >
         <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 48 }}>
-          <div style={{ textAlign: "center", display: "grid", gap: 12, justifyItems: "center" }}>
-            <h2 style={{
-              fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
-              lineHeight: 1.25, margin: 0,
-            }}>
-              Four ways to sell
-            </h2>
-            <p style={{ fontSize: TYPE.lg, color: T.textSubtle, margin: 0, maxWidth: 680, lineHeight: 1.6 }}>
-              Start with one channel and add more as your business grows. Each option works independently, or together.
-            </p>
-          </div>
-
-          <CardList layout={{ mobile: 1, tablet: 2, desktop: 4 }}>
+          {/* Heading passed to CardList itself, not a separate div above
+             it — CardList's own layout already reserves top padding for
+             a heading area whether or not one is given, so a manual
+             heading here on top of this outer grid's own `gap` stacked
+             two spacings and left a much bigger gap than every other
+             CardList-heading section on this page. */}
+          <CardList
+            heading="Four ways to sell"
+            subheading="Start with one channel and add more as your business grows. Each option works independently, or together."
+            headingAlign="center"
+            layout={{ mobile: 1, tablet: 2, desktop: 4 }}
+          >
             {SELL_PATHS.map(card => (
               <Card
                 key={card.id}
