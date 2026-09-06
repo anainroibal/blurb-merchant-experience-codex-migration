@@ -77,10 +77,19 @@ const SELL_PATHS = [
     id: "retail", name: "Retail Distribution",
     img: ILLUS + "reach-bookstores.BYbE8YXC_Z1XIS6H.webp",
     alt: "An illustration of a person riding an open book past a globe.",
-    /* Inline links in the outline's own text (Amazon / Blurb Bookstore /
-       Ingram), rendered via Card's Markdown-capable description. */
-    line: "Reach new readers by listing your book on [Amazon](https://www.amazon.com), the [Blurb Bookstore](https://www.blurb.com/sell-through-blurb), and in [Ingram's](https://www.blurb.com/ingram) global network.",
-    href: "https://www.blurb.com/sell-through-blurb", cta: "Explore Retail Distribution",
+    /* No single "Retail Distribution" page exists to send a CTA to —
+       it's a bucket over three actual channels — so the plain-text
+       sentence and the one link/icon it had are replaced with three
+       real destination links instead. Card has no multi-link slot, so
+       these live as trailing Markdown links in `description`, same
+       mechanism the inline links used before, just moved out of the
+       sentence and into their own line. */
+    line: "Reach new readers by listing your book where readers already shop.",
+    links: [
+      ["Amazon", "https://www.amazon.com"],
+      ["Blurb Bookstore", "https://www.blurb.com/sell-through-blurb"],
+      ["Ingram", "https://www.blurb.com/ingram"],
+    ],
   },
   {
     id: "los", name: "Large Order Services",
@@ -244,8 +253,10 @@ export default function SellLandingV2({ onGo }) {
                   </div>
                 }
                 title={card.name}
-                description={card.line}
-                {...(card.stage
+                description={card.links
+                  ? `${card.line}\n\n${card.links.map(([label, url]) => `[${label}](${url})`).join(" · ")}`
+                  : card.line}
+                {...(!card.links && (card.stage
                   /* Same `link` treatment as the other three cards —
                      underlined text, no button chrome. No openInNewTab
                      (and so no external-open icon) since this goes to
@@ -254,7 +265,7 @@ export default function SellLandingV2({ onGo }) {
                      so it's a plain link, matching how other in-app
                      links style themselves elsewhere in this codebase. */
                   ? { link: { href: "#", onClick: e => { e.preventDefault(); onGo?.(card.stage); }, children: card.cta } }
-                  : { link: { href: card.href, openInNewTab: true, children: card.cta } })}
+                  : { link: { href: card.href, openInNewTab: true, children: card.cta } }))}
               />
             ))}
           </CardList>
@@ -277,13 +288,13 @@ export default function SellLandingV2({ onGo }) {
                   "Integrating print-on-demand",
                 ] },
                 { header: "Profit margin", cells: [
-                  "Highest",
+                  "Highest, new [seller pricing](?stage=margin) with no extra fees",
                   "Varies by retailer",
                   "Custom quote",
                   "Highest",
                 ] },
                 { header: "Storefront", cells: [
-                  "Provided",
+                  "Create it in minutes",
                   "Not required",
                   "Not required",
                   "You build it",
@@ -292,9 +303,9 @@ export default function SellLandingV2({ onGo }) {
                   "You bring it",
                   "Retailer's audience",
                   "You bring it",
-                  "You build it",
+                  "You bring it",
                 ] },
-                { header: "Inventory risk", cells: [
+                { header: "Inventory", cells: [
                   "None (Print-on-Demand)",
                   "None (Print-on-Demand)",
                   "Yes (You hold stock)",
@@ -380,19 +391,24 @@ export default function SellLandingV2({ onGo }) {
               </div>
             ))}
           </div>
+        </div>
+      </section>
 
-          <div style={{
-            display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-            borderTop: `1px solid ${T.border}`, paddingTop: 24,
-          }}>
-            {STATS.map(([icon, stat, caption]) => (
-              <div key={stat} style={{ display: "grid", gap: 8 }}>
-                <span className="ms" aria-hidden style={{ fontSize: 28, color: C.blue600 }}>{icon}</span>
-                <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 500, color: T.textNeutral }}>{stat}</div>
-                <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle }}>{caption}</p>
-              </div>
-            ))}
-          </div>
+      {/* ── Stats ── its own section, no grey background — the grey
+          panel belongs to the Showcase placeholder above it, not to
+          these three facts. */}
+      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px", borderTop: `1px solid ${T.border}` }}>
+        <div style={{
+          maxWidth: 1240, margin: "0 auto", display: "grid", gap: 16,
+          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+        }}>
+          {STATS.map(([icon, stat, caption]) => (
+            <div key={stat} style={{ display: "grid", gap: 8 }}>
+              <span className="ms" aria-hidden style={{ fontSize: 28, color: C.blue600 }}>{icon}</span>
+              <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 500, color: T.textNeutral }}>{stat}</div>
+              <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle }}>{caption}</p>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -429,7 +445,7 @@ export default function SellLandingV2({ onGo }) {
             Ready to share your project with the world?
           </h2>
           <p style={{ margin: 0, fontSize: TYPE.lg, color: T.textSubtle, lineHeight: 1.6 }}>
-            Create your book, magazine, or wall art today and unlock your selling potential.
+            Create your book, magazine, notebook or journal today and unlock your selling potential.
           </p>
           <Button onClick={() => onGo?.("getstarted")}>Get started</Button>
         </div>
