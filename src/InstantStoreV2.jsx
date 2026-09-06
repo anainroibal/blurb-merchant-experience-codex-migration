@@ -36,27 +36,27 @@ import Faq from "./Faq.jsx";
    dollar figures) with a door to the Sell page's real one. */
 
 const STEPS = [
-  ["Set Your Price", "Decide what your buyer pays. Whatever is left after your printing cost is yours."],
-  ["Create Your Product Page", "Add your book, a description and a cover photo — your store page is ready in minutes."],
-  ["Share & Sell", "Post your link anywhere — a bio, a newsletter, a stall — and start taking orders."],
+  ["Set your price", "Decide what your buyer pays. Whatever is left after your printing cost is yours."],
+  ["Create your product page", "Add your book, a description and a cover photo — your store page is ready in minutes."],
+  ["Share & sell", "Post your link anywhere — a bio, a newsletter, a stall — and start taking orders."],
 ];
 
 const FEATURES = [
-  ["payments", "Maximum Profit, Zero Fees",
+  ["payments", "Maximum profit, zero fees",
    "No listing fees and no monthly cost — you keep everything above your printing cost."],
-  ["auto_awesome", "AI-Powered Listings",
+  ["auto_awesome", "AI-powered listings",
    "Draft your product title, description and keywords in seconds, then edit to make it yours."],
-  ["storefront", "Your Custom Product Page",
+  ["storefront", "Your custom product page",
    "A real page for your book — cover, description, your bio and your other work, not a bare payment box."],
-  ["local_shipping", "Effortless Fulfillment",
+  ["local_shipping", "Effortless fulfillment",
    "We print, pack and ship every order, with tracking, straight to your buyer."],
-  ["receipt_long", "Automated Sales Tax",
+  ["receipt_long", "Automated sales tax",
    "Sales tax is calculated and collected automatically, wherever your buyer orders from."],
-  ["auto_stories", "Sell Books, Magazines & More",
+  ["auto_stories", "Sell books, magazines & more",
    "Photo books, paperback and hardcover, magazines, notebooks and journals — your call."],
-  ["all_inclusive", "No Minimums, Ever",
+  ["all_inclusive", "No minimums, ever",
    "Sell one copy or a thousand. There is no order minimum on an Instant Store."],
-  ["share", "Share Anywhere",
+  ["share", "Share anywhere",
    "Your link works in a bio, a newsletter, a QR code on a stall — anywhere a link goes."],
 ];
 
@@ -90,11 +90,11 @@ export default function InstantStoreV2({ onGo }) {
       {/* ── Hero ── the gradient the seller pages share. */}
       <HeroCenter
         className="hero-gradient-seller"
-        heading="Your Book, Your Audience, Your Profit"
+        heading="Your book, your audience, your profit"
         subheading="Set up an online store and start selling books directly to your audience. In minutes — no third-party platform or tech skills required."
         ctas={[
-          { children: "Create Your Instant Store" },
-          { as: "a", href: "#demo", variant: "outlined", children: "See a Store in Action" },
+          { children: "Create your Instant Store" },
+          { as: "a", href: "#demo", variant: "outlined", children: "See a store in action" },
         ]}
       />
 
@@ -121,7 +121,7 @@ export default function InstantStoreV2({ onGo }) {
       <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <CardList
-            heading="Create Your Online Bookstore in Three Simple Steps"
+            heading="Create your online bookstore in three simple steps"
             headingAlign="center"
             layout={{ mobile: 1, tablet: 3, desktop: 3 }}
           >
@@ -145,7 +145,7 @@ export default function InstantStoreV2({ onGo }) {
       <section style={{ background: C.gray50, padding: "clamp(56px, 7vw, 80px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <CardList
-            heading="Everything You Need to Create an Online Bookstore"
+            heading="Everything you need to create an online bookstore"
             headingAlign="center"
             layout={{ mobile: 1, tablet: 2, desktop: 4 }}
           >
@@ -172,7 +172,7 @@ export default function InstantStoreV2({ onGo }) {
                 fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
                 lineHeight: 1.25, margin: 0,
               }}>
-                Keep More of What You Earn
+                Keep more of what you earn
               </h2>
               {/* "XX%" rather than a typed figure — the outline has a
                   number here but it isn't sourced anywhere in the board's
@@ -259,7 +259,7 @@ export default function InstantStoreV2({ onGo }) {
           elsewhere, not retyped. */}
       <section style={{ background: C.gray50, padding: "clamp(56px, 7vw, 80px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <CardList heading="What Can You Sell with Blurb" headingAlign="center" layout={{ mobile: 1, tablet: 2, desktop: 4 }}>
+          <CardList heading="What can you sell with Blurb" headingAlign="center" layout={{ mobile: 1, tablet: 2, desktop: 4 }}>
             {FORMAT_CARDS.map(f => (
               <Card
                 key={f.id}
@@ -279,7 +279,7 @@ export default function InstantStoreV2({ onGo }) {
         </div>
       </section>
 
-      <Faq heading={<>Your Blurb Instant Store<br />Questions, Answered</>} items={FAQS} />
+      <Faq heading={<>Your Blurb Instant Store<br />questions, answered</>} items={FAQS} />
 
       {/* ── Close ── */}
       <section
@@ -294,12 +294,12 @@ export default function InstantStoreV2({ onGo }) {
             fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
             lineHeight: 1.25, margin: 0,
           }}>
-            Ready to Share Your Work and Maximize Your Profit?
+            Ready to share your work and maximize your profit?
           </h2>
           <p style={{ margin: 0, fontSize: TYPE.lg, color: T.textSubtle, lineHeight: 1.6 }}>
             It takes just a few minutes to get started.
           </p>
-          <Button>Create Your Instant Store</Button>
+          <Button>Create your Instant Store</Button>
         </div>
       </section>
     </div>

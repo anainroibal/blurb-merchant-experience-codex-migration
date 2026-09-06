@@ -39,9 +39,9 @@ import Faq from "./Faq.jsx";
    pending real logo assets. */
 
 const QUALITY = [
-  ["shuffle", "Mix & Match", "Combine formats, sizes and papers across a single project."],
-  ["print", "Print-On-Demand", "Every copy prints only once it's ordered — nothing to stock up front."],
-  ["workspace_premium", "Unmatched Quality", "Twenty years of in-house printing and full production control."],
+  ["shuffle", "Mix & match", "Combine formats, sizes and papers across a single project."],
+  ["print", "Print-on-demand", "Every copy prints only once it's ordered — nothing to stock up front."],
+  ["workspace_premium", "Unmatched quality", "Twenty years of in-house printing and full production control."],
   ["precision_manufacturing", "Powered by RPI Print", "Our own presses and fulfilment network, not an outsourced printer."],
 ];
 
@@ -57,7 +57,7 @@ const SELL_PATHS = [
     alt: "An illustration of a person setting up a book listing.",
     line: "Share one link — a newsletter, a bio, a talk, a stall — and we print and ship every order.",
     facts: ["You set the price", "Nothing to run, and no listing fees"],
-    stage: "instantstorev2", cta: "Get Started",
+    stage: "instantstorev2", cta: "Get started",
   },
   {
     id: "retail", name: "Retail Distribution",
@@ -65,7 +65,7 @@ const SELL_PATHS = [
     alt: "An illustration of a person riding an open book past a globe.",
     line: "List your book where readers already shop — Blurb's own Bookstore, Amazon, and Ingram's global network.",
     facts: ["Reach readers you'd never find on your own", "Photo books, paperback & hardcover"],
-    href: "https://www.blurb.com/sell-through-blurb", cta: "Get Started",
+    href: "https://www.blurb.com/sell-through-blurb", cta: "Get started",
   },
   {
     id: "los", name: "Large Order Services",
@@ -73,14 +73,14 @@ const SELL_PATHS = [
     alt: "A press roller running colour on a large print job.",
     line: "Past a hundred copies, our print team quotes the job and handles the logistics with you.",
     facts: ["Quoted by our print team", "For bulk stock, not per-order"],
-    href: "https://www.blurb.com/large-order-services", cta: "Get Started",
+    href: "https://www.blurb.com/large-order-services", cta: "Get started",
   },
   {
     id: "api", name: "RPI Print API",
     icon: "integration_instructions",
     line: "Already have a storefront? RPI's print network can produce and ship behind it.",
     facts: ["Print and fulfilment via API", "For your own storefront or app"],
-    href: "https://www.rpiprint.com", cta: "Get Started",
+    href: "https://www.rpiprint.com", cta: "Get started",
   },
 ];
 
@@ -116,16 +116,16 @@ export default function SellLandingV2({ onGo }) {
       {/* ── Hero ── the gradient the seller pages share. */}
       <HeroCenter
         className="hero-gradient-seller"
-        heading="Sell With Blurb"
+        heading="Sell with Blurb"
         subheading="From a solo storefront to global distribution and custom order APIs, Blurb has a selling solution for every seller."
-        ctas={[{ as: "a", href: "#paths", children: "Explore Our Selling Tools" }]}
+        ctas={[{ as: "a", href: "#paths", children: "Explore our selling tools" }]}
       />
 
       {/* ── Built-in quality ── */}
       <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <CardList
-            heading="Built-In Quality, Flexibility, and Support"
+            heading="Built-in quality, flexibility, and support"
             headingAlign="center"
             layout={{ mobile: 1, tablet: 2, desktop: 4 }}
           >
@@ -158,7 +158,7 @@ export default function SellLandingV2({ onGo }) {
               fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
               lineHeight: 1.25, margin: 0,
             }}>
-              Four Ways to Sell
+              Four ways to sell
             </h2>
             <p style={{ fontSize: TYPE.lg, color: T.textSubtle, margin: 0, maxWidth: 680, lineHeight: 1.6 }}>
               Sell directly, through retail distribution, in bulk, or behind your own storefront.
@@ -202,7 +202,7 @@ export default function SellLandingV2({ onGo }) {
               fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.25rem, 2.4vw, 1.5rem)",
               lineHeight: 1.25, margin: 0, textAlign: "center",
             }}>
-              Which Selling Path is Right For You?
+              Which selling path is right for you?
             </h3>
 
             <ComparisonTable
@@ -239,10 +239,10 @@ export default function SellLandingV2({ onGo }) {
                   "Depends on your own model",
                 ] },
                 { header: "Get started", cells: [
-                  "[Get Started](?stage=instantstorev2)",
-                  "[Get Started](https://www.blurb.com/sell-through-blurb)",
-                  "[Get Started](https://www.blurb.com/large-order-services)",
-                  "[Get Started](https://www.rpiprint.com)",
+                  "[Get started](?stage=instantstorev2)",
+                  "[Get started](https://www.blurb.com/sell-through-blurb)",
+                  "[Get started](https://www.blurb.com/large-order-services)",
+                  "[Get started](https://www.rpiprint.com)",
                 ] },
               ]}
             />
@@ -254,7 +254,7 @@ export default function SellLandingV2({ onGo }) {
           elsewhere, not retyped. */}
       <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <CardList heading="What Can You Sell with Blurb" headingAlign="center" layout={{ mobile: 1, tablet: 2, desktop: 4 }}>
+          <CardList heading="What can you sell with Blurb" headingAlign="center" layout={{ mobile: 1, tablet: 2, desktop: 4 }}>
             {FORMAT_CARDS.map(f => (
               <Card
                 key={f.id}
@@ -285,13 +285,13 @@ export default function SellLandingV2({ onGo }) {
                 fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
                 lineHeight: 1.25, margin: 0,
               }}>
-                Showcase Title
+                Showcase title
               </h2>
               <p style={{ margin: 0, fontSize: TYPE.base, color: T.textSubtle, maxWidth: 620 }}>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.
               </p>
             </div>
-            <Button variant="outlined">Browse Now</Button>
+            <Button variant="outlined">Browse now</Button>
           </div>
 
           <div style={{ display: "grid", gap: 24, gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
@@ -339,7 +339,7 @@ export default function SellLandingV2({ onGo }) {
         </div>
       </section>
 
-      <Faq heading={<>Common Questions<br />About Selling with Blurb</>} items={FAQS} />
+      <Faq heading={<>Common questions<br />about selling with Blurb</>} items={FAQS} />
 
       {/* ── Close ── */}
       <section
