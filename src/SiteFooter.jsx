@@ -29,7 +29,7 @@ export default function SiteFooter() {
   return (
     <div style={{ position: "relative" }}>
       <Footer
-        copyright="2026 Blurb, Inc. All rights reserved."
+        copyright="2026 RPI Print, Inc. All rights reserved."
         links={LINKS}
         socialLinks={[]}
       />
