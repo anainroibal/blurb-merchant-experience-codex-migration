@@ -4,6 +4,20 @@ import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { FORMAT_CARDS } from "./FormatCards.jsx";
 import Faq from "./Faq.jsx";
 
+/* The outline writes its own copy for this section rather than reusing
+   FormatCards.jsx's sitewide descriptions (they read differently) —
+   real Blurb photography stays, via FORMAT_CARDS' img/alt, matched by id. */
+const SELL_FORMATS = [
+  { id: "photo", title: "Photo Books",
+    desc: "From high-end photography albums to keepsake family books, photo books are our most premium format with multiple trim sizes and paper types." },
+  { id: "trade", title: "Paperback & Hardcover",
+    desc: "Ideal for books that combine art with text or just text alone like portfolios, cookbooks, novels, children's books and the like." },
+  { id: "magazine", title: "Magazines",
+    desc: "Great for a series or one-off custom projects. Impressive newsstand quality and easy distribution." },
+  { id: "notebook", title: "Notebooks & Journals",
+    desc: "Choose from blank, lined, square, or dot-grid notebook pages, plus easily add photos or illustrations within the pages." },
+];
+
 /* ────────────────────────────────────────────────────────────────
    Instant Store — v2 (2026-09-06)
 
@@ -29,35 +43,52 @@ import Faq from "./Faq.jsx";
    price is a line in a calculation, never a price tag" rules exist to
    rule out. Anain okayed shipping it as designed (2026-09-06), so it's
    built as-designed below — figures kept at the "$X" placeholder this
-   app already uses rather than invented ones, same reasoning as the
-   ladder elsewhere. Directly under it is an alternative that keeps
-   those two rules: the same cost → price → profit ladder used
-   everywhere else on this page, plus a qualitative-only comparison (no
-   dollar figures) with a door to the Sell page's real one. */
+   app already uses rather than invented ones (the outline's own cells
+   are already "$X.XX"/"X%" placeholders, not real numbers). The "50%"
+   in the caption above the table IS the outline's literal text, not
+   a placeholder — it has no visible source in the board's provenance
+   panel, so it's worth confirming with Anain before this ships anywhere
+   real. Directly under it is an alternative that keeps CLAUDE.md's two
+   rules: the same cost → price → profit ladder used everywhere else on
+   this page, plus a qualitative-only comparison (no dollar figures)
+   with a door to the Sell page's real one.
+
+   ── Corrected 2026-09-06 ──
+   An earlier pass of this file invented body copy for the 3-step and
+   8-tile sections instead of reading it off the Figma frame — wrong,
+   and not disclosed as invented at the time either. Re-extracted from
+   the frame's own Properties panel and canvas text below; the only
+   two lines that are genuinely placeholder IN THE OUTLINE ITSELF are
+   "Share anywhere"'s lorem ipsum and the FAQ answers (the outline has
+   questions only, no answers — those stay drafted, and are flagged as
+   such below). */
 
 const STEPS = [
-  ["Set your price", "Decide what your buyer pays. Whatever is left after your printing cost is yours."],
-  ["Create your product page", "Add your book, a description and a cover photo — your store page is ready in minutes."],
-  ["Share & sell", "Post your link anywhere — a bio, a newsletter, a stall — and start taking orders."],
+  ["Set your price", "Upload your book and set your selling price. Our new seller pricing means you keep up to 50% more of every sale."],
+  ["Create your product page", "Our AI helps you draft your title, description, and keywords. Your customizable product page is ready in minutes."],
+  ["Share & sell", "Share your unique link or QR code on your bio, newsletter, or social media. We handle the printing, shipping, and sales tax."],
 ];
 
 const FEATURES = [
   ["payments", "Maximum profit, zero fees",
-   "No listing fees and no monthly cost — you keep everything above your printing cost."],
+   "With print costs up to 70% lower than retail, you maximize your earnings on every sale."],
   ["auto_awesome", "AI-powered listings",
-   "Draft your product title, description and keywords in seconds, then edit to make it yours."],
+   "Save time and optimize your page. Our AI assistant drafts your product title, description, and keywords."],
   ["storefront", "Your custom product page",
-   "A real page for your book — cover, description, your bio and your other work, not a bare payment box."],
+   "Showcase your work with an interactive preview, author bio, and seamless checkout."],
   ["local_shipping", "Effortless fulfillment",
-   "We print, pack and ship every order, with tracking, straight to your buyer."],
+   "We handle printing, white-label packaging, global shipping, and order tracking directly to your customer."],
   ["receipt_long", "Automated sales tax",
-   "Sales tax is calculated and collected automatically, wherever your buyer orders from."],
+   "Sales tax is automatically collected and remitted, so you don't have to manage it."],
   ["auto_stories", "Sell books, magazines & more",
-   "Photo books, paperback and hardcover, magazines, notebooks and journals — your call."],
+   "Your Instant Store works for photo books, magazines, notebooks, and wall art."],
   ["all_inclusive", "No minimums, ever",
-   "Sell one copy or a thousand. There is no order minimum on an Instant Store."],
+   "Sell one copy or one thousand — seller pricing applies from your very first sale."],
+  /* This one really is "Lorem ipsum dolor sit amet" in the Figma frame
+     itself — kept as-is rather than drafted, same as the Showcase
+     section on Sell v2. */
   ["share", "Share anywhere",
-   "Your link works in a bio, a newsletter, a QR code on a stall — anywhere a link goes."],
+   "Lorem ipsum dolor sit amet"],
 ];
 
 const FAQS = [
@@ -174,12 +205,11 @@ export default function InstantStoreV2({ onGo }) {
               }}>
                 Keep more of what you earn
               </h2>
-              {/* "XX%" rather than a typed figure — the outline has a
-                  number here but it isn't sourced anywhere in the board's
-                  provenance panel, so it stays a placeholder like every
-                  other unsourced figure in this app. */}
+              {/* The outline's own literal text — see the file header
+                  note on why this specific number is worth confirming
+                  before this ships anywhere real. */}
               <p style={{ margin: 0, fontSize: TYPE.base, color: T.textSubtle }}>
-                Earn up to XX% higher margins compared to other distribution channels.
+                *Earn up to 50% higher margins compared to other distribution channels.
               </p>
             </div>
             <Button variant="outlined" onClick={() => onGo?.("margin")}>Calculate your margin</Button>
@@ -260,21 +290,24 @@ export default function InstantStoreV2({ onGo }) {
       <section style={{ background: C.gray50, padding: "clamp(56px, 7vw, 80px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <CardList heading="What can you sell with Blurb" headingAlign="center" layout={{ mobile: 1, tablet: 2, desktop: 4 }}>
-            {FORMAT_CARDS.map(f => (
-              <Card
-                key={f.id}
-                icon={
-                  <img
-                    src={f.img}
-                    alt={f.alt}
-                    loading="lazy"
-                    style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", display: "block", borderRadius: R.lg }}
-                  />
-                }
-                title={f.title}
-                description={f.desc}
-              />
-            ))}
+            {SELL_FORMATS.map(f => {
+              const photo = FORMAT_CARDS.find(c => c.id === f.id);
+              return (
+                <Card
+                  key={f.id}
+                  icon={
+                    <img
+                      src={photo.img}
+                      alt={photo.alt}
+                      loading="lazy"
+                      style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", display: "block", borderRadius: R.lg }}
+                    />
+                  }
+                  title={f.title}
+                  description={f.desc}
+                />
+              );
+            })}
           </CardList>
         </div>
       </section>

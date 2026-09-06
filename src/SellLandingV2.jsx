@@ -34,15 +34,29 @@ import Faq from "./Faq.jsx";
 
    The showcase/testimonial section keeps the outline's own lorem-ipsum
    — inventing testimonial copy or stats here would be worse than a
-   visible placeholder. Same for "Trusted by": the brand names are
-   real (confirmed by Figma comment #63), the wordmarks are plain text
-   pending real logo assets. */
+   visible placeholder. Same for its button ("Button text" is the
+   outline's own placeholder label). "Trusted by" wordmarks are plain
+   text pending real logo assets; the five names are the outline's own.
+
+   ── Corrected 2026-09-06 ──
+   An earlier pass of this file invented body copy for the quality
+   section, the four path cards, the comparison table and the FAQ
+   questions instead of reading them off the Figma frame — wrong, and
+   not disclosed as invented at the time either (the Showcase/Trusted-by
+   sections *were* correctly flagged as placeholder; the rest wasn't).
+   Everything below except the FAQ *answers* (the outline has questions
+   only) is now the frame's own text, read off its Properties panel and
+   canvas, not drafted. */
 
 const QUALITY = [
-  ["shuffle", "Mix & match", "Combine formats, sizes and papers across a single project."],
-  ["print", "Print-on-demand", "Every copy prints only once it's ordered — nothing to stock up front."],
-  ["workspace_premium", "Unmatched quality", "Twenty years of in-house printing and full production control."],
-  ["precision_manufacturing", "Powered by RPI Print", "Our own presses and fulfilment network, not an outsourced printer."],
+  ["shuffle", "Mix & match",
+   "Use multiple channels at once with an Instant Store for your followers and Amazon for new readers"],
+  ["print", "Print-on-demand",
+   "Most of our selling tools require no inventory or upfront cost. We print and ship only when you make a sale."],
+  ["workspace_premium", "Unmatched quality",
+   "Give your audience access to Blurb's superior print quality, vast catalog of formats, and premium paper types."],
+  ["precision_manufacturing", "Powered by RPI Print",
+   "Our in-house fulfillment network ensures quality control and reliability at scale trusted by brands like Canva and Minted."],
 ];
 
 /* Blurb's own illustrations, reused from SellerLanding.jsx rather than
@@ -55,33 +69,46 @@ const SELL_PATHS = [
     id: "link", name: "Instant Store",
     img: ILLUS + "blurb-dashboard.YPDjPrK8_Z1bvCol.webp",
     alt: "An illustration of a person setting up a book listing.",
-    line: "Share one link — a newsletter, a bio, a talk, a stall — and we print and ship every order.",
-    facts: ["You set the price", "Nothing to run, and no listing fees"],
-    stage: "instantstorev2", cta: "Get started",
+    line: "Sell directly to your audience in minutes with a customizable product page we build for you — no fees or tech skills required.",
+    stage: "instantstorev2", cta: "Create Your Instant Store",
   },
   {
     id: "retail", name: "Retail Distribution",
     img: ILLUS + "reach-bookstores.BYbE8YXC_Z1XIS6H.webp",
     alt: "An illustration of a person riding an open book past a globe.",
-    line: "List your book where readers already shop — Blurb's own Bookstore, Amazon, and Ingram's global network.",
-    facts: ["Reach readers you'd never find on your own", "Photo books, paperback & hardcover"],
-    href: "https://www.blurb.com/sell-through-blurb", cta: "Get started",
+    /* Inline links in the outline's own text (Amazon / Blurb Bookstore /
+       Ingram), rendered via Card's Markdown-capable description. */
+    line: "Reach new readers by listing your book on [Amazon](https://www.amazon.com), the [Blurb Bookstore](https://www.blurb.com/sell-through-blurb), and in [Ingram's](https://www.blurb.com/ingram) global network.",
+    href: "https://www.blurb.com/sell-through-blurb", cta: "Explore Retail Distribution",
   },
   {
     id: "los", name: "Large Order Services",
     img: ILLUS + "large-order.Dolls1H4_A7dqn.webp",
     alt: "A press roller running colour on a large print job.",
-    line: "Past a hundred copies, our print team quotes the job and handles the logistics with you.",
-    facts: ["Quoted by our print team", "For bulk stock, not per-order"],
-    href: "https://www.blurb.com/large-order-services", cta: "Get started",
+    line: "Get dedicated support and volume discounts for orders of 100+ copies, perfect for events, clients, or resale.",
+    href: "https://www.blurb.com/large-order-services", cta: "Get a Custom Quote",
   },
   {
     id: "api", name: "RPI Print API",
     icon: "integration_instructions",
-    line: "Already have a storefront? RPI's print network can produce and ship behind it.",
-    facts: ["Print and fulfilment via API", "For your own storefront or app"],
-    href: "https://www.rpiprint.com", cta: "Get started",
+    line: "For developers and platforms. Integrate our enterprise-grade print network directly into your app or website.",
+    href: "https://www.rpiprint.com", cta: "Learn more about RPI Print API",
   },
+];
+
+/* Same product-type copy as Instant Store v2's "What can you sell"
+   section — the outline writes its own descriptions rather than
+   reusing FormatCards.jsx's sitewide ones; real Blurb photography
+   stays, via FORMAT_CARDS' img/alt, matched by id. */
+const SELL_FORMATS = [
+  { id: "photo", title: "Photo Books",
+    desc: "From high-end photography albums to keepsake family books, photo books are our most premium format with multiple trim sizes and paper types." },
+  { id: "trade", title: "Paperback & Hardcover",
+    desc: "Ideal for books that combine art with text or just text alone like portfolios, cookbooks, novels, children's books and the like." },
+  { id: "magazine", title: "Magazines",
+    desc: "Great for a series or one-off custom projects. Impressive newsstand quality and easy distribution." },
+  { id: "notebook", title: "Notebooks & Journals",
+    desc: "Choose from blank, lined, square, or dot-grid notebook pages, plus easily add photos or illustrations within the pages." },
 ];
 
 const SHOWCASE = [
@@ -90,23 +117,35 @@ const SHOWCASE = [
   ["Product Name", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.", "Reviewer Name"],
 ];
 
-const TRUSTED_BY = ["Canva", "minted", "Treering", "Storyworth"];
+const STATS = [
+  ["verified_user", "XX+ Years", "Empowering sellers with industry-leading print quality."],
+  ["public", "XX+ Countries", "Shipped to a global network of buyers and readers."],
+  ["auto_stories", "20M+", "Unique books and products created and sold."],
+];
 
+const TRUSTED_BY = ["Canva", "minted", "Treering", "Storyworth", "We Can Books"];
+
+/* Questions are the outline's own (Accordion Block, 8 sections); it
+   carries no answer text (every section is closed, title only), so
+   the answers below are drafted — a sentence to react to, same as the
+   route cards on v1's Sell page were before Ana had copy to react to. */
 const FAQS = [
   ["What are the different ways to sell a self-published book with Blurb?",
-   "Four: your own Instant Store, Blurb's Bookstore, Amazon, Ingram's retail network, Large Order Services for bulk stock, or RPI's print API for your own storefront."],
-  ["Which distribution channels does Blurb support?",
-   "Blurb's own Bookstore, Amazon, and Ingram — which reaches bookshops, libraries and the retailers among them."],
+   "Four: your own Instant Store, Retail Distribution through Blurb's Bookstore, Amazon and Ingram, Large Order Services for bulk stock, or the RPI Print API for your own storefront."],
+  ["Where's the best place to sell my books online?",
+   "It depends on your audience. An Instant Store is best if you already have followers to sell to directly; Retail Distribution reaches readers who are browsing rather than looking for you specifically."],
   ["Can I sell books without holding inventory or paying upfront?",
-   "Yes. Every print-on-demand route — Instant Store, Bookstore, Amazon, Ingram — prints a copy only once it's ordered. Nothing to buy or store in advance."],
-  ["How does international book selling work?",
-   "Your book is orderable by readers anywhere those channels reach, and each order prints at the facility nearest the buyer."],
+   "Yes. Every print-on-demand route — Instant Store, Retail Distribution — prints a copy only once it's ordered. Nothing to buy or store in advance."],
+  ["How does print-on-demand work for authors and creators?",
+   "Your book prints only when a buyer orders it. There's no minimum run, no warehouse, and no upfront printing cost to cover before you make a sale."],
   ["Do I need an ISBN or barcode to sell my book?",
-   "Only for the routes that require retail listing — Amazon and Ingram. Your Instant Store link and Blurb's own Bookstore don't require one."],
-  ["What's the difference between selling directly to readers vs. through Amazon or Ingram?",
-   "On your Instant Store, you bring the buyer and set the price, so what's left after your printing cost is yours. On Amazon or Ingram, the channel brings the buyer and takes its own cut."],
-  ["Can I sell more than books — magazines, notebooks, or other formats?",
+   "Only for the routes that require retail listing — Amazon and Ingram, under Retail Distribution. Your Instant Store link doesn't require one."],
+  ["What's the difference between selling directly to readers and selling through Amazon or Ingram?",
+   "On your Instant Store, you bring the buyer and set the price, so what's left after your printing cost is yours. Through Amazon or Ingram, the retailer brings the buyer and takes its own cut."],
+  ["Can I sell more than books, like magazines, notebooks, or wall art, the same way?",
    "Yes — magazines and notebooks & journals are sellable through most of these routes. Availability varies by channel; the product page for each route lists what it takes."],
+  ["How do I decide which of Blurb's selling options is right for me?",
+   "Start with the comparison table above — it lines up best-for, profit margin, storefront and audience across all four routes so you can compare at a glance."],
 ];
 
 export default function SellLandingV2({ onGo }) {
@@ -117,7 +156,7 @@ export default function SellLandingV2({ onGo }) {
       <HeroCenter
         className="hero-gradient-seller"
         heading="Sell with Blurb"
-        subheading="From a solo storefront to global distribution and custom order APIs, Blurb has a selling solution for every seller."
+        subheading="From a simple storefront to global distribution and custom print APIs, Blurb has a selling solution for every seller."
         ctas={[{ as: "a", href: "#paths", children: "Explore our selling tools" }]}
       />
 
@@ -189,7 +228,7 @@ export default function SellLandingV2({ onGo }) {
                   </div>
                 }
                 title={card.name}
-                description={`${card.line}\n\n${card.facts.map(f => `- ${f}`).join("\n")}`}
+                description={card.line}
                 {...(card.stage
                   ? { cta: { onClick: () => onGo?.(card.stage), children: card.cta } }
                   : { link: { href: card.href, openInNewTab: true, children: card.cta } })}
@@ -209,67 +248,71 @@ export default function SellLandingV2({ onGo }) {
               columnHeaders={["", "Instant Store", "Retail Distribution", "Large Order Services", "RPI Print API"]}
               rows={[
                 { header: "Best for", cells: [
-                  "Selling directly to your own audience",
-                  "Reaching readers browsing a store",
-                  "Bulk stock for an event or resale",
-                  "Powering your own storefront or app",
+                  "Direct sales to your existing audience",
+                  "Discoverability & reaching new readers",
+                  "Bulk orders for events or resale",
+                  "Integrating print-on-demand",
                 ] },
                 { header: "Profit margin", cells: [
-                  "You set it — highest when you bring the buyer",
-                  "Set by the channel's trade terms",
-                  "Quoted per job",
-                  "Set by your own pricing",
+                  "Highest",
+                  "Varies by retailer",
+                  "Custom quote",
+                  "Highest",
                 ] },
-                { header: "Turnaround", cells: [
-                  "Printed as ordered, one at a time",
-                  "Printed as ordered, one at a time",
-                  "Quoted with your order",
-                  "Printed as your system orders",
+                { header: "Storefront", cells: [
+                  "Provided",
+                  "Not required",
+                  "Not required",
+                  "You build it",
                 ] },
                 { header: "Audience", cells: [
-                  "Yours — wherever you share the link",
-                  "The channel's readers",
-                  "Yours, in hand",
-                  "Your own platform's users",
+                  "You bring it",
+                  "Retailer's audience",
+                  "You bring it",
+                  "You build it",
                 ] },
                 { header: "Inventory risk", cells: [
-                  "None",
-                  "None",
-                  "You hold the stock",
-                  "Depends on your own model",
-                ] },
-                { header: "Get started", cells: [
-                  "[Get started](?stage=instantstorev2)",
-                  "[Get started](https://www.blurb.com/sell-through-blurb)",
-                  "[Get started](https://www.blurb.com/large-order-services)",
-                  "[Get started](https://www.rpiprint.com)",
+                  "None (Print-on-Demand)",
+                  "None (Print-on-Demand)",
+                  "Yes (You hold stock)",
+                  "None (Print-on-demand)",
                 ] },
               ]}
             />
+
+            <div style={{ display: "grid", gap: 12, gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
+              <Button onClick={() => onGo?.("instantstorev2")}>Get started</Button>
+              <Button as="a" href="https://www.blurb.com/sell-through-blurb" target="_blank" rel="noreferrer" variant="outlined">Get started</Button>
+              <Button as="a" href="https://www.blurb.com/large-order-services" target="_blank" rel="noreferrer" variant="outlined">Get started</Button>
+              <Button as="a" href="https://www.rpiprint.com" target="_blank" rel="noreferrer" variant="outlined">Get started</Button>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* ── What can you sell ── the same four product-type cards used
-          elsewhere, not retyped. */}
+      {/* ── What can you sell ── same copy as Instant Store v2's version
+          of this section, not retyped. */}
       <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <CardList heading="What can you sell with Blurb" headingAlign="center" layout={{ mobile: 1, tablet: 2, desktop: 4 }}>
-            {FORMAT_CARDS.map(f => (
-              <Card
-                key={f.id}
-                icon={
-                  <img
-                    src={f.img}
-                    alt={f.alt}
-                    loading="lazy"
-                    style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", display: "block", borderRadius: R.lg }}
-                  />
-                }
-                title={f.title}
-                description={f.desc}
-              />
-            ))}
+            {SELL_FORMATS.map(f => {
+              const photo = FORMAT_CARDS.find(c => c.id === f.id);
+              return (
+                <Card
+                  key={f.id}
+                  icon={
+                    <img
+                      src={photo.img}
+                      alt={photo.alt}
+                      loading="lazy"
+                      style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", display: "block", borderRadius: R.lg }}
+                    />
+                  }
+                  title={f.title}
+                  description={f.desc}
+                />
+              );
+            })}
           </CardList>
         </div>
       </section>
@@ -291,13 +334,14 @@ export default function SellLandingV2({ onGo }) {
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.
               </p>
             </div>
-            <Button variant="outlined">Browse now</Button>
+            <Button variant="outlined">Button text</Button>
           </div>
 
           <div style={{ display: "grid", gap: 24, gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
             {SHOWCASE.map(([name, quote, reviewer], i) => (
-              <div key={i} style={{ display: "grid", gap: 12 }}>
+              <div key={i} style={{ display: "grid", gap: 8 }}>
                 <div style={{ borderRadius: R.lg, aspectRatio: "4 / 3", background: "#e8e8e8" }} />
+                <div style={{ fontSize: TYPE.sm, color: T.textSubtle, marginTop: 4 }}>Sold with</div>
                 <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE.lg, fontWeight: 500 }}>{name}</div>
                 <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.6 }}>“{quote}”</p>
                 <div style={{ fontSize: TYPE.sm, color: T.textSubtle }}>{reviewer}</div>
@@ -306,22 +350,23 @@ export default function SellLandingV2({ onGo }) {
           </div>
 
           <div style={{
-            display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
-            borderTop: `1px solid ${T.border}`, paddingTop: 24, textAlign: "center",
+            display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            borderTop: `1px solid ${T.border}`, paddingTop: 24,
           }}>
-            {[["XX+", "Years"], ["XX+", "Countries"], ["XXM+", "Books Printed"]].map(([n, label]) => (
-              <div key={label}>
-                <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["6xl"], fontWeight: 500 }}>{n}</div>
-                <div style={{ fontSize: TYPE.sm, color: T.textSubtle }}>{label}</div>
+            {STATS.map(([icon, stat, caption]) => (
+              <div key={stat} style={{ display: "grid", gap: 8 }}>
+                <span className="ms" aria-hidden style={{ fontSize: 28, color: C.blue600 }}>{icon}</span>
+                <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 500 }}>{stat}</div>
+                <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle }}>{caption}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── Trusted by ──
-          Names confirmed by Figma comment #63; wordmarks are plain
-          text pending real logo assets. */}
+      {/* ── Trusted by ── names are the outline's own (Figma comment
+          #63 confirms Canva/Minted); wordmarks are plain text pending
+          real logo assets. */}
       <section style={{ padding: "clamp(40px, 5vw, 56px) 24px" }}>
         <div style={{
           maxWidth: 1240, margin: "0 auto", display: "grid", gap: 24, justifyItems: "center", textAlign: "center",
@@ -356,7 +401,10 @@ export default function SellLandingV2({ onGo }) {
           }}>
             Ready to bring your project to life?
           </h2>
-          <Button onClick={() => onGo?.("getstarted")}>Start Creating</Button>
+          <p style={{ margin: 0, fontSize: TYPE.lg, color: T.textSubtle, lineHeight: 1.6 }}>
+            Create your book, magazine, or wall art today and unlock your selling potential.
+          </p>
+          <Button onClick={() => onGo?.("getstarted")}>Start creating</Button>
         </div>
       </section>
     </div>
