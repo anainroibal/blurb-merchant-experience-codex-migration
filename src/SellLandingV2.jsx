@@ -49,11 +49,11 @@ import Faq from "./Faq.jsx";
    only) is now the frame's own text, read off its Properties panel and
    canvas, not drafted. */
 
+/* Ana, 2026-09-XX: dropped to 3 cards — Mix & Match removed, Print-on-
+   demand renamed/rewritten to lead with "no inventory risk". */
 const QUALITY = [
-  ["shuffle", "Mix & match",
-   "Use multiple channels at once with an Instant Store for your followers and Amazon for new readers"],
-  ["print", "Print-on-demand",
-   "Most of our selling tools require no inventory or upfront cost. We print and ship only when you make a sale."],
+  ["print", "Print on demand, no inventory risk",
+   "No need to hold an inventory or have upfront costs. We print and ship only when you make a sale."],
   ["workspace_premium", "Unmatched quality",
    "Give your audience access to Blurb's superior print quality, vast catalog of formats, and premium paper types."],
   ["precision_manufacturing", "Powered by RPI Print",
@@ -70,7 +70,7 @@ const SELL_PATHS = [
     id: "link", name: "Instant Store",
     img: ILLUS + "blurb-dashboard.YPDjPrK8_Z1bvCol.webp",
     alt: "An illustration of a person setting up a book listing.",
-    line: "Sell directly to your audience in minutes with a customizable product page we build for you — no fees or tech skills required.",
+    line: "Sell directly to your audience in minutes with a product page that fully showcases your book — no extra fees, no tech skills required.",
     stage: "instantstorev2", cta: "Create Your Instant Store",
   },
   {
@@ -92,7 +92,7 @@ const SELL_PATHS = [
   {
     id: "api", name: "RPI Print API",
     icon: "integration_instructions",
-    line: "For developers and platforms. Integrate our enterprise-grade print network directly into your app or website.",
+    line: "Integrate the API infrastructure trusted by Blurb, Canva and Minted, directly into your app or website.",
     href: "https://www.rpiprint.com", cta: "Learn more about RPI Print API",
   },
 ];
@@ -157,7 +157,7 @@ export default function SellLandingV2({ onGo }) {
       <HeroCenter
         className="hero-gradient-seller"
         heading="Sell with Blurb"
-        subheading="From a simple storefront to global distribution and custom print APIs, Blurb has a selling solution for every seller."
+        subheading="From a simple storefront to retail distribution and APIs, Blurb has a selling solution for every seller."
         ctas={[{ as: "a", href: "#paths", children: "Explore our selling tools" }]}
       />
 
@@ -167,7 +167,7 @@ export default function SellLandingV2({ onGo }) {
           <CardList
             heading="Built-in quality, flexibility, and support"
             headingAlign="center"
-            layout={{ mobile: 1, tablet: 2, desktop: 4 }}
+            layout={{ mobile: 1, tablet: 3, desktop: 3 }}
           >
             {QUALITY.map(([icon, title, body]) => (
               <Card
@@ -201,7 +201,7 @@ export default function SellLandingV2({ onGo }) {
               Four ways to sell
             </h2>
             <p style={{ fontSize: TYPE.lg, color: T.textSubtle, margin: 0, maxWidth: 680, lineHeight: 1.6 }}>
-              Sell directly, through retail distribution, in bulk, or behind your own storefront.
+              Start with one channel and add more as your business grows. Each option works independently, or together.
             </p>
           </div>
 
@@ -231,7 +231,14 @@ export default function SellLandingV2({ onGo }) {
                 title={card.name}
                 description={card.line}
                 {...(card.stage
-                  ? { cta: { onClick: () => onGo?.(card.stage), children: card.cta } }
+                  /* Same `link` treatment as the other three cards —
+                     underlined text, no button chrome. No openInNewTab
+                     (and so no external-open icon) since this goes to
+                     another page in this app, not a new tab; Codex's
+                     Link has no separate "same page" icon to swap in,
+                     so it's a plain link, matching how other in-app
+                     links style themselves elsewhere in this codebase. */
+                  ? { link: { href: "#", onClick: e => { e.preventDefault(); onGo?.(card.stage); }, children: card.cta } }
                   : { link: { href: card.href, openInNewTab: true, children: card.cta } })}
               />
             ))}
@@ -403,12 +410,12 @@ export default function SellLandingV2({ onGo }) {
             fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
             lineHeight: 1.25, margin: 0,
           }}>
-            Ready to bring your project to life?
+            Ready to share your project with the world?
           </h2>
           <p style={{ margin: 0, fontSize: TYPE.lg, color: T.textSubtle, lineHeight: 1.6 }}>
             Create your book, magazine, or wall art today and unlock your selling potential.
           </p>
-          <Button onClick={() => onGo?.("getstarted")}>Start creating</Button>
+          <Button onClick={() => onGo?.("getstarted")}>Get started</Button>
         </div>
       </section>
     </div>
