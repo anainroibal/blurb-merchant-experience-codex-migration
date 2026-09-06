@@ -8,6 +8,8 @@ import Estimator from "./Estimator.jsx";
 import Home from "./Home.jsx";
 import ProductCatalog from "./ProductCatalog.jsx";
 import InstantStorePage from "./InstantStorePage.jsx";
+import SellLandingV2 from "./SellLandingV2.jsx";
+import InstantStoreV2 from "./InstantStoreV2.jsx";
 import ShippingPage from "./ShippingPage.jsx";
 import PricingToday from "./PricingToday.jsx";
 
@@ -75,6 +77,13 @@ const STAGES = [
   /* Ways to sell, renamed and given one goal: which route is mine? It is
      where a seller lands, and it ends in the single step that follows. */
   { id: "seller",     short: "Sell",         label: "/sell — how to print it and how to sell it, Instant Store included" },
+  /* Figma content-outline rebuild (2026-09-06) — a fourth selling path
+     (RPI Print API), a showcase/testimonial section and a trusted-by
+     logo strip that v1 doesn't have. Not yet folded into `seller`
+     because several of its sections are still marked in-flux by open
+     Figma comments — kept as its own stage so it can be reviewed
+     side by side with v1 rather than overwriting it. */
+  { id: "sellv2",     short: "Sell v2",      label: "Sell — Figma content-outline rebuild, reviewed alongside v1" },
   /* Two pages, not two tabs. The maker's price sits under Pricing; the
      seller's margin sits under Sell & Self-Publish, which is what keeps
      the public pricing pages retail-only. */
@@ -82,6 +91,10 @@ const STAGES = [
   { id: "margin",     short: "Profit",       label: "Instant Store profit calculator — under Sell & Self-Publish" },
   /* Crometrics' page. A placeholder so the links into it can be reviewed. */
   { id: "instantstore", short: "Instant Store", label: "The Instant Store page — placeholder, built by Crometrics" },
+  /* Figma content-outline rebuild (2026-09-06), same reason as Sell v2:
+     kept as its own stage rather than replacing `instantstore` while
+     open Figma comments still have parts of it in flux. */
+  { id: "instantstorev2", short: "Instant Store v2", label: "Instant Store — Figma content-outline rebuild, reviewed alongside v1" },
   /* /shipping, after both calculators, because what it now does is explain
      what they compute — 2026-08-27. */
   { id: "shipping",   short: "Shipping",     label: "/shipping — informational, now that both calculators price delivery" },
@@ -394,6 +407,8 @@ export default function App() {
           />
         )}
         {stage === "seller"     && <SellerLanding onGo={go} lean={lean} />}
+        {stage === "sellv2"     && <SellLandingV2 onGo={go} />}
+        {stage === "instantstorev2" && <InstantStoreV2 onGo={go} />}
         {/* ── Two versions of this page, chosen by scope ──
             RECOMMENDED replaces /pricing with the calculator. LEAN keeps
             the page as it is today, tables and all, and adds one Instant
