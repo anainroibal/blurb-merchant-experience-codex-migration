@@ -95,6 +95,17 @@
         background: linear-gradient(100deg, #e9ecef 0%, #f6f3ef 45%, #ebebeb 100%);
       }
 
+      /* Codex's Markdown renderer turns a `[label](url)` cell into a real
+         Link component, which defaults to its own font-size (16px) —
+         bigger than ComparisonTable's own cell text (14px), so a link
+         inside a sentence read as a size bump rather than just a link.
+         Scoped rather than global: only resets links inside a table
+         marked with this class, not every Link on the page. */
+      .comparison-table-links a {
+        font-size: inherit;
+        line-height: inherit;
+      }
+
       .radiocard-flush {
         padding: 0;
         background: transparent;

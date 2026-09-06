@@ -71,7 +71,7 @@ const SELL_PATHS = [
     img: ILLUS + "blurb-dashboard.YPDjPrK8_Z1bvCol.webp",
     alt: "An illustration of a person setting up a book listing.",
     line: "Sell directly to your audience in minutes with a product page that fully showcases your book — no extra fees, no tech skills required.",
-    stage: "instantstorev2", cta: "Create Your Instant Store",
+    stage: "instantstorev2", cta: "Create your Instant Store",
   },
   {
     id: "retail", name: "Retail Distribution",
@@ -96,7 +96,7 @@ const SELL_PATHS = [
     img: ILLUS + "large-order.Dolls1H4_A7dqn.webp",
     alt: "A press roller running colour on a large print job.",
     line: "Get dedicated support and volume discounts for orders of 100+ copies, perfect for events, clients, or resale.",
-    href: "https://www.blurb.com/large-order-services", cta: "Get a Custom Quote",
+    href: "https://www.blurb.com/large-order-services", cta: "Get a custom quote",
   },
   {
     id: "api", name: "RPI Print API",
@@ -279,6 +279,7 @@ export default function SellLandingV2({ onGo }) {
             </h3>
 
             <ComparisonTable
+              className="comparison-table-links"
               columnHeaders={["", "Instant Store", "Retail Distribution", "Large Order Services", "RPI Print API"]}
               rows={[
                 { header: "Best for", cells: [
@@ -306,10 +307,10 @@ export default function SellLandingV2({ onGo }) {
                   "You bring it",
                 ] },
                 { header: "Inventory", cells: [
-                  "None (Print-on-Demand)",
-                  "None (Print-on-Demand)",
-                  "Yes (You hold stock)",
-                  "None (Print-on-demand)",
+                  "None (print on demand)",
+                  "None (print on demand)",
+                  "Yes (you hold stock)",
+                  "None (print on demand)",
                 ] },
                 /* The outline renders these as real buttons, one per
                    column, not a text row — but ComparisonTable's own
