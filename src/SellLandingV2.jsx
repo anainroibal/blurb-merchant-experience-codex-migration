@@ -52,12 +52,12 @@ import Faq from "./Faq.jsx";
 /* Ana, 2026-09-XX: dropped to 3 cards — Mix & Match removed, Print-on-
    demand renamed/rewritten to lead with "no inventory risk". */
 const QUALITY = [
-  ["print", "Print on demand, no inventory risk",
+  ["print", "Print on demand, no inventory",
    "No need to hold an inventory or have upfront costs. We print and ship only when you make a sale."],
   ["workspace_premium", "Unmatched quality",
    "Give your audience access to Blurb's superior print quality, vast catalog of formats, and premium paper types."],
   ["precision_manufacturing", "Powered by RPI Print",
-   "Our in-house fulfillment network ensures quality control and reliability at scale trusted by brands like Canva and Minted."],
+   "Our in-house fulfillment ensures quality control and reliability at scale, trusted by brands like Canva and Minted."],
 ];
 
 /* Blurb's own illustrations, reused from SellerLanding.jsx rather than
@@ -132,9 +132,12 @@ const SHOWCASE = [
 ];
 
 const STATS = [
-  ["verified_user", "XX+ Years", "Empowering sellers with industry-leading print quality."],
-  ["public", "XX+ Countries", "Shipped to a global network of buyers and readers."],
+  ["verified_user", "20+ Years",
+   "Backed by 20 years of in-house expertise and full production control, Blurb ensures consistent quality from start to finish. No outsourcing, no compromises."],
+  ["public", "70+ Countries", "Shipped to a global network of buyers and readers."],
   ["auto_stories", "20M+", "Unique books and products created and sold."],
+  ["eco", "Sustainable papers & practices",
+   "Our photo books are crafted in the US with Forest Stewardship Council-certified papers and printed at the facility nearest you."],
 ];
 
 const TRUSTED_BY = ["Canva", "minted", "Treering", "Storyworth", "We Can Books"];
@@ -337,7 +340,8 @@ export default function SellLandingV2({ onGo }) {
                       style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", display: "block", borderRadius: R.lg }}
                     />
                   }
-                  title={`${f.title} · ${plural(f.formats, "format")} · ${plural(f.papers, "paper")} · ${plural(f.sizes, "size")}`}
+                  eyebrow={`${plural(f.formats, "format")} · ${plural(f.papers, "paper")} · ${plural(f.sizes, "size")}`}
+                  title={f.title}
                   description={f.desc}
                 />
               );
@@ -385,7 +389,7 @@ export default function SellLandingV2({ onGo }) {
             {STATS.map(([icon, stat, caption]) => (
               <div key={stat} style={{ display: "grid", gap: 8 }}>
                 <span className="ms" aria-hidden style={{ fontSize: 28, color: C.blue600 }}>{icon}</span>
-                <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 500 }}>{stat}</div>
+                <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 500, color: T.textNeutral }}>{stat}</div>
                 <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle }}>{caption}</p>
               </div>
             ))}
