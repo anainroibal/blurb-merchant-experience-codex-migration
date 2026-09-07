@@ -178,19 +178,56 @@ export default function SellLandingV2({ onGo }) {
   return (
     <div style={{ fontFamily: FONT_BODY, color: C.gray950 }}>
 
-      {/* ── Hero ── the gradient the seller pages share. */}
+      {/* ── Hero ──
+          "Sell with Blurb" read as sell THROUGH Blurb — a marketplace
+          you list on, not a production partner behind whatever you
+          build (your own store, a retailer listing, your own app).
+          Rewritten around that instead: the CRO brief's own framing
+          is "your brand, not ours" for the white-label paths (Instant
+          Store's packaging, the API), so the hero leads with control
+          staying with the seller. Ticks underneath are the brief's
+          "Overall benefits applicable to all seller tools" — HeroCenter
+          has no slot for them, so they're their own strip right under
+          it, same pattern as other heroes on this page's siblings that
+          need more than heading/subheading/CTA. */}
       <HeroCenter
         className="hero-gradient-seller"
-        heading="Sell with Blurb"
-        subheading="From a simple storefront to retail distribution and APIs, Blurb has a selling solution for every seller."
+        heading="However you sell, it's still your book"
+        subheading="Four ways to reach readers — a store that's fully yours, global retail distribution, bulk orders, or your own platform. You choose how; we handle the printing, shipping, and production behind it."
         ctas={[{ as: "a", href: "#paths", children: "Explore our selling tools" }]}
       />
 
-      {/* ── Built-in quality ── */}
-      <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
+      <section style={{ padding: "0 24px clamp(32px, 4vw, 48px)" }}>
+        <div style={{
+          maxWidth: 900, margin: "0 auto", display: "grid", gap: 16,
+          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+        }}>
+          {[
+            "Choice and optionality — mix and match ways to sell",
+            "Print on demand — no inventory, no stock risk",
+            "Your brand on every order, not ours",
+          ].map(text => (
+            <div key={text} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+              <span className="ms" aria-hidden style={{ fontSize: 20, color: C.blue600, flex: "0 0 auto" }}>check_circle</span>
+              <span style={{ fontSize: TYPE.sm, color: T.textNeutral, lineHeight: 1.5 }}>{text}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Included with every way you sell ──
+          Was "Built-in quality, flexibility, and support" — a heading
+          that describes itself rather than saying what's in the
+          section (Ana: "I don't know what that means"). These three
+          are the CRO brief's own "Overall benefits applicable to all
+          seller tools", so the heading says exactly that now. Padding
+          cut roughly in half (was clamp(56px,7vw,80px), matching the
+          page's heavier hero-adjacent sections) — this one sits
+          between two dense sections and doesn't need that much air. */}
+      <section style={{ padding: "clamp(32px, 4vw, 48px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <CardList
-            heading="Built-in quality, flexibility, and support"
+            heading="Included with every way you sell"
             headingAlign="center"
             layout={{ mobile: 1, tablet: 3, desktop: 3 }}
           >
@@ -278,39 +315,79 @@ export default function SellLandingV2({ onGo }) {
               Which selling path is right for you?
             </h3>
 
+            {/* ── Beefed up, Lulu-style (Ana wanted this as inspiration) ──
+                Lulu's own comparison table (lulu.com/sell) uses a status
+                dot per cell — green/yellow/red — plus a legend, across
+                nine features. Same shape here: nine rows instead of the
+                previous five, a dot on every cell, a legend caption
+                below. Cell content is the CRO brief's own value props
+                and FAQ answers for each path, not invented — the one
+                place the brief itself flags as unverified (SKU-based
+                margin comparisons like "30% more than the Bookstore")
+                is left out; "Seller pricing, no platform fees" and
+                "Same pricing as Instant Store" are both lines the brief
+                states directly, not comparisons. Codex's ComparisonTable
+                only takes Markdown strings, so the dot is a plain
+                emoji character rather than a real status component —
+                there's no colored-dot primitive in Codex to reach for
+                instead. */}
             <ComparisonTable
               className="comparison-table-links"
               columnHeaders={["", "Instant Store", "Retail Distribution", "Large Order Services", "RPI Print API"]}
               rows={[
                 { header: "Best for", cells: [
-                  "Direct sales to your existing audience",
-                  "Discoverability & reaching new readers",
-                  "Bulk orders for events or resale",
-                  "Integrating print-on-demand",
+                  "🟢 Sellers with their own audience — followers, a newsletter, no store yet",
+                  "🟢 Reaching new readers who don't know you yet",
+                  "🟢 Bulk orders for an event, gift, or resale",
+                  "🟢 Developers building print into their own product",
                 ] },
-                { header: "Profit margin", cells: [
-                  "Highest, new [seller pricing](?stage=margin) with no extra fees",
-                  "Varies by retailer",
-                  "Custom quote",
-                  "Highest",
+                { header: "Setup", cells: [
+                  "🟢 AI-assisted, live in minutes",
+                  "🟢 Simple via Blurb",
+                  "🟡 Custom quote required",
+                  "🔴 Developer integration required",
                 ] },
-                { header: "Storefront", cells: [
-                  "Create it in minutes",
-                  "Not required",
-                  "Not required",
-                  "You build it",
+                { header: "Hands-off selling", cells: [
+                  "🟢 Yes",
+                  "🟢 Yes",
+                  "🔴 No — project-managed with an account team",
+                  "🟢 Yes",
                 ] },
-                { header: "Audience", cells: [
-                  "You bring it",
-                  "Retailer's audience",
-                  "You bring it",
-                  "You bring it",
+                { header: "Order fulfillment", cells: [
+                  "🟢 Automated",
+                  "🟢 Automated",
+                  "🟡 White-glove, project-managed",
+                  "🟢 Automated",
                 ] },
                 { header: "Inventory", cells: [
-                  "None (print on demand)",
-                  "None (print on demand)",
-                  "Yes (you hold stock)",
-                  "None (print on demand)",
+                  "🟢 None — print on demand",
+                  "🟢 None — print on demand",
+                  "🔴 You hold the stock",
+                  "🟢 None — print on demand",
+                ] },
+                { header: "Profit", cells: [
+                  "🟢 [Seller pricing](?stage=margin), no platform fees",
+                  "🟡 Retail pricing; fees vary by retailer",
+                  "🟡 Custom quote, bulk discounting",
+                  "🟢 Same pricing as Instant Store, no additional fees",
+                ] },
+                { header: "Storefront", cells: [
+                  "🟢 Provided, customizable in minutes",
+                  "🔴 Not provided — lists on the retailer's own page",
+                  "🔴 Not applicable",
+                  "🔴 You build it",
+                ] },
+                { header: "Packaging", cells: [
+                  "🟢 White-labeled — your brand, not Blurb's",
+                  "🟡 Set by the retailer",
+                  "🟡 Custom, including multi-address dropship",
+                  "🟢 White-labeled — your brand, not Blurb's",
+                ] },
+                { header: "Tech required", cells: [
+                  "🟢 None",
+                  "🟢 None",
+                  "🟢 None — handled by your account team",
+                  "🔴 Developer resources",
                 ] },
                 /* The outline renders these as real buttons, one per
                    column, not a text row — but ComparisonTable's own
@@ -329,6 +406,9 @@ export default function SellLandingV2({ onGo }) {
                 ] },
               ]}
             />
+            <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, textAlign: "center" }}>
+              🟢 Included / easy &nbsp;&nbsp; 🟡 Limited / requires extra effort &nbsp;&nbsp; 🔴 Not included
+            </p>
           </div>
         </div>
       </section>
