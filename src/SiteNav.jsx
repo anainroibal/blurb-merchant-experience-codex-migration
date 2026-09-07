@@ -206,7 +206,7 @@ const NAV = [
          (DES-482 #5d), which is a good sign it reads. */
       ["Retail distribution", "List on Amazon, Ingram and the Blurb Bookstore.", null, "seller"],
       ["Bulk orders", "Volume discounts start at 100 copies. We quote the run and handle the logistics."],
-      ["API", "Send orders from your own system and we print, pack and ship them."],
+      ["API", "Integrate the API infrastructure trusted by Blurb, Canva and Minted, directly into your app or website."],
     ]},
   ], featured: {
     /* The featured slot Switch to Blurb vacated goes to the profit
@@ -229,8 +229,10 @@ const NAV = [
          here. Named "RPI Print API" per the design review (item 27):
          orchestration at scale, not fulfilment, with RPI as the outer
          layer and Blurb inside it — shortened again to just "API"
-         (Ana), same as every other nav mention of it. */
-      ["API", "Print and delivery orchestrated at scale, through RPI's own network."],
+         (Ana), same as every other nav mention of it. Description
+         matches the RPI Print API card's own copy on the Sell v2 page
+         (Ana) rather than saying it a third way. */
+      ["API", "Integrate the API infrastructure trusted by Blurb, Canva and Minted, directly into your app or website."],
     ]},
   ]},
 
