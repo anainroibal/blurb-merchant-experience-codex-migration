@@ -206,7 +206,7 @@ const NAV = [
          (DES-482 #5d), which is a good sign it reads. */
       ["Retail distribution", "List on Amazon, Ingram and the Blurb Bookstore.", null, "seller"],
       ["Bulk orders", "Volume discounts start at 100 copies. We quote the run and handle the logistics."],
-      ["API", "Integrate the API infrastructure trusted by Blurb, Canva and Minted, directly into your app or website."],
+      ["API", "Integrate our print API infrastructure directly into your app or website."],
     ]},
   ], featured: {
     /* The featured slot Switch to Blurb vacated goes to the profit
@@ -232,7 +232,7 @@ const NAV = [
          (Ana), same as every other nav mention of it. Description
          matches the RPI Print API card's own copy on the Sell v2 page
          (Ana) rather than saying it a third way. */
-      ["API", "Integrate the API infrastructure trusted by Blurb, Canva and Minted, directly into your app or website."],
+      ["API", "Integrate our print API infrastructure directly into your app or website."],
     ]},
   ]},
 

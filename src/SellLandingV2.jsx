@@ -101,7 +101,7 @@ const SELL_PATHS = [
   {
     id: "api", name: "RPI Print API",
     icon: "integration_instructions",
-    line: "Integrate the API infrastructure trusted by Blurb, Canva and Minted, directly into your app or website.",
+    line: "Integrate our print API infrastructure directly into your app or website.",
     href: "https://www.rpiprint.com", cta: "Learn more about RPI Print API",
   },
 ];
