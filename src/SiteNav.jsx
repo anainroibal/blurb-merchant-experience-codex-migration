@@ -205,7 +205,7 @@ const NAV = [
          apart. "Retail distribution" is Ana's own word for the group
          (DES-482 #5d), which is a good sign it reads. */
       ["Retail distribution", "List on Amazon, Ingram and the Blurb Bookstore.", null, "seller"],
-      ["Volume orders", "Volume discounts start at 100 copies. We quote the run and handle the logistics."],
+      ["Bulk orders", "Volume discounts start at 100 copies. We quote the run and handle the logistics."],
       ["API", "Send orders from your own system and we print, pack and ship them."],
     ]},
   ], featured: {
@@ -223,9 +223,9 @@ const NAV = [
 
   { label: "Services", href: "/large-order-services", columns: [
     { heading: "Services", items: [
-      ["Volume orders", "Volume discounts start at 100 copies. We quote the run and handle the logistics."],
+      ["Bulk orders", "Volume discounts start at 100 copies. We quote the run and handle the logistics."],
       /* Moved out of the featured panel (Ana) and into the list, as a
-         normal item alongside Volume orders — no more "Featured" card
+         normal item alongside Bulk orders — no more "Featured" card
          here. Named "RPI Print API" per the design review (item 27):
          orchestration at scale, not fulfilment, with RPI as the outer
          layer and Blurb inside it — shortened again to just "API"
