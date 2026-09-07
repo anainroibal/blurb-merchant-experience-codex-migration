@@ -125,7 +125,7 @@ const NAV = [
          different question rather than a second price for the same one.
          It does not breach the retail-only rule — that rule is about
          showing the two prices together, and a link is not a price. */
-      ["Selling instead?", "See what you keep on an Instant Store sale.", null, "margin"],
+      ["Selling instead?", "See what you keep on an Instant Store sale.", "New", "margin"],
     ]},
   ], featured: {
     heading: "Featured",
@@ -194,7 +194,7 @@ const NAV = [
        category, so a second heading was drawing a line that wasn't
        there. Both stay listed under Services too (design review item 23). */
     { heading: "Ways to sell", items: [
-      ["Instant Store", "Share a link or embed a button. We print and ship each order.", null, "instantstore"],
+      ["Instant Store", "Share a link or embed a button. We print and ship each order.", "New", "instantstore"],
       /* ── Three channels, one item (Ana's mock, 2026-08-28) ──
          The Bookstore, Amazon and Ingram were three lines. They are one
          decision: somebody else brings the buyer, lists the book in their
@@ -328,6 +328,21 @@ export const NAV_COLUMNS = NAV.map(g => ({
    rather than a selling point. */
 function Tag({ children }) {
   if (!children) return null;
+  /* "New" is a different kind of tag from COMING SOON / CONCEPT — those
+     are a caveat (outline, quiet); this one is a highlight, so it gets
+     the same solid chip SellerLanding.jsx already uses for its own
+     "New" mark rather than reusing the neutral outline treatment. */
+  if (children === "New") {
+    return (
+      <span style={{
+        marginLeft: 8, padding: "1px 8px", borderRadius: 999, verticalAlign: "middle",
+        fontSize: 10, fontWeight: 700, letterSpacing: 0.6, textTransform: "uppercase",
+        background: C.blue600, color: "#fff", whiteSpace: "nowrap",
+      }}>
+        {children}
+      </span>
+    );
+  }
   return (
     <span style={{
       marginLeft: 8, padding: "1px 8px", borderRadius: 999, verticalAlign: "middle",
