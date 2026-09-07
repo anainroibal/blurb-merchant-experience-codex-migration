@@ -345,7 +345,7 @@ const LEAN_NAV = [
       ["Amazon", null, null, "sellv2"],
       ["Ingram", null, null, "sellv2"],
       ["Large Order Services"],
-      ["API"],
+      ["API Printing"],
     ]},
   ]},
 
@@ -363,11 +363,17 @@ const LEAN_NAV = [
     ]},
   ]},
 
+  /* Large Order Services and API Printing sit under BOTH Sell &
+     Self-Publish and Resources on the live site (confirmed off its own
+     nav sitemap) — not a duplication bug to clean up, the real nav
+     really does list each in two places. */
   { label: "Resources", href: "/blog", columns: [
     { heading: "Resources", items: [
       ["Blog"],
       ["BookWright Templates"],
       ["Help Center"],
+      ["Large Order Services"],
+      ["API Printing"],
     ]},
   ]},
 ];
