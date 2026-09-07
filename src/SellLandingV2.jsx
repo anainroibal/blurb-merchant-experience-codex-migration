@@ -315,7 +315,7 @@ export default function SellLandingV2({ onGo }) {
             You sell it. We print it.
           </h1>
           <p style={{ fontSize: TYPE.lg, lineHeight: 1.55, color: T.textSubtle, margin: 0, maxWidth: 640 }}>
-            Four ways to reach readers: your own store, global retail, bulk orders, or your own platform. We handle the printing, shipping, and production behind every one.
+            Four ways to reach readers: your own store, global retail, bulk orders, or your own platform. We handle the printing, shipping, and production for each one.
           </p>
           <Button as="a" href="#paths">Explore our selling tools</Button>
 
