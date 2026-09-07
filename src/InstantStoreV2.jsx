@@ -46,33 +46,43 @@ const SELL_FORMATS = [
    money set beside a per-channel breakdown, the shape CLAUDE.md's
    "never put retail and fulfilment side by side" / "the fulfilment
    price is a line in a calculation, never a price tag" rules exist to
-   rule out. Anain okayed shipping it as designed (2026-09-06). Figures
-   stay at the "$X" placeholder this app already uses rather than
-   invented ones (the outline's own cells are already "$X.XX"/"X%"
-   placeholders, not real numbers). The "50%" in the caption above the
-   table IS the outline's literal text, not a placeholder — it has no
-   visible source in the board's provenance panel, so it's worth
-   confirming with Anain before this ships anywhere real.
+   rule out. Anain okayed shipping it as designed (2026-09-06).
 
-   Reworked 2026-09-06 (Ana): dropped the qualitative "alternative"
-   table that used to sit under this one — with a real table on the
-   page already (design-review-approved), a second one arguing the
-   opposite case read as hedging rather than adding information, and
-   Ana called it out directly ("we can break the rule in this case").
-   Expanded instead: Ingram and "Other print-on-demand solutions"
-   columns, so the table compares every route this page's own six-route
-   sibling on Sell v2 does, not just three of them. Setup fees dropped —
-   nobody in this market charges one, so a row of identical "$0"s across
-   every column proved nothing. A new "Other fees" row does the
-   differentiating work instead: Blurb charges none of the payment-
-   processing, platform, or hosting fees a generic POD/storefront
-   stack often does, which is a real, checkable difference, unlike a
-   shared zero. Amazon's and Ingram's Commission cells carry real
-   figures rather than "X%" — Amazon's $1.35-plus-15% fee is already
-   sourced in CLAUDE.md's own figures section; Ingram has no fixed
-   commission at all, since it works off a wholesale discount the
-   seller sets, so its cell explains the mechanism instead of quoting
-   a number that doesn't exist for it.
+   Reworked 2026-09-06 (Ana), twice over:
+
+   First pass — dropped the qualitative "alternative" table that used to
+   sit under this one. With a real table on the page already
+   (design-review-approved), a second one arguing the opposite case read
+   as hedging rather than adding information, and Ana called it out
+   directly ("we can break the rule in this case"). Expanded the
+   remaining table with Ingram and "Other print-on-demand solutions"
+   columns, and a new "Other fees" row in place of Setup fees (nobody in
+   this market charges one, so a row of identical "$0"s proved nothing;
+   Blurb charging none of the payment-processing/platform/hosting fees a
+   generic POD stack does is a real, checkable difference instead).
+
+   Second pass — the "$X.XX" placeholders made the table impossible to
+   actually read, so it's now pinned to one real spec: an 8×10 ImageWrap
+   Hardcover photo book, 80 pages. Blurb still publishes no fulfilment
+   pricing, so print cost is *estimated*, the same way every other
+   margin figure in this app is (Configurator.jsx, ProductOptions.jsx,
+   SellerLanding.jsx): this spec's own retail unit price from
+   catalog.js/pricing.data.js ($41 base at 20 pages + 60 extra pages at
+   $0.33/page = $60.80) times FULFILMENT_FACTOR (0.35) = $21.28. "Est.
+   margin" assumes a $60.80 sale — the same figure, so every channel is
+   priced against what Blurb itself would charge for the book at retail,
+   not an arbitrary sale price. Ingram is dropped for this specific
+   product — it's trade-only per catalog.js, so it doesn't carry photo
+   books — and RPI Print API takes its place, carrying Instant Store's
+   own cost structure (same infrastructure, same 0% Blurb-side
+   commission). Amazon's Commission cell keeps its real, already-sourced
+   figure (CLAUDE.md's own figures section: $1.35 + 15% of list price).
+   The 50% margin claim in the caption above the table is now 70% (Ana) —
+   still the outline's own unsourced figure otherwise, worth confirming
+   with Anain before this ships anywhere real. The "Other print-on-demand
+   solutions" column is styled distinctly (see the scoped
+   `.keep-more-table` rule in index.html) since it's the one column of
+   five that isn't Blurb.
 
    ── Corrected 2026-09-06 ──
    An earlier pass of this file invented body copy for the 3-step and
@@ -232,24 +242,42 @@ export default function InstantStoreV2({ onGo }) {
               }}>
                 Keep more of what you earn
               </h2>
-              {/* The outline's own literal text — see the file header
-                  note on why this specific number is worth confirming
-                  before this ships anywhere real. */}
+              {/* The outline's own literal text, corrected (Ana: it's
+                  actually 70%, not 50%) — see the file header note on
+                  why this figure is still worth confirming before this
+                  ships anywhere real. */}
               <p style={{ margin: 0, fontSize: TYPE.base, color: T.textSubtle }}>
-                *Earn up to 50% higher margins compared to other distribution channels.
+                *Earn up to 70% higher margins compared to other distribution channels.
               </p>
             </div>
             <Button variant="outlined" onClick={() => onGo?.("margin")}>Calculate your margin</Button>
           </div>
 
+          {/* Figures below assume one real spec (Ana) rather than "$X.XX"
+              placeholders, so the table can actually be read: an 8×10
+              ImageWrap Hardcover photo book, 80 pages. Blurb publishes no
+              fulfilment pricing, so — same as every other margin figure
+              in this app (Configurator.jsx, ProductOptions.jsx,
+              SellerLanding.jsx) — print cost is estimated as this spec's
+              own retail unit price (catalog.js: $41 base at 20 pages +
+              60 extra pages at $0.33 = $60.80) times FULFILMENT_FACTOR
+              (0.35) = $21.28. "Est. margin" assumes a $60.80 sale — the
+              same figure, so every channel is priced even with what
+              Blurb itself would charge for the book at retail.
+
+              RPI Print API replaces Ingram (Ana: Ingram is trade-only,
+              per catalog.js — it doesn't carry photo books at all) and
+              carries Instant Store's own cost structure: same
+              infrastructure, same 0% Blurb-side commission. */}
           <ComparisonTable
-            columnHeaders={["", "Instant Store", "Blurb Bookstore", "Amazon", "Ingram", "Other print-on-demand solutions"]}
+            className="keep-more-table"
+            columnHeaders={["", "Instant Store", "Blurb Bookstore", "Amazon", "RPI Print API", "Other print-on-demand solutions"]}
             rows={[
-              { header: "Print cost", cells: ["$X.XX", "$X.XX", "$X.XX", "$X.XX", "Varies by provider"] },
+              { header: "Print cost", cells: ["$21.28", "$21.28", "$21.28", "$21.28", "Varies by provider"] },
               { header: "Commission", cells: [
                 "0%", "0%",
                 "Amazon's distribution fee ($1.35 per book + 15% of your list price)",
-                "No fixed commission — you set a wholesale discount off your own list price",
+                "0%",
                 "Varies by provider",
               ] },
               /* The point of this row (Ana): every Blurb route charges
@@ -259,7 +287,7 @@ export default function InstantStoreV2({ onGo }) {
                 "None", "None", "None", "None",
                 "Payment processing fees, platform fees, hosting fees",
               ] },
-              { header: "Est. margin on a $20 sale", cells: ["$X.XX", "$X.XX", "$X.XX", "$X.XX", "Varies by provider"] },
+              { header: "Est. margin on a $60.80 sale", cells: ["$39.52", "$39.52", "$29.05", "$39.52", "Varies by provider"] },
             ]}
           />
         </div>

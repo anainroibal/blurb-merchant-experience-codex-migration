@@ -355,7 +355,7 @@ export default function SellLandingV2({ onGo }) {
             You made it. We help you sell it.
           </h1>
           <p style={{ fontSize: TYPE.lg, lineHeight: 1.55, color: T.textSubtle, margin: 0, maxWidth: 640 }}>
-            Four ways to reach readers: an Instant Store we build for you, global retail distribution, bulk orders, or your own platform. We print and ship every order, so you can focus on selling.
+            Four ways to reach readers: an Instant Store we build for you, global retail distribution, bulk orders, or your own platform. We print and ship every order, so you can focus on creating.
           </p>
           <Button as="a" href="#paths" style={{ marginTop: 8 }}>Explore our selling tools</Button>
         </div>
