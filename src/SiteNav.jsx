@@ -275,6 +275,95 @@ const NAV = [
   ]},
 ];
 
+/* ── LEAN_NAV — the fallback, under Scope "Minimum effort" (Ana) ──
+   The row above is a real redesign: new classification (Products,
+   Pricing, Creation Tools, Sell, Services, Bookstore, Support), not
+   just new pages behind old labels. This is the hedge in case that
+   redesign doesn't get built: today's actual blurb.com nav — same six
+   menus, same items, same order, read straight off the live site
+   (Products, Pricing, Design Tools, Sell & Self-Publish, Bookstore,
+   Resources) — with only the destinations swapped to the new pages
+   this project adds. Old classification, new pages, so the two
+   proposals can be told apart at a glance.
+
+   What actually changed from the live site:
+     · "Instant Store" is grafted into Sell & Self-Publish, first in
+       the list — the live site has no slot for it because it doesn't
+       exist there yet, and Sell & Self-Publish is the nearest real
+       bucket for it.
+     · Blurb Bookstore / Amazon / Ingram all point at the Sell v2 page
+       (the new retail-distribution comparison), rather than each
+       going to its own live page — this prototype has one comparison
+       screen for all three, not three.
+     · Everything else keeps its real label and, where the live site's
+       destination has no equivalent screen here (Design Tools, Large
+       Order Services, API Printing, the Bookstore categories,
+       Resources), stays a label with no page behind it — same
+       "prototype holds five screens, not a site" limit the main row
+       already lives with. */
+const LEAN_NAV = [
+  { label: "Products", href: "/formats", columns: [
+    { heading: "Products", items: [
+      ["Shop All", null, null, "catalog"],
+      ["Photo Books", null, null, "product"],
+      ["Layflat Books"],
+      ["Paperback and Hardcover Books"],
+      ["Magazines"],
+      ["Notebooks & Journals"],
+      ["Wall Art"],
+    ]},
+  ]},
+
+  { label: "Pricing", href: "/pricing", columns: [
+    { heading: "Pricing", items: [
+      ["Pricing Calculator", null, null, "pricing"],
+      ["Shipping Calculator", null, null, "shipping"],
+    ]},
+  ]},
+
+  { label: "Design Tools", href: "/bookmaking-tools", columns: [
+    { heading: "Design Tools", items: [
+      ["BookWright"],
+      ["Adobe Tools"],
+      ["PDF to Book"],
+      ["BookWright Templates"],
+    ]},
+  ]},
+
+  { label: "Sell & Self-Publish", href: "/self-publish", columns: [
+    { heading: "Sell & Self-Publish", items: [
+      ["Instant Store", null, "New", "instantstorev2"],
+      ["Blurb Bookstore", null, null, "sellv2"],
+      ["Amazon", null, null, "sellv2"],
+      ["Ingram", null, null, "sellv2"],
+      ["Large Order Services"],
+      ["API Printing"],
+    ]},
+  ]},
+
+  { label: "Bookstore", href: "/bookstore", columns: [
+    { heading: "Bookstore", chunkAt: 5, items: [
+      ["All Categories"],
+      ["Photography"],
+      ["Portfolios"],
+      ["Cookbooks"],
+      ["Travel"],
+      ["Biographies & Memoirs"],
+      ["Children's Books"],
+      ["Business & Economics"],
+      ["Literature & Fiction"],
+    ]},
+  ]},
+
+  { label: "Resources", href: "/blog", columns: [
+    { heading: "Resources", items: [
+      ["Blog"],
+      ["BookWright Templates"],
+      ["Help Center"],
+    ]},
+  ]},
+];
+
 /* Bookstore's old rationale for sitting apart as a plain link, no icon
    and no menu — superseded above (Ana): it's a normal NAV entry now,
    in the row, with a real category dropdown. */
@@ -747,7 +836,7 @@ function MobileNav({ open, signedIn, onClose, onSignedIn, onGo, lean }) {
         padding: "8px 16px 20px", fontFamily: FONT_BODY,
       }}
     >
-      {NAV.map(group => (
+      {(lean ? LEAN_NAV : NAV).map(group => (
         <div key={group.label} style={{ padding: "10px 0", borderBottom: `1px solid ${T.border}` }}>
           <div style={{ fontSize: TYPE.lg, fontWeight: 700, color: T.textNeutral, padding: "4px 0 6px" }}>
             {group.label}
@@ -998,7 +1087,7 @@ export default function SiteNav({ signedIn, onSignedIn, onGo, lean = false }) {
           className="nav-desktop"
           style={{ display: "flex", alignItems: "center", gap: 0, flex: 1, minWidth: 0 }}
         >
-          {NAV.map(group => <NavItem key={group.label} group={group} />)}
+          {(lean ? LEAN_NAV : NAV).map(group => <NavItem key={group.label} group={group} />)}
         </nav>
 
         <div className="hide-sm" style={{ display: "flex", alignItems: "center", gap: 16, flex: "0 0 auto" }}>
