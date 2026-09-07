@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, CardList, Card, ComparisonTable, HeroCenter } from "@blurb/codex-react";
+import { Button, CardList, Card } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { FORMAT_CARDS } from "./FormatCards.jsx";
 import Faq from "./Faq.jsx";
@@ -101,12 +101,104 @@ const SELL_PATHS = [
   {
     id: "api", name: "RPI Print API",
     icon: "integration_instructions",
-    line: "Integrate our print API infrastructure directly into your app or website.",
+    /* Ana: "too bold" was about the nav mention specifically, not this
+       page — the CRO brief actually confirms this as a real value prop
+       for the API ("Direct API access to the same manufacturing and
+       fulfilment infrastructure that already powers Blurb, Canva, and
+       Minted"), so it stays here. Nav keeps the plainer line. */
+    line: "Integrate the API infrastructure trusted by Blurb, Canva and Minted, directly into your app or website.",
     href: "https://www.rpiprint.com", cta: "Learn more about RPI Print API",
   },
 ];
 
 const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
+
+/* Codex's own semantic status colors, read from its compiled CSS
+   (--codex-color-semantic-bg-success / -warning / -danger). tokens.js
+   has no success/warning/danger aliases, so these are the real hex
+   values rather than an invented palette. */
+const STATUS_COLOR = { success: "#166640", warning: "#8e4412", danger: "#bd1818" };
+
+function StatusDot({ status }) {
+  return (
+    <span
+      aria-hidden
+      style={{
+        display: "inline-block", width: 8, height: 8, borderRadius: "50%",
+        background: STATUS_COLOR[status], margin: "6px 10px 0 0", flex: "0 0 auto",
+      }}
+    />
+  );
+}
+
+const COMPARE_COLUMNS = ["Instant Store", "Retail Distribution", "Large Order Services", "RPI Print API"];
+
+const COMPARE_ROWS = [
+  { label: "Best for", cells: [
+    { status: "success", text: "Sellers with their own audience — followers, a newsletter, no store yet" },
+    { status: "success", text: "Reaching new readers who don't know you yet" },
+    { status: "success", text: "Bulk orders for an event, gift, or resale" },
+    { status: "success", text: "Developers building print into their own product" },
+  ] },
+  { label: "Setup", cells: [
+    { status: "success", text: "AI-assisted, live in minutes" },
+    { status: "success", text: "Simple via Blurb" },
+    { status: "warning", text: "Custom quote required" },
+    { status: "danger", text: "Developer integration required" },
+  ] },
+  /* Renamed from "Hands-off selling" — too close a copy of Lulu's own
+     row name and Yes/No shape. Asks what's required of the seller
+     instead of scoring the route pass/fail. */
+  { label: "Ongoing involvement", cells: [
+    { status: "success", text: "None needed" },
+    { status: "success", text: "None needed" },
+    { status: "warning", text: "Project-managed with an account team" },
+    { status: "success", text: "None needed" },
+  ] },
+  { label: "Order fulfillment", cells: [
+    { status: "success", text: "Automated" },
+    { status: "success", text: "Automated" },
+    { status: "warning", text: "White-glove, project-managed" },
+    { status: "success", text: "Automated" },
+  ] },
+  { label: "Inventory", cells: [
+    { status: "success", text: "None — print on demand" },
+    { status: "success", text: "None — print on demand" },
+    { status: "danger", text: "You hold the stock" },
+    { status: "success", text: "None — print on demand" },
+  ] },
+  { label: "Profit", cells: [
+    { status: "success", linkStage: "margin", linkLabel: "Seller pricing", text: ", no additional fees" },
+    { status: "warning", text: "Retail pricing; fees vary by retailer" },
+    { status: "warning", text: "Custom quote, bulk discounting" },
+    { status: "success", text: "Same pricing as Instant Store, no additional fees" },
+  ] },
+  { label: "Storefront", cells: [
+    { status: "success", text: "Provided, customizable in minutes" },
+    { status: "danger", text: "Not provided — lists on the retailer's own page" },
+    { status: "danger", text: "Not applicable" },
+    { status: "danger", text: "You build it" },
+  ] },
+  { label: "Packaging", cells: [
+    { status: "success", text: "White-labeled — your brand, not Blurb's" },
+    { status: "warning", text: "Set by the retailer" },
+    { status: "warning", text: "Custom, including multi-address dropship" },
+    { status: "success", text: "White-labeled — your brand, not Blurb's" },
+  ] },
+  { label: "Tech required", cells: [
+    { status: "success", text: "None" },
+    { status: "success", text: "None" },
+    { status: "success", text: "None — handled by your account team" },
+    { status: "danger", text: "Developer resources" },
+  ] },
+];
+
+const GET_STARTED = [
+  { stage: "instantstorev2" },
+  { href: "https://www.blurb.com/sell-through-blurb" },
+  { href: "https://www.blurb.com/large-order-services" },
+  { href: "https://www.rpiprint.com" },
+];
 
 /* Same product-type copy as Instant Store v2's "What can you sell"
    section — the outline writes its own descriptions rather than
@@ -182,36 +274,54 @@ export default function SellLandingV2({ onGo }) {
           "Sell with Blurb" read as sell THROUGH Blurb — a marketplace
           you list on, not a production partner behind whatever you
           build (your own store, a retailer listing, your own app).
-          Rewritten around that instead: the CRO brief's own framing
-          is "your brand, not ours" for the white-label paths (Instant
-          Store's packaging, the API), so the hero leads with control
-          staying with the seller. Ticks underneath are the brief's
-          "Overall benefits applicable to all seller tools" — HeroCenter
-          has no slot for them, so they're their own strip right under
-          it, same pattern as other heroes on this page's siblings that
-          need more than heading/subheading/CTA. */}
-      <HeroCenter
-        className="hero-gradient-seller"
-        heading="However you sell, it's still your book"
-        subheading="Four ways to reach readers — a store that's fully yours, global retail distribution, bulk orders, or your own platform. You choose how; we handle the printing, shipping, and production behind it."
-        ctas={[{ as: "a", href: "#paths", children: "Explore our selling tools" }]}
-      />
+          "However you sell, it's still your book" didn't land either
+          (Ana). Rewritten shorter and more direct: seller as the
+          subject/verb, Blurb as what happens after — same shape as
+          the API section's own short pitch in the brief ("We print,
+          we ship, you scale").
 
-      <section style={{ padding: "0 24px clamp(32px, 4vw, 48px)" }}>
-        <div style={{
-          maxWidth: 900, margin: "0 auto", display: "grid", gap: 16,
-          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-        }}>
-          {[
-            "Choice and optionality — mix and match ways to sell",
-            "Print on demand — no inventory, no stock risk",
-            "Your brand on every order, not ours",
-          ].map(text => (
-            <div key={text} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
-              <span className="ms" aria-hidden style={{ fontSize: 20, color: C.blue600, flex: "0 0 auto" }}>check_circle</span>
-              <span style={{ fontSize: TYPE.sm, color: T.textNeutral, lineHeight: 1.5 }}>{text}</span>
-            </div>
-          ))}
+          Custom rather than HeroCenter: the tick row is the brief's
+          "Overall benefits applicable to all seller tools", and it
+          needs to read as PART of the hero, not a second section
+          bolted underneath it (Ana: "sitting awkwardly"). HeroCenter
+          has no slot for extra content, so this hero is hand-built —
+          same padding/heading/subheading sizing HeroCenter itself
+          uses (--codex-spacing-24/32, --codex-font-size-9xl/lg), so
+          it still reads like the same hero pattern as its siblings. */}
+      <section className="hero-gradient-seller" style={{ padding: "clamp(56px, 8vw, 96px) 24px", textAlign: "center" }}>
+        <div style={{ maxWidth: 860, margin: "0 auto", display: "grid", gap: 20, justifyItems: "center" }}>
+          <h1 style={{
+            fontFamily: FONT_DISPLAY, fontWeight: 400, letterSpacing: "-0.01em",
+            fontSize: "clamp(2rem, 4.6vw, 2.75rem)", lineHeight: 1.2, margin: 0,
+          }}>
+            You sell it. We print it.
+          </h1>
+          <p style={{ fontSize: TYPE.lg, lineHeight: 1.55, color: T.textSubtle, margin: 0, maxWidth: 640 }}>
+            Four ways to reach readers — a store that's fully yours, global retail distribution, bulk orders, or your own platform. You choose how; we handle the printing, shipping, and production behind it.
+          </p>
+          <Button as="a" href="#paths">Explore our selling tools</Button>
+
+          {/* Third tick was "your brand on every order, not ours" —
+              true of Instant Store and the API, but not Retail
+              Distribution (ships in the retailer's own packaging) or
+              Large Order Services (custom/dropship). Swapped for the
+              brief's other universal benefit instead, which does hold
+              across all four. */}
+          <div style={{
+            marginTop: 12, display: "grid", gap: 12, width: "100%", maxWidth: 780,
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", textAlign: "left",
+          }}>
+            {[
+              "Choice and optionality — mix and match ways to sell",
+              "Print on demand — no inventory, no stock risk",
+              "Blurb's superior print quality, papers, and formats",
+            ].map(text => (
+              <div key={text} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+                <span className="ms" aria-hidden style={{ fontSize: 20, color: C.blue600, flex: "0 0 auto" }}>check_circle</span>
+                <span style={{ fontSize: TYPE.sm, color: T.textNeutral, lineHeight: 1.5 }}>{text}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -318,96 +428,118 @@ export default function SellLandingV2({ onGo }) {
             {/* ── Beefed up, Lulu-style (Ana wanted this as inspiration) ──
                 Lulu's own comparison table (lulu.com/sell) uses a status
                 dot per cell — green/yellow/red — plus a legend, across
-                nine features. Same shape here: nine rows instead of the
-                previous five, a dot on every cell, a legend caption
-                below. Cell content is the CRO brief's own value props
-                and FAQ answers for each path, not invented — the one
-                place the brief itself flags as unverified (SKU-based
-                margin comparisons like "30% more than the Bookstore")
-                is left out; "Seller pricing, no platform fees" and
-                "Same pricing as Instant Store" are both lines the brief
-                states directly, not comparisons. Codex's ComparisonTable
-                only takes Markdown strings, so the dot is a plain
-                emoji character rather than a real status component —
-                there's no colored-dot primitive in Codex to reach for
-                instead. */}
-            <ComparisonTable
-              className="comparison-table-links"
-              columnHeaders={["", "Instant Store", "Retail Distribution", "Large Order Services", "RPI Print API"]}
-              rows={[
-                { header: "Best for", cells: [
-                  "🟢 Sellers with their own audience — followers, a newsletter, no store yet",
-                  "🟢 Reaching new readers who don't know you yet",
-                  "🟢 Bulk orders for an event, gift, or resale",
-                  "🟢 Developers building print into their own product",
-                ] },
-                { header: "Setup", cells: [
-                  "🟢 AI-assisted, live in minutes",
-                  "🟢 Simple via Blurb",
-                  "🟡 Custom quote required",
-                  "🔴 Developer integration required",
-                ] },
-                { header: "Hands-off selling", cells: [
-                  "🟢 Yes",
-                  "🟢 Yes",
-                  "🔴 No — project-managed with an account team",
-                  "🟢 Yes",
-                ] },
-                { header: "Order fulfillment", cells: [
-                  "🟢 Automated",
-                  "🟢 Automated",
-                  "🟡 White-glove, project-managed",
-                  "🟢 Automated",
-                ] },
-                { header: "Inventory", cells: [
-                  "🟢 None — print on demand",
-                  "🟢 None — print on demand",
-                  "🔴 You hold the stock",
-                  "🟢 None — print on demand",
-                ] },
-                { header: "Profit", cells: [
-                  "🟢 [Seller pricing](?stage=margin), no platform fees",
-                  "🟡 Retail pricing; fees vary by retailer",
-                  "🟡 Custom quote, bulk discounting",
-                  "🟢 Same pricing as Instant Store, no additional fees",
-                ] },
-                { header: "Storefront", cells: [
-                  "🟢 Provided, customizable in minutes",
-                  "🔴 Not provided — lists on the retailer's own page",
-                  "🔴 Not applicable",
-                  "🔴 You build it",
-                ] },
-                { header: "Packaging", cells: [
-                  "🟢 White-labeled — your brand, not Blurb's",
-                  "🟡 Set by the retailer",
-                  "🟡 Custom, including multi-address dropship",
-                  "🟢 White-labeled — your brand, not Blurb's",
-                ] },
-                { header: "Tech required", cells: [
-                  "🟢 None",
-                  "🟢 None",
-                  "🟢 None — handled by your account team",
-                  "🔴 Developer resources",
-                ] },
-                /* The outline renders these as real buttons, one per
-                   column, not a text row — but ComparisonTable's own
-                   column widths (responsive, sticky label column) can't
-                   be mirrored by a separate element, so a standalone
-                   button row never lines up under its column. A row of
-                   Markdown links, inside the same table, lines up
-                   exactly because it's the same grid — same trick
-                   SellerLanding.jsx's six-route table uses for its own
-                   "Learn more" links. */
-                { header: "", cells: [
-                  "[Get started](?stage=instantstorev2)",
-                  "[Get started](https://www.blurb.com/sell-through-blurb)",
-                  "[Get started](https://www.blurb.com/large-order-services)",
-                  "[Get started](https://www.rpiprint.com)",
-                ] },
-              ]}
-            />
-            <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, textAlign: "center" }}>
-              🟢 Included / easy &nbsp;&nbsp; 🟡 Limited / requires extra effort &nbsp;&nbsp; 🔴 Not included
+                nine features. Same shape here. Cell content is the CRO
+                brief's own value props and FAQ answers for each path, not
+                invented — the one place the brief itself flags as
+                unverified (SKU-based margin comparisons like "30% more
+                than the Bookstore") is left out; "Seller pricing, no
+                additional fees" and "Same pricing as Instant Store" are
+                both lines the brief states directly, not comparisons.
+
+                Hand-built rather than Codex's ComparisonTable: that
+                component's cells are Markdown strings run through
+                react-markdown + remark-gfm with no rehype-raw plugin
+                (confirmed in its own Markdown.js), so a styled span is
+                impossible inside a cell — an emoji was the only "dot"
+                reachable that way. This grid uses Codex's own semantic
+                status colors instead (--codex-color-semantic-bg-success
+                / -warning / -danger, read from its compiled CSS), same
+                zebra rows / rule color / sticky label column / 16px
+                cells as the tool comparison on /bookmaking-tools. */}
+            <div style={{
+              overflowX: "auto", WebkitOverflowScrolling: "touch",
+              border: `1px solid ${C.charcoal200}`, borderRadius: R.md,
+            }}>
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: "160px repeat(4, minmax(180px, 1fr))",
+                minWidth: 860,
+              }}>
+                {["", ...COMPARE_COLUMNS].map((col, ci) => (
+                  <div
+                    key={col || "row-label"}
+                    style={{
+                      position: ci === 0 ? "sticky" : "static", left: 0, zIndex: 2,
+                      background: "#fff", borderBottom: `1px solid ${C.charcoal200}`,
+                      borderRight: ci < 4 ? `1px solid ${C.charcoal200}` : "none",
+                      padding: 16, fontFamily: FONT_DISPLAY, fontWeight: 500,
+                      fontSize: TYPE.sm, color: T.textNeutral,
+                    }}
+                  >
+                    {col}
+                  </div>
+                ))}
+
+                {COMPARE_ROWS.map((row, ri) => {
+                  const rowBg = ri % 2 === 1 ? C.gray50 : "#fff";
+                  return (
+                    <React.Fragment key={row.label}>
+                      <div style={{
+                        position: "sticky", left: 0, zIndex: 1, background: rowBg,
+                        borderBottom: `1px solid ${C.charcoal200}`, borderRight: `1px solid ${C.charcoal200}`,
+                        padding: 16, fontSize: TYPE.sm, fontWeight: 500, color: T.textNeutral,
+                      }}>
+                        {row.label}
+                      </div>
+                      {row.cells.map((cell, ci) => (
+                        <div key={ci} style={{
+                          background: rowBg, borderBottom: `1px solid ${C.charcoal200}`,
+                          borderRight: ci < 3 ? `1px solid ${C.charcoal200}` : "none",
+                          padding: 16, display: "flex", alignItems: "flex-start", gap: 0,
+                          fontSize: TYPE.sm, color: T.textNeutral, lineHeight: 1.5,
+                        }}>
+                          <StatusDot status={cell.status} />
+                          <span>
+                            {cell.linkStage && (
+                              <>
+                                <a
+                                  href="#"
+                                  onClick={e => { e.preventDefault(); onGo?.(cell.linkStage); }}
+                                  style={{ color: C.blue600 }}
+                                >
+                                  {cell.linkLabel}
+                                </a>
+                                {cell.text}
+                              </>
+                            )}
+                            {!cell.linkStage && cell.text}
+                          </span>
+                        </div>
+                      ))}
+                    </React.Fragment>
+                  );
+                })}
+
+                {/* Same grid as the rows above, so the CTAs land exactly
+                    under their own column — the trick SellerLanding.jsx's
+                    six-route table uses with Markdown links, done here
+                    with real elements since the table is hand-built anyway. */}
+                <div style={{ position: "sticky", left: 0, zIndex: 1, background: "#fff", borderRight: `1px solid ${C.charcoal200}`, padding: 16 }} />
+                {GET_STARTED.map((item, i) => (
+                  <div key={i} style={{
+                    background: "#fff", borderRight: i < 3 ? `1px solid ${C.charcoal200}` : "none",
+                    padding: 16,
+                  }}>
+                    {item.stage ? (
+                      <Button
+                        variant="text"
+                        onClick={() => onGo?.(item.stage)}
+                      >
+                        Get started
+                      </Button>
+                    ) : (
+                      <Button as="a" variant="text" href={item.href} target="_blank" rel="noopener noreferrer">
+                        Get started
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, textAlign: "center", display: "flex", gap: 20, justifyContent: "center", flexWrap: "wrap" }}>
+              <span style={{ display: "inline-flex", alignItems: "center" }}><StatusDot status="success" /> Included / easy</span>
+              <span style={{ display: "inline-flex", alignItems: "center" }}><StatusDot status="warning" /> Limited / requires extra effort</span>
+              <span style={{ display: "inline-flex", alignItems: "center" }}><StatusDot status="danger" /> Not included</span>
             </p>
           </div>
         </div>
@@ -417,7 +549,7 @@ export default function SellLandingV2({ onGo }) {
           of this section, not retyped. */}
       <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <CardList heading="What can you sell with Blurb" headingAlign="center" layout={{ mobile: 1, tablet: 2, desktop: 4 }}>
+          <CardList heading="What you can sell with Blurb" headingAlign="center" layout={{ mobile: 1, tablet: 2, desktop: 4 }}>
             {SELL_FORMATS.map(f => {
               const photo = FORMAT_CARDS.find(c => c.id === f.id);
               return (

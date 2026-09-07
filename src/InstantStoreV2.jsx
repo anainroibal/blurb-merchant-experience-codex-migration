@@ -289,7 +289,7 @@ export default function InstantStoreV2({ onGo }) {
           elsewhere, not retyped. */}
       <section style={{ background: C.gray50, padding: "clamp(56px, 7vw, 80px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <CardList heading="What can you sell with Blurb" headingAlign="center" layout={{ mobile: 1, tablet: 2, desktop: 4 }}>
+          <CardList heading="What you can sell with Blurb" headingAlign="center" layout={{ mobile: 1, tablet: 2, desktop: 4 }}>
             {SELL_FORMATS.map(f => {
               const photo = FORMAT_CARDS.find(c => c.id === f.id);
               return (
