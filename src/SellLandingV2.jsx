@@ -121,6 +121,22 @@ const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
    picked instead for how distinct they read that small. */
 const STATUS_COLOR = { success: "#1e8c55", warning: "#eda113", danger: "#e22c2c" };
 
+/* Same solid-blue "New" marker as SellerLanding.jsx and the nav's own
+   Instant Store entries — Badge's fixed 7-color API has no solid-blue
+   treatment, so it stays a small custom chip rather than losing that
+   visual weight. */
+function Chip({ children }) {
+  return (
+    <span style={{
+      padding: "2px 8px", borderRadius: 999, fontSize: 11, fontWeight: 700,
+      letterSpacing: 0.4, textTransform: "uppercase", whiteSpace: "nowrap",
+      background: C.blue600, color: "#fff",
+    }}>
+      {children}
+    </span>
+  );
+}
+
 function StatusDot({ status }) {
   return (
     <span
@@ -419,7 +435,18 @@ export default function SellLandingV2({ onGo }) {
             ))}
           </CardList>
 
-          <div style={{ display: "grid", gap: 20, marginTop: 8 }}>
+          {/* Own panel, not just a heading dropped on the section's own
+              gray50 — the cards above already sit on that background, so
+              the table needs a background of its own to read as a
+              distinct part of the section rather than a continuation of
+              the same surface (Ana: "needs a diff bg colour to the 4 ways
+              to sell section"). White reads as the lift here since the
+              section itself is T.bgSubtle. */}
+          <div style={{
+            display: "grid", gap: 20, marginTop: 8, background: T.bgNeutral,
+            border: `1px solid ${T.border}`, borderRadius: R.lg,
+            padding: "clamp(24px, 4vw, 40px) clamp(16px, 3vw, 32px)",
+          }}>
             <h3 style={{
               fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.25rem, 2.4vw, 1.5rem)",
               lineHeight: 1.25, margin: 0, textAlign: "center",
@@ -466,9 +493,11 @@ export default function SellLandingV2({ onGo }) {
                       borderRight: ci < 4 ? `1px solid ${C.charcoal200}` : "none",
                       padding: 16, fontFamily: FONT_DISPLAY, fontWeight: 500,
                       fontSize: TYPE.sm, color: T.textNeutral,
+                      display: "flex", alignItems: "center", gap: 8,
                     }}
                   >
                     {col}
+                    {col === "Instant Store" && <Chip>New</Chip>}
                   </div>
                 ))}
 
