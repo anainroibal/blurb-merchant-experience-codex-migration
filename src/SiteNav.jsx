@@ -111,6 +111,29 @@ const NAV = [
     cta: "Shop Layflat",
   }},
 
+  { label: "Pricing", href: "/pricing", columns: [
+    { heading: "Pricing", items: [
+      ["Pricing Calculator", "Price a specific book by size, pages and paper.", null, "pricing"],
+      /* Not "Shipping Calculator" any more (2026-08-27). The calculating
+         happens where the book is priced — a postcode and dated speeds in
+         the pricing calculator, what the buyer pays in the profit calculator
+         — so the page it opens explains delivery rather than computing it,
+         and the nav says which of the two this is. */
+      ["Shipping & Delivery", "How long printing and delivery take, and what it costs where.", null, "shipping"],
+      /* Ana: this menu defaults to maker pricing, and a seller looking for
+         prices looks here. One cross-link, worded so it is plainly a
+         different question rather than a second price for the same one.
+         It does not breach the retail-only rule — that rule is about
+         showing the two prices together, and a link is not a price. */
+      ["Selling instead?", "See what you keep on an Instant Store sale.", null, "margin"],
+    ]},
+  ], featured: {
+    heading: "Featured",
+    title: "Need to order in volume?",
+    body: "Volume discounts start at 100+ copies. Our Large Order Services quotes the run and handles the logistics.",
+    cta: "Learn more",
+  }},
+
   /* TOOLS, top level. It was folded into Products for a while, on the
      argument that tools serve making rather than being a reason to visit.
      That is true of a shopper and wrong about everyone else: the tool is
@@ -211,28 +234,32 @@ const NAV = [
     ]},
   ]},
 
-  { label: "Pricing", href: "/pricing", columns: [
-    { heading: "Pricing", items: [
-      ["Pricing Calculator", "Price a specific book by size, pages and paper.", null, "pricing", true],
-      /* Not "Shipping Calculator" any more (2026-08-27). The calculating
-         happens where the book is priced — a postcode and dated speeds in
-         the pricing calculator, what the buyer pays in the profit calculator
-         — so the page it opens explains delivery rather than computing it,
-         and the nav says which of the two this is. */
-      ["Shipping & Delivery", "How long printing and delivery take, and what it costs where.", null, "shipping"],
-      /* Ana: this menu defaults to maker pricing, and a seller looking for
-         prices looks here. One cross-link, worded so it is plainly a
-         different question rather than a second price for the same one.
-         It does not breach the retail-only rule — that rule is about
-         showing the two prices together, and a link is not a price. */
-      ["Selling instead?", "See what you keep on an Instant Store sale.", null, "margin"],
+  /* ── Bookstore gets a menu again (Ana) ──
+     Reverses the call below (still here, for the record): Bookstore lost
+     its dropdown because "Browse the Bookstore" and "All Categories" were
+     two links to the same shop with a click in front of them. What's
+     added back isn't that — it's the live site's actual category list,
+     which is the reason anyone opens a shop's nav menu in the first
+     place. Chunked 5/4 across two columns, the same mechanism Products
+     uses to split its own seven.
+
+     Moved into the row itself, between Services and Support, rather than
+     sitting apart to the right of it — see Ana's ordering, applied to the
+     whole row: Products, Pricing, Creation Tools, Sell, Services,
+     Bookstore, Support. */
+  { label: "Bookstore", href: "/bookstore", columns: [
+    { heading: "Categories", chunkAt: 5, items: [
+      ["All Categories"],
+      ["Photography"],
+      ["Portfolios"],
+      ["Cookbooks"],
+      ["Travel"],
+      ["Biographies & Memoirs"],
+      ["Children's Books"],
+      ["Business & Economics"],
+      ["Literature & Fiction"],
     ]},
-  ], featured: {
-    heading: "Featured",
-    title: "Need to order in volume?",
-    body: "Volume discounts start at 100+ copies. Our Large Order Services quotes the run and handles the logistics.",
-    cta: "Learn more",
-  }},
+  ]},
 
   /* Renamed from "Resources" (Ana, 2026-09-01): with Services (things you
      buy — Large Order Services, RPI Print API) and Creation Tools (things
@@ -248,18 +275,9 @@ const NAV = [
   ]},
 ];
 
-/* Shopping is not one of the five jobs, so the Bookstore sits apart from
-   them — its own item to the right of the nav row, as in the sketch. */
-/* ── The Bookstore is a link, not a menu ──
-   It goes straight there. Everything else in the row is a category of
-   pages; this is one page, and it is somewhere people arrive meaning to
-   browse rather than to choose. A dropdown holding "Browse the Bookstore"
-   and "All Categories" was two links to the same shop with a click in
-   front of them.
-
-   No icon and no "Blurb" either: it was the only pictogram in the row,
-   which made it look like a different kind of thing, and the logo already
-   says whose site this is. */
+/* Bookstore's old rationale for sitting apart as a plain link, no icon
+   and no menu — superseded above (Ana): it's a normal NAV entry now,
+   in the row, with a real category dropdown. */
 /* ── The signed-in account menu ──
    RESTORED 2026-08-24. It was deleted with the old NAV data when the menus
    were rebuilt to draft D, while both consumers — this menu and the mobile
@@ -297,8 +315,6 @@ const ACCOUNT_MENU = [
   [{ label: "Settings" }, { label: "Help" }],
   [{ label: "Log out", quiet: true }],
 ];
-
-const BOOKSTORE = { label: "Bookstore", href: "/bookstore", direct: true };
 
 /* The same navigation, flattened into footer columns. Exported so a footer
    cannot drift from the header — one list, two renderings. */
@@ -742,17 +758,6 @@ function MobileNav({ open, signedIn, onClose, onSignedIn, onGo, lean }) {
         </div>
       ))}
 
-      <a
-        href="#"
-        onClick={e => { e.preventDefault(); onClose(); }}
-        style={{
-          display: "block", padding: "14px 0", borderBottom: `1px solid ${T.border}`,
-          textDecoration: "none", fontSize: TYPE.lg, fontWeight: 700, color: T.textNeutral,
-        }}
-      >
-        {BOOKSTORE.label}
-      </a>
-
       <div style={{ padding: "14px 0", display: "grid", gap: 2 }}>
         {signedIn
           ? ACCOUNT_MENU.flat().map(it => (
@@ -853,8 +858,6 @@ export default function SiteNav({ signedIn, onSignedIn, onGo, lean = false }) {
   const [open, setOpen] = useState(null);
   const [locale, setLocale] = useState(0);
   const [mobileOpen, setMobileOpen] = useState(false);
-  /* Bookstore has no panel to open, so it carries its own hover state. */
-  const [shopHot, setShopHot] = useState(false);
   const ref = useRef(null);
 
   useEffect(() => {
@@ -981,28 +984,6 @@ export default function SiteNav({ signedIn, onSignedIn, onGo, lean = false }) {
           style={{ display: "flex", alignItems: "center", gap: 0, flex: 1, minWidth: 0 }}
         >
           {NAV.map(group => <NavItem key={group.label} group={group} />)}
-
-          {/* Straight to the shop — no panel, so no hover intent either. */}
-          <a
-            href="#"
-            onClick={e => { e.preventDefault(); setOpen(null); }}
-            /* The others go blue when their panel opens, which is what hover
-               does to them. This one has no panel, so it was the only item in
-               the row that stayed black under the pointer — the same gesture
-               with no answer. Hover and focus colour it themselves. */
-            onMouseEnter={() => { hoverClose(); setShopHot(true); }}
-            onMouseLeave={() => setShopHot(false)}
-            onFocus={() => setShopHot(true)}
-            onBlur={() => setShopHot(false)}
-            style={{
-              padding: "22px 12px", textDecoration: "none",
-              fontFamily: FONT_BODY, fontSize: TYPE.sm, fontWeight: 500,
-              color: shopHot ? C.blue600 : T.textNeutral, whiteSpace: "nowrap",
-              transition: "color var(--nav-hover) var(--nav-ease)",
-            }}
-          >
-            {BOOKSTORE.label}
-          </a>
         </nav>
 
         <div className="hide-sm" style={{ display: "flex", alignItems: "center", gap: 16, flex: "0 0 auto" }}>
