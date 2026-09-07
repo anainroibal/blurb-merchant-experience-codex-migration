@@ -192,10 +192,11 @@ const COMPARE_ROWS = [
     { status: "warning", text: "Custom quote required" },
     { status: "danger", text: "Developer integration required" },
   ] },
-  /* Renamed from "Hands-off selling" — too close a copy of Lulu's own
-     row name and Yes/No shape. Asks what's required of the seller
+  /* Renamed from "Hands-off selling" (too close a copy of Lulu's own
+     row name and Yes/No shape), then from "Ongoing involvement" (Ana:
+     didn't like it). Asks what's required of the seller day to day
      instead of scoring the route pass/fail. */
-  { label: "Ongoing involvement", cells: [
+  { label: "Day-to-day management", cells: [
     { status: "success", text: "None needed" },
     { status: "success", text: "None needed" },
     { status: "warning", text: "Project-managed with an account team" },
@@ -354,7 +355,7 @@ export default function SellLandingV2({ onGo }) {
             You made it. We help you sell it.
           </h1>
           <p style={{ fontSize: TYPE.lg, lineHeight: 1.55, color: T.textSubtle, margin: 0, maxWidth: 640 }}>
-            Four ways to reach readers: an Instant Store we build for you, global retail distribution, bulk orders, or your own platform. We handle the printing, shipping, and production for each one.
+            Four ways to reach readers: an Instant Store we build for you, global retail distribution, bulk orders, or your own platform. We print and ship every order, so you can focus on selling.
           </p>
           <Button as="a" href="#paths" style={{ marginTop: 8 }}>Explore our selling tools</Button>
         </div>

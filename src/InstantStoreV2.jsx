@@ -1,4 +1,3 @@
-import React from "react";
 import { Button, CardList, Card, ComparisonTable, HeroCenter } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { FORMAT_CARDS } from "./FormatCards.jsx";
@@ -6,15 +5,21 @@ import Faq from "./Faq.jsx";
 
 /* The outline writes its own copy for this section rather than reusing
    FormatCards.jsx's sitewide descriptions (they read differently) —
-   real Blurb photography stays, via FORMAT_CARDS' img/alt, matched by id. */
+   real Blurb photography stays, via FORMAT_CARDS' img/alt, matched by id.
+   Same shape as Sell v2's own version of this section now (Ana): the
+   formats/papers/sizes counts, read off blurb.com/pricing (2026-09-06),
+   not the local catalog matrix — see SellLandingV2.jsx's own note on
+   what each count means and why it's sourced from the live page. */
+const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
+
 const SELL_FORMATS = [
-  { id: "photo", title: "Photo Books",
+  { id: "photo", title: "Photo Books", formats: 3, papers: 7, sizes: 6,
     desc: "From high-end photography albums to keepsake family books, photo books are our most premium format with multiple trim sizes and paper types." },
-  { id: "trade", title: "Paperback & Hardcover",
+  { id: "trade", title: "Paperback & Hardcover", formats: 3, papers: 3, sizes: 3,
     desc: "Ideal for books that combine art with text or just text alone like portfolios, cookbooks, novels, children's books and the like." },
-  { id: "magazine", title: "Magazines",
+  { id: "magazine", title: "Magazines", formats: 1, papers: 1, sizes: 1,
     desc: "Great for a series or one-off custom projects. Impressive newsstand quality and easy distribution." },
-  { id: "notebook", title: "Notebooks & Journals",
+  { id: "notebook", title: "Notebooks & Journals", formats: 4, papers: 1, sizes: 3,
     desc: "Choose from blank, lined, square, or dot-grid notebook pages, plus easily add photos or illustrations within the pages." },
 ];
 
@@ -41,17 +46,33 @@ const SELL_FORMATS = [
    money set beside a per-channel breakdown, the shape CLAUDE.md's
    "never put retail and fulfilment side by side" / "the fulfilment
    price is a line in a calculation, never a price tag" rules exist to
-   rule out. Anain okayed shipping it as designed (2026-09-06), so it's
-   built as-designed below — figures kept at the "$X" placeholder this
-   app already uses rather than invented ones (the outline's own cells
-   are already "$X.XX"/"X%" placeholders, not real numbers). The "50%"
-   in the caption above the table IS the outline's literal text, not
-   a placeholder — it has no visible source in the board's provenance
-   panel, so it's worth confirming with Anain before this ships anywhere
-   real. Directly under it is an alternative that keeps CLAUDE.md's two
-   rules: the same cost → price → profit ladder used everywhere else on
-   this page, plus a qualitative-only comparison (no dollar figures)
-   with a door to the Sell page's real one.
+   rule out. Anain okayed shipping it as designed (2026-09-06). Figures
+   stay at the "$X" placeholder this app already uses rather than
+   invented ones (the outline's own cells are already "$X.XX"/"X%"
+   placeholders, not real numbers). The "50%" in the caption above the
+   table IS the outline's literal text, not a placeholder — it has no
+   visible source in the board's provenance panel, so it's worth
+   confirming with Anain before this ships anywhere real.
+
+   Reworked 2026-09-06 (Ana): dropped the qualitative "alternative"
+   table that used to sit under this one — with a real table on the
+   page already (design-review-approved), a second one arguing the
+   opposite case read as hedging rather than adding information, and
+   Ana called it out directly ("we can break the rule in this case").
+   Expanded instead: Ingram and "Other print-on-demand solutions"
+   columns, so the table compares every route this page's own six-route
+   sibling on Sell v2 does, not just three of them. Setup fees dropped —
+   nobody in this market charges one, so a row of identical "$0"s across
+   every column proved nothing. A new "Other fees" row does the
+   differentiating work instead: Blurb charges none of the payment-
+   processing, platform, or hosting fees a generic POD/storefront
+   stack often does, which is a real, checkable difference, unlike a
+   shared zero. Amazon's and Ingram's Commission cells carry real
+   figures rather than "X%" — Amazon's $1.35-plus-15% fee is already
+   sourced in CLAUDE.md's own figures section; Ingram has no fixed
+   commission at all, since it works off a wholesale discount the
+   seller sets, so its cell explains the mechanism instead of quoting
+   a number that doesn't exist for it.
 
    ── Corrected 2026-09-06 ──
    An earlier pass of this file invented body copy for the 3-step and
@@ -64,7 +85,7 @@ const SELL_FORMATS = [
    such below). */
 
 const STEPS = [
-  ["Set your price", "Upload your book and set your selling price. Our new seller pricing means you keep up to 50% more of every sale."],
+  ["Set your price", "Upload your book and set your selling price. Our [new seller pricing](?stage=margin) means you keep up to 50% more of every sale."],
   ["Create your product page", "Our AI helps you draft your title, description, and keywords. Your customizable product page is ready in minutes."],
   ["Share & sell", "Share your unique link or QR code on your bio, newsletter, or social media. We handle the printing, shipping, and sales tax."],
 ];
@@ -122,7 +143,13 @@ export default function InstantStoreV2({ onGo }) {
       <HeroCenter
         className="hero-gradient-seller"
         heading="Your book, your audience, your profit"
-        subheading="Set up an online store and start selling books directly to your audience. In minutes — no third-party platform or tech skills required."
+        /* "Set up an online store" oversold it (Ana) — an Instant Store
+           is one product page behind one link, not a multi-book
+           storefront to browse. Rewritten around what it actually is,
+           matching the "product page" language Sell v2's own Instant
+           Store card already uses rather than introducing a third way
+           to describe the same thing. */
+        subheading="Turn your book into a shareable product page and start selling directly to your audience. Live in minutes, with no tech skills or third-party platform required."
         ctas={[
           { children: "Create your Instant Store" },
           { as: "a", href: "#demo", variant: "outlined", children: "See a store in action" },
@@ -152,7 +179,7 @@ export default function InstantStoreV2({ onGo }) {
       <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <CardList
-            heading="Create your online bookstore in three simple steps"
+            heading="Create your Instant Store in three simple steps"
             headingAlign="center"
             layout={{ mobile: 1, tablet: 3, desktop: 3 }}
           >
@@ -192,7 +219,7 @@ export default function InstantStoreV2({ onGo }) {
         </div>
       </section>
 
-      {/* ── Keep More of What You Earn ── as designed, then an alternative ── */}
+      {/* ── Keep More of What You Earn ── */}
       <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 20 }}>
           <div style={{
@@ -216,72 +243,25 @@ export default function InstantStoreV2({ onGo }) {
           </div>
 
           <ComparisonTable
-            columnHeaders={["", "Instant Store", "Blurb Bookstore", "Amazon"]}
+            columnHeaders={["", "Instant Store", "Blurb Bookstore", "Amazon", "Ingram", "Other print-on-demand solutions"]}
             rows={[
-              { header: "Print cost", cells: ["$X.XX", "$X.XX", "$X.XX"] },
-              { header: "Setup fees", cells: ["$0", "$0", "$0"] },
-              { header: "Commission", cells: ["0%", "0%", "X%"] },
-              { header: "Est. margin on a $20 sale", cells: ["$X.XX", "$X.XX", "$X.XX"] },
+              { header: "Print cost", cells: ["$X.XX", "$X.XX", "$X.XX", "$X.XX", "Varies by provider"] },
+              { header: "Commission", cells: [
+                "0%", "0%",
+                "Amazon's distribution fee ($1.35 per book + 15% of your list price)",
+                "No fixed commission — you set a wholesale discount off your own list price",
+                "Varies by provider",
+              ] },
+              /* The point of this row (Ana): every Blurb route charges
+                 none of these, which a shared "$0" Setup fees row (since
+                 dropped — nobody in this market has one) couldn't show. */
+              { header: "Other fees", cells: [
+                "None", "None", "None", "None",
+                "Payment processing fees, platform fees, hosting fees",
+              ] },
+              { header: "Est. margin on a $20 sale", cells: ["$X.XX", "$X.XX", "$X.XX", "$X.XX", "Varies by provider"] },
             ]}
           />
-
-          {/* ── An alternative, that keeps the fulfilment-price rule ──
-              Same "your cost → your price → your profit" ladder every
-              other Instant Store surface uses, plus a comparison with no
-              dollar figures in it at all — and a door to the Sell page's
-              real six-route table, which is where CLAUDE.md says a
-              cross-channel comparison belongs. */}
-          <div style={{ borderTop: `1px solid ${T.border}`, marginTop: 12, paddingTop: 32, display: "grid", gap: 20 }}>
-            <p style={{
-              margin: 0, fontSize: 11, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase",
-              color: T.textSubtle,
-            }}>
-              An alternative, without a fulfilment price standing next to a channel's
-            </p>
-
-            <div style={{
-              border: `1px solid ${T.border}`, borderRadius: R.lg, padding: 24,
-              display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap",
-            }}>
-              {[
-                ["Your cost", "$X", "What we charge to print it"],
-                ["Your price", "$X", "You set this"],
-                ["Your profit", "$X", "What is left, and it is yours"],
-              ].map(([label, figure, hint], i) => (
-                <React.Fragment key={label}>
-                  {i > 0 && (
-                    <span className="ms" aria-hidden style={{ fontSize: 24, color: T.textSubtle }}>arrow_forward</span>
-                  )}
-                  <div style={{ display: "grid", gap: 2 }}>
-                    <div style={{ fontSize: TYPE.sm, fontWeight: 700, color: T.textSubtle }}>{label}</div>
-                    <div style={{
-                      fontFamily: FONT_DISPLAY, fontSize: "1.75rem", fontWeight: 500, lineHeight: 1.1,
-                      color: i === 2 ? C.blue600 : C.gray950,
-                    }}>
-                      {figure}
-                    </div>
-                    <div style={{ fontSize: TYPE.sm, color: T.textSubtle }}>{hint}</div>
-                  </div>
-                </React.Fragment>
-              ))}
-            </div>
-
-            <ComparisonTable
-              columnHeaders={["", "Instant Store", "Blurb Bookstore", "Amazon"]}
-              rows={[
-                { header: "You set the price", cells: ["Yes", "No", "No"] },
-                { header: "Commission cap", cells: ["None — nothing is taken off", "None — nothing is taken off", "Set by Amazon"] },
-                { header: "Inventory required", cells: ["No", "No", "No"] },
-                { header: "When you're paid", cells: ["Standard payout schedule", "Standard payout schedule", "Held through Amazon's returns window"] },
-              ]}
-            />
-
-            <div>
-              <Button variant="outlined" onClick={() => onGo?.("sellv2")}>
-                Compare all four ways to sell in detail
-              </Button>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -303,6 +283,7 @@ export default function InstantStoreV2({ onGo }) {
                       style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", display: "block", borderRadius: R.lg }}
                     />
                   }
+                  eyebrow={`${plural(f.formats, "format")} · ${plural(f.papers, "paper")} · ${plural(f.sizes, "size")}`}
                   title={f.title}
                   description={f.desc}
                 />
