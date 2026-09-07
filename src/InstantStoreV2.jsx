@@ -158,8 +158,10 @@ export default function InstantStoreV2({ onGo }) {
            storefront to browse. Rewritten around what it actually is,
            matching the "product page" language Sell v2's own Instant
            Store card already uses rather than introducing a third way
-           to describe the same thing. */
-        subheading="Turn your book into a shareable product page and start selling directly to your audience. Live in minutes, with no tech skills or third-party platform required."
+           to describe the same thing. "Third-party platform" corrected
+           next (Ana: "i don't know what 3rd party means") — plain
+           language for the same idea, no separate site to go build. */
+        subheading="Turn your book into a shareable product page and start selling directly to your audience. Live in minutes, no website or tech skills needed."
         ctas={[
           { children: "Create your Instant Store" },
           { as: "a", href: "#demo", variant: "outlined", children: "See a store in action" },
@@ -169,15 +171,34 @@ export default function InstantStoreV2({ onGo }) {
       {/* ── Demo placeholder ──
           The outline has a checkered box with a play icon here — no real
           demo video exists yet, so this stays an honest placeholder
-          rather than a fabricated embed. */}
+          rather than a fabricated embed. The hero's own gradient now
+          covers the top half of the box (Ana: "for visual cohesion"),
+          so the two sections read as one continuous piece rather than a
+          hard color line where the hero ends. Two absolutely-positioned
+          halves rather than a shared background, since the checkerboard
+          is a `repeating-conic-gradient` — clipping it to the bottom
+          half via background-size would distort its tiles; a separate
+          half-height layer keeps the same 32px checker untouched. */}
       <section id="demo" style={{ padding: "0 24px clamp(48px, 7vw, 72px)" }}>
         <div style={{ maxWidth: 840, margin: "0 auto" }}>
           <div style={{
-            borderRadius: R.lg, overflow: "hidden", aspectRatio: "16 / 9",
-            background: "repeating-conic-gradient(#f2f2f2 0% 25%, #fafafa 0% 50%) 50% / 32px 32px",
-            border: `1px solid ${T.border}`, display: "grid", placeItems: "center",
+            position: "relative", borderRadius: R.lg, overflow: "hidden", aspectRatio: "16 / 9",
+            border: `1px solid ${T.border}`,
           }}>
-            <span className="ms" aria-hidden style={{ fontSize: 56, color: C.gray400 }}>play_circle</span>
+            <div aria-hidden className="hero-gradient-seller" style={{ position: "absolute", inset: "0 0 50% 0" }} />
+            <div aria-hidden style={{
+              position: "absolute", inset: "50% 0 0 0",
+              background: "repeating-conic-gradient(#f2f2f2 0% 25%, #fafafa 0% 50%) 50% / 32px 32px",
+            }} />
+            <span
+              className="ms" aria-hidden
+              style={{
+                position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)",
+                fontSize: 56, color: C.gray400,
+              }}
+            >
+              play_circle
+            </span>
           </div>
           <p style={{ margin: "12px 0 0", fontSize: TYPE.sm, color: T.textSubtle, textAlign: "center" }}>
             Placeholder — a short walkthrough of setting up and sharing an Instant Store goes here.
@@ -245,9 +266,11 @@ export default function InstantStoreV2({ onGo }) {
               {/* The outline's own literal text, corrected (Ana: it's
                   actually 70%, not 50%) — see the file header note on
                   why this figure is still worth confirming before this
-                  ships anywhere real. */}
+                  ships anywhere real. No asterisk (Ana: "makes no
+                  sense") — it pointed at nothing, since the outline
+                  never carried a footnote to land on. */}
               <p style={{ margin: 0, fontSize: TYPE.base, color: T.textSubtle }}>
-                *Earn up to 70% higher margins compared to other distribution channels.
+                Earn up to 70% higher margins compared to other distribution channels.
               </p>
             </div>
             <Button variant="outlined" onClick={() => onGo?.("margin")}>Calculate your margin</Button>
@@ -268,7 +291,16 @@ export default function InstantStoreV2({ onGo }) {
               RPI Print API replaces Ingram (Ana: Ingram is trade-only,
               per catalog.js — it doesn't carry photo books at all) and
               carries Instant Store's own cost structure: same
-              infrastructure, same 0% Blurb-side commission. */}
+              infrastructure, same 0% Blurb-side commission.
+
+              The spec itself is now stated on the page, not just here
+              in a comment (Ana: "you need to somehow say this is based
+              on a photobook") — a reader comparing five numbers has to
+              know what book they're pricing. */}
+          <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle }}>
+            Figures below are for an 8×10 ImageWrap Hardcover photo book, 80 pages. Actual costs vary by format, size, and page count.
+          </p>
+
           <ComparisonTable
             className="keep-more-table"
             columnHeaders={["", "Instant Store", "Blurb Bookstore", "Amazon", "RPI Print API", "Other print-on-demand solutions"]}
