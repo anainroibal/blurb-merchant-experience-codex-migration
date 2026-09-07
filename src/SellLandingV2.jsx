@@ -70,7 +70,7 @@ const SELL_PATHS = [
     id: "link", name: "Instant Store",
     img: ILLUS + "blurb-dashboard.YPDjPrK8_Z1bvCol.webp",
     alt: "An illustration of a person setting up a book listing.",
-    line: "Sell directly to your audience in minutes with a product page that fully showcases your book — no extra fees, no tech skills required.",
+    line: "Sell directly to your audience in minutes with a product page that fully showcases your book. No extra fees, no tech skills required.",
     stage: "instantstorev2", cta: "Create your Instant Store",
   },
   {
@@ -113,11 +113,13 @@ const SELL_PATHS = [
 
 const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
-/* Codex's own semantic status colors, read from its compiled CSS
-   (--codex-color-semantic-bg-success / -warning / -danger). tokens.js
-   has no success/warning/danger aliases, so these are the real hex
-   values rather than an invented palette. */
-const STATUS_COLOR = { success: "#166640", warning: "#8e4412", danger: "#bd1818" };
+/* Codex's own success/warning/danger primitives (read from its compiled
+   CSS), one step lighter than the semantic -text/-icon tokens
+   (#166640/#8e4412/#bd1818). Those are tuned for text-on-white contrast,
+   which makes all three read as similarly dark, low-saturation blobs at
+   dot size — hard to tell apart at a glance. Same ramps, same hues,
+   picked instead for how distinct they read that small. */
+const STATUS_COLOR = { success: "#1e8c55", warning: "#eda113", danger: "#e22c2c" };
 
 function StatusDot({ status }) {
   return (
@@ -135,7 +137,7 @@ const COMPARE_COLUMNS = ["Instant Store", "Retail Distribution", "Large Order Se
 
 const COMPARE_ROWS = [
   { label: "Best for", cells: [
-    { status: "success", text: "Sellers with their own audience — followers, a newsletter, no store yet" },
+    { status: "success", text: "Sellers with their own audience: followers, a newsletter, no store yet" },
     { status: "success", text: "Reaching new readers who don't know you yet" },
     { status: "success", text: "Bulk orders for an event, gift, or resale" },
     { status: "success", text: "Developers building print into their own product" },
@@ -162,10 +164,10 @@ const COMPARE_ROWS = [
     { status: "success", text: "Automated" },
   ] },
   { label: "Inventory", cells: [
-    { status: "success", text: "None — print on demand" },
-    { status: "success", text: "None — print on demand" },
+    { status: "success", text: "None: print on demand" },
+    { status: "success", text: "None: print on demand" },
     { status: "danger", text: "You hold the stock" },
-    { status: "success", text: "None — print on demand" },
+    { status: "success", text: "None: print on demand" },
   ] },
   { label: "Profit", cells: [
     { status: "success", linkStage: "margin", linkLabel: "Seller pricing", text: ", no additional fees" },
@@ -175,20 +177,20 @@ const COMPARE_ROWS = [
   ] },
   { label: "Storefront", cells: [
     { status: "success", text: "Provided, customizable in minutes" },
-    { status: "danger", text: "Not provided — lists on the retailer's own page" },
+    { status: "danger", text: "Not provided: lists on the retailer's own page" },
     { status: "danger", text: "Not applicable" },
     { status: "danger", text: "You build it" },
   ] },
   { label: "Packaging", cells: [
-    { status: "success", text: "White-labeled — your brand, not Blurb's" },
+    { status: "success", text: "White-labeled: your brand, not Blurb's" },
     { status: "warning", text: "Set by the retailer" },
     { status: "warning", text: "Custom, including multi-address dropship" },
-    { status: "success", text: "White-labeled — your brand, not Blurb's" },
+    { status: "success", text: "White-labeled: your brand, not Blurb's" },
   ] },
   { label: "Tech required", cells: [
     { status: "success", text: "None" },
     { status: "success", text: "None" },
-    { status: "success", text: "None — handled by your account team" },
+    { status: "success", text: "None: handled by your account team" },
     { status: "danger", text: "Developer resources" },
   ] },
 ];
@@ -253,17 +255,17 @@ const FAQS = [
   ["Where's the best place to sell my books online?",
    "It depends on your audience. An Instant Store is best if you already have followers to sell to directly; Retail Distribution reaches readers who are browsing rather than looking for you specifically."],
   ["Can I sell books without holding inventory or paying upfront?",
-   "Yes. Every print-on-demand route — Instant Store, Retail Distribution — prints a copy only once it's ordered. Nothing to buy or store in advance."],
+   "Yes. Instant Store and Retail Distribution both print a copy only once it's ordered, so there's nothing to buy or store in advance."],
   ["How does print-on-demand work for authors and creators?",
    "Your book prints only when a buyer orders it. There's no minimum run, no warehouse, and no upfront printing cost to cover before you make a sale."],
   ["Do I need an ISBN or barcode to sell my book?",
-   "Only for the routes that require retail listing — Amazon and Ingram, under Retail Distribution. Your Instant Store link doesn't require one."],
+   "Only Amazon and Ingram, both under Retail Distribution, require retail listing. Your Instant Store link doesn't need one."],
   ["What's the difference between selling directly to readers and selling through Amazon or Ingram?",
    "On your Instant Store, you bring the buyer and set the price, so what's left after your printing cost is yours. Through Amazon or Ingram, the retailer brings the buyer and takes its own cut."],
   ["Can I sell more than books, like magazines, notebooks, or wall art, the same way?",
-   "Yes — magazines and notebooks & journals are sellable through most of these routes. Availability varies by channel; the product page for each route lists what it takes."],
+   "Yes. Magazines and notebooks & journals are sellable through most of these routes. Availability varies by channel, so check each route's product page for specifics."],
   ["How do I decide which of Blurb's selling options is right for me?",
-   "Start with the comparison table above — it lines up best-for, profit margin, storefront and audience across all four routes so you can compare at a glance."],
+   "Start with the comparison table above. It lines up best-for, profit margin, storefront and audience across all four routes so you can compare at a glance."],
 ];
 
 export default function SellLandingV2({ onGo }) {
@@ -297,7 +299,7 @@ export default function SellLandingV2({ onGo }) {
             You sell it. We print it.
           </h1>
           <p style={{ fontSize: TYPE.lg, lineHeight: 1.55, color: T.textSubtle, margin: 0, maxWidth: 640 }}>
-            Four ways to reach readers — a store that's fully yours, global retail distribution, bulk orders, or your own platform. You choose how; we handle the printing, shipping, and production behind it.
+            Four ways to reach readers: your own store, global retail, bulk orders, or your own platform. We handle the printing, shipping, and production behind every one.
           </p>
           <Button as="a" href="#paths">Explore our selling tools</Button>
 
@@ -312,8 +314,8 @@ export default function SellLandingV2({ onGo }) {
             gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", textAlign: "left",
           }}>
             {[
-              "Choice and optionality — mix and match ways to sell",
-              "Print on demand — no inventory, no stock risk",
+              "Mix and match ways to sell",
+              "Print on demand, no inventory or stock risk",
               "Blurb's superior print quality, papers, and formats",
             ].map(text => (
               <div key={text} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
