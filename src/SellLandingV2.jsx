@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, CardList, Card } from "@blurb/codex-react";
+import { Button, CardList, Card, Link } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { FORMAT_CARDS } from "./FormatCards.jsx";
 import Faq from "./Faq.jsx";
@@ -110,6 +110,34 @@ const SELL_PATHS = [
     href: "https://www.rpiprint.com", cta: "Learn more about RPI Print API",
   },
 ];
+
+/* One tile treatment for all four cards. Each illustration has its own
+   native aspect ratio, and the old `width: 78%, height: auto` let that
+   ratio decide the rendered size — a tall narrow illustration filled
+   much more of the tile than a wide short one. A fixed box with
+   objectFit: contain gives every image (and the API card's icon) the
+   same visual weight regardless of its source proportions. */
+function PathTile({ card }) {
+  return (
+    <div style={{
+      position: "relative", width: "100%", background: "#f5f0ea", borderRadius: R.lg,
+      aspectRatio: "4 / 3", display: "grid", placeItems: "center", overflow: "hidden",
+    }}>
+      {card.img ? (
+        <img
+          src={card.img}
+          alt={card.alt}
+          loading="lazy"
+          style={{ width: "65%", height: "65%", objectFit: "contain", display: "block", mixBlendMode: "multiply" }}
+        />
+      ) : (
+        /* No Blurb illustration exists yet for this route — see file
+           header note. */
+        <span className="ms" aria-hidden style={{ fontSize: 56, color: C.blue600 }}>{card.icon}</span>
+      )}
+    </div>
+  );
+}
 
 const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
@@ -298,14 +326,15 @@ export default function SellLandingV2({ onGo }) {
           the API section's own short pitch in the brief ("We print,
           we ship, you scale").
 
-          Custom rather than HeroCenter: the tick row is the brief's
-          "Overall benefits applicable to all seller tools", and it
-          needs to read as PART of the hero, not a second section
-          bolted underneath it (Ana: "sitting awkwardly"). HeroCenter
-          has no slot for extra content, so this hero is hand-built —
-          same padding/heading/subheading sizing HeroCenter itself
-          uses (--codex-spacing-24/32, --codex-font-size-9xl/lg), so
-          it still reads like the same hero pattern as its siblings. */}
+          Custom rather than HeroCenter: it originally carried a tick row
+          too (the brief's "Overall benefits applicable to all seller
+          tools"), tried both above and below the button — Ana called
+          both placements "off", and two of the three ticks already
+          duplicate "Included with every way you sell" below, so they're
+          cut rather than relocated a third time. What's left (heading,
+          subheading, one CTA) matches HeroCenter's own shape closely
+          enough that it could probably move back to that component; kept
+          hand-built for now since nothing here needs its slot. */}
       <section className="hero-gradient-seller" style={{ padding: "clamp(56px, 8vw, 96px) 24px", textAlign: "center" }}>
         <div style={{ maxWidth: 860, margin: "0 auto", display: "grid", gap: 20, justifyItems: "center" }}>
           <h1 style={{
@@ -317,35 +346,6 @@ export default function SellLandingV2({ onGo }) {
           <p style={{ fontSize: TYPE.lg, lineHeight: 1.55, color: T.textSubtle, margin: 0, maxWidth: 640 }}>
             Four ways to reach readers: your own store, global retail, bulk orders, or your own platform. We handle the printing, shipping, and production for each one.
           </p>
-          {/* Third tick was "your brand on every order, not ours" —
-              true of Instant Store and the API, but not Retail
-              Distribution (ships in the retailer's own packaging) or
-              Large Order Services (custom/dropship). Swapped for the
-              brief's other universal benefit instead, which does hold
-              across all four.
-
-              Below the subheading rather than below the button (Ana:
-              "visually looks off") — the button was centered, the tick
-              grid left-aligned, and the two sat back to back with no
-              hierarchy between them. Ticks now read as the pitch's own
-              supporting points, and the button closes the block as the
-              one action left to take. */}
-          <div style={{
-            marginTop: 4, display: "grid", gap: 12, width: "100%", maxWidth: 780,
-            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", textAlign: "left",
-          }}>
-            {[
-              "Mix and match ways to sell",
-              "Print on demand, no inventory or stock risk",
-              "Blurb's superior print quality, papers, and formats",
-            ].map(text => (
-              <div key={text} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
-                <span className="ms" aria-hidden style={{ fontSize: 20, color: C.blue600, flex: "0 0 auto" }}>check_circle</span>
-                <span style={{ fontSize: TYPE.sm, color: T.textNeutral, lineHeight: 1.5 }}>{text}</span>
-              </div>
-            ))}
-          </div>
-
           <Button as="a" href="#paths" style={{ marginTop: 8 }}>Explore our selling tools</Button>
         </div>
       </section>
@@ -402,42 +402,61 @@ export default function SellLandingV2({ onGo }) {
             headingAlign="center"
             layout={{ mobile: 1, tablet: 2, desktop: 4 }}
           >
-            {SELL_PATHS.map(card => (
+            {SELL_PATHS.map(card => card.links ? (
+              /* Retail Distribution: three real destinations, not one —
+                 Card's `link`/`cta` slots only ever render a single
+                 anchor, so three links can't pass through either one.
+                 Hand-built to match Card's own layout exactly (same
+                 tokens: --codex-font-family-heading, --codex-spacing-3
+                 gap between children) rather than burying the links
+                 inside the description as a second Markdown paragraph —
+                 that read as plain body text with no gap above it,
+                 sitting in a visibly different spot than the other three
+                 cards' link. Real <Link openInNewTab> also fixes a bug
+                 the Markdown version had: react-markdown's `a` override
+                 has no way to set target, so those links were opening in
+                 the same tab and navigating away from the prototype. */
+              <div key={card.id} style={{
+                display: "flex", flexDirection: "column", alignItems: "flex-start",
+                width: "100%", gap: "var(--codex-spacing-3)",
+              }}>
+                <PathTile card={card} />
+                <h3 style={{
+                  fontFamily: "var(--codex-font-family-heading)", fontWeight: 500,
+                  color: "var(--codex-color-semantic-text-bold)", fontSize: "var(--codex-font-size-3xl)",
+                  lineHeight: "var(--codex-font-line-height-tight)", margin: 0,
+                }}>
+                  {card.name}
+                </h3>
+                <p style={{
+                  lineHeight: "var(--codex-font-line-height-snug)",
+                  color: "var(--codex-color-semantic-text-bold)", margin: 0,
+                }}>
+                  {card.line}
+                </p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "0 16px" }}>
+                  {card.links.map(([label, url]) => (
+                    <Link key={label} href={url} openInNewTab>{label}</Link>
+                  ))}
+                </div>
+              </div>
+            ) : (
               <Card
                 key={card.id}
-                icon={
-                  <div style={{
-                    position: "relative", width: "100%", background: "#f5f0ea", borderRadius: R.lg,
-                    aspectRatio: "4 / 3", display: "grid", placeItems: "center", overflow: "hidden",
-                  }}>
-                    {card.img ? (
-                      <img
-                        src={card.img}
-                        alt={card.alt}
-                        loading="lazy"
-                        style={{ width: "78%", height: "auto", display: "block", mixBlendMode: "multiply" }}
-                      />
-                    ) : (
-                      /* No Blurb illustration exists yet for this route —
-                         see file header note. */
-                      <span className="ms" aria-hidden style={{ fontSize: 56, color: C.blue600 }}>{card.icon}</span>
-                    )}
-                  </div>
-                }
+                icon={<PathTile card={card} />}
                 title={card.name}
-                description={card.links
-                  ? `${card.line}\n\n${card.links.map(([label, url]) => `[${label}](${url})`).join(" · ")}`
-                  : card.line}
-                {...(!card.links && (card.stage
-                  /* Same `link` treatment as the other three cards —
-                     underlined text, no button chrome. No openInNewTab
-                     (and so no external-open icon) since this goes to
-                     another page in this app, not a new tab; Codex's
-                     Link has no separate "same page" icon to swap in,
-                     so it's a plain link, matching how other in-app
-                     links style themselves elsewhere in this codebase. */
+                description={card.line}
+                {...(card.stage
+                  /* Same `link` treatment as Large Order Services and the
+                     API card — underlined text, no button chrome. No
+                     openInNewTab (and so no external-open icon) since
+                     this goes to another page in this app, not a new
+                     tab; Codex's Link has no separate "same page" icon
+                     to swap in, so it's a plain link, matching how other
+                     in-app links style themselves elsewhere in this
+                     codebase. */
                   ? { link: { href: "#", onClick: e => { e.preventDefault(); onGo?.(card.stage); }, children: card.cta } }
-                  : { link: { href: card.href, openInNewTab: true, children: card.cta } }))}
+                  : { link: { href: card.href, openInNewTab: true, children: card.cta } })}
               />
             ))}
           </CardList>
