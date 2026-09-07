@@ -399,7 +399,7 @@ export default function SummaryPanel({
           fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 700,
           letterSpacing: 0.8, textTransform: "uppercase",
         }}>
-          {selling ? "What you'd earn" : bulk ? "What the run costs" : "Pricing summary"}
+          {selling ? "What you'd earn with an Instant Store" : bulk ? "What the run costs" : "Pricing summary"}
         </div>
 
         {/* what you've chosen */}

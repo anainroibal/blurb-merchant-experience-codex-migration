@@ -232,21 +232,25 @@ export const CATALOG = {
     ],
     tiers: [{ min: 50, pct: 0.25 }, { min: 20, pct: 0.20 }, { min: 10, pct: 0.20 }],
     addons: ["whitelabel"],
-    /* ── Not sold through any channel (Ana + engineering, 2026-08-25) ──
-       "We won't allow selling of wall art or notebooks and journals. The
-       principle is we only allow selling of what is currently allowed in
-       the bookstore, to avoid additional scope."
+    /* ── Reopened for Instant Store (Ana) ──
+       Reverses the 2026-08-25 "Ana + engineering" call below (kept for
+       the record) that withdrew notebooks from every channel to match
+       what the live Bookstore allows. That was a scope decision, not a
+       product one, and Ana's now asking for notebooks to show under
+       "to Sell" on Get Started specifically for the Instant Store route
+       — so `checkout_link` alone reopens, not `bookstore`/`amazon`/
+       `ingram`, which is worth confirming with engineering again since
+       the original call was made jointly with them and this only
+       revisits one piece of it.
 
-       This overrides what /self-publish says. That page lists "notebooks
-       and journals" under the Bookstore, and this repo took it as
-       confirmation on 2026-08-19. A decision made with engineering beats a
-       marketing page, so the rule stands and the page is what is wrong —
-       worth raising with whoever owns it, because a seller reading it
-       today is being told they can sell something they cannot.
-
-       Notebooks stay fully priced and orderable for yourself. What is
-       withdrawn is selling them. */
-    sellChannels: [],
+       Original note: "We won't allow selling of wall art or notebooks
+       and journals. The principle is we only allow selling of what is
+       currently allowed in the bookstore, to avoid additional scope."
+       That also overrode /self-publish, which lists "notebooks and
+       journals" under the Bookstore — still worth raising with whoever
+       owns that page, since a seller reading it is told they can sell
+       notebooks through routes this catalog still says no to. */
+    sellChannels: ["checkout_link"],
   },
 
   /* Wall Art. Priced material × size — a shape no other product here

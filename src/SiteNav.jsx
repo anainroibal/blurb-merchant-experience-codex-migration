@@ -194,7 +194,7 @@ const NAV = [
        category, so a second heading was drawing a line that wasn't
        there. Both stay listed under Services too (design review item 23). */
     { heading: "Ways to sell", items: [
-      ["Instant Store", "Share a link or embed a button. We print and ship each order.", "New", "instantstore"],
+      ["Instant Store", "Create a link to a full product page. Maximum margins, no fees, no tech hassle.", "New", "instantstore"],
       /* ── Three channels, one item (Ana's mock, 2026-08-28) ──
          The Bookstore, Amazon and Ingram were three lines. They are one
          decision: somebody else brings the buyer, lists the book in their
@@ -339,7 +339,7 @@ const LEAN_NAV = [
       ["Large Order Services"],
       ["API Printing"],
     ]},
-  ]},
+  ], seeAll: ["All selling options", "sellv2"]},
 
   { label: "Bookstore", href: "/bookstore", columns: [
     { heading: "Bookstore", chunkAt: 5, items: [
@@ -532,7 +532,10 @@ function MenuLink({ item, onClose, onGo, lean }) {
           something to use, and it opens straight into a working screen.
           The chevron is the same one the "See all …" link carries, so the
           menu has one arrow meaning one thing: this goes somewhere now. */}
-      <span style={{ display: "block", fontWeight: 700 }}>
+      {/* Bold labels are Draft D's own touch — the live site's dropdowns
+          are plain weight throughout, so LEAN_NAV (Scope "Minimum
+          effort") drops it to match. */}
+      <span style={{ display: "block", fontWeight: lean ? 400 : 700 }}>
         {label}<Tag>{tag}</Tag>
         {arrow && <span className="ms" aria-hidden style={{ fontSize: 16, verticalAlign: "-3px", marginLeft: 2 }}>chevron_right</span>}
       </span>
@@ -549,12 +552,17 @@ function MenuLink({ item, onClose, onGo, lean }) {
 }
 
 function MegaMenu({ group, isOpen, onClose, onGo, lean }) {
-  /* Every menu is headed (2026-08-24). The rule used to be "only when the
-     menu holds more than one kind of thing", which left Tools — a single
-     column — as the one panel that opened with no label on it, and the row
-     reading inconsistently as you moved along it. A heading costs one line
-     and says what the list is; there is no menu here where that is wasted. */
-  const headed = true;
+  /* Every menu is headed (2026-08-24) — for Draft D. The rule used to be
+     "only when the menu holds more than one kind of thing", which left
+     Tools — a single column — as the one panel that opened with no label
+     on it, and the row reading inconsistently as you moved along it. A
+     heading costs one line and says what the list is; there is no menu
+     in Draft D where that is wasted.
+
+     LEAN_NAV doesn't get one: those column headings aren't in blurb.com's
+     own dropdowns, and this nav's whole point is matching what's actually
+     there, not adding Draft D's own touches on top of it. */
+  const headed = !lean;
 
   return (
     /* Mounted whether or not it is open, so the exit is animated too — a
