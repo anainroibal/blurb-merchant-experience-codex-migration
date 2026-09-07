@@ -317,16 +317,21 @@ export default function SellLandingV2({ onGo }) {
           <p style={{ fontSize: TYPE.lg, lineHeight: 1.55, color: T.textSubtle, margin: 0, maxWidth: 640 }}>
             Four ways to reach readers: your own store, global retail, bulk orders, or your own platform. We handle the printing, shipping, and production for each one.
           </p>
-          <Button as="a" href="#paths">Explore our selling tools</Button>
-
           {/* Third tick was "your brand on every order, not ours" —
               true of Instant Store and the API, but not Retail
               Distribution (ships in the retailer's own packaging) or
               Large Order Services (custom/dropship). Swapped for the
               brief's other universal benefit instead, which does hold
-              across all four. */}
+              across all four.
+
+              Below the subheading rather than below the button (Ana:
+              "visually looks off") — the button was centered, the tick
+              grid left-aligned, and the two sat back to back with no
+              hierarchy between them. Ticks now read as the pitch's own
+              supporting points, and the button closes the block as the
+              one action left to take. */}
           <div style={{
-            marginTop: 12, display: "grid", gap: 12, width: "100%", maxWidth: 780,
+            marginTop: 4, display: "grid", gap: 12, width: "100%", maxWidth: 780,
             gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", textAlign: "left",
           }}>
             {[
@@ -340,6 +345,8 @@ export default function SellLandingV2({ onGo }) {
               </div>
             ))}
           </div>
+
+          <Button as="a" href="#paths" style={{ marginTop: 8 }}>Explore our selling tools</Button>
         </div>
       </section>
 
