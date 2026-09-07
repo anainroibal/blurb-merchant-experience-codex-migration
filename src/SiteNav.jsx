@@ -158,7 +158,7 @@ const NAV = [
       ["BookWright", "Blurb's own book-making software."],
       ["PDF to Book", "Bring a file you have already laid out."],
       ["Adobe software", "InDesign plugin and Lightroom Book Module."],
-      ["Templates", "Layouts sized to every format Blurb prints."],
+      ["BookWright Templates", "Layouts sized to every format Blurb prints."],
     ]},
   ], seeAll: ["See all creation tools"]},
 
@@ -206,7 +206,7 @@ const NAV = [
          (DES-482 #5d), which is a good sign it reads. */
       ["Retail distribution", "List on Amazon, Ingram and the Blurb Bookstore.", null, "seller"],
       ["Volume orders", "Volume discounts start at 100 copies. We quote the run and handle the logistics."],
-      ["RPI Print API", "Send orders from your own system and we print, pack and ship them."],
+      ["API", "Send orders from your own system and we print, pack and ship them."],
     ]},
   ], featured: {
     /* The featured slot Switch to Blurb vacated goes to the profit
@@ -226,11 +226,11 @@ const NAV = [
       ["Volume orders", "Volume discounts start at 100 copies. We quote the run and handle the logistics."],
       /* Moved out of the featured panel (Ana) and into the list, as a
          normal item alongside Volume orders — no more "Featured" card
-         here. "RPI Print API" is the name Ana asked for, described as
-         the design review described it (item 27): orchestration at
-         scale, not fulfilment, with RPI as the outer layer and Blurb
-         inside it. */
-      ["RPI Print API", "Print and delivery orchestrated at scale, through RPI's own network."],
+         here. Named "RPI Print API" per the design review (item 27):
+         orchestration at scale, not fulfilment, with RPI as the outer
+         layer and Blurb inside it — shortened again to just "API"
+         (Ana), same as every other nav mention of it. */
+      ["API", "Print and delivery orchestrated at scale, through RPI's own network."],
     ]},
   ]},
 
@@ -330,16 +330,22 @@ const LEAN_NAV = [
     ]},
   ]},
 
+  /* "All selling options" was a seeAll footer link at first — the
+     bordered-off, blue, chevron-carrying treatment Draft D uses for
+     this same job. Too much design for a nav that's supposed to be
+     the plain one (Ana): it's a flat item here instead, first in the
+     list, same weight as everything beside it. */
   { label: "Sell & Self-Publish", href: "/self-publish", columns: [
     { heading: "Sell & Self-Publish", items: [
+      ["All selling options", null, null, "sellv2"],
       ["Instant Store", null, "New", "instantstorev2"],
       ["Blurb Bookstore", null, null, "sellv2"],
       ["Amazon", null, null, "sellv2"],
       ["Ingram", null, null, "sellv2"],
       ["Large Order Services"],
-      ["API Printing"],
+      ["API"],
     ]},
-  ], seeAll: ["All selling options", "sellv2"]},
+  ]},
 
   { label: "Bookstore", href: "/bookstore", columns: [
     { heading: "Bookstore", chunkAt: 5, items: [
