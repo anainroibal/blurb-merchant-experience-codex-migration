@@ -101,6 +101,22 @@
         border: none;
       }
 
+      /* Sell v2's hand-built Retail Distribution card (three destination
+         links, so it can't use Card's single link/cta slot) needs its
+         title to match Card's own title exactly — including the part
+         that isn't a flat value: Card.module.css jumps title from
+         font-size-xl to font-size-3xl only at 1024px and up. A hardcoded
+         3xl looked fine on a wide screenshot but ran larger than its
+         three Card siblings below that width. */
+      .path-card-title {
+        font-size: var(--codex-font-size-xl);
+      }
+      @media (min-width: 1024px) {
+        .path-card-title {
+          font-size: var(--codex-font-size-3xl);
+        }
+      }
+
       /* Menus and popovers: fade up from just below their trigger. */
       .pop-in {
         animation: pop-in var(--slow) var(--ease) both;

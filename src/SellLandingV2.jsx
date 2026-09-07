@@ -430,9 +430,9 @@ export default function SellLandingV2({ onGo }) {
                 width: "100%", gap: "var(--codex-spacing-3)",
               }}>
                 <PathTile card={card} />
-                <h3 style={{
-                  fontFamily: "var(--codex-font-family-heading)", fontWeight: 500,
-                  color: "var(--codex-color-semantic-text-bold)", fontSize: "var(--codex-font-size-3xl)",
+                <h3 className="path-card-title" style={{
+                  fontFamily: "var(--codex-font-family-heading)", fontWeight: "var(--codex-font-weight-normal)",
+                  color: "var(--codex-color-semantic-text-bold)",
                   lineHeight: "var(--codex-font-line-height-tight)", margin: 0,
                 }}>
                   {card.name}
