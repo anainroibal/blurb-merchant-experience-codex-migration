@@ -321,19 +321,20 @@ export default function SellLandingV2({ onGo }) {
           you list on, not a production partner behind whatever you
           build (your own store, a retailer listing, your own app).
           "However you sell, it's still your book" didn't land either
-          (Ana). Rewritten shorter and more direct: seller as the
-          subject/verb, Blurb as what happens after — same shape as
-          the API section's own short pitch in the brief ("We print,
-          we ship, you scale").
+          (Ana).
 
-          Subheading corrected twice over (Ana): "we handle the
-          printing, shipping, and production" made it sound like Blurb
-          only does fulfillment and the seller has to sort out selling
-          itself — when the four routes ARE the selling tools (an
-          Instant Store included). And "your own store" read as
-          something the seller builds, when Blurb builds it for them.
-          Both fixed in the same sentence rather than added as a
-          separate clause.
+          "You sell it. We print it." was the next attempt, and it
+          carried the same problem the subheading did (Ana, on a later
+          pass): splitting the work as "you handle selling, we only
+          print" undersells the four routes themselves, which ARE
+          Blurb's selling tools (an Instant Store included, not just
+          fulfillment behind whatever the seller already built).
+          Rewritten so the headline states that division correctly —
+          seller creates, Blurb helps sell AND prints — which also
+          means the subheading no longer has to carry that point itself
+          via an added clause ("each with the tools to sell built in"
+          read awkwardly, Ana's second pass). It goes back to plainly
+          describing the four routes plus fulfillment.
 
           Custom rather than HeroCenter: it originally carried a tick row
           too (the brief's "Overall benefits applicable to all seller
@@ -350,10 +351,10 @@ export default function SellLandingV2({ onGo }) {
             fontFamily: FONT_DISPLAY, fontWeight: 400, letterSpacing: "-0.01em",
             fontSize: "clamp(2rem, 4.6vw, 2.75rem)", lineHeight: 1.2, margin: 0,
           }}>
-            You sell it. We print it.
+            You made it. We help you sell it.
           </h1>
           <p style={{ fontSize: TYPE.lg, lineHeight: 1.55, color: T.textSubtle, margin: 0, maxWidth: 640 }}>
-            Four ways to reach readers, each with the tools to sell built in: an Instant Store we build for you, global retail distribution, bulk orders, or your own platform. We handle the printing, shipping, and production for each one.
+            Four ways to reach readers: an Instant Store we build for you, global retail distribution, bulk orders, or your own platform. We handle the printing, shipping, and production for each one.
           </p>
           <Button as="a" href="#paths" style={{ marginTop: 8 }}>Explore our selling tools</Button>
         </div>
