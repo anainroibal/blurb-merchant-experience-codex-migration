@@ -130,7 +130,7 @@ const NAV = [
 
      Its overview link leads, for the reason Sell's does. */
   { label: "Creation Tools", href: "/bookmaking-tools", columns: [
-    { heading: "Creative tools", items: [
+    { heading: "Creation Tools", items: [
       ["Blurb online editor", "Design in your browser. Nothing to download."],
       ["BookWright", "Blurb's own book-making software."],
       ["PDF to Book", "Bring a file you have already laid out."],
@@ -163,6 +163,13 @@ const NAV = [
      warning already written above this list: it is a proposition about
      store integrations, and it should wait until there are any. */
   { label: "Sell", href: "/self-publish", columns: [
+    /* Store integrations dropped (Ana) — it was the one item here with
+       no source anywhere (see the file-header warning), tagged "Coming
+       soon" against a thing nobody owns. Volume orders and RPI Print
+       API folded into this same column rather than a separate "Seller
+       tools" heading — they're still ways to sell, not a different
+       category, so a second heading was drawing a line that wasn't
+       there. Both stay listed under Services too (design review item 23). */
     { heading: "Ways to sell", items: [
       ["Instant Store", "Share a link or embed a button. We print and ship each order.", null, "instantstore"],
       /* ── Three channels, one item (Ana's mock, 2026-08-28) ──
@@ -175,9 +182,6 @@ const NAV = [
          apart. "Retail distribution" is Ana's own word for the group
          (DES-482 #5d), which is a good sign it reads. */
       ["Retail distribution", "List on Amazon, Ingram and the Blurb Bookstore.", null, "seller"],
-      ["Store integrations", "Connect Shopify, Etsy and more.", "Coming soon"],
-    ]},
-    { heading: "Seller tools", items: [
       ["Volume orders", "Volume discounts start at 100 copies. We quote the run and handle the logistics."],
       ["RPI Print API", "Send orders from your own system and we print, pack and ship them."],
     ]},
@@ -197,18 +201,15 @@ const NAV = [
   { label: "Services", href: "/large-order-services", columns: [
     { heading: "Services", items: [
       ["Volume orders", "Volume discounts start at 100 copies. We quote the run and handle the logistics."],
+      /* Moved out of the featured panel (Ana) and into the list, as a
+         normal item alongside Volume orders — no more "Featured" card
+         here. "RPI Print API" is the name Ana asked for, described as
+         the design review described it (item 27): orchestration at
+         scale, not fulfilment, with RPI as the outer layer and Blurb
+         inside it. */
+      ["RPI Print API", "Print and delivery orchestrated at scale, through RPI's own network."],
     ]},
-  ], featured: {
-    /* "RPI Print API", the name Ana asked for, and described as the design
-       review described it (item 27): orchestration at scale, not
-       fulfilment, with RPI as the outer layer and Blurb inside it. "Print
-       as infrastructure" was closer to a slogan than to what it does. */
-    heading: "Featured",
-    title: "RPI Print API",
-    body: "Print and delivery orchestrated at scale. Send orders from your own system and RPI's network prints, packs and ships them.",
-    cta: "Go to RPI Print",
-    external: true,
-  }},
+  ]},
 
   { label: "Pricing", href: "/pricing", columns: [
     { heading: "Pricing", items: [
@@ -238,8 +239,8 @@ const NAV = [
      you make with) both live in the nav, "Resources" read as a third
      synonym for the same idea. This one is content you read, so it's
      named for that instead. */
-  { label: "Help & Support", href: "/blog", columns: [
-    { heading: "Help & Support", items: [
+  { label: "Support", href: "/blog", columns: [
+    { heading: "Support", items: [
       ["Blog", "Craft, printing and selling, from Blurb and its makers."],
       ["Events", "Workshops, talks and book fairs."],
       ["Help Center", "Guides, specs and answers."],
