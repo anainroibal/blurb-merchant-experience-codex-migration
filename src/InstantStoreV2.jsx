@@ -117,16 +117,16 @@ function InstantStoreMockup() {
    own "Print on demand" card makes further down, restated here since
    it belongs with "Blurb prints and ships it," not as a separate claim. */
 const WALKTHROUGH = [
-  ["A real product page", "Cover, description, and pricing — everything a buyer needs to feel confident before they purchase."],
-  ["See inside before you buy", "An interactive preview lets buyers flip through real pages before they commit — the confidence that turns interest into a sale."],
-  ["One click to buy", "A single 'Buy now' takes buyers straight to checkout. No cart to build, no plugins to configure."],
-  ["Blurb prints and ships it", "No inventory to buy upfront — every order triggers a fresh print run, and you only pay for what ships. Your buyer gets a tracked delivery, and you never touch a box."],
+  ["A real product page", "Cover, description, and pricing: everything a buyer needs to feel confident before they purchase."],
+  ["See inside before you buy", "An interactive preview lets buyers flip through real pages before they commit, building the confidence that turns interest into a sale."],
+  ["One click to buy", "A single 'Buy now' takes buyers straight to checkout, including Apple Pay, Google Pay, and PayPal. No cart to build, no plugins to configure."],
+  ["Blurb prints and ships it", "No inventory to buy upfront: every order triggers a fresh print run, and you only pay for what ships. Your buyer gets a tracked delivery, and you never touch a box."],
 ];
 
 const FULFILMENT_POINTS = [
   ["inventory_2", "Print on demand", "Every order triggers a fresh print run. No inventory to manage, no stock to buy upfront."],
   ["local_shipping", "Ships in days", "Blurb packs and ships every order directly to your buyer. You never touch a box."],
-  ["verified", "Tracking on every order", "Buyers get a tracking number automatically — no support emails asking where an order is."],
+  ["verified", "Tracking on every order", "Buyers get a tracking number automatically, so there's no support email asking where an order is."],
   ["schedule", "No setup required", "No warehouse, no carrier accounts, no fulfilment integrations. It works the moment you share your link."],
 ];
 
@@ -275,7 +275,7 @@ const FEATURES = [
   ["auto_stories", "Sell books, magazines & more",
    "Your Instant Store works for photo books, magazines, notebooks, and wall art."],
   ["all_inclusive", "No minimums, ever",
-   "Sell one copy or one thousand — seller pricing applies from your very first sale."],
+   "Sell one copy or one thousand. Seller pricing applies from your very first sale."],
   /* This one really is "Lorem ipsum dolor sit amet" in the Figma frame
      itself — kept as-is rather than drafted, same as the Showcase
      section on Sell v2. */
@@ -285,23 +285,23 @@ const FEATURES = [
 
 const FAQS = [
   ["How do I set up an online store for my book?",
-   "Pick a project already in your account (or start one), set your price, and your Instant Store page is ready to share — no separate sign-up."],
+   "Pick a project already in your account (or start one), set your price, and your Instant Store page is ready to share, with no separate sign-up."],
   ["Is there a minimum order to sell through my Instant Store?",
    "No. Sell one copy or a thousand; there is no minimum."],
   ["How much does Blurb take from each sale?",
    "Nothing off the top. You set the price, we charge you our printing cost to fulfil the order, and what's left is yours."],
   ["How do I get paid for my sales?",
-   "Payouts follow the same US $25 minimum and cadence as the rest of Blurb's print-on-demand routes — by PayPal or check once that threshold is reached."],
+   "Payouts follow the same US $25 minimum and cadence as the rest of Blurb's print-on-demand routes: by PayPal or check once that threshold is reached."],
   ["Who handles sales tax and shipping on each order?",
    "We calculate and collect sales tax automatically. Your buyer pays shipping at checkout, so it's never taken out of what you keep."],
   ["Can I sell books to readers internationally?",
-   "Yes — your Instant Store link works for any buyer, and each order prints at the facility nearest them."],
+   "Yes. Your Instant Store link works for any buyer, and each order prints at the facility nearest them."],
   ["How do I share my Instant Store?",
    "Anywhere a link goes: a social bio, a newsletter, a QR code on a stall, or behind a button on a site you already run."],
   ["Is seller pricing available on every order?",
    "Yes. The price you set is the price your buyer pays on every order, with no separate wholesale or retail tiers to track."],
   ["Can I buy my own book through my Instant Store link?",
-   "Yes — the same link works for you, at the price you set."],
+   "Yes. The same link works for you, at the price you set."],
   ["Can I turn my Instant Store link off?",
    "Yes, any time. Turning it off stops new orders; anything already placed still ships."],
 ];
@@ -313,7 +313,7 @@ export default function InstantStoreV2({ onGo }) {
       {/* ── Hero ── the gradient the seller pages share, two columns again
           (Ana liked the video beside the copy) — but the video demo, not
           InstantStoreMockup, sits on the right this time, so the mockup
-          still appears exactly once (in "More than a checkout" below)
+          still appears exactly once (in "What buyers see" below)
           rather than being shown twice. */}
       <section className="hero-gradient-seller" style={{ padding: "clamp(56px, 8vw, 96px) 24px" }}>
         <div style={{
@@ -343,42 +343,57 @@ export default function InstantStoreV2({ onGo }) {
               <Button>Create your Instant Store</Button>
               <Button as="a" href="#demo" variant="outlined">See a store in action</Button>
             </div>
+            {/* The margin story is this route's biggest differentiator,
+                and nothing above the fold said so directly (Ana) — the
+                H1's "your profit" hints at it, but a reader has to reach
+                "Keep more of what you earn" much further down the page
+                to see the actual number. Same 70% figure that section
+                and the FEATURES grid's own "Maximum profit" tile already
+                use, not a new claim. */}
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span className="ms" aria-hidden style={{ fontSize: 20, color: C.blue600 }}>trending_up</span>
+              <span style={{ fontSize: TYPE.sm, fontWeight: 600 }}>
+                Seller pricing: earn up to 70% more than other distribution channels
+              </span>
+            </div>
           </div>
 
           {/* No real demo video exists yet, so this stays an honest
               checkerboard placeholder rather than a fabricated embed —
               same treatment as before, just moved back beside the hero
-              copy instead of sitting in its own full-width section. */}
-          <div>
-            <div id="demo" style={{
-              position: "relative", borderRadius: R.lg, overflow: "hidden", aspectRatio: "16 / 9",
-              border: `1px solid ${T.border}`,
-              background: "repeating-conic-gradient(#f2f2f2 0% 25%, #fafafa 0% 50%) 50% / 32px 32px",
-            }}>
-              <span
-                className="ms" aria-hidden
-                style={{
-                  position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)",
-                  fontSize: 56, color: C.gray400,
-                }}
-              >
-                play_circle
-              </span>
-            </div>
-            <p style={{ margin: "12px 0 0", fontSize: TYPE.sm, color: T.textSubtle, textAlign: "center" }}>
-              Placeholder — a short walkthrough of setting up and sharing an Instant Store goes here.
-            </p>
+              copy instead of sitting in its own full-width section. No
+              caption under it any more (Ana) — it wasn't adding anything
+              the CTA above it doesn't already say. */}
+          <div id="demo" style={{
+            position: "relative", borderRadius: R.lg, overflow: "hidden", aspectRatio: "16 / 9",
+            border: `1px solid ${T.border}`,
+            background: "repeating-conic-gradient(#f2f2f2 0% 25%, #fafafa 0% 50%) 50% / 32px 32px",
+          }}>
+            <span
+              className="ms" aria-hidden
+              style={{
+                position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)",
+                fontSize: 56, color: C.gray400,
+              }}
+            >
+              play_circle
+            </span>
           </div>
         </div>
       </section>
 
-      {/* ── More than a checkout ──
-          Walks a buyer through the product-page mockup with numbered
-          annotations rather than describing it in the abstract — the
-          one place InstantStoreMockup appears (Ana: not duplicated with
-          the hero any more). This is the buyer's view of the page;
-          "Three simple steps" below is the seller's view of setting it
-          up — complementary, not overlapping. */}
+      {/* ── What buyers see ──
+          Was "More than a checkout. A whole store in one link." — "a
+          whole store" oversold it the same way "online store"/"online
+          bookstore" did elsewhere on this page (Ana), and "more than a
+          checkout" read as too close to Lulu's own positioning to keep.
+          Rewritten to just describe what the section shows rather than
+          make a comparative claim. Walks a buyer through the product-
+          page mockup with numbered annotations rather than describing it
+          in the abstract — the one place InstantStoreMockup appears
+          (Ana: not duplicated with the hero any more). This is the
+          buyer's view of the page; "Three steps" below is the seller's
+          view of setting it up, complementary, not overlapping. */}
       <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
         <div style={{
           maxWidth: 1160, margin: "0 auto", display: "grid",
@@ -396,7 +411,7 @@ export default function InstantStoreV2({ onGo }) {
                 fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
                 lineHeight: 1.25, margin: 0,
               }}>
-                More than a checkout. A whole store in one link.
+                One link, a real product page.
               </h2>
             </div>
             {WALKTHROUGH.map(([title, body], i) => (
@@ -423,7 +438,7 @@ export default function InstantStoreV2({ onGo }) {
       <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <CardList
-            heading="Create your Instant Store in three simple steps"
+            heading="Create your Instant Store in three steps"
             headingAlign="center"
             layout={{ mobile: 1, tablet: 3, desktop: 3 }}
           >
@@ -477,7 +492,7 @@ export default function InstantStoreV2({ onGo }) {
               }}>
                 Keep more of what you earn
               </h2>
-              {/* Moved down from the "More than a checkout" walkthrough
+              {/* Moved down from the "What buyers see" walkthrough
                   (Ana): that section's own "Set your own price" point was
                   redundant with this one, but she wanted this exact line
                   kept rather than lost along with it. */}
@@ -598,8 +613,11 @@ export default function InstantStoreV2({ onGo }) {
       </section>
 
       {/* ── What can you sell ── the same four product-type cards used
-          elsewhere, not retyped. */}
-      <section style={{ background: C.gray50, padding: "clamp(56px, 7vw, 80px) 24px" }}>
+          elsewhere, not retyped. Padding cut roughly in half (Ana: too
+          large) — same clamp(32px,4vw,48px) Sell v2's own "Included with
+          every way you sell" section uses for the same reason: it sits
+          between two dense sections and doesn't need that much air. */}
+      <section style={{ background: C.gray50, padding: "clamp(32px, 4vw, 48px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <CardList heading="What you can sell with Blurb" headingAlign="center" layout={{ mobile: 1, tablet: 2, desktop: 4 }}>
             {SELL_FORMATS.map(f => {
