@@ -23,6 +23,16 @@ import Faq from "./Faq.jsx";
    need to carry that exact figure. */
 const MOCKUP_COVER = FORMAT_CARDS.find(c => c.id === "photo");
 
+/* Jamie Reyes' other (fictional) books, for the "More by this author"
+   section below — see that section's own comment. `pos` crops the
+   one real cover photo to a different focal point per card so the
+   three don't look like the exact same crop repeated. */
+const MORE_BOOKS = [
+  { title: "Harbor Light", price: "$28.00", desc: "Quiet mornings along New England's working harbors.", pos: "20% 60%" },
+  { title: "Windward", price: "$32.00", desc: "A season chasing storms across the Pacific Northwest coast.", pos: "80% 30%" },
+  { title: "Low Tide", price: "$26.00", desc: "Tidepools, driftwood, and the hour after sunrise.", pos: "50% 80%" },
+];
+
 function InstantStoreMockup() {
   return (
     <div style={{
@@ -72,32 +82,59 @@ function InstantStoreMockup() {
 
       {/* Book preview — the real PDP's own standout feature (Ana), missing
           from the first pass of this mockup entirely, then an icon
-          placeholder (Ana: "add the preview image too"). No real interior
-          page photography exists for this placeholder book, so the same
-          cover photo stands in — an honest reuse rather than a fabricated
-          page spread, cropped differently (wider, off-center) so it
-          doesn't just repeat the cover thumbnail above it. */}
-      <div style={{ borderTop: `1px solid ${T.border}`, padding: "16px 24px", display: "grid", gap: 10 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+          placeholder (Ana: "add the preview image too"), then a single
+          reused cover photo (Ana: "use this other screenshot" — a real
+          open two-page spread, not a cropped cover). Rebuilt as an
+          actual spread: two facing pages with placeholder body text (not
+          real book content, same honest-placeholder spirit as this
+          file's other invented copy) and a folded-corner cue on the
+          right page suggesting more pages to turn. "View fullscreen" is
+          now a bordered button with an icon, matching the reference
+          rather than a bare text link. */}
+      <div style={{ borderTop: `1px solid ${T.border}`, padding: "16px 24px", display: "grid", gap: 12 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div>
-            <div style={{ fontWeight: 600, fontSize: TYPE.sm }}>Book preview</div>
+            <div style={{ fontWeight: 700, fontSize: TYPE.lg }}>Book preview</div>
             <div style={{ fontSize: 11, color: T.textSubtle }}>First 15 pages</div>
           </div>
-          <span style={{ fontSize: 11, color: C.blue600, fontWeight: 600 }}>View fullscreen</span>
+          <button style={{
+            display: "flex", alignItems: "center", gap: 6, padding: "6px 12px",
+            border: `1px solid ${T.border}`, borderRadius: R.md, background: "#fff",
+            fontSize: 11, fontWeight: 600, color: T.textNeutral, cursor: "pointer",
+          }}>
+            <span className="ms" aria-hidden style={{ fontSize: 14 }}>open_in_full</span>
+            View fullscreen
+          </button>
         </div>
-        <img
-          src={MOCKUP_COVER.img}
-          alt=""
-          aria-hidden
-          loading="lazy"
-          style={{
-            width: "100%", aspectRatio: "16 / 9", objectFit: "cover", objectPosition: "50% 30%",
-            borderRadius: R.md, border: `1px solid ${T.border}`, display: "block",
-          }}
-        />
+
+        <div style={{
+          position: "relative", display: "grid", gridTemplateColumns: "1fr 1fr",
+          border: `1px solid ${T.border}`, borderRadius: R.md, overflow: "hidden",
+          boxShadow: "0 12px 30px -18px rgba(13, 47, 68, 0.4)", background: "#fff",
+        }}>
+          <div style={{ padding: "20px 18px", borderRight: `1px solid ${T.border}`, display: "grid", gap: 10, justifyItems: "center" }}>
+            <div style={{ fontFamily: FONT_DISPLAY, fontSize: "1.1rem", fontWeight: 600 }}>1</div>
+            <p style={{ margin: 0, fontSize: 9, lineHeight: 1.7, color: T.textNeutral, textAlign: "left" }}>
+              The tide had already turned by the time she reached the shoreline, the morning light catching on wet sand still dark from the night before.
+            </p>
+          </div>
+          <div style={{ position: "relative", padding: "20px 18px", display: "grid", gap: 10 }}>
+            <p style={{ margin: 0, fontSize: 9, lineHeight: 1.7, color: T.textNeutral, textAlign: "left" }}>
+              She'd made this walk a hundred times, but the quiet never felt routine. Somewhere past the rocks a gull called out, once, then again.
+            </p>
+            {/* Folded corner — a simple diagonal cue that the page turns,
+                not a real interactivity affordance. */}
+            <div style={{
+              position: "absolute", bottom: 0, right: 0, width: 32, height: 32,
+              background: "linear-gradient(135deg, transparent 50%, #f0f0f0 50%)",
+              borderLeft: `1px solid ${T.border}`, borderTop: `1px solid ${T.border}`,
+            }} />
+          </div>
+        </div>
+
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, fontSize: 11, color: T.textSubtle }}>
           <span className="ms" aria-hidden style={{ fontSize: 16 }}>chevron_left</span>
-          Page 5 of 15
+          Page 1 of 15
           <span className="ms" aria-hidden style={{ fontSize: 16 }}>chevron_right</span>
         </div>
       </div>
@@ -105,21 +142,44 @@ function InstantStoreMockup() {
       {/* More by this author — the real PDP's own feature, missing from
           every earlier pass of this mockup (Ana: "we're missing the fact
           we show other books by the author, like in the original
-          figma"). Same cover photo reused per thumbnail, since no second
-          placeholder book exists — an honest reuse, same spirit as Book
-          preview above reusing the cover for its own placeholder. */}
-      <div style={{ borderTop: `1px solid ${T.border}`, padding: "16px 24px", display: "grid", gap: 10 }}>
-        <div style={{ fontWeight: 600, fontSize: TYPE.sm }}>More by Jamie Reyes</div>
-        <div style={{ display: "flex", gap: 10 }}>
-          {[1, 2, 3].map(i => (
-            <img
-              key={i}
-              src={MOCKUP_COVER.img}
-              alt=""
-              aria-hidden
-              loading="lazy"
-              style={{ width: 64, aspectRatio: "3 / 4", objectFit: "cover", borderRadius: R.sm, border: `1px solid ${T.border}`, display: "block" }}
-            />
+          figma"), then a bare row of thumbnails (Ana: "use this image
+          for the more from the author bit" — full cards, matching the
+          reference: cover, author, title, description, price, and a
+          "View book" link). Three more fictional Jamie Reyes titles,
+          same invented-placeholder spirit as "Coastal Mornings" itself
+          — not real Blurb books. Same cover photo reused per card
+          (cropped to a different focal point each time, same honest-
+          reuse trick as elsewhere in this mockup), since no second
+          placeholder cover exists. */}
+      <div style={{ borderTop: `1px solid ${T.border}`, padding: "16px 24px", display: "grid", gap: 12 }}>
+        <div style={{ fontWeight: 700, fontSize: TYPE.lg }}>More by Jamie Reyes</div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
+          {MORE_BOOKS.map(book => (
+            <div key={book.title} style={{ display: "grid", gap: 4 }}>
+              <div style={{ background: C.gray50, borderRadius: R.md, padding: 8 }}>
+                <img
+                  src={MOCKUP_COVER.img}
+                  alt=""
+                  aria-hidden
+                  loading="lazy"
+                  style={{
+                    width: "100%", aspectRatio: "3 / 4", objectFit: "cover", objectPosition: book.pos,
+                    borderRadius: R.sm, display: "block", boxShadow: "0 6px 16px -8px rgba(13, 47, 68, 0.4)",
+                  }}
+                />
+              </div>
+              <div style={{ fontSize: 10, color: T.textSubtle }}>Jamie Reyes</div>
+              <div style={{ fontSize: TYPE.sm, fontWeight: 600, lineHeight: 1.3 }}>{book.title}</div>
+              <div style={{ fontSize: 10, color: T.textSubtle, lineHeight: 1.4 }}>{book.desc}</div>
+              <div style={{ fontSize: 11, fontWeight: 700 }}>Starting at {book.price}</div>
+              <a
+                href="#" onClick={e => e.preventDefault()}
+                style={{ fontSize: 11, color: C.blue600, textDecoration: "underline", display: "inline-flex", alignItems: "center", gap: 2 }}
+              >
+                View book
+                <span className="ms" aria-hidden style={{ fontSize: 12 }}>arrow_forward</span>
+              </a>
+            </div>
           ))}
         </div>
       </div>
@@ -141,13 +201,17 @@ function InstantStoreMockup() {
 
    Points 1 and 2 merged into one (Ana: too many points) — the product
    page and the page preview are both part of the same "here's what a
-   buyer sees" fact, not two separate steps. The merge also picks up a
-   fact the mockup itself was missing (Ana: "we're missing the fact we
-   show other books by the author, like in the original figma"), now
-   added to both the copy here and the mockup's own "More by this
-   author" section below. */
+   buyer sees" fact, not two separate steps. "More from the author" —
+   a fact the mockup itself was missing (Ana: "we're missing the fact
+   we show other books by the author, like in the original figma") —
+   was first folded into that same merged point, then pulled back out
+   into its own line (Ana: "i didn't want you to merge the 'more from
+   the author' i do think that warrants a separate line"). Net result
+   is 4 points again, same count as before the 1+2 merge, just
+   redistributed rather than shortened. */
 const WALKTHROUGH = [
-  ["Showcase your work", "Cover, description, and pricing, plus an interactive preview so buyers can flip through real pages, and other books by the author to discover next: everything a buyer needs to feel confident before they purchase."],
+  ["Showcase your work", "Cover, description, and pricing, plus an interactive preview so buyers can flip through real pages before they buy."],
+  ["More from the author", "Buyers can browse your other books right on the page, so one purchase leads to the next."],
   ["One click to buy", "A single 'Buy now' takes buyers straight to checkout, including Apple Pay, Google Pay, and PayPal. No cart to build, no plugins to configure."],
   ["Blurb prints and ships it", "No inventory to buy upfront: every order triggers a fresh print run, and you only pay for what ships. Your buyer gets a tracked delivery, and you never touch a box."],
 ];
