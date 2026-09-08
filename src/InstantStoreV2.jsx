@@ -1,7 +1,139 @@
-import { Button, CardList, Card, ComparisonTable, HeroCenter } from "@blurb/codex-react";
+import { Button, CardList, Card, ComparisonTable } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { FORMAT_CARDS } from "./FormatCards.jsx";
 import Faq from "./Faq.jsx";
+
+/* ── InstantStoreMockup ──
+   A Figma Make POC for this same page (260824-POC — Instant Store LP)
+   put a real-looking product-page screenshot beside its hero, and used
+   it again as the anchor for an annotated "what buyers see" walkthrough
+   further down — both flagged by Ana as the strongest thing in that
+   file, worth bringing into this one. No real Instant Store page exists
+   to screenshot, so this is a hand-built mockup rather than a fabricated
+   embed: real Blurb product photography (FORMAT_CARDS' own photo book
+   image), a placeholder title/author/description in the same spirit as
+   this file's other honest placeholders (the Showcase section, "Share
+   anywhere"'s lorem ipsum), and the real $60.80 / $21.28 / $39.52
+   figures the margin table below already uses for this exact spec, so
+   the two sections agree with each other rather than showing two
+   different made-up numbers. */
+const MOCKUP_COVER = FORMAT_CARDS.find(c => c.id === "photo");
+
+function InstantStoreMockup() {
+  return (
+    <div style={{
+      borderRadius: R.lg, overflow: "hidden", border: `1px solid ${T.border}`,
+      background: "#fff", boxShadow: "0 24px 60px -24px rgba(13, 47, 68, 0.35)",
+    }}>
+      {/* Browser chrome — signals "this is a real page", not a book cover. */}
+      <div style={{
+        display: "flex", alignItems: "center", gap: 6,
+        padding: "10px 14px", borderBottom: `1px solid ${T.border}`, background: C.gray50,
+      }}>
+        {["#ff5f57", "#febc2e", "#28c840"].map(c => (
+          <span key={c} style={{ width: 10, height: 10, borderRadius: "50%", background: c }} />
+        ))}
+        <div style={{
+          marginLeft: 8, flex: 1, background: "#fff", border: `1px solid ${T.border}`, borderRadius: 6,
+          padding: "3px 10px", fontSize: 11, color: T.textSubtle, fontFamily: "monospace",
+        }}>
+          blurb.com/c/coastal-mornings
+        </div>
+      </div>
+
+      <div style={{
+        display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+        gap: 24, padding: 24,
+      }}>
+        <img
+          src={MOCKUP_COVER.img}
+          alt={MOCKUP_COVER.alt}
+          loading="lazy"
+          style={{ width: "100%", aspectRatio: "4 / 3", objectFit: "cover", borderRadius: R.md, display: "block" }}
+        />
+        <div style={{ display: "grid", gap: 8, alignContent: "start" }}>
+          <h3 style={{ margin: 0, fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "1.25rem", lineHeight: 1.25 }}>
+            Coastal Mornings
+          </h3>
+          <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle }}>by Jamie Reyes</p>
+          <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>
+            A year of early tides and empty beaches, shot along the Pacific coast.
+          </p>
+          <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
+            <span style={{
+              padding: "4px 10px", borderRadius: 999, fontSize: TYPE.sm, fontWeight: 600,
+              border: `1px solid ${C.blue600}`, color: C.blue600,
+            }}>
+              Hardcover
+            </span>
+            <span style={{
+              padding: "4px 10px", borderRadius: 999, fontSize: TYPE.sm,
+              border: `1px solid ${T.border}`, color: T.textSubtle,
+            }}>
+              Softcover
+            </span>
+          </div>
+          <div style={{ fontFamily: FONT_DISPLAY, fontSize: "1.5rem", fontWeight: 500, marginTop: 4 }}>
+            $60.80
+          </div>
+          <Button size="small">Buy now</Button>
+          <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: TYPE.sm, color: T.textSubtle }}>
+            <span className="ms" aria-hidden style={{ fontSize: 16, color: C.blue600 }}>verified</span>
+            Printed and shipped by Blurb
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const WALKTHROUGH = [
+  ["A real product page", "Cover, description, format options, and pricing — everything a buyer needs to feel confident before they purchase."],
+  ["Set your own price", "You choose what to charge. What's left after your printing cost is yours, with no listing or platform fees."],
+  ["Buyers check out right there", "Payment and shipping are built in. No plugins to install, no separate checkout to configure."],
+  ["Blurb prints and ships it", "The order goes straight to production. Your buyer gets a tracked delivery, and you never touch a box."],
+];
+
+const FULFILMENT_POINTS = [
+  ["inventory_2", "Print on demand", "Every order triggers a fresh print run. No inventory to manage, no stock to buy upfront."],
+  ["local_shipping", "Ships in days", "Blurb packs and ships every order directly to your buyer. You never touch a box."],
+  ["verified", "Tracking on every order", "Buyers get a tracking number automatically — no support emails asking where an order is."],
+  ["schedule", "No setup required", "No warehouse, no carrier accounts, no fulfilment integrations. It works the moment you share your link."],
+];
+
+/* The same POC that inspired InstantStoreMockup also had a tiny
+   "your price / print cost / you keep" widget for its own setup-steps
+   section — much more digestible at a glance than a table row, so it's
+   reused here as a companion to the comparison table rather than a
+   replacement for it (Ana wasn't sure the table alone was landing).
+   Same $60.80 / $21.28 / $39.52 the table already uses for this spec,
+   not a second set of numbers. */
+function MiniProfitWidget() {
+  const ROWS = [["Your price", "$60.80"], ["Print cost", "$21.28"]];
+  return (
+    <div style={{
+      border: `1px solid ${T.border}`, borderRadius: R.lg, padding: 20,
+      display: "grid", gap: 12, maxWidth: 300, width: "100%",
+    }}>
+      {ROWS.map(([label, value]) => (
+        <div key={label} style={{ display: "flex", justifyContent: "space-between", fontSize: TYPE.sm, color: T.textSubtle }}>
+          <span>{label}</span>
+          <span>{value}</span>
+        </div>
+      ))}
+      <div style={{ height: 1, background: T.border }} />
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <span style={{ fontWeight: 600 }}>You keep</span>
+        <span style={{
+          background: "#d7f4e0", color: "#166640", padding: "4px 12px", borderRadius: 999,
+          fontWeight: 700, fontSize: TYPE.sm,
+        }}>
+          $39.52
+        </span>
+      </div>
+    </div>
+  );
+}
 
 /* The outline writes its own copy for this section rather than reusing
    FormatCards.jsx's sitewide descriptions (they read differently) —
@@ -149,60 +281,89 @@ export default function InstantStoreV2({ onGo }) {
   return (
     <div style={{ fontFamily: FONT_BODY, color: C.gray950 }}>
 
-      {/* ── Hero ── the gradient the seller pages share. */}
-      <HeroCenter
-        className="hero-gradient-seller"
-        heading="Your book, your audience, your profit"
-        /* "Set up an online store" oversold it (Ana) — an Instant Store
-           is one product page behind one link, not a multi-book
-           storefront to browse. Rewritten around what it actually is,
-           matching the "product page" language Sell v2's own Instant
-           Store card already uses rather than introducing a third way
-           to describe the same thing. "Third-party platform" corrected
-           next (Ana: "i don't know what 3rd party means") — plain
-           language for the same idea, no separate site to go build. */
-        subheading="Turn your book into a shareable product page and start selling directly to your audience. Live in minutes, no website or tech skills needed."
-        ctas={[
-          { children: "Create your Instant Store" },
-          { as: "a", href: "#demo", variant: "outlined", children: "See a store in action" },
-        ]}
-      />
-
-      {/* ── Demo placeholder ──
-          The outline has a checkered box with a play icon here — no real
-          demo video exists yet, so this stays an honest placeholder
-          rather than a fabricated embed. The hero's own gradient now
-          covers the top half of the box (Ana: "for visual cohesion"),
-          so the two sections read as one continuous piece rather than a
-          hard color line where the hero ends. Two absolutely-positioned
-          halves rather than a shared background, since the checkerboard
-          is a `repeating-conic-gradient` — clipping it to the bottom
-          half via background-size would distort its tiles; a separate
-          half-height layer keeps the same 32px checker untouched. */}
-      <section id="demo" style={{ padding: "0 24px clamp(48px, 7vw, 72px)" }}>
-        <div style={{ maxWidth: 840, margin: "0 auto" }}>
-          <div style={{
-            position: "relative", borderRadius: R.lg, overflow: "hidden", aspectRatio: "16 / 9",
-            border: `1px solid ${T.border}`,
-          }}>
-            <div aria-hidden className="hero-gradient-seller" style={{ position: "absolute", inset: "0 0 50% 0" }} />
-            <div aria-hidden style={{
-              position: "absolute", inset: "50% 0 0 0",
-              background: "repeating-conic-gradient(#f2f2f2 0% 25%, #fafafa 0% 50%) 50% / 32px 32px",
-            }} />
-            <span
-              className="ms" aria-hidden
-              style={{
-                position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)",
-                fontSize: 56, color: C.gray400,
-              }}
-            >
-              play_circle
-            </span>
+      {/* ── Hero ── the gradient the seller pages share, now two columns
+          instead of HeroCenter's single centered one — the mockup needs
+          a slot beside the copy, which HeroCenter has no prop for. */}
+      <section className="hero-gradient-seller" style={{ padding: "clamp(56px, 8vw, 96px) 24px" }}>
+        <div style={{
+          maxWidth: 1160, margin: "0 auto", display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 48, alignItems: "center",
+        }}>
+          <div style={{ display: "grid", gap: 20 }}>
+            <h1 style={{
+              fontFamily: FONT_DISPLAY, fontWeight: 400, letterSpacing: "-0.01em",
+              fontSize: "clamp(2rem, 4.6vw, 2.75rem)", lineHeight: 1.2, margin: 0,
+            }}>
+              Your book, your audience, your profit
+            </h1>
+            {/* "Set up an online store" oversold it (Ana) — an Instant
+                Store is one product page behind one link, not a
+                multi-book storefront to browse. Rewritten around what it
+                actually is, matching the "product page" language Sell
+                v2's own Instant Store card already uses. "Third-party
+                platform" corrected next (Ana: "i don't know what 3rd
+                party means") — plain language, no separate site to go
+                build. */}
+            <p style={{ fontSize: TYPE.lg, lineHeight: 1.55, color: T.textSubtle, margin: 0, maxWidth: 520 }}>
+              Turn your book into a shareable product page and start selling directly to your audience. Live in minutes, no website or tech skills needed.
+            </p>
+            <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+              <Button>Create your Instant Store</Button>
+              <Button as="a" href="#demo" variant="outlined">See a store in action</Button>
+            </div>
           </div>
-          <p style={{ margin: "12px 0 0", fontSize: TYPE.sm, color: T.textSubtle, textAlign: "center" }}>
-            Placeholder — a short walkthrough of setting up and sharing an Instant Store goes here.
-          </p>
+          <InstantStoreMockup />
+        </div>
+      </section>
+
+      {/* ── More than a checkout ──
+          A Figma Make POC for this page (Ana, see the InstantStoreMockup
+          comment above) walked a buyer through the same product-page
+          mockup with numbered annotations rather than describing it in
+          the abstract — this replaces what used to be an honest "no
+          video yet" checkerboard placeholder with actual content. Four
+          points rather than the POC's five: ours has no author-bio panel
+          to annotate, so that one's dropped rather than stretched to
+          cover a feature this mockup doesn't show. This is the buyer's
+          view of the page; "Three simple steps" below is the seller's
+          view of setting it up — complementary, not overlapping. */}
+      <section id="demo" style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
+        <div style={{
+          maxWidth: 1160, margin: "0 auto", display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 48, alignItems: "center",
+        }}>
+          <div style={{ display: "grid", gap: 24 }}>
+            <div style={{ display: "grid", gap: 8 }}>
+              <p style={{
+                margin: 0, fontSize: 11, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase",
+                color: T.textSubtle,
+              }}>
+                The difference
+              </p>
+              <h2 style={{
+                fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
+                lineHeight: 1.25, margin: 0,
+              }}>
+                More than a checkout. A whole store in one link.
+              </h2>
+            </div>
+            {WALKTHROUGH.map(([title, body], i) => (
+              <div key={title} style={{ display: "flex", gap: 16 }}>
+                <span style={{
+                  flex: "0 0 auto", width: 28, height: 28, borderRadius: "50%",
+                  background: C.blue600, color: "#fff", display: "grid", placeItems: "center",
+                  fontSize: TYPE.sm, fontWeight: 700,
+                }}>
+                  {i + 1}
+                </span>
+                <div style={{ display: "grid", gap: 4 }}>
+                  <h3 style={{ margin: 0, fontSize: TYPE.lg, fontWeight: 600 }}>{title}</h3>
+                  <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>{body}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <InstantStoreMockup />
         </div>
       </section>
 
@@ -254,9 +415,10 @@ export default function InstantStoreV2({ onGo }) {
       <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 20 }}>
           <div style={{
-            display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 16, flexWrap: "wrap",
+            display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gap: 24, alignItems: "center",
           }}>
-            <div style={{ display: "grid", gap: 8 }}>
+            <div style={{ display: "grid", gap: 12, alignContent: "start" }}>
               <h2 style={{
                 fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
                 lineHeight: 1.25, margin: 0,
@@ -272,8 +434,11 @@ export default function InstantStoreV2({ onGo }) {
               <p style={{ margin: 0, fontSize: TYPE.base, color: T.textSubtle }}>
                 Earn up to 70% higher margins compared to other distribution channels.
               </p>
+              <div>
+                <Button variant="outlined" onClick={() => onGo?.("margin")}>Calculate your margin</Button>
+              </div>
             </div>
-            <Button variant="outlined" onClick={() => onGo?.("margin")}>Calculate your margin</Button>
+            <MiniProfitWidget />
           </div>
 
           {/* Figures below assume one real spec (Ana) rather than "$X.XX"
@@ -338,6 +503,38 @@ export default function InstantStoreV2({ onGo }) {
               { header: "Est. margin on a $60.80 sale", cells: ["$39.52", "$23.30", "$12.83", "$39.52", "Varies by provider"] },
             ]}
           />
+        </div>
+      </section>
+
+      {/* ── Blurb handles everything after the sale ──
+          The 8-tile grid above already lists "Effortless fulfillment" as
+          one of eight items; this gives the same claim its own moment
+          right where it matters most — straight after the cost numbers,
+          answering "what does that print cost actually buy me?" before
+          moving on to what's sellable. Adapted from the same POC (Ana),
+          not copied: these four facts are already established elsewhere
+          on this page (the FEATURES grid's own fulfillment/tax copy),
+          restated here as a standalone strip rather than new claims.
+          Plain background, not gray50 — "What you can sell" right after
+          it already is gray50, and back-to-back would merge the two
+          into one block with no visible seam. */}
+      <section style={{ padding: "clamp(48px, 6vw, 64px) 24px" }}>
+        <div style={{ maxWidth: 1160, margin: "0 auto", display: "grid", gap: 32 }}>
+          <h2 style={{
+            fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
+            lineHeight: 1.25, margin: 0,
+          }}>
+            Blurb handles everything after the sale.
+          </h2>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 32 }}>
+            {FULFILMENT_POINTS.map(([icon, title, body]) => (
+              <div key={title} style={{ display: "grid", gap: 8 }}>
+                <span className="ms" aria-hidden style={{ fontSize: 28, color: C.blue600 }}>{icon}</span>
+                <h3 style={{ margin: 0, fontSize: TYPE.base, fontWeight: 600 }}>{title}</h3>
+                <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>{body}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
