@@ -281,17 +281,33 @@ export default function InstantStoreV2({ onGo }) {
               ImageWrap Hardcover photo book, 80 pages. Blurb publishes no
               fulfilment pricing, so — same as every other margin figure
               in this app (Configurator.jsx, ProductOptions.jsx,
-              SellerLanding.jsx) — print cost is estimated as this spec's
-              own retail unit price (catalog.js: $41 base at 20 pages +
-              60 extra pages at $0.33 = $60.80) times FULFILMENT_FACTOR
-              (0.35) = $21.28. "Est. margin" assumes a $60.80 sale — the
-              same figure, so every channel is priced even with what
-              Blurb itself would charge for the book at retail.
+              SellerLanding.jsx) — the retail unit price is estimated from
+              catalog.js ($41 base at 20 pages + 60 extra pages at $0.33
+              = $60.80), used as "Est. margin"'s assumed sale price on
+              every channel: the seller sets their own price everywhere
+              here (Ana), Instant Store and Bookstore/Amazon alike, so
+              $60.80 stands in for whatever a seller might charge, not a
+              price only Blurb controls.
+
+              Print cost is where channels actually differ (Ana,
+              correcting an earlier pass that gave every channel the same
+              cost): Instant Store and RPI Print API get the discounted
+              "seller pricing" rate this app already uses everywhere
+              else — retail price × FULFILMENT_FACTOR (0.35) = $21.28.
+              Blurb Bookstore and Amazon don't get that rate, and there's
+              no existing figure anywhere in this codebase for what they
+              pay instead, so $37.50 is a placeholder Ana explicitly
+              okayed guessing at, picked so Instant Store's margin lands
+              close to the page's own "up to 70% higher" claim rather
+              than an arbitrary number. Worth a real figure before this
+              ships anywhere real — everything else on this row chain is
+              at least traceable to a source; this one number isn't.
 
               RPI Print API replaces Ingram (Ana: Ingram is trade-only,
               per catalog.js — it doesn't carry photo books at all) and
               carries Instant Store's own cost structure: same
-              infrastructure, same 0% Blurb-side commission.
+              infrastructure, same discounted print cost, same 0%
+              Blurb-side commission.
 
               The spec itself is now stated on the page, not just here
               in a comment (Ana: "you need to somehow say this is based
@@ -305,7 +321,7 @@ export default function InstantStoreV2({ onGo }) {
             className="keep-more-table"
             columnHeaders={["", "Instant Store", "Blurb Bookstore", "Amazon", "RPI Print API", "Other print-on-demand solutions"]}
             rows={[
-              { header: "Print cost", cells: ["$21.28", "$21.28", "$21.28", "$21.28", "Varies by provider"] },
+              { header: "Print cost", cells: ["$21.28", "$37.50", "$37.50", "$21.28", "Varies by provider"] },
               { header: "Commission", cells: [
                 "0%", "0%",
                 "Amazon's distribution fee ($1.35 per book + 15% of your list price)",
@@ -319,7 +335,7 @@ export default function InstantStoreV2({ onGo }) {
                 "None", "None", "None", "None",
                 "Payment processing fees, platform fees, hosting fees",
               ] },
-              { header: "Est. margin on a $60.80 sale", cells: ["$39.52", "$39.52", "$29.05", "$39.52", "Varies by provider"] },
+              { header: "Est. margin on a $60.80 sale", cells: ["$39.52", "$23.30", "$12.83", "$39.52", "Varies by provider"] },
             ]}
           />
         </div>
