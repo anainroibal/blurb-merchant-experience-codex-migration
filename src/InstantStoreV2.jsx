@@ -292,8 +292,18 @@ const STEPS = [
   /* "70% more of every sale" -> the calculated "3x more profit than
      selling through Amazon" claim (Ana: align it to the 3x we agreed) —
      same figure and caveats as Sell v2's Instant Store card and the
-     "Keep more of what you earn" table below. */
-  ["Set your price", "Upload your book and set your selling price. Our [new seller pricing](?stage=margin) means up to 3x more profit than selling through Amazon."],
+     "Keep more of what you earn" table below. Then "than selling
+     through Amazon" -> "than selling through our other retail
+     distribution channels" (Ana) — broadens the comparison from Amazon
+     specifically to the whole Retail Distribution card. Worth flagging,
+     same as Sell v2's own tick: the 3x figure is Amazon's math
+     specifically (0% Instant Store commission vs Amazon's $1.35 + 15%);
+     Blurb Bookstore's own numbers in the table below work out closer to
+     1.7x, since it charges no commission the way Amazon does. "Seller
+     pricing" -> "Instant Store pricing" (Ana), renamed everywhere on
+     this page — "you're a seller on retail distro but not getting the
+     price so it's not a good name for it". */
+  ["Set your price", "Upload your book and set your selling price. Our [new Instant Store pricing](?stage=margin) means up to 3x more profit than selling through our other retail distribution channels."],
   ["Create your product page", "Our AI helps you draft your title, description, and keywords. Your customizable product page is ready in minutes."],
   ["Share & sell", "Share your unique link or QR code on your bio, newsletter, or social media. We handle the printing, shipping, and sales tax."],
 ];
@@ -312,7 +322,7 @@ const FEATURES = [
   ["auto_stories", "Sell books, magazines & more",
    "Your Instant Store works for photo books, magazines, notebooks, and journals."],
   ["all_inclusive", "No minimums, ever",
-   "Sell one copy or one thousand. Seller pricing applies from your very first sale."],
+   "Sell one copy or one thousand. Instant Store pricing applies from your very first sale."],
   /* Was literally "Lorem ipsum dolor sit amet" in the Figma frame
      itself (kept as-is for a while, same spirit as the Showcase section
      on Sell v2 staying placeholder) — now drafted, in the same
@@ -338,7 +348,7 @@ const FAQS = [
    "Yes. Your Instant Store link works for any buyer, and each order prints at the facility nearest them."],
   ["How do I share my Instant Store?",
    "Anywhere a link goes: a social bio, a newsletter, a QR code on a stall, or behind a button on a site you already run."],
-  ["Is seller pricing available on every order?",
+  ["Is Instant Store pricing available on every order?",
    "Yes. The price you set is the price your buyer pays on every order, with no separate wholesale or retail tiers to track."],
   ["Can I buy my own book through my Instant Store link?",
    "Yes. The same link works for you, at the price you set."],
@@ -387,13 +397,24 @@ export default function InstantStoreV2({ onGo }) {
                 and nothing above the fold said so directly (Ana) — the
                 H1's "your profit" hints at it, but a reader has to reach
                 "Keep more of what you earn" much further down the page
-                to see the actual number. Same 70% figure that section
-                and the FEATURES grid's own "Maximum profit" tile already
-                use, not a new claim. */}
+                to see the actual number.
+
+                Was "earn up to 70% more than other distribution
+                channels" — a profit claim under the same accuracy
+                problem flagged on Sell v2's own tick (70% is the print-
+                cost discount, not a profit multiple). Corrected the
+                same way (Ana): this line now makes the print-cost claim
+                it can actually back up, same 70% figure the FEATURES
+                grid's own "Maximum profit" tile already uses, rather
+                than the profit claim "Keep more of what you earn" below
+                makes properly (as 3x, calculated). "Seller pricing" ->
+                "Instant Store pricing" (Ana: "you're a seller on retail
+                distro but not getting the price so it's not a good name
+                for it") — renamed everywhere on this page. */}
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span className="ms" aria-hidden style={{ fontSize: 20, color: C.blue600 }}>trending_up</span>
               <span style={{ fontSize: TYPE.sm, fontWeight: 600 }}>
-                Seller pricing: earn up to 70% more than other distribution channels
+                Instant Store pricing: access up to 70% lower print costs
               </span>
             </div>
           </div>
@@ -539,9 +560,18 @@ export default function InstantStoreV2({ onGo }) {
                   ships anywhere real. No asterisk (Ana: "makes no
                   sense") — it pointed at nothing, since the outline
                   never carried a footnote to land on. "Margins" ->
-                  "profit" per the CRO brief's confirmed terminology. */}
+                  "profit" per the CRO brief's confirmed terminology.
+
+                  "70% higher profit" carried the same accuracy problem
+                  flagged elsewhere on this page and on Sell v2 (70% is
+                  the print-cost discount, not a profit multiple) —
+                  brought in line with the same calculated "3x" claim
+                  the hero callout and STEPS now make, not left as the
+                  odd one out once those were fixed. Not explicitly
+                  asked for this pass; flagged to Ana in case narrower
+                  scope was intended. */}
               <p style={{ margin: 0, fontSize: TYPE.base, color: T.textSubtle }}>
-                Earn up to 70% higher profit compared to other distribution channels.
+                Earn up to 3x more profit than selling through other distribution channels.
               </p>
               <div>
                 <Button variant="outlined" onClick={() => onGo?.("margin")}>Calculate your profit</Button>

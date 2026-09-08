@@ -109,10 +109,20 @@ const SELL_PATHS = [
        `linkStage` instead of a plain string, same pattern the
        comparison table's Profit row already uses. `suffix` keeps the
        link scoped to "Up to 3x more profit" itself (Ana), not the
-       whole sentence — "than selling through Amazon" is context for
-       the claim, not part of what's clickable. */
+       whole sentence — the rest is context for the claim, not part of
+       what's clickable.
+
+       "than selling through Amazon" -> "than selling through our
+       retail distribution channels" (Ana) broadens the comparison from
+       Amazon specifically to the whole Retail Distribution card
+       (Amazon, Ingram, Blurb Bookstore) — worth flagging that the 3.08x
+       figure above is Amazon's math only. Blurb Bookstore's own numbers
+       in the "Keep more of what you earn" table ($39.52 vs $23.30) work
+       out to about 1.7x, not 3x, since it charges no commission the way
+       Amazon does; Ingram isn't costed anywhere in this app at all. The
+       claim as worded now overstates the Bookstore/Ingram case. */
     ticks: [
-      { text: "Up to 3x more profit", suffix: " than selling through Amazon", linkStage: "margin" },
+      { text: "Up to 3x more profit", suffix: " than selling through our retail distribution channels", linkStage: "margin" },
       "No subscription, no additional fees",
       "One link to share, no store required",
     ],
@@ -299,7 +309,7 @@ const COMPARE_ROWS = [
     { status: "success", text: "None: print on demand" },
   ] },
   { label: "Profit", cells: [
-    { status: "success", linkStage: "margin", linkLabel: "Seller pricing", text: ", no additional fees" },
+    { status: "success", linkStage: "margin", linkLabel: "Instant Store pricing", text: ", no additional fees" },
     { status: "warning", text: "Retail pricing; fees vary by retailer" },
     { status: "warning", text: "Custom quote, bulk discounting" },
     { status: "success", text: "Same pricing as Instant Store, no additional fees" },
@@ -420,8 +430,8 @@ const FAQS = [
    "Only Amazon and Ingram, both under Retail Distribution, require retail listing. Your Instant Store link doesn't need one."],
   ["What's the difference between selling directly to readers and selling through Amazon or Ingram?",
    "On your Instant Store, you bring the buyer and set the price, so what's left after your printing cost is yours. Through Amazon or Ingram, the retailer brings the buyer and takes its own cut."],
-  ["Can I sell more than books, like magazines, notebooks, or wall art, the same way?",
-   "Yes. Magazines and notebooks & journals are sellable through most of these routes. Availability varies by channel, so check each route's product page for specifics."],
+  ["Can I sell more than books, like magazines or notebooks, the same way?",
+   "Yes. Magazines and notebooks & journals are sellable through most of these routes; wall art isn't sellable through any of them yet. Availability varies by channel, so check each route's product page for specifics."],
   ["How do I decide which of Blurb's selling options is right for me?",
    "Start with the comparison table above. It lines up best-for, profit, storefront and audience across all four routes so you can compare at a glance."],
 ];
@@ -623,8 +633,9 @@ export default function SellLandingV2({ onGo }) {
                 invented — the one place the brief itself flags as
                 unverified (SKU-based margin comparisons like "30% more
                 than the Bookstore") is left out; "Seller pricing, no
-                additional fees" and "Same pricing as Instant Store" are
-                both lines the brief states directly, not comparisons.
+                additional fees" (now relabeled "Instant Store pricing",
+                see below) and "Same pricing as Instant Store" are both
+                lines the brief states directly, not comparisons.
 
                 Hand-built rather than Codex's ComparisonTable: that
                 component's cells are Markdown strings run through
@@ -814,7 +825,9 @@ export default function SellLandingV2({ onGo }) {
           both plain white, back to back, with nothing separating them).
           Not gray50 — Showcase right above it already uses that, and
           two grays in a row would just move the "both look the same"
-          problem rather than fix it. */}
+          problem rather than fix it. Trusted By below is back to white
+          now (see its own note) — this tint is what gives that section
+          something to contrast against. */}
       <section style={{ padding: "clamp(40px, 5vw, 56px) 24px", borderTop: `1px solid ${T.border}`, background: T.bgAccentSubtle }}>
         <div style={{
           maxWidth: 1240, margin: "0 auto", display: "grid", gap: 16,
@@ -834,10 +847,12 @@ export default function SellLandingV2({ onGo }) {
           Minted, Treering, Storyworth, We Can Books — names confirmed
           by Figma comment #63), exported straight off the frame rather
           than reproduced as styled text, so the real marks show up
-          instead of a guess at their wordmarks. Gray50, same as
-          Showcase two sections up but not adjacent to it, so Stats'
-          blue tint keeps the two grays from sitting back to back. */}
-      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px", background: C.gray50 }}>
+          instead of a guess at their wordmarks. White, not gray50 (Ana:
+          it and Stats' light blue tint sit back to back and read as two
+          near-identical washed-out tones rather than two distinct
+          sections) — white gives Stats' tint something to actually
+          contrast against. */}
+      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px", background: T.bgNeutral }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <img
             src="/assets/trusted-by-logos.png"
@@ -862,7 +877,7 @@ export default function SellLandingV2({ onGo }) {
             fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
             lineHeight: 1.25, margin: 0,
           }}>
-            Ready to share your project with the world?
+            Ready to share your book with the world?
           </h2>
           <p style={{ margin: 0, fontSize: TYPE.lg, color: T.textSubtle, lineHeight: 1.6 }}>
             Create your book, magazine, notebook or journal today and unlock your selling potential.
