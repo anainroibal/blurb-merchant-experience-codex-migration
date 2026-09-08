@@ -343,10 +343,39 @@ const SELL_FORMATS = [
     desc: "Choose from blank, lined, square, or dot-grid notebook pages, plus easily add photos or illustrations within the pages." },
 ];
 
+/* Real stories, images and quotes lifted from blurb.com/stories-that-bind
+   (Ana: "use the imagery and copy on this page as placeholder") — this
+   section's own outline was still lorem-ipsum (Figma comments #61/#74
+   marked it as unfinished), so this replaces invented placeholder text
+   with the company's own real, published customer stories instead.
+   Quotes are copied verbatim, ellipses and bracketed insertions
+   included — that's how blurb.com itself presents them, not a
+   transcription artifact. */
 const SHOWCASE = [
-  ["Product Name", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.", "Reviewer Name"],
-  ["Product Name", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.", "Reviewer Name"],
-  ["Product Name", "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.", "Reviewer Name"],
+  {
+    img: "https://assets.blurb.com/_astro/sonder.CCg793-X_ZXcnk.webp",
+    alt: "Sonder, a poetry book by Diane Saint",
+    title: "Poetry as resistance, refuge and freedom",
+    quote: "In Sonder, I explore the profound complexity of...nonbinary and Two-Spirit experiences through poetry. [Blurb gives me] creative freedom. I was able to keep my book's personality as I wanted it.",
+    attribution: "Diane Saint",
+    cta: "Read Sonder", href: "https://www.blurb.com/b/12245117-sonder",
+  },
+  {
+    img: "https://assets.blurb.com/_astro/rafid.B2xZ7pre_Zgdf0g.webp",
+    alt: "Rafid Naeem behind the camera",
+    title: "The world, captured through his lens",
+    quote: "Creating books used to be complicated and inaccessible, but Blurb has truly revolutionized the self-publishing space. It has empowered artists by giving them an easy...way to share their stories.",
+    attribution: "Rafid Naeem",
+    cta: "Watch Rafid at work", href: "https://www.youtube.com/rafidn",
+  },
+  {
+    img: "https://assets.blurb.com/_astro/explore.ByuDNTlG_Z2ceXPa.webp",
+    alt: "What a Day, a book by Michele DeVries and Mark Sprague",
+    title: "Life on the road, stories in print",
+    quote: "When we decided to pursue self-publishing, Blurb felt like a natural choice given the quality of their products and all the...tools [that help] turning an idea into a sellable product. We're huge fans.",
+    attribution: "Michele DeVries & Mark Sprague",
+    cta: "Explore What a Day", href: "https://www.blurb.com/b/12026231-what-a-day",
+  },
 ];
 
 const STATS = [
@@ -723,34 +752,45 @@ export default function SellLandingV2({ onGo }) {
         </div>
       </section>
 
-      {/* ── Showcase ── still lorem-ipsum in the outline itself (Figma
-          comments #61/#74 mark this section as still being reworked) —
-          kept as a visible placeholder rather than invented copy. */}
+      {/* ── Showcase ── the outline's own lorem-ipsum (Figma comments
+          #61/#74 marked this section as still unfinished) replaced with
+          blurb.com/stories-that-bind's own real customer stories (Ana),
+          not invented testimonials — see the SHOWCASE note above. No
+          header button any more: the outline's own was an unsourced
+          "Button text" placeholder, and each story now has its own real
+          link, so a generic top-level CTA had nothing left to point at. */}
       <section style={{ background: C.gray50, padding: "clamp(56px, 7vw, 80px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 40 }}>
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
-            <div style={{ display: "grid", gap: 8 }}>
-              <h2 style={{
-                fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
-                lineHeight: 1.25, margin: 0,
-              }}>
-                Showcase title
-              </h2>
-              <p style={{ margin: 0, fontSize: TYPE.base, color: T.textSubtle, maxWidth: 620 }}>
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.
-              </p>
-            </div>
-            <Button variant="outlined">Button text</Button>
+          <div style={{ display: "grid", gap: 8, textAlign: "center" }}>
+            <h2 style={{
+              fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
+              lineHeight: 1.25, margin: 0,
+            }}>
+              Real books by real creators, just like you
+            </h2>
+            <p style={{ margin: "0 auto", fontSize: TYPE.base, color: T.textSubtle, maxWidth: 620 }}>
+              Books build connections across time, space, and community. Yours will, too.
+            </p>
           </div>
 
           <div style={{ display: "grid", gap: 24, gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
-            {SHOWCASE.map(([name, quote, reviewer], i) => (
-              <div key={i} style={{ display: "grid", gap: 8 }}>
-                <div style={{ borderRadius: R.lg, aspectRatio: "4 / 3", background: "#e8e8e8" }} />
-                <div style={{ fontSize: TYPE.sm, color: T.textSubtle, marginTop: 4 }}>Sold with</div>
-                <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE.lg, fontWeight: 500 }}>{name}</div>
-                <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.6 }}>“{quote}”</p>
-                <div style={{ fontSize: TYPE.sm, color: T.textSubtle }}>{reviewer}</div>
+            {SHOWCASE.map(story => (
+              <div key={story.title} style={{ display: "grid", gap: 8 }}>
+                <img
+                  src={story.img}
+                  alt={story.alt}
+                  loading="lazy"
+                  style={{ width: "100%", aspectRatio: "4 / 3", objectFit: "cover", borderRadius: R.lg, display: "block" }}
+                />
+                <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE.lg, fontWeight: 500, marginTop: 4 }}>{story.title}</div>
+                <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.6 }}>“{story.quote}”</p>
+                <div style={{ fontSize: TYPE.sm, color: T.textSubtle }}>—{story.attribution}</div>
+                <a
+                  href={story.href} target="_blank" rel="noopener noreferrer"
+                  style={{ fontSize: TYPE.sm, color: C.blue600, textDecoration: "underline", marginTop: 4 }}
+                >
+                  {story.cta}
+                </a>
               </div>
             ))}
           </div>
