@@ -206,10 +206,10 @@ const NAV = [
          (DES-482 #5d), which is a good sign it reads. */
       ["Retail distribution", "List on Amazon, Ingram and the Blurb Bookstore.", null, "seller"],
       /* "Bulk orders" renamed again (Ana) — it was itself a rename from
-         "Volume orders" for SEO. "Bulk Printing" names what the route
-         actually is rather than the quantity threshold that gets you
-         there. */
-      ["Bulk Printing", "Volume discounts start at 100 copies. We quote the run and handle the logistics."],
+         "Volume orders" for SEO. "Bulk Printing Services" names what
+         the route actually is rather than the quantity threshold that
+         gets you there. */
+      ["Bulk Printing Services", "Volume discounts start at 100 copies. We quote the run and handle the logistics."],
       ["API", "Integrate our print API infrastructure directly into your app or website."],
     ]},
   ], featured: {
@@ -227,10 +227,11 @@ const NAV = [
 
   { label: "Services", href: "/large-order-services", columns: [
     { heading: "Services", items: [
-      ["Bulk Printing", "Volume discounts start at 100 copies. We quote the run and handle the logistics."],
+      ["Bulk Printing Services", "Volume discounts start at 100 copies. We quote the run and handle the logistics."],
       /* Moved out of the featured panel (Ana) and into the list, as a
-         normal item alongside Bulk Printing — no more "Featured" card
-         here. Named "RPI Print API" per the design review (item 27):
+         normal item alongside Bulk Printing Services — no more
+         "Featured" card here. Named "RPI Print API" per the design
+         review (item 27):
          orchestration at scale, not fulfilment, with RPI as the outer
          layer and Blurb inside it — shortened again to just "API"
          (Ana), same as every other nav mention of it. Description
@@ -348,7 +349,7 @@ const LEAN_NAV = [
       ["Blurb Bookstore", null, null, "sellv2"],
       ["Amazon", null, null, "sellv2"],
       ["Ingram", null, null, "sellv2"],
-      ["Large Order Services"],
+      ["Bulk Printing Services"],
       ["API Printing"],
     ]},
   ]},
@@ -372,19 +373,20 @@ const LEAN_NAV = [
      nav sitemap) — not a duplication bug to clean up, the real nav
      really does list each in two places.
 
-     "Large Order Services" is NOT renamed to "Bulk Printing" here
-     (2026-09-08) despite the rename everywhere else Ana asked for it —
-     this whole nav's job is to mirror what blurb.com actually says
-     today, and today it still says "Large Order Services" (both times
-     it appears). Renaming it here would make the lean nav wrong about
-     the live site, not just differently worded. Worth telling Ana this
-     is the one place the rename didn't apply, and why. */
+     "Large Order Services" -> "Bulk Printing Services" here too
+     (2026-09-08, Ana, explicitly naming both navs this time) — this
+     nav's whole job up to now had been to mirror blurb.com's own labels
+     exactly, which is why this one item was deliberately left renamed
+     everywhere else and not here. That's now a known, intentional
+     departure from the live site rather than an oversight: this lean
+     nav no longer matches blurb.com's real "Large Order Services"
+     wording for this item specifically. */
   { label: "Resources", href: "/blog", columns: [
     { heading: "Resources", items: [
       ["Blog"],
       ["BookWright Templates"],
       ["Help Center"],
-      ["Large Order Services"],
+      ["Bulk Printing Services"],
       ["API Printing"],
     ]},
   ]},
