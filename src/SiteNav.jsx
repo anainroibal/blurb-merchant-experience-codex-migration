@@ -130,7 +130,7 @@ const NAV = [
   ], featured: {
     heading: "Featured",
     title: "Need to order in volume?",
-    body: "Volume discounts start at 100+ copies. Our Large Order Services quotes the run and handles the logistics.",
+    body: "Volume discounts start at 100+ copies. Our Bulk Printing Services quotes the run and handles the logistics.",
     cta: "Learn more",
   }},
 
@@ -205,7 +205,11 @@ const NAV = [
          apart. "Retail distribution" is Ana's own word for the group
          (DES-482 #5d), which is a good sign it reads. */
       ["Retail distribution", "List on Amazon, Ingram and the Blurb Bookstore.", null, "seller"],
-      ["Bulk orders", "Volume discounts start at 100 copies. We quote the run and handle the logistics."],
+      /* "Bulk orders" renamed again (Ana) — it was itself a rename from
+         "Volume orders" for SEO. "Bulk Printing" names what the route
+         actually is rather than the quantity threshold that gets you
+         there. */
+      ["Bulk Printing", "Volume discounts start at 100 copies. We quote the run and handle the logistics."],
       ["API", "Integrate our print API infrastructure directly into your app or website."],
     ]},
   ], featured: {
@@ -223,9 +227,9 @@ const NAV = [
 
   { label: "Services", href: "/large-order-services", columns: [
     { heading: "Services", items: [
-      ["Bulk orders", "Volume discounts start at 100 copies. We quote the run and handle the logistics."],
+      ["Bulk Printing", "Volume discounts start at 100 copies. We quote the run and handle the logistics."],
       /* Moved out of the featured panel (Ana) and into the list, as a
-         normal item alongside Bulk orders — no more "Featured" card
+         normal item alongside Bulk Printing — no more "Featured" card
          here. Named "RPI Print API" per the design review (item 27):
          orchestration at scale, not fulfilment, with RPI as the outer
          layer and Blurb inside it — shortened again to just "API"
@@ -366,7 +370,15 @@ const LEAN_NAV = [
   /* Large Order Services and API Printing sit under BOTH Sell &
      Self-Publish and Resources on the live site (confirmed off its own
      nav sitemap) — not a duplication bug to clean up, the real nav
-     really does list each in two places. */
+     really does list each in two places.
+
+     "Large Order Services" is NOT renamed to "Bulk Printing" here
+     (2026-09-08) despite the rename everywhere else Ana asked for it —
+     this whole nav's job is to mirror what blurb.com actually says
+     today, and today it still says "Large Order Services" (both times
+     it appears). Renaming it here would make the lean nav wrong about
+     the live site, not just differently worded. Worth telling Ana this
+     is the one place the rename didn't apply, and why. */
   { label: "Resources", href: "/blog", columns: [
     { heading: "Resources", items: [
       ["Blog"],

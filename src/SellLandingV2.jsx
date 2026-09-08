@@ -97,9 +97,12 @@ const SELL_PATHS = [
        link/no-store point (Ana: not the strongest value here) — closer
        to how the brief itself pitches it ("post it anywhere: bio,
        story, newsletter, DM", "no additional storefront to build").
-       Payment methods tick cut to make room within 3. */
+       Payment methods tick cut to make room within 3. First tick links
+       to the profit calculator (Ana) — a tick object with `linkStage`
+       instead of a plain string, same pattern the comparison table's
+       Profit row already uses. */
     ticks: [
-      "Seller pricing: print costs up to 70% lower than retail",
+      { text: "Seller pricing: print costs up to 70% lower than retail", linkStage: "margin" },
       "No subscription, no additional fees",
       "One link to share, no store required",
     ],
@@ -125,7 +128,7 @@ const SELL_PATHS = [
   {
     id: "los", name: "Bulk Printing Services", icon: "local_shipping",
     bestFor: "High-touch support",
-    line: "Get dedicated support and volume discounts for orders of 100+ copies, perfect for events, clients, or resale.",
+    line: "Get concierge service and volume discounts for orders of 100+ copies, perfect for events, clients, or resale.",
     /* "Dedicated account team" -> "concierge service" (Ana) — matches
        the brief's own contrast for this route ("concierge service
        rather than self-service"). */
@@ -518,16 +521,29 @@ export default function SellLandingV2({ onGo }) {
                     scannable value props from the CRO brief rather than
                     the mock's own full sentences. */}
                 <ul style={{ display: "grid", gap: 6, margin: 0, padding: 0, listStyle: "none", width: "100%" }}>
-                  {card.ticks.map(tick => (
-                    <li key={tick} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
-                      <span className="ms" aria-hidden style={{ fontSize: 18, color: C.blue600, flex: "0 0 auto", lineHeight: "var(--codex-font-line-height-snug)" }}>
-                        check_circle
-                      </span>
-                      <span style={{ fontSize: TYPE.sm, color: "var(--codex-color-semantic-text-bold)", lineHeight: 1.4 }}>
-                        {tick}
-                      </span>
-                    </li>
-                  ))}
+                  {card.ticks.map(tick => {
+                    const { text, linkStage } = typeof tick === "string" ? { text: tick, linkStage: null } : tick;
+                    return (
+                      <li key={text} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+                        <span className="ms" aria-hidden style={{ fontSize: 18, color: C.blue600, flex: "0 0 auto", lineHeight: "var(--codex-font-line-height-snug)" }}>
+                          check_circle
+                        </span>
+                        {linkStage ? (
+                          <a
+                            href="#"
+                            onClick={e => { e.preventDefault(); onGo?.(linkStage); }}
+                            style={{ fontSize: TYPE.sm, color: C.blue600, textDecoration: "underline", lineHeight: 1.4 }}
+                          >
+                            {text}
+                          </a>
+                        ) : (
+                          <span style={{ fontSize: TYPE.sm, color: "var(--codex-color-semantic-text-bold)", lineHeight: 1.4 }}>
+                            {text}
+                          </span>
+                        )}
+                      </li>
+                    );
+                  })}
                 </ul>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 4 }}>
                   {card.links.map(([label, dest]) => (
