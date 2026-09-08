@@ -318,7 +318,7 @@ const FAQS = [
   ["Can I sell more than books, like magazines, notebooks, or wall art, the same way?",
    "Yes. Magazines and notebooks & journals are sellable through most of these routes. Availability varies by channel, so check each route's product page for specifics."],
   ["How do I decide which of Blurb's selling options is right for me?",
-   "Start with the comparison table above. It lines up best-for, profit margin, storefront and audience across all four routes so you can compare at a glance."],
+   "Start with the comparison table above. It lines up best-for, profit, storefront and audience across all four routes so you can compare at a glance."],
 ];
 
 export default function SellLandingV2({ onGo }) {

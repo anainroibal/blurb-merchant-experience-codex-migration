@@ -136,9 +136,13 @@ const FULFILMENT_POINTS = [
    reused here as a companion to the comparison table rather than a
    replacement for it (Ana wasn't sure the table alone was landing).
    Same $60.80 / $21.28 / $39.52 the table already uses for this spec,
-   not a second set of numbers. */
+   not a second set of numbers. Labels corrected against the CRO brief's
+   confirmed pricing terminology (Section 3.1): "Listing price" is the
+   named term for the price a seller sets, not a bare "Your price" that
+   relies on context to mean anything; "Your profit" is the confirmed
+   headline term in place of "margin". */
 function MiniProfitWidget() {
-  const ROWS = [["Your price", "$60.80"], ["Print cost", "$21.28"]];
+  const ROWS = [["Your listing price", "$60.80"], ["Print cost", "$21.28"]];
   return (
     <div style={{
       border: `1px solid ${T.border}`, borderRadius: R.lg, padding: 20,
@@ -152,7 +156,7 @@ function MiniProfitWidget() {
       ))}
       <div style={{ height: 1, background: T.border }} />
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span style={{ fontWeight: 600 }}>You keep</span>
+        <span style={{ fontWeight: 600 }}>Your profit</span>
         <span style={{
           background: "#d7f4e0", color: "#166640", padding: "4px 12px", borderRadius: 999,
           fontWeight: 700, fontSize: TYPE.sm,
@@ -256,7 +260,7 @@ const SELL_FORMATS = [
    such below). */
 
 const STEPS = [
-  ["Set your price", "Upload your book and set your selling price. Our [new seller pricing](?stage=margin) means you keep up to 50% more of every sale."],
+  ["Set your price", "Upload your book and set your selling price. Our [new seller pricing](?stage=margin) means you keep up to 70% more of every sale."],
   ["Create your product page", "Our AI helps you draft your title, description, and keywords. Your customizable product page is ready in minutes."],
   ["Share & sell", "Share your unique link or QR code on your bio, newsletter, or social media. We handle the printing, shipping, and sales tax."],
 ];
@@ -504,12 +508,13 @@ export default function InstantStoreV2({ onGo }) {
                   why this figure is still worth confirming before this
                   ships anywhere real. No asterisk (Ana: "makes no
                   sense") — it pointed at nothing, since the outline
-                  never carried a footnote to land on. */}
+                  never carried a footnote to land on. "Margins" ->
+                  "profit" per the CRO brief's confirmed terminology. */}
               <p style={{ margin: 0, fontSize: TYPE.base, color: T.textSubtle }}>
-                Earn up to 70% higher margins compared to other distribution channels.
+                Earn up to 70% higher profit compared to other distribution channels.
               </p>
               <div>
-                <Button variant="outlined" onClick={() => onGo?.("margin")}>Calculate your margin</Button>
+                <Button variant="outlined" onClick={() => onGo?.("margin")}>Calculate your profit</Button>
               </div>
             </div>
             <MiniProfitWidget />
@@ -574,7 +579,7 @@ export default function InstantStoreV2({ onGo }) {
                 "None", "None", "None", "None",
                 "Payment processing fees, platform fees, hosting fees",
               ] },
-              { header: "Est. margin on a $60.80 sale", cells: ["$39.52", "$23.30", "$12.83", "$39.52", "Varies by provider"] },
+              { header: "Est. profit on a $60.80 sale", cells: ["$39.52", "$23.30", "$12.83", "$39.52", "Varies by provider"] },
             ]}
           />
         </div>
