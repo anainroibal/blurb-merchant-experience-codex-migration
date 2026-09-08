@@ -19,7 +19,7 @@ import Faq from "./Faq.jsx";
    v1's "Choose how to sell your book" cards Instant Store, Bookstore,
    Amazon and Ingram individually — each a distinct product-facing
    channel. This outline groups Bookstore/Amazon/Ingram into one
-   "Retail Distribution" card and gives Large Order Services and RPI
+   "Retail Distribution" card and gives Bulk Printing Services and RPI
    Print API — which v1's table already described in text-only rows,
    with no card of their own — full card-level billing alongside
    Instant Store. That's a real IA change, not a restyle, so it's
@@ -91,7 +91,7 @@ const SELL_PATHS = [
     ],
   },
   {
-    id: "los", name: "Large Order Services", icon: "local_shipping",
+    id: "los", name: "Bulk Printing Services", icon: "local_shipping",
     line: "Get dedicated support and volume discounts for orders of 100+ copies, perfect for events, clients, or resale.",
     links: [["Get a custom quote", { href: "https://www.blurb.com/large-order-services" }]],
   },
@@ -185,13 +185,13 @@ function StatusDot({ status }) {
   );
 }
 
-const COMPARE_COLUMNS = ["Instant Store", "Retail Distribution", "Large Order Services", "RPI Print API"];
+const COMPARE_COLUMNS = ["Instant Store", "Retail Distribution", "Bulk Printing Services", "RPI Print API"];
 
 const COMPARE_ROWS = [
   { label: "Best for", cells: [
     { status: "success", text: "Sellers with their own audience: followers, a newsletter, no store yet" },
     { status: "success", text: "Reaching new readers who don't know you yet" },
-    { status: "success", text: "Bulk orders for an event, gift, or resale" },
+    { status: "success", text: "Bulk printing for an event, gift, or resale" },
     { status: "success", text: "Developers building print into their own product" },
   ] },
   { label: "Setup", cells: [
@@ -304,7 +304,7 @@ const TRUSTED_BY = ["Canva", "minted", "Treering", "Storyworth", "We Can Books"]
    route cards on v1's Sell page were before Ana had copy to react to. */
 const FAQS = [
   ["What are the different ways to sell a self-published book with Blurb?",
-   "Four: your own Instant Store, Retail Distribution through Blurb's Bookstore, Amazon and Ingram, Large Order Services for bulk stock, or the RPI Print API for your own storefront."],
+   "Four: your own Instant Store, Retail Distribution through Blurb's Bookstore, Amazon and Ingram, Bulk Printing Services for large-quantity orders, or the RPI Print API for your own storefront."],
   ["Where's the best place to sell my books online?",
    "It depends on your audience. An Instant Store is best if you already have followers to sell to directly; Retail Distribution reaches readers who are browsing rather than looking for you specifically."],
   ["Can I sell books without holding inventory or paying upfront?",
@@ -363,7 +363,7 @@ export default function SellLandingV2({ onGo }) {
             You made it. We help you sell it.
           </h1>
           <p style={{ fontSize: TYPE.lg, lineHeight: 1.55, color: T.textSubtle, margin: 0, maxWidth: 640 }}>
-            Four ways to reach readers: an Instant Store we build for you, global retail distribution, bulk orders, or your own platform. We print and ship every order, so you can focus on creating.
+            Four ways to reach readers: an Instant Store we build for you, global retail distribution, bulk printing, or your own platform. We print and ship every order, so you can focus on creating.
           </p>
           <Button as="a" href="#paths" style={{ marginTop: 8 }}>Explore our selling tools</Button>
         </div>
