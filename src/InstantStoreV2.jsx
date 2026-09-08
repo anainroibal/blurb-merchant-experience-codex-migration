@@ -101,6 +101,28 @@ function InstantStoreMockup() {
           <span className="ms" aria-hidden style={{ fontSize: 16 }}>chevron_right</span>
         </div>
       </div>
+
+      {/* More by this author — the real PDP's own feature, missing from
+          every earlier pass of this mockup (Ana: "we're missing the fact
+          we show other books by the author, like in the original
+          figma"). Same cover photo reused per thumbnail, since no second
+          placeholder book exists — an honest reuse, same spirit as Book
+          preview above reusing the cover for its own placeholder. */}
+      <div style={{ borderTop: `1px solid ${T.border}`, padding: "16px 24px", display: "grid", gap: 10 }}>
+        <div style={{ fontWeight: 600, fontSize: TYPE.sm }}>More by Jamie Reyes</div>
+        <div style={{ display: "flex", gap: 10 }}>
+          {[1, 2, 3].map(i => (
+            <img
+              key={i}
+              src={MOCKUP_COVER.img}
+              alt=""
+              aria-hidden
+              loading="lazy"
+              style={{ width: 64, aspectRatio: "3 / 4", objectFit: "cover", borderRadius: R.sm, border: `1px solid ${T.border}`, display: "block" }}
+            />
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
@@ -115,10 +137,17 @@ function InstantStoreMockup() {
    checkout in the abstract (Ana). Point 4 folds in the no-inventory /
    pay-only-for-what-ships point (Ana) — the same fact FULFILMENT_POINTS'
    own "Print on demand" card makes further down, restated here since
-   it belongs with "Blurb prints and ships it," not as a separate claim. */
+   it belongs with "Blurb prints and ships it," not as a separate claim.
+
+   Points 1 and 2 merged into one (Ana: too many points) — the product
+   page and the page preview are both part of the same "here's what a
+   buyer sees" fact, not two separate steps. The merge also picks up a
+   fact the mockup itself was missing (Ana: "we're missing the fact we
+   show other books by the author, like in the original figma"), now
+   added to both the copy here and the mockup's own "More by this
+   author" section below. */
 const WALKTHROUGH = [
-  ["A real product page", "Cover, description, and pricing: everything a buyer needs to feel confident before they purchase."],
-  ["See inside before you buy", "An interactive preview lets buyers flip through real pages before they commit, building the confidence that turns interest into a sale."],
+  ["Showcase your work", "Cover, description, and pricing, plus an interactive preview so buyers can flip through real pages, and other books by the author to discover next: everything a buyer needs to feel confident before they purchase."],
   ["One click to buy", "A single 'Buy now' takes buyers straight to checkout, including Apple Pay, Google Pay, and PayPal. No cart to build, no plugins to configure."],
   ["Blurb prints and ships it", "No inventory to buy upfront: every order triggers a fresh print run, and you only pay for what ships. Your buyer gets a tracked delivery, and you never touch a box."],
 ];
@@ -260,7 +289,11 @@ const SELL_FORMATS = [
    such below). */
 
 const STEPS = [
-  ["Set your price", "Upload your book and set your selling price. Our [new seller pricing](?stage=margin) means you keep up to 70% more of every sale."],
+  /* "70% more of every sale" -> the calculated "3x more profit than
+     selling through Amazon" claim (Ana: align it to the 3x we agreed) —
+     same figure and caveats as Sell v2's Instant Store card and the
+     "Keep more of what you earn" table below. */
+  ["Set your price", "Upload your book and set your selling price. Our [new seller pricing](?stage=margin) means up to 3x more profit than selling through Amazon."],
   ["Create your product page", "Our AI helps you draft your title, description, and keywords. Your customizable product page is ready in minutes."],
   ["Share & sell", "Share your unique link or QR code on your bio, newsletter, or social media. We handle the printing, shipping, and sales tax."],
 ];
@@ -277,14 +310,17 @@ const FEATURES = [
   ["receipt_long", "Automated sales tax",
    "Sales tax is automatically collected and remitted, so you don't have to manage it."],
   ["auto_stories", "Sell books, magazines & more",
-   "Your Instant Store works for photo books, magazines, notebooks, and wall art."],
+   "Your Instant Store works for photo books, magazines, notebooks, and journals."],
   ["all_inclusive", "No minimums, ever",
    "Sell one copy or one thousand. Seller pricing applies from your very first sale."],
-  /* This one really is "Lorem ipsum dolor sit amet" in the Figma frame
-     itself — kept as-is rather than drafted, same as the Showcase
-     section on Sell v2. */
+  /* Was literally "Lorem ipsum dolor sit amet" in the Figma frame
+     itself (kept as-is for a while, same spirit as the Showcase section
+     on Sell v2 staying placeholder) — now drafted, in the same
+     "post it anywhere" language the CRO brief itself uses for this
+     value prop (see SellLandingV2.jsx's own note on the Instant Store
+     card). */
   ["share", "Share anywhere",
-   "Lorem ipsum dolor sit amet"],
+   "Post your link in a bio, a newsletter, a story, or a DM. However your audience finds you, they can buy there too."],
 ];
 
 const FAQS = [
@@ -405,12 +441,6 @@ export default function InstantStoreV2({ onGo }) {
         }}>
           <div style={{ display: "grid", gap: 24 }}>
             <div style={{ display: "grid", gap: 8 }}>
-              <p style={{
-                margin: 0, fontSize: 11, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase",
-                color: T.textSubtle,
-              }}>
-                The difference
-              </p>
               <h2 style={{
                 fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
                 lineHeight: 1.25, margin: 0,
@@ -466,7 +496,7 @@ export default function InstantStoreV2({ onGo }) {
       <section style={{ background: C.gray50, padding: "clamp(56px, 7vw, 80px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <CardList
-            heading="Everything you need to create an online bookstore"
+            heading="Everything you need to sell your book online"
             headingAlign="center"
             layout={{ mobile: 1, tablet: 2, desktop: 4 }}
           >

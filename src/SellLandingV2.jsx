@@ -107,29 +107,30 @@ const SELL_PATHS = [
        to build"). Payment methods tick cut to make room within 3. First
        tick links to the profit calculator — a tick object with
        `linkStage` instead of a plain string, same pattern the
-       comparison table's Profit row already uses. */
+       comparison table's Profit row already uses. `suffix` keeps the
+       link scoped to "Up to 3x more profit" itself (Ana), not the
+       whole sentence — "than selling through Amazon" is context for
+       the claim, not part of what's clickable. */
     ticks: [
-      { text: "Up to 3x more profit than selling through Amazon", linkStage: "margin" },
+      { text: "Up to 3x more profit", suffix: " than selling through Amazon", linkStage: "margin" },
       "No subscription, no additional fees",
       "One link to share, no store required",
     ],
     links: [["Create your Instant Store", { stage: "instantstorev2" }]],
   },
   {
-    id: "retail", name: "Retail distribution", icon: "public",
+    id: "retail", name: "Retail Distribution", icon: "public",
     bestFor: "Maximum reach",
     /* "Self-publish" added (Ana: "i'm missing the term") — it was
        nowhere in this card despite being Blurb's own name for the
        whole activity this page is about. */
     line: "Self-publish and reach new readers by listing your book where they already shop.",
-    /* Third tick added (Ana) — discoverability is the actual trade this
-       route makes (per the brief's own "Problems it solves": readers
-       browsing or searching a retailer, not clicking a personal link),
-       distinct from tick 1 (which channels) and tick 2 (ISBN support). */
+    /* Back to 2 ticks (Ana) — the third ("Get discovered by readers who
+       don't know you yet") made this card 3 ticks plus 3 CTAs, more
+       than any other card carries. */
     ticks: [
       "Sell on Amazon, access Ingram's 40,000+ retailers, or list on the Blurb Bookstore",
       "ISBN support included",
-      "Get discovered by readers who don't know you yet",
     ],
     /* Link labels are action-based (Ana), not just the channel name. */
     links: [
@@ -139,7 +140,7 @@ const SELL_PATHS = [
     ],
   },
   {
-    id: "los", name: "Bulk printing services", icon: "local_shipping",
+    id: "los", name: "Bulk Printing Services", icon: "local_shipping",
     bestFor: "High-touch support",
     line: "Get concierge service and volume discounts for orders of 100+ copies, perfect for events, clients, or resale.",
     /* "Dedicated account team" -> "concierge service" (Ana) — matches
@@ -163,7 +164,7 @@ const SELL_PATHS = [
     line: "Integrate the API infrastructure trusted by Blurb, Canva and Minted, directly into your app or website.",
     ticks: [
       "Same infrastructure that powers Blurb, Canva, Minted",
-      "Fully white-labeled under your brand",
+      "White-label packaging",
       "No fees, no minimums",
     ],
     links: [["Learn more about RPI Print API", { href: "https://www.rpiprint.com" }]],
@@ -260,7 +261,7 @@ function StatusDot({ status }) {
   );
 }
 
-const COMPARE_COLUMNS = ["Instant Store", "Retail distribution", "Bulk printing services", "RPI Print API"];
+const COMPARE_COLUMNS = ["Instant Store", "Retail Distribution", "Bulk Printing Services", "RPI Print API"];
 
 const COMPARE_ROWS = [
   { label: "Best for", cells: [
@@ -310,10 +311,10 @@ const COMPARE_ROWS = [
     { status: "danger", text: "You build it" },
   ] },
   { label: "Packaging", cells: [
-    { status: "success", text: "Fully white-labeled under your brand" },
-    { status: "warning", text: "Set by the retailer" },
+    { status: "success", text: "White-label packaging" },
+    { status: "warning", text: "Blurb-branded packaging" },
     { status: "warning", text: "Custom, including multi-address dropship" },
-    { status: "success", text: "Fully white-labeled under your brand" },
+    { status: "success", text: "White-label packaging" },
   ] },
   { label: "Tech required", cells: [
     { status: "success", text: "None" },
@@ -408,15 +409,15 @@ const TRUSTED_BY = ["Canva", "minted", "Treering", "Storyworth", "We Can Books"]
    route cards on v1's Sell page were before Ana had copy to react to. */
 const FAQS = [
   ["What are the different ways to sell a self-published book with Blurb?",
-   "Four: your own Instant Store, Retail distribution through Blurb's Bookstore, Amazon and Ingram, Bulk printing services for large-quantity orders, or the RPI Print API for your own storefront."],
+   "Four: your own Instant Store, Retail Distribution through Blurb's Bookstore, Amazon and Ingram, Bulk Printing Services for large-quantity orders, or the RPI Print API for your own storefront."],
   ["Where's the best place to sell my books online?",
-   "It depends on your audience. An Instant Store is best if you already have followers to sell to directly; Retail distribution reaches readers who are browsing rather than looking for you specifically."],
+   "It depends on your audience. An Instant Store is best if you already have followers to sell to directly; Retail Distribution reaches readers who are browsing rather than looking for you specifically."],
   ["Can I sell books without holding inventory or paying upfront?",
-   "Yes. Instant Store and Retail distribution both print a copy only once it's ordered, so there's nothing to buy or store in advance."],
+   "Yes. Instant Store and Retail Distribution both print a copy only once it's ordered, so there's nothing to buy or store in advance."],
   ["How does print-on-demand work for authors and creators?",
    "Your book prints only when a buyer orders it. There's no minimum run, no warehouse, and no upfront printing cost to cover before you make a sale."],
   ["Do I need an ISBN or barcode to sell my book?",
-   "Only Amazon and Ingram, both under Retail distribution, require retail listing. Your Instant Store link doesn't need one."],
+   "Only Amazon and Ingram, both under Retail Distribution, require retail listing. Your Instant Store link doesn't need one."],
   ["What's the difference between selling directly to readers and selling through Amazon or Ingram?",
    "On your Instant Store, you bring the buyer and set the price, so what's left after your printing cost is yours. Through Amazon or Ingram, the retailer brings the buyer and takes its own cut."],
   ["Can I sell more than books, like magazines, notebooks, or wall art, the same way?",
@@ -564,25 +565,24 @@ export default function SellLandingV2({ onGo }) {
                     the mock's own full sentences. */}
                 <ul style={{ display: "grid", gap: 6, margin: 0, padding: 0, listStyle: "none", width: "100%" }}>
                   {card.ticks.map(tick => {
-                    const { text, linkStage } = typeof tick === "string" ? { text: tick, linkStage: null } : tick;
+                    const { text, linkStage, suffix } = typeof tick === "string" ? { text: tick, linkStage: null, suffix: "" } : tick;
                     return (
                       <li key={text} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
                         <span className="ms" aria-hidden style={{ fontSize: 18, color: C.blue600, flex: "0 0 auto", lineHeight: "var(--codex-font-line-height-snug)" }}>
                           check_circle
                         </span>
-                        {linkStage ? (
-                          <a
-                            href="#"
-                            onClick={e => { e.preventDefault(); onGo?.(linkStage); }}
-                            style={{ fontSize: TYPE.sm, color: C.blue600, textDecoration: "underline", lineHeight: 1.4 }}
-                          >
-                            {text}
-                          </a>
-                        ) : (
-                          <span style={{ fontSize: TYPE.sm, color: "var(--codex-color-semantic-text-bold)", lineHeight: 1.4 }}>
-                            {text}
-                          </span>
-                        )}
+                        <span style={{ fontSize: TYPE.sm, color: "var(--codex-color-semantic-text-bold)", lineHeight: 1.4 }}>
+                          {linkStage ? (
+                            <a
+                              href="#"
+                              onClick={e => { e.preventDefault(); onGo?.(linkStage); }}
+                              style={{ color: C.blue600, textDecoration: "underline" }}
+                            >
+                              {text}
+                            </a>
+                          ) : text}
+                          {suffix}
+                        </span>
                       </li>
                     );
                   })}
