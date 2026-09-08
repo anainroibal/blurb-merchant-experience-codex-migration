@@ -75,15 +75,37 @@ const ILLUS = "https://assets.blurb.com/_astro/";
    destination, three for Retail Distribution — rendered by the same
    plain-anchor code below rather than Card's `link` slot (see the note
    there on why). */
+/* Ticks and "Best for" are from the CRO brief's own per-tool "Value"
+   sections (New landing pages - CRO Brief.docx), trimmed to short
+   scannable phrases rather than the brief's full sentences — Ana's own
+   reference mock made the same point ("wayyy too wordy but this is the
+   concept"). Skipped anything the brief itself flags as unverified
+   ("Claims that compare the margin... are SKU-based and need explicit
+   verification") or that's already said once in "Included with every
+   way you sell" below (print-on-demand, Blurb's quality) rather than
+   repeating it per card. */
 const SELL_PATHS = [
   {
-    id: "link", name: "Instant Store", icon: "storefront",
+    id: "link", name: "Instant Store", icon: "storefront", isNew: true,
+    bestFor: "Getting started fast",
     line: "Sell directly to your audience in minutes with a product page that fully showcases your book. No extra fees, no tech skills required.",
+    ticks: [
+      "Seller pricing: up to 70% more profit",
+      "No subscription, no platform fees",
+      "AI-drafted listing, interactive preview",
+      "Checkout via Apple Pay, Google Pay, PayPal",
+    ],
     links: [["Create your Instant Store", { stage: "instantstorev2" }]],
   },
   {
     id: "retail", name: "Retail Distribution", icon: "public",
+    bestFor: "Maximum reach",
     line: "Reach new readers by listing your book where readers already shop.",
+    ticks: [
+      "Amazon, Ingram's 40,000+ retailers, and the Blurb Bookstore",
+      "Keep everything above print cost on the Bookstore",
+      "ISBN support included",
+    ],
     links: [
       ["Amazon", { href: "https://www.amazon.com" }],
       ["Blurb Bookstore", { href: "https://www.blurb.com/sell-through-blurb" }],
@@ -92,29 +114,53 @@ const SELL_PATHS = [
   },
   {
     id: "los", name: "Bulk Printing Services", icon: "local_shipping",
+    bestFor: "High-touch support",
     line: "Get dedicated support and volume discounts for orders of 100+ copies, perfect for events, clients, or resale.",
+    ticks: [
+      "Dedicated account team, start to finish",
+      "Dropshipping to multiple addresses",
+      "Custom quotes tailored to your project",
+    ],
     links: [["Get a custom quote", { href: "https://www.blurb.com/large-order-services" }]],
   },
   {
     id: "api", name: "RPI Print API", icon: "integration_instructions",
+    bestFor: "Developers & platforms",
     /* Ana: "too bold" was about the nav mention specifically, not this
        page — the CRO brief actually confirms this as a real value prop
        for the API ("Direct API access to the same manufacturing and
        fulfilment infrastructure that already powers Blurb, Canva, and
        Minted"), so it stays here. Nav keeps the plainer line. */
     line: "Integrate the API infrastructure trusted by Blurb, Canva and Minted, directly into your app or website.",
+    ticks: [
+      "Same infrastructure that powers Blurb, Canva, Minted",
+      "White-labeled: your brand, not Blurb's",
+      "No fees, no minimums",
+    ],
     links: [["Learn more about RPI Print API", { href: "https://www.rpiprint.com" }]],
   },
 ];
 
 /* One tile treatment for all four cards — same size, same icon-on-cream
-   style, nothing left to read as inconsistent. */
+   style, nothing left to read as inconsistent. "Best for" badge added
+   (Ana's own reference mock) — a light outline pill, not a solid chip,
+   so it doesn't compete with the solid-blue "New" marker Instant Store
+   already carries. */
 function PathTile({ card }) {
   return (
     <div style={{
       position: "relative", width: "100%", background: "#f5f0ea", borderRadius: R.lg,
       aspectRatio: "4 / 3", display: "grid", placeItems: "center", overflow: "hidden",
     }}>
+      {card.bestFor && (
+        <span style={{
+          position: "absolute", top: 12, right: 12,
+          padding: "4px 10px", borderRadius: 999, fontSize: 11, fontWeight: 600,
+          background: "#fff", border: `1px solid ${C.blue600}`, color: C.blue600,
+        }}>
+          Best for: {card.bestFor}
+        </span>
+      )}
       <span className="ms" aria-hidden style={{ fontSize: 56, color: C.blue600 }}>{card.icon}</span>
     </div>
   );
@@ -438,19 +484,38 @@ export default function SellLandingV2({ onGo }) {
                 width: "100%", gap: "var(--codex-spacing-3)",
               }}>
                 <PathTile card={card} />
-                <h3 className="path-card-title" style={{
-                  fontFamily: "var(--codex-font-family-heading)", fontWeight: "var(--codex-font-weight-normal)",
-                  color: "var(--codex-color-semantic-text-bold)",
-                  lineHeight: "var(--codex-font-line-height-tight)", margin: 0,
-                }}>
-                  {card.name}
-                </h3>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <h3 className="path-card-title" style={{
+                    fontFamily: "var(--codex-font-family-heading)", fontWeight: "var(--codex-font-weight-normal)",
+                    color: "var(--codex-color-semantic-text-bold)",
+                    lineHeight: "var(--codex-font-line-height-tight)", margin: 0,
+                  }}>
+                    {card.name}
+                  </h3>
+                  {card.isNew && <Chip>New</Chip>}
+                </div>
                 <p style={{
                   lineHeight: "var(--codex-font-line-height-snug)",
                   color: "var(--codex-color-semantic-text-bold)", margin: 0,
                 }}>
                   {card.line}
                 </p>
+                {/* Ticks beef up what used to be just the description
+                    (Ana, working from her own reference mock) — short
+                    scannable value props from the CRO brief rather than
+                    the mock's own full sentences. */}
+                <ul style={{ display: "grid", gap: 6, margin: 0, padding: 0, listStyle: "none", width: "100%" }}>
+                  {card.ticks.map(tick => (
+                    <li key={tick} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+                      <span className="ms" aria-hidden style={{ fontSize: 18, color: C.blue600, flex: "0 0 auto", lineHeight: "var(--codex-font-line-height-snug)" }}>
+                        check_circle
+                      </span>
+                      <span style={{ fontSize: TYPE.sm, color: "var(--codex-color-semantic-text-bold)", lineHeight: 1.4 }}>
+                        {tick}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 4 }}>
                   {card.links.map(([label, dest]) => (
                     <PathLink key={label} label={label} dest={dest} onGo={onGo} />
