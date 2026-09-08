@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, CardList, Card, Link } from "@blurb/codex-react";
+import { Button, CardList, Card } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { FORMAT_CARDS } from "./FormatCards.jsx";
 import Faq from "./Faq.jsx";
@@ -65,77 +65,85 @@ const QUALITY = [
    own yet — see the file header note. */
 const ILLUS = "https://assets.blurb.com/_astro/";
 
+/* Icons, not illustrations, for all four (Ana: "inconsistent sized
+   images" — the real problem was style, not size: two hand-drawn
+   illustrations, one real photograph (large-order.Dolls1H4_A7dqn.webp),
+   and one bare icon, side by side. No illustration exists for the API
+   card at all, so icon-only is the one treatment every card can share
+   without fabricating new art. Links are `[label, url]` pairs — every
+   card gets the same shape, one entry for the three that have a single
+   destination, three for Retail Distribution — rendered by the same
+   plain-anchor code below rather than Card's `link` slot (see the note
+   there on why). */
 const SELL_PATHS = [
   {
-    id: "link", name: "Instant Store",
-    img: ILLUS + "blurb-dashboard.YPDjPrK8_Z1bvCol.webp",
-    alt: "An illustration of a person setting up a book listing.",
+    id: "link", name: "Instant Store", icon: "storefront",
     line: "Sell directly to your audience in minutes with a product page that fully showcases your book. No extra fees, no tech skills required.",
-    stage: "instantstorev2", cta: "Create your Instant Store",
+    links: [["Create your Instant Store", { stage: "instantstorev2" }]],
   },
   {
-    id: "retail", name: "Retail Distribution",
-    img: ILLUS + "reach-bookstores.BYbE8YXC_Z1XIS6H.webp",
-    alt: "An illustration of a person riding an open book past a globe.",
-    /* No single "Retail Distribution" page exists to send a CTA to —
-       it's a bucket over three actual channels — so the plain-text
-       sentence and the one link/icon it had are replaced with three
-       real destination links instead. Card has no multi-link slot, so
-       these live as trailing Markdown links in `description`, same
-       mechanism the inline links used before, just moved out of the
-       sentence and into their own line. */
+    id: "retail", name: "Retail Distribution", icon: "public",
     line: "Reach new readers by listing your book where readers already shop.",
     links: [
-      ["Amazon", "https://www.amazon.com"],
-      ["Blurb Bookstore", "https://www.blurb.com/sell-through-blurb"],
-      ["Ingram", "https://www.blurb.com/ingram"],
+      ["Amazon", { href: "https://www.amazon.com" }],
+      ["Blurb Bookstore", { href: "https://www.blurb.com/sell-through-blurb" }],
+      ["Ingram", { href: "https://www.blurb.com/ingram" }],
     ],
   },
   {
-    id: "los", name: "Large Order Services",
-    img: ILLUS + "large-order.Dolls1H4_A7dqn.webp",
-    alt: "A press roller running colour on a large print job.",
+    id: "los", name: "Large Order Services", icon: "local_shipping",
     line: "Get dedicated support and volume discounts for orders of 100+ copies, perfect for events, clients, or resale.",
-    href: "https://www.blurb.com/large-order-services", cta: "Get a custom quote",
+    links: [["Get a custom quote", { href: "https://www.blurb.com/large-order-services" }]],
   },
   {
-    id: "api", name: "RPI Print API",
-    icon: "integration_instructions",
+    id: "api", name: "RPI Print API", icon: "integration_instructions",
     /* Ana: "too bold" was about the nav mention specifically, not this
        page — the CRO brief actually confirms this as a real value prop
        for the API ("Direct API access to the same manufacturing and
        fulfilment infrastructure that already powers Blurb, Canva, and
        Minted"), so it stays here. Nav keeps the plainer line. */
     line: "Integrate the API infrastructure trusted by Blurb, Canva and Minted, directly into your app or website.",
-    href: "https://www.rpiprint.com", cta: "Learn more about RPI Print API",
+    links: [["Learn more about RPI Print API", { href: "https://www.rpiprint.com" }]],
   },
 ];
 
-/* One tile treatment for all four cards. Each illustration has its own
-   native aspect ratio, and the old `width: 78%, height: auto` let that
-   ratio decide the rendered size — a tall narrow illustration filled
-   much more of the tile than a wide short one. A fixed box with
-   objectFit: contain gives every image (and the API card's icon) the
-   same visual weight regardless of its source proportions. */
+/* One tile treatment for all four cards — same size, same icon-on-cream
+   style, nothing left to read as inconsistent. */
 function PathTile({ card }) {
   return (
     <div style={{
       position: "relative", width: "100%", background: "#f5f0ea", borderRadius: R.lg,
       aspectRatio: "4 / 3", display: "grid", placeItems: "center", overflow: "hidden",
     }}>
-      {card.img ? (
-        <img
-          src={card.img}
-          alt={card.alt}
-          loading="lazy"
-          style={{ width: "65%", height: "65%", objectFit: "contain", display: "block", mixBlendMode: "multiply" }}
-        />
-      ) : (
-        /* No Blurb illustration exists yet for this route — see file
-           header note. */
-        <span className="ms" aria-hidden style={{ fontSize: 56, color: C.blue600 }}>{card.icon}</span>
-      )}
+      <span className="ms" aria-hidden style={{ fontSize: 56, color: C.blue600 }}>{card.icon}</span>
     </div>
+  );
+}
+
+/* Plain anchors, not Codex's <Link>, for every path card's CTA(s) (Ana:
+   "remove the 'open in a new link' icons on those links"). Link's
+   `openInNewTab` is the only way to get target="_blank" out of it, and
+   that prop is what appends the icon — the two aren't separable, so
+   there's no way to keep correct new-tab behavior through that
+   component without the icon it was bundled with. A plain anchor gets
+   both: target/rel for external links (so clicking one doesn't
+   navigate the prototype itself away, the bug fixed earlier), onGo for
+   the one internal link, no icon either way. Styled to match Link's own
+   look (Codex's real blue, inherited size) so nothing looks demoted for
+   being hand-built. */
+function PathLink({ label, dest, onGo }) {
+  const style = { color: C.blue600, textDecoration: "underline", fontSize: "inherit" };
+  if (dest.stage) {
+    return (
+      <a href="#" onClick={e => { e.preventDefault(); onGo?.(dest.stage); }} style={style}>
+        {label}
+      </a>
+    );
+  }
+  return (
+    <a href={dest.href} target="_blank" rel="noopener noreferrer" style={style}>
+      {label}
+    </a>
   );
 }
 
@@ -413,20 +421,18 @@ export default function SellLandingV2({ onGo }) {
             headingAlign="center"
             layout={{ mobile: 1, tablet: 2, desktop: 4 }}
           >
-            {SELL_PATHS.map(card => card.links ? (
-              /* Retail Distribution: three real destinations, not one —
-                 Card's `link`/`cta` slots only ever render a single
-                 anchor, so three links can't pass through either one.
-                 Hand-built to match Card's own layout exactly (same
-                 tokens: --codex-font-family-heading, --codex-spacing-3
-                 gap between children) rather than burying the links
-                 inside the description as a second Markdown paragraph —
-                 that read as plain body text with no gap above it,
-                 sitting in a visibly different spot than the other three
-                 cards' link. Real <Link openInNewTab> also fixes a bug
-                 the Markdown version had: react-markdown's `a` override
-                 has no way to set target, so those links were opening in
-                 the same tab and navigating away from the prototype. */
+            {/* All four hand-built, not just Retail Distribution (Ana:
+                "keep it closer... consistent card layouts") — Card's
+                `link` slot only ever renders one anchor through Codex's
+                own <Link>, which is where the unwanted "open in new tab"
+                icon was coming from (see PathLink above). Retail's three
+                destinations couldn't fit through that slot at all, so it
+                was already hand-built; the other three now use the exact
+                same structure — same tile, same title class, same
+                description tokens, same PathLink — so nothing about one
+                card's layout can drift from another's the way title
+                size, tile treatment, and link style all had before. */}
+            {SELL_PATHS.map(card => (
               <div key={card.id} style={{
                 display: "flex", flexDirection: "column", alignItems: "flex-start",
                 width: "100%", gap: "var(--codex-spacing-3)",
@@ -445,30 +451,12 @@ export default function SellLandingV2({ onGo }) {
                 }}>
                   {card.line}
                 </p>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "0 16px" }}>
-                  {card.links.map(([label, url]) => (
-                    <Link key={label} href={url} openInNewTab>{label}</Link>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: 4 }}>
+                  {card.links.map(([label, dest]) => (
+                    <PathLink key={label} label={label} dest={dest} onGo={onGo} />
                   ))}
                 </div>
               </div>
-            ) : (
-              <Card
-                key={card.id}
-                icon={<PathTile card={card} />}
-                title={card.name}
-                description={card.line}
-                {...(card.stage
-                  /* Same `link` treatment as Large Order Services and the
-                     API card — underlined text, no button chrome. No
-                     openInNewTab (and so no external-open icon) since
-                     this goes to another page in this app, not a new
-                     tab; Codex's Link has no separate "same page" icon
-                     to swap in, so it's a plain link, matching how other
-                     in-app links style themselves elsewhere in this
-                     codebase. */
-                  ? { link: { href: "#", onClick: e => { e.preventDefault(); onGo?.(card.stage); }, children: card.cta } }
-                  : { link: { href: card.href, openInNewTab: true, children: card.cta } })}
-              />
             ))}
           </CardList>
 
