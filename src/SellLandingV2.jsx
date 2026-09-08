@@ -109,24 +109,30 @@ const SELL_PATHS = [
     links: [["Create your Instant Store", { stage: "instantstorev2" }]],
   },
   {
-    id: "retail", name: "Retail Distribution", icon: "public",
+    id: "retail", name: "Retail distribution", icon: "public",
     bestFor: "Maximum reach",
-    line: "Reach new readers by listing your book where readers already shop.",
-    /* Second tick dropped (Ana) — "keep everything above print cost"
-       is true of the Bookstore only, not Amazon or Ingram, so it read
-       as a claim about all three when it's really about one. */
+    /* "Self-publish" added (Ana: "i'm missing the term") — it was
+       nowhere in this card despite being Blurb's own name for the
+       whole activity this page is about. */
+    line: "Self-publish and reach new readers by listing your book where they already shop.",
+    /* Third tick added (Ana) — discoverability is the actual trade this
+       route makes (per the brief's own "Problems it solves": readers
+       browsing or searching a retailer, not clicking a personal link),
+       distinct from tick 1 (which channels) and tick 2 (ISBN support). */
     ticks: [
       "Sell on Amazon, access Ingram's 40,000+ retailers, or list on the Blurb Bookstore",
       "ISBN support included",
+      "Get discovered by readers who don't know you yet",
     ],
+    /* Link labels are action-based (Ana), not just the channel name. */
     links: [
-      ["Amazon", { href: "https://www.amazon.com" }],
-      ["Blurb Bookstore", { href: "https://www.blurb.com/sell-through-blurb" }],
-      ["Ingram", { href: "https://www.blurb.com/ingram" }],
+      ["Sell on Amazon", { href: "https://www.amazon.com" }],
+      ["Sell on Blurb Bookstore", { href: "https://www.blurb.com/sell-through-blurb" }],
+      ["Sell through Ingram", { href: "https://www.blurb.com/ingram" }],
     ],
   },
   {
-    id: "los", name: "Bulk Printing Services", icon: "local_shipping",
+    id: "los", name: "Bulk printing services", icon: "local_shipping",
     bestFor: "High-touch support",
     line: "Get concierge service and volume discounts for orders of 100+ copies, perfect for events, clients, or resale.",
     /* "Dedicated account team" -> "concierge service" (Ana) — matches
@@ -247,7 +253,7 @@ function StatusDot({ status }) {
   );
 }
 
-const COMPARE_COLUMNS = ["Instant Store", "Retail Distribution", "Bulk Printing Services", "RPI Print API"];
+const COMPARE_COLUMNS = ["Instant Store", "Retail distribution", "Bulk printing services", "RPI Print API"];
 
 const COMPARE_ROWS = [
   { label: "Best for", cells: [
@@ -379,9 +385,9 @@ const SHOWCASE = [
 ];
 
 const STATS = [
-  ["verified_user", "20+ Years",
+  ["verified_user", "20+ years",
    "Backed by 20 years of in-house expertise and full production control, Blurb ensures consistent quality from start to finish. No outsourcing, no compromises."],
-  ["public", "70+ Countries",
+  ["public", "70+ countries",
    "Shipped to a global network of buyers and readers, with over 20M unique books and products created and sold."],
   ["eco", "Sustainable papers & practices",
    "Our photo books are crafted in the US with Forest Stewardship Council-certified papers and printed at the facility nearest you."],
@@ -395,15 +401,15 @@ const TRUSTED_BY = ["Canva", "minted", "Treering", "Storyworth", "We Can Books"]
    route cards on v1's Sell page were before Ana had copy to react to. */
 const FAQS = [
   ["What are the different ways to sell a self-published book with Blurb?",
-   "Four: your own Instant Store, Retail Distribution through Blurb's Bookstore, Amazon and Ingram, Bulk Printing Services for large-quantity orders, or the RPI Print API for your own storefront."],
+   "Four: your own Instant Store, Retail distribution through Blurb's Bookstore, Amazon and Ingram, Bulk printing services for large-quantity orders, or the RPI Print API for your own storefront."],
   ["Where's the best place to sell my books online?",
-   "It depends on your audience. An Instant Store is best if you already have followers to sell to directly; Retail Distribution reaches readers who are browsing rather than looking for you specifically."],
+   "It depends on your audience. An Instant Store is best if you already have followers to sell to directly; Retail distribution reaches readers who are browsing rather than looking for you specifically."],
   ["Can I sell books without holding inventory or paying upfront?",
-   "Yes. Instant Store and Retail Distribution both print a copy only once it's ordered, so there's nothing to buy or store in advance."],
+   "Yes. Instant Store and Retail distribution both print a copy only once it's ordered, so there's nothing to buy or store in advance."],
   ["How does print-on-demand work for authors and creators?",
    "Your book prints only when a buyer orders it. There's no minimum run, no warehouse, and no upfront printing cost to cover before you make a sale."],
   ["Do I need an ISBN or barcode to sell my book?",
-   "Only Amazon and Ingram, both under Retail Distribution, require retail listing. Your Instant Store link doesn't need one."],
+   "Only Amazon and Ingram, both under Retail distribution, require retail listing. Your Instant Store link doesn't need one."],
   ["What's the difference between selling directly to readers and selling through Amazon or Ingram?",
    "On your Instant Store, you bring the buyer and set the price, so what's left after your printing cost is yours. Through Amazon or Ingram, the retailer brings the buyer and takes its own cut."],
   ["Can I sell more than books, like magazines, notebooks, or wall art, the same way?",
@@ -797,10 +803,12 @@ export default function SellLandingV2({ onGo }) {
         </div>
       </section>
 
-      {/* ── Stats ── its own section, no grey background — the grey
-          panel belongs to the Showcase placeholder above it, not to
-          these three facts. */}
-      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px", borderTop: `1px solid ${T.border}` }}>
+      {/* ── Stats ── a light blue tint (Ana: this and Trusted By were
+          both plain white, back to back, with nothing separating them).
+          Not gray50 — Showcase right above it already uses that, and
+          two grays in a row would just move the "both look the same"
+          problem rather than fix it. */}
+      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px", borderTop: `1px solid ${T.border}`, background: T.bgAccentSubtle }}>
         <div style={{
           maxWidth: 1240, margin: "0 auto", display: "grid", gap: 16,
           gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
@@ -819,8 +827,10 @@ export default function SellLandingV2({ onGo }) {
           Minted, Treering, Storyworth, We Can Books — names confirmed
           by Figma comment #63), exported straight off the frame rather
           than reproduced as styled text, so the real marks show up
-          instead of a guess at their wordmarks. */}
-      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px" }}>
+          instead of a guess at their wordmarks. Gray50, same as
+          Showcase two sections up but not adjacent to it, so Stats'
+          blue tint keeps the two grays from sitting back to back. */}
+      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px", background: C.gray50 }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <img
             src="/assets/trusted-by-logos.png"

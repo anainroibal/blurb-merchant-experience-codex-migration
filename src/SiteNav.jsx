@@ -185,7 +185,7 @@ const NAV = [
      source we hold, and Ana's reasoning is the stronger version of the
      warning already written above this list: it is a proposition about
      store integrations, and it should wait until there are any. */
-  { label: "Sell", href: "/self-publish", columns: [
+  { label: "Sell & Self-Publish", href: "/self-publish", columns: [
     /* Store integrations dropped (Ana) — it was the one item here with
        no source anywhere (see the file-header warning), tagged "Coming
        soon" against a thing nobody owns. Volume orders and RPI Print
