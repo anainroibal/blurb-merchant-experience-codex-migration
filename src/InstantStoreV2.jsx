@@ -4,19 +4,23 @@ import { FORMAT_CARDS } from "./FormatCards.jsx";
 import Faq from "./Faq.jsx";
 
 /* ── InstantStoreMockup ──
-   A Figma Make POC for this same page (260824-POC — Instant Store LP)
-   put a real-looking product-page screenshot beside its hero, and used
-   it again as the anchor for an annotated "what buyers see" walkthrough
-   further down — both flagged by Ana as the strongest thing in that
-   file, worth bringing into this one. No real Instant Store page exists
-   to screenshot, so this is a hand-built mockup rather than a fabricated
-   embed: real Blurb product photography (FORMAT_CARDS' own photo book
-   image), a placeholder title/author/description in the same spirit as
-   this file's other honest placeholders (the Showcase section, "Share
-   anywhere"'s lorem ipsum), and the real $60.80 / $21.28 / $39.52
-   figures the margin table below already uses for this exact spec, so
-   the two sections agree with each other rather than showing two
-   different made-up numbers. */
+   Originally modeled on a Figma Make POC's own product-page screenshot
+   (260824-POC — Instant Store LP); corrected against the real Instant
+   Store demo's actual PDP once Ana shared a screenshot of it. No format
+   picker — only one format ships at launch, so a Hardcover/Softcover
+   toggle overclaimed. No "Printed and shipped by Blurb" badge either —
+   the real PDP doesn't carry one. Preview added, since it's on the real
+   page and Ana called it out as worth showing. Used once, not twice
+   (Ana: showing it in both the hero and the walkthrough read as the
+   same image repeated) — it lives in the walkthrough section only; the
+   hero goes back to a plain hero with the demo video restored beside
+   it. Real Blurb product photography (FORMAT_CARDS' own photo book
+   image) stands in for the cover; title/author/description are a
+   placeholder in the same spirit as this file's other honest
+   placeholders (the Showcase section, "Share anywhere"'s lorem ipsum).
+   Price is the same $60.80 the margin table below prices this exact
+   spec at, so the two sections agree rather than showing two different
+   made-up numbers. */
 const MOCKUP_COVER = FORMAT_CARDS.find(c => c.id === "photo");
 
 function InstantStoreMockup() {
@@ -59,37 +63,51 @@ function InstantStoreMockup() {
           <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>
             A year of early tides and empty beaches, shot along the Pacific coast.
           </p>
-          <div style={{ display: "flex", gap: 8, marginTop: 4 }}>
-            <span style={{
-              padding: "4px 10px", borderRadius: 999, fontSize: TYPE.sm, fontWeight: 600,
-              border: `1px solid ${C.blue600}`, color: C.blue600,
-            }}>
-              Hardcover
-            </span>
-            <span style={{
-              padding: "4px 10px", borderRadius: 999, fontSize: TYPE.sm,
-              border: `1px solid ${T.border}`, color: T.textSubtle,
-            }}>
-              Softcover
-            </span>
-          </div>
           <div style={{ fontFamily: FONT_DISPLAY, fontSize: "1.5rem", fontWeight: 500, marginTop: 4 }}>
             $60.80
           </div>
           <Button size="small">Buy now</Button>
-          <span style={{ display: "flex", alignItems: "center", gap: 4, fontSize: TYPE.sm, color: T.textSubtle }}>
-            <span className="ms" aria-hidden style={{ fontSize: 16, color: C.blue600 }}>verified</span>
-            Printed and shipped by Blurb
-          </span>
+        </div>
+      </div>
+
+      {/* Book preview — the real PDP's own standout feature (Ana), missing
+          from the first pass of this mockup entirely. An icon stands in
+          for the actual page spread rather than a fabricated screenshot
+          of pages that don't exist, same honesty rule as everything else
+          placeholder on this page. */}
+      <div style={{ borderTop: `1px solid ${T.border}`, padding: "16px 24px", display: "grid", gap: 10 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}>
+          <div>
+            <div style={{ fontWeight: 600, fontSize: TYPE.sm }}>Book preview</div>
+            <div style={{ fontSize: 11, color: T.textSubtle }}>First 15 pages</div>
+          </div>
+          <span style={{ fontSize: 11, color: C.blue600, fontWeight: 600 }}>View fullscreen</span>
+        </div>
+        <div style={{
+          aspectRatio: "16 / 9", borderRadius: R.md, background: C.gray50, border: `1px solid ${T.border}`,
+          display: "grid", placeItems: "center",
+        }}>
+          <span className="ms" aria-hidden style={{ fontSize: 32, color: C.gray400 }}>auto_stories</span>
+        </div>
+        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, fontSize: 11, color: T.textSubtle }}>
+          <span className="ms" aria-hidden style={{ fontSize: 16 }}>chevron_left</span>
+          Page 5 of 15
+          <span className="ms" aria-hidden style={{ fontSize: 16 }}>chevron_right</span>
         </div>
       </div>
     </div>
   );
 }
 
+/* "Set your own price" dropped (Ana: it's redundant with "Keep more of
+   what you earn" below) — its copy moves down to that section instead
+   of being lost, since Ana specifically wanted to keep the line. A
+   preview point takes its place, since the mockup now shows the
+   feature. First bullet's "format options" mention cut too, matching
+   the mockup's own dropped format picker. */
 const WALKTHROUGH = [
-  ["A real product page", "Cover, description, format options, and pricing — everything a buyer needs to feel confident before they purchase."],
-  ["Set your own price", "You choose what to charge. What's left after your printing cost is yours, with no listing or platform fees."],
+  ["A real product page", "Cover, description, and pricing — everything a buyer needs to feel confident before they purchase."],
+  ["See inside before you buy", "An interactive preview lets buyers flip through real pages before they commit — the confidence that turns interest into a sale."],
   ["Buyers check out right there", "Payment and shipping are built in. No plugins to install, no separate checkout to configure."],
   ["Blurb prints and ships it", "The order goes straight to production. Your buyer gets a tracked delivery, and you never touch a box."],
 ];
@@ -281,53 +299,83 @@ export default function InstantStoreV2({ onGo }) {
   return (
     <div style={{ fontFamily: FONT_BODY, color: C.gray950 }}>
 
-      {/* ── Hero ── the gradient the seller pages share, now two columns
-          instead of HeroCenter's single centered one — the mockup needs
-          a slot beside the copy, which HeroCenter has no prop for. */}
-      <section className="hero-gradient-seller" style={{ padding: "clamp(56px, 8vw, 96px) 24px" }}>
-        <div style={{
-          maxWidth: 1160, margin: "0 auto", display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 48, alignItems: "center",
-        }}>
-          <div style={{ display: "grid", gap: 20 }}>
-            <h1 style={{
-              fontFamily: FONT_DISPLAY, fontWeight: 400, letterSpacing: "-0.01em",
-              fontSize: "clamp(2rem, 4.6vw, 2.75rem)", lineHeight: 1.2, margin: 0,
-            }}>
-              Your book, your audience, your profit
-            </h1>
-            {/* "Set up an online store" oversold it (Ana) — an Instant
-                Store is one product page behind one link, not a
-                multi-book storefront to browse. Rewritten around what it
-                actually is, matching the "product page" language Sell
-                v2's own Instant Store card already uses. "Third-party
-                platform" corrected next (Ana: "i don't know what 3rd
-                party means") — plain language, no separate site to go
-                build. */}
-            <p style={{ fontSize: TYPE.lg, lineHeight: 1.55, color: T.textSubtle, margin: 0, maxWidth: 520 }}>
-              Turn your book into a shareable product page and start selling directly to your audience. Live in minutes, no website or tech skills needed.
-            </p>
-            <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-              <Button>Create your Instant Store</Button>
-              <Button as="a" href="#demo" variant="outlined">See a store in action</Button>
-            </div>
+      {/* ── Hero ── the gradient the seller pages share. Back to a single
+          centered column (Ana: showing the product-page mockup here AND
+          in the walkthrough below was the same image twice) — the video
+          demo goes back to sitting right after it instead, restoring
+          both "keep the video" and having it near the top of the page. */}
+      <section className="hero-gradient-seller" style={{ padding: "clamp(56px, 8vw, 96px) 24px", textAlign: "center" }}>
+        <div style={{ maxWidth: 640, margin: "0 auto", display: "grid", gap: 20, justifyItems: "center" }}>
+          <h1 style={{
+            fontFamily: FONT_DISPLAY, fontWeight: 400, letterSpacing: "-0.01em",
+            fontSize: "clamp(2rem, 4.6vw, 2.75rem)", lineHeight: 1.2, margin: 0,
+          }}>
+            Your book, your audience, your profit
+          </h1>
+          {/* "Set up an online store" oversold it (Ana) — an Instant
+              Store is one product page behind one link, not a
+              multi-book storefront to browse. Rewritten around what it
+              actually is, matching the "product page" language Sell
+              v2's own Instant Store card already uses. "Third-party
+              platform" corrected next (Ana: "i don't know what 3rd
+              party means") — plain language, no separate site to go
+              build. */}
+          <p style={{ fontSize: TYPE.lg, lineHeight: 1.55, color: T.textSubtle, margin: 0 }}>
+            Turn your book into a shareable product page and start selling directly to your audience. Live in minutes, no website or tech skills needed.
+          </p>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
+            <Button>Create your Instant Store</Button>
+            <Button as="a" href="#demo" variant="outlined">See a store in action</Button>
           </div>
-          <InstantStoreMockup />
+        </div>
+      </section>
+
+      {/* ── Demo placeholder ──
+          The outline has a checkered box with a play icon here — no real
+          demo video exists yet, so this stays an honest placeholder
+          rather than a fabricated embed. The hero's own gradient covers
+          the top half of the box, so the two sections read as one
+          continuous piece rather than a hard color line where the hero
+          ends. Two absolutely-positioned halves rather than a shared
+          background, since the checkerboard is a
+          `repeating-conic-gradient` — clipping it to the bottom half via
+          background-size would distort its tiles; a separate half-height
+          layer keeps the same 32px checker untouched. */}
+      <section id="demo" style={{ padding: "0 24px clamp(48px, 7vw, 72px)" }}>
+        <div style={{ maxWidth: 840, margin: "0 auto" }}>
+          <div style={{
+            position: "relative", borderRadius: R.lg, overflow: "hidden", aspectRatio: "16 / 9",
+            border: `1px solid ${T.border}`,
+          }}>
+            <div aria-hidden className="hero-gradient-seller" style={{ position: "absolute", inset: "0 0 50% 0" }} />
+            <div aria-hidden style={{
+              position: "absolute", inset: "50% 0 0 0",
+              background: "repeating-conic-gradient(#f2f2f2 0% 25%, #fafafa 0% 50%) 50% / 32px 32px",
+            }} />
+            <span
+              className="ms" aria-hidden
+              style={{
+                position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)",
+                fontSize: 56, color: C.gray400,
+              }}
+            >
+              play_circle
+            </span>
+          </div>
+          <p style={{ margin: "12px 0 0", fontSize: TYPE.sm, color: T.textSubtle, textAlign: "center" }}>
+            Placeholder — a short walkthrough of setting up and sharing an Instant Store goes here.
+          </p>
         </div>
       </section>
 
       {/* ── More than a checkout ──
-          A Figma Make POC for this page (Ana, see the InstantStoreMockup
-          comment above) walked a buyer through the same product-page
-          mockup with numbered annotations rather than describing it in
-          the abstract — this replaces what used to be an honest "no
-          video yet" checkerboard placeholder with actual content. Four
-          points rather than the POC's five: ours has no author-bio panel
-          to annotate, so that one's dropped rather than stretched to
-          cover a feature this mockup doesn't show. This is the buyer's
-          view of the page; "Three simple steps" below is the seller's
-          view of setting it up — complementary, not overlapping. */}
-      <section id="demo" style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
+          Walks a buyer through the product-page mockup with numbered
+          annotations rather than describing it in the abstract — the
+          one place InstantStoreMockup appears (Ana: not duplicated with
+          the hero any more). This is the buyer's view of the page;
+          "Three simple steps" below is the seller's view of setting it
+          up — complementary, not overlapping. */}
+      <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
         <div style={{
           maxWidth: 1160, margin: "0 auto", display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 48, alignItems: "center",
@@ -425,6 +473,13 @@ export default function InstantStoreV2({ onGo }) {
               }}>
                 Keep more of what you earn
               </h2>
+              {/* Moved down from the "More than a checkout" walkthrough
+                  (Ana): that section's own "Set your own price" point was
+                  redundant with this one, but she wanted this exact line
+                  kept rather than lost along with it. */}
+              <p style={{ margin: 0, fontSize: TYPE.base, color: T.textNeutral }}>
+                You choose what to charge. What's left after your printing cost is yours, with no listing or platform fees.
+              </p>
               {/* The outline's own literal text, corrected (Ana: it's
                   actually 70%, not 50%) — see the file header note on
                   why this figure is still worth confirming before this
