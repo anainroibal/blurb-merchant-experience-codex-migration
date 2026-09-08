@@ -89,20 +89,27 @@ const SELL_PATHS = [
     id: "link", name: "Instant Store", icon: "storefront", isNew: true,
     bestFor: "Getting started fast",
     line: "Sell directly to your audience in minutes with a product page that fully showcases your book. No extra fees, no tech skills required.",
-    /* Down to 3 ticks (Ana). The 70% figure was wrong as written — it's
-       print cost that runs up to 70% below retail via seller pricing,
-       not profit that's 70% higher (a different, unverified claim the
-       brief itself flags as needing real Amazon/Ingram fee data before
-       it could be stated as a %). "AI-drafted listing" swapped for the
-       link/no-store point (Ana: not the strongest value here) — closer
-       to how the brief itself pitches it ("post it anywhere: bio,
-       story, newsletter, DM", "no additional storefront to build").
-       Payment methods tick cut to make room within 3. First tick links
-       to the profit calculator (Ana) — a tick object with `linkStage`
-       instead of a plain string, same pattern the comparison table's
-       Profit row already uses. */
+    /* Down to 3 ticks (Ana). First tick turned into a real margin claim
+       (Ana: "help turn the 70% lower print cost into a margin claim...
+       compare it to amazon"), calculated rather than guessed: same
+       $60.80/8x10 ImageWrap Hardcover spec and figures the "Keep more
+       of what you earn" table (InstantStoreV2.jsx) already uses — $21.28
+       print cost via seller pricing, 0% commission, so $39.52 profit;
+       Amazon pays the standard $37.50 print-cost tier (seller pricing
+       is Instant Store/RPI Print API only, confirmed by both the brief
+       and Ana directly) plus its real $1.35 + 15% commission, so $12.83
+       profit. $39.52 / $12.83 = 3.08x. Same caveat as the table itself:
+       Amazon's $37.50 print cost is Ana's own guess, not a verified
+       rate, so this number moves if that one does. "AI-drafted listing"
+       swapped for the link/no-store point (Ana: not the strongest value
+       here) — closer to how the brief itself pitches it ("post it
+       anywhere: bio, story, newsletter, DM", "no additional storefront
+       to build"). Payment methods tick cut to make room within 3. First
+       tick links to the profit calculator — a tick object with
+       `linkStage` instead of a plain string, same pattern the
+       comparison table's Profit row already uses. */
     ticks: [
-      { text: "Seller pricing: print costs up to 70% lower than retail", linkStage: "margin" },
+      { text: "Up to 3x more profit than selling through Amazon", linkStage: "margin" },
       "No subscription, no additional fees",
       "One link to share, no store required",
     ],
