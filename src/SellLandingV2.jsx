@@ -89,11 +89,19 @@ const SELL_PATHS = [
     id: "link", name: "Instant Store", icon: "storefront", isNew: true,
     bestFor: "Getting started fast",
     line: "Sell directly to your audience in minutes with a product page that fully showcases your book. No extra fees, no tech skills required.",
+    /* Down to 3 ticks (Ana). The 70% figure was wrong as written — it's
+       print cost that runs up to 70% below retail via seller pricing,
+       not profit that's 70% higher (a different, unverified claim the
+       brief itself flags as needing real Amazon/Ingram fee data before
+       it could be stated as a %). "AI-drafted listing" swapped for the
+       link/no-store point (Ana: not the strongest value here) — closer
+       to how the brief itself pitches it ("post it anywhere: bio,
+       story, newsletter, DM", "no additional storefront to build").
+       Payment methods tick cut to make room within 3. */
     ticks: [
-      "Seller pricing: up to 70% more profit",
-      "No subscription, no platform fees",
-      "AI-drafted listing, interactive preview",
-      "Checkout via Apple Pay, Google Pay, PayPal",
+      "Seller pricing: print costs up to 70% lower than retail",
+      "No subscription, no additional fees",
+      "One link to share, no store required",
     ],
     links: [["Create your Instant Store", { stage: "instantstorev2" }]],
   },
@@ -101,9 +109,11 @@ const SELL_PATHS = [
     id: "retail", name: "Retail Distribution", icon: "public",
     bestFor: "Maximum reach",
     line: "Reach new readers by listing your book where readers already shop.",
+    /* Second tick dropped (Ana) — "keep everything above print cost"
+       is true of the Bookstore only, not Amazon or Ingram, so it read
+       as a claim about all three when it's really about one. */
     ticks: [
-      "Amazon, Ingram's 40,000+ retailers, and the Blurb Bookstore",
-      "Keep everything above print cost on the Bookstore",
+      "Sell on Amazon, access Ingram's 40,000+ retailers, or list on the Blurb Bookstore",
       "ISBN support included",
     ],
     links: [
@@ -116,8 +126,11 @@ const SELL_PATHS = [
     id: "los", name: "Bulk Printing Services", icon: "local_shipping",
     bestFor: "High-touch support",
     line: "Get dedicated support and volume discounts for orders of 100+ copies, perfect for events, clients, or resale.",
+    /* "Dedicated account team" -> "concierge service" (Ana) — matches
+       the brief's own contrast for this route ("concierge service
+       rather than self-service"). */
     ticks: [
-      "Dedicated account team, start to finish",
+      "Concierge service, start to finish",
       "Dropshipping to multiple addresses",
       "Custom quotes tailored to your project",
     ],
@@ -134,7 +147,7 @@ const SELL_PATHS = [
     line: "Integrate the API infrastructure trusted by Blurb, Canva and Minted, directly into your app or website.",
     ticks: [
       "Same infrastructure that powers Blurb, Canva, Minted",
-      "White-labeled: your brand, not Blurb's",
+      "Fully white-labeled under your brand",
       "No fees, no minimums",
     ],
     links: [["Learn more about RPI Print API", { href: "https://www.rpiprint.com" }]],
@@ -281,10 +294,10 @@ const COMPARE_ROWS = [
     { status: "danger", text: "You build it" },
   ] },
   { label: "Packaging", cells: [
-    { status: "success", text: "White-labeled: your brand, not Blurb's" },
+    { status: "success", text: "Fully white-labeled under your brand" },
     { status: "warning", text: "Set by the retailer" },
     { status: "warning", text: "Custom, including multi-address dropship" },
-    { status: "success", text: "White-labeled: your brand, not Blurb's" },
+    { status: "success", text: "Fully white-labeled under your brand" },
   ] },
   { label: "Tech required", cells: [
     { status: "success", text: "None" },
