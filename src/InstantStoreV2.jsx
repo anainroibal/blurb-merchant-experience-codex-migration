@@ -440,16 +440,50 @@ const FEATURES = [
    brief's own FAQ for this exact question is explicit: "No, checkout
    links are for your buyers. Order copies for yourself at standard
    pricing." Fixed to match; the old "Yes... at the price you set" had
-   it backwards. */
-const FAQS = [
+   it backwards.
+
+   Trimmed and corrected again (Ana):
+   - "How much does Blurb take from each sale?" now leads with the
+     print-on-demand fact itself (you only pay to print what actually
+     sells) rather than just "no setup fee", which was true but wasn't
+     the actual answer to "how much does Blurb take".
+   - "How do I take payments from my book?" dropped — payment methods
+     are already covered in the walkthrough ("A single 'Buy now' takes
+     buyers straight to checkout, including Apple Pay, Google Pay, and
+     PayPal"), so this FAQ was answering a question the page had
+     already answered above the fold.
+   - The payout answer's "...the same schedule as the rest of Blurb's
+     print-on-demand routes" was flagged as untrue (Ana: "ingram is
+     diff") and checked against SellerLanding.jsx's own more careful
+     FAQ answer, which is explicit that it isn't: "Instant Store and
+     Bookstore sales pay out by PayPal or check on a set cadence;
+     Amazon holds payment through its returns window, and Ingram can
+     take up to four months." Dropped the comparison rather than
+     generalize past what's actually true; the $25/monthly/check-or-
+     PayPal facts themselves are real, shared with Bookstore.
+   - "How fast does an order ship after someone purchases my book?"
+     dropped — Blurb publishes no shipping-time commitment this app
+     can quote, so the honest answer was always "it depends, go check
+     the shipping page," which isn't worth its own FAQ line when that
+     same link now lives on the international-shipping question below.
+   - "Can I sell books to readers internationally?" now links to the
+     shipping page (`onGo("shipping")`) for delivery times and rates by
+     country, in place of the dropped shipping-speed FAQ.
+   - Pricing-scope answer split into two paragraphs and "not a volume
+     discount" cut as redundant with the sentence right after it, which
+     already says what applies instead. "Bulk Printing Services" is now
+     a real link to blurb.com/large-order-services, the same URL Sell
+     v2's own card already uses.
+   - Refund-policy answer now links to blurb.com/returns, Blurb's real,
+     live return policy page — found once Ana asked for a real link
+     rather than staying a deliberately generic placeholder. */
+const FAQS = onGo => [
   ["How do I set up an online store for my book?",
    "Open the Instant Store page from your dashboard, choose the project you want to sell, and set your listing details and price. You can preview your page before it goes live, and there's no separate sign-up."],
   ["How much does Blurb take from each sale?",
-   "Nothing off the top, and there's no setup fee to use it. You only pay for printing. What's left after that is yours."],
-  ["How do I take payments from my book?",
-   "Buyers can pay by credit or debit card, Apple Pay, Google Pay, or PayPal right at checkout. You don't need a merchant account or payment processor of your own."],
+   "Nothing off the top. It's print on demand, so you only pay to print the copies that actually sell, no setup fee and nothing upfront. What's left after that is yours."],
   ["How do I get paid for my sales?",
-   "By check or PayPal at the end of each month, once you've reached the $25 minimum payment threshold, the same schedule as the rest of Blurb's print-on-demand routes."],
+   "By check or PayPal at the end of each month, once you've reached the $25 minimum payment threshold."],
   ["Who handles sales tax and shipping on each order?",
    "We calculate and collect sales tax automatically. Your buyer pays shipping at checkout, so it's never taken out of what you keep."],
   ["Is there a minimum order?",
@@ -457,15 +491,35 @@ const FAQS = [
   ["Do I need to order a proof before I can sell through my Instant Store?",
    "Yes. Ordering and reviewing a proof, either a discounted physical copy or a free PDF, is required before your Instant Store can go live. It's the same quality check every Blurb book goes through before it's offered for sale."],
   ["Can I sell books to readers internationally?",
-   "Yes. Your Instant Store link works for any buyer, and each order prints at the facility nearest them."],
-  ["How fast does an order ship after someone purchases my book?",
-   "Print and shipping times vary by product, shipping method, and destination. Your buyer picks a shipping speed at checkout, and Blurb's shipping page has current timelines for each."],
+   <>
+     Yes. Your Instant Store link works for any buyer, and each order prints at the facility nearest them. See our{" "}
+     <a href="#" onClick={e => { e.preventDefault(); onGo?.("shipping"); }} style={{ color: C.blue600, textDecoration: "underline" }}>
+       shipping page
+     </a>{" "}
+     for delivery times and rates by country.
+   </>],
   ["How do I share my Instant Store?",
    "Anywhere a link goes: a social bio, a newsletter, a QR code on a stall, or behind a button on a site you already run."],
   ["Is Instant Store pricing also available if I sell through the Blurb Bookstore, Amazon, or Ingram?",
-   "No. Pricing on the Blurb Bookstore, Amazon, and Ingram is unchanged, and so are orders you place for yourself. Instant Store pricing is a separate, stable print cost available only on orders your buyers place directly through your Instant Store link, not a volume discount. If you're ordering 100 or more copies for an event, inventory, or your own use, Bulk Printing Services' existing volume discounts still apply instead."],
+   <>
+     <p style={{ margin: "0 0 12px" }}>
+       No. Pricing on the Blurb Bookstore, Amazon, and Ingram is unchanged, and so are orders you place for yourself. Instant Store pricing is a separate, stable print cost available only on orders your buyers place directly through your Instant Store link.
+     </p>
+     <p style={{ margin: 0 }}>
+       If you're ordering 100 or more copies for an event, inventory, or your own use,{" "}
+       <a href="https://www.blurb.com/large-order-services" target="_blank" rel="noopener noreferrer" style={{ color: C.blue600, textDecoration: "underline" }}>
+         Bulk Printing Services
+       </a>' existing volume discounts will apply instead.
+     </p>
+   </>],
   ["What is Blurb's refund policy on Instant Store books?",
-   "The same return policy that covers every Blurb order applies to Instant Store sales too."],
+   <>
+     The same{" "}
+     <a href="https://www.blurb.com/returns" target="_blank" rel="noopener noreferrer" style={{ color: C.blue600, textDecoration: "underline" }}>
+       return policy
+     </a>{" "}
+     that covers every Blurb order applies to Instant Store sales too.
+   </>],
   ["Where can I see reporting on my sales?",
    "Your dashboard's Earnings and Monthly Profit Reports pages show what you've made from every route, Instant Store included."],
   ["Can I buy my own book through my Instant Store link?",
@@ -898,7 +952,7 @@ export default function InstantStoreV2({ onGo }) {
         </div>
       </section>
 
-      <Faq heading={<>Your Blurb Instant Store<br />questions, answered</>} items={FAQS} />
+      <Faq heading={<>Your Blurb Instant Store<br />questions, answered</>} items={FAQS(onGo)} />
 
       {/* ── Close ── */}
       <section
