@@ -388,7 +388,7 @@ const FEATURES = [
   ["receipt_long", "Automated sales tax",
    "Sales tax is automatically collected and remitted, so you don't have to manage it."],
   ["auto_stories", "Sell books, magazines & more",
-   "Your Instant Store works for photo books, magazines, notebooks, and journals."],
+   "Your Instant Store works for photo books, paperback and hardcover books, magazines, notebooks, and journals."],
   ["all_inclusive", "No minimums, ever",
    "Sell one copy or one thousand. Instant Store pricing applies from your very first sale."],
   /* Was literally "Lorem ipsum dolor sit amet" in the Figma frame
@@ -567,9 +567,21 @@ export default function InstantStoreV2({ onGo }) {
                 of this sentence. "Your audience" -> "your readers": the
                 SEO doc marks "sell books directly to readers" as this
                 page's own primary phrase (not Sell v2's), so the lede
-                carries it in close to that exact form. */}
+                carries it in close to that exact form.
+
+                "Instant Store" itself named here now (Ana: "it's odd we
+                don't say 'instant store' on the hero anywhere") — the
+                H1 never names it either (three short "your X" beats,
+                no room for the product name without breaking that
+                rhythm — see its own comment), so the lede was the one
+                place left to say it before the page's first button
+                does. Restructured around the name rather than just
+                inserting "with an Instant Store" (Ana's own suggested
+                minimum) — naming it as the noun the sentence is about
+                reads more like an actual answer to "what is this" than
+                a name tacked on midway through. */}
             <p style={{ fontSize: TYPE.lg, lineHeight: 1.55, color: T.textSubtle, margin: 0, maxWidth: 520 }}>
-              Turn your book into a shareable product page and sell directly to your readers. Live in minutes, no hidden fees, and no website or tech skills needed.
+              Turn your book into an Instant Store, a shareable product page that sells directly to your readers. Live in minutes, no hidden fees, and no website or tech skills needed.
             </p>
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
               <Button>Create your Instant Store</Button>
