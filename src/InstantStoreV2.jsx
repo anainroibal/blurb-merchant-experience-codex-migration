@@ -378,7 +378,7 @@ const STEPS = [
 
 const FEATURES = [
   ["payments", "Maximum profit, zero fees",
-   "With print costs up to 70% lower than retail, you maximize your earnings on every sale."],
+   "With print costs up to 70% lower than standard Blurb prices, you maximize your earnings on every sale."],
   ["auto_awesome", "AI-powered listings",
    "Save time and optimize your page. Our AI assistant drafts your product title, description, and keywords."],
   ["storefront", "Your custom product page",
@@ -474,9 +474,11 @@ const FEATURES = [
      already says what applies instead. "Bulk Printing Services" is now
      a real link to blurb.com/large-order-services, the same URL Sell
      v2's own card already uses.
-   - Refund-policy answer now links to blurb.com/returns, Blurb's real,
-     live return policy page — found once Ana asked for a real link
-     rather than staying a deliberately generic placeholder. */
+   - Refund-policy answer briefly linked to blurb.com/returns, then
+     the question was dropped entirely (Ana) rather than kept as a
+     link-only answer.
+   - "Can I turn my Instant Store link off?" dropped too (Ana) — down
+     to 13 questions, then 11. */
 const FAQS = onGo => [
   ["How do I set up an online store for my book?",
    "Open the Instant Store page from your dashboard, choose the project you want to sell, and set your listing details and price. You can preview your page before it goes live, and there's no separate sign-up."],
@@ -512,20 +514,10 @@ const FAQS = onGo => [
        </a>' existing volume discounts will apply instead.
      </p>
    </>],
-  ["What is Blurb's refund policy on Instant Store books?",
-   <>
-     The same{" "}
-     <a href="https://www.blurb.com/returns" target="_blank" rel="noopener noreferrer" style={{ color: C.blue600, textDecoration: "underline" }}>
-       return policy
-     </a>{" "}
-     that covers every Blurb order applies to Instant Store sales too.
-   </>],
   ["Where can I see reporting on my sales?",
    "Your dashboard's Earnings and Monthly Profit Reports pages show what you've made from every route, Instant Store included."],
   ["Can I buy my own book through my Instant Store link?",
    "No. Your Instant Store link is for direct-to-consumer sales to your buyers, the ones your listing price and profit are built around. Order copies for yourself separately, at standard pricing."],
-  ["Can I turn my Instant Store link off?",
-   "Yes, any time. Turning it off stops new orders; anything already placed still ships."],
 ];
 
 export default function InstantStoreV2({ onGo }) {
@@ -600,11 +592,13 @@ export default function InstantStoreV2({ onGo }) {
                 makes properly (as 3x, calculated). "Seller pricing" ->
                 "Instant Store pricing" (Ana: "you're a seller on retail
                 distro but not getting the price so it's not a good name
-                for it") — renamed everywhere on this page. */}
+                for it") — renamed everywhere on this page, though this
+                one line dropped the label again (Ana) in favor of
+                naming what the 70% is actually relative to. */}
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span className="ms" aria-hidden style={{ fontSize: 20, color: C.blue600 }}>trending_up</span>
               <span style={{ fontSize: TYPE.sm, fontWeight: 600 }}>
-                Instant Store pricing: access up to 70% lower print costs
+                Access up to 70% lower print costs than standard Blurb pricing
               </span>
             </div>
           </div>

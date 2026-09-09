@@ -137,17 +137,33 @@ const SELL_PATHS = [
     line: "Self-publish and reach new readers by listing your book where they already shop.",
     /* Back to 2 ticks (Ana) — the third ("Get discovered by readers who
        don't know you yet") made this card 3 ticks plus 3 CTAs, more
-       than any other card carries. */
+       than any other card carries.
+
+       First tick's channel names are now real inline links (Ana:
+       "actually hyperlink Amazon, Ingram and Blurb Bookstore
+       respectively") — same three destinations the card's own CTAs
+       used to carry one-per-line below. A tick object with a `node`
+       instead of `text`, since this is the one tick with more than one
+       link in it; the render code below falls back to rendering `node`
+       directly when present. */
     ticks: [
-      "Sell on Amazon, access Ingram's 40,000+ retailers, or list on the Blurb Bookstore",
+      { key: "retail-channels", node: (
+        <>
+          Sell on <a href="https://www.amazon.com" target="_blank" rel="noopener noreferrer" style={{ color: C.blue600, textDecoration: "underline" }}>Amazon</a>, access{" "}
+          <a href="https://www.blurb.com/ingram" target="_blank" rel="noopener noreferrer" style={{ color: C.blue600, textDecoration: "underline" }}>Ingram</a>'s 40,000+ retailers, or list on the{" "}
+          <a href="https://www.blurb.com/sell-through-blurb" target="_blank" rel="noopener noreferrer" style={{ color: C.blue600, textDecoration: "underline" }}>Blurb Bookstore</a>
+        </>
+      ) },
       "ISBN support included",
     ],
-    /* Link labels are action-based (Ana), not just the channel name. */
-    links: [
-      ["Sell on Amazon", { href: "https://www.amazon.com" }],
-      ["Sell on Blurb Bookstore", { href: "https://www.blurb.com/sell-through-blurb" }],
-      ["Sell through Ingram", { href: "https://www.blurb.com/ingram" }],
-    ],
+    /* Down from three separate per-retailer CTAs to one (Ana) — now that
+       the channels are linked inline in the tick above, three more
+       identical links below just repeated them. One main CTA also
+       brings this card in line with the other three, which each carry
+       exactly one link. No dedicated retail-distribution page exists in
+       this app, so it points at the real live page that covers all
+       three channels together. */
+    links: [["Explore Retail Distribution", { href: "https://www.blurb.com/self-publish" }]],
   },
   {
     id: "los", name: "Bulk Printing Services", icon: "local_shipping",
@@ -650,23 +666,28 @@ export default function SellLandingV2({ onGo }) {
                     looking like a link again. */}
                 <ul style={{ display: "grid", gap: 6, margin: 0, padding: 0, listStyle: "none", width: "100%" }}>
                   {card.ticks.map(tick => {
-                    const { text, linkStage, suffix } = typeof tick === "string" ? { text: tick, linkStage: null, suffix: "" } : tick;
+                    const { text, linkStage, suffix, node, key } =
+                      typeof tick === "string" ? { text: tick, linkStage: null, suffix: "", node: null, key: tick } : tick;
                     return (
-                      <li key={text} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+                      <li key={key || text} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
                         <span className="ms" aria-hidden style={{ fontSize: 18, color: "var(--codex-color-semantic-text-bold)", flex: "0 0 auto", lineHeight: "var(--codex-font-line-height-snug)" }}>
                           check_circle
                         </span>
                         <span style={{ fontSize: TYPE.sm, color: "var(--codex-color-semantic-text-bold)", lineHeight: 1.4 }}>
-                          {linkStage ? (
-                            <a
-                              href="#"
-                              onClick={e => { e.preventDefault(); onGo?.(linkStage); }}
-                              style={{ color: C.blue600, textDecoration: "underline" }}
-                            >
-                              {text}
-                            </a>
-                          ) : text}
-                          {suffix}
+                          {node ? node : (
+                            <>
+                              {linkStage ? (
+                                <a
+                                  href="#"
+                                  onClick={e => { e.preventDefault(); onGo?.(linkStage); }}
+                                  style={{ color: C.blue600, textDecoration: "underline" }}
+                                >
+                                  {text}
+                                </a>
+                              ) : text}
+                              {suffix}
+                            </>
+                          )}
                         </span>
                       </li>
                     );
