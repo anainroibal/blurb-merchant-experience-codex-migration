@@ -376,13 +376,39 @@ const STEPS = [
   ["Share & sell", "Share your unique link or QR code on your bio, newsletter, or social media. We handle the printing, shipping, and sales tax."],
 ];
 
+/* Revised (Ana: "give the benefits a whirl, based on the SEO brief and
+   the CRO brief") — same 8 topics as before, since between them they
+   already map cleanly onto the CRO brief's own "Value" bullets for
+   Instant Store (a few of that list's other bullets — no tech
+   knowledge required, inventory risk, payout reporting — are covered
+   elsewhere on this page instead: the hero subhead, the fulfilment
+   strip further down, and the FAQ, respectively, so repeating them
+   here would just be redundant with copy this page already has).
+   Wording tightened to state specific facts from the brief that
+   weren't in this grid at all before:
+   - "Maximum profit" now says "no subscription" (brief: "No
+     subscription to pay, no platform fees") — this grid's own "no
+     fees" claim didn't actually say what kind before.
+   - "AI-powered listings" picks up the brief's own "not starting from
+     a blank page" phrase.
+   - "Your custom product page" now names the actual checkout methods
+     and "no buyer account needed" (brief: "checkout in a few taps,
+     with no account needed via Apple Pay, Google Pay and Paypal") —
+     the SEO doc separately flags "secure checkout for books" as a
+     trust signal worth stating concretely, not just "seamless".
+   - "No minimums, ever" adds "no volume threshold" (brief: "no
+     minimums, no volume threshold") and "Instant Store pricing" is
+     now a real link to the profit calculator (Ana), matching the
+     STEPS card's own [text](?stage=margin) pattern.
+   - "Share anywhere" now names the brief's own mechanism (a
+     customizable URL and a QR code), not just the destinations. */
 const FEATURES = [
   ["payments", "Maximum profit, zero fees",
-   "With print costs up to 70% lower than standard Blurb prices, you maximize your earnings on every sale."],
+   "With print costs up to 70% lower than standard Blurb prices and no subscription or platform fees, you keep more of every sale."],
   ["auto_awesome", "AI-powered listings",
-   "Save time and optimize your page. Our AI assistant drafts your product title, description, and keywords."],
+   "Our AI drafts your title, description, and keywords, so you're never starting from a blank page."],
   ["storefront", "Your custom product page",
-   "Showcase your work with an interactive preview, author bio, and seamless checkout."],
+   "Showcase your work with an interactive preview, author bio, and one-tap checkout via Apple Pay, Google Pay, or PayPal, no buyer account needed."],
   ["local_shipping", "Effortless fulfillment",
    "We handle printing, white-label packaging, global shipping, and order tracking directly to your customer."],
   ["receipt_long", "Automated sales tax",
@@ -390,15 +416,17 @@ const FEATURES = [
   ["auto_stories", "Sell books, magazines & more",
    "Your Instant Store works for photo books, paperback and hardcover books, magazines, notebooks, and journals."],
   ["all_inclusive", "No minimums, ever",
-   "Sell one copy or one thousand. Instant Store pricing applies from your very first sale."],
+   "Sell one copy or a thousand, with no minimums and no volume threshold. [Instant Store pricing](?stage=margin) applies from your very first sale."],
   /* Was literally "Lorem ipsum dolor sit amet" in the Figma frame
      itself (kept as-is for a while, same spirit as the Showcase section
      on Sell v2 staying placeholder) — now drafted, in the same
      "post it anywhere" language the CRO brief itself uses for this
      value prop (see SellLandingV2.jsx's own note on the Instant Store
-     card). */
+     card). Names the brief's own mechanism now too (a customizable URL
+     and a QR code — "Create with a URL that you can customize and a
+     QR code"), not just the destinations to post it. */
   ["share", "Share anywhere",
-   "Post your link in a bio, a newsletter, a story, or a DM. However your audience finds you, they can buy there too."],
+   "Get a shareable URL and QR code to post in a bio, a newsletter, a story, or a DM. However your audience finds you, they can buy there too."],
 ];
 
 /* Consolidated from two sources (Ana): the SEO team's 10 required
