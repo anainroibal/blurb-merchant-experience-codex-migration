@@ -233,8 +233,6 @@ function PathLink({ label, dest, onGo }) {
   );
 }
 
-const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
-
 /* Codex's own success/warning/danger primitives (read from its compiled
    CSS), one step lighter than the semantic -text/-icon tokens
    (#166640/#8e4412/#bd1818). Those are tuned for text-on-white contrast,
@@ -341,30 +339,45 @@ const GET_STARTED = [
   { href: "https://www.rpiprint.com" },
 ];
 
-/* Same product-type copy as Instant Store v2's "What can you sell"
-   section — the outline writes its own descriptions rather than
-   reusing FormatCards.jsx's sitewide ones; real Blurb photography
-   stays, via FORMAT_CARDS' img/alt, matched by id.
+/* Revised (Ana, working from a reference mock): "Best for" per format,
+   same convention the SELL_PATHS cards above and /self-publish's own
+   "Choose how to sell your book" cards already use, in place of the
+   formats/papers/sizes count line. Rendered through Card's own
+   `description` (Markdown, per Card.d.ts) as a bold "Best for:" line
+   plus the sell-what-you-can sentence — two paragraphs in one string,
+   not two card slots, since Card has no third text slot to spare.
+   Copy follows the reference's own "Best for" lines closely, but the
+   longer sentence is freshly written rather than echoing it back
+   verbatim — the reference repeated its "Best for" text as the
+   description too on two of its four cards, which reads as
+   unfinished placeholder rather than real copy.
 
-   `formats`/`papers`/`sizes` are read directly off blurb.com/pricing
-   (2026-09-06), not the local catalog matrix — CLAUDE.md already
-   documents several gaps between the two (the "T7" price gaps), and
-   the live page is what a seller actually reads.
-     formats = distinct binding rows (Paperback / Imagewrap Hardcover /
-       Dust Jacket Hardcover / Wire-O Softcover)
-     papers  = distinct paper/finish sections (Standard, Premium,
-       Mohawk Superfine, layflat variants, etc. each count once)
-     sizes   = the count /pricing itself states in each card's own
-       "X sizes" line */
+   Photo Books and Notebooks & Journals get their own photography
+   instead of FORMAT_CARDS' shared images (Ana: "and imagery") — real
+   Blurb photos from blurb.com/photo-books and blurb.com/notebooks, a
+   travel-themed hardcover and an open notebook shot, picked to read
+   as distinct from the Paris café / closed-cover shots FORMAT_CARDS
+   already uses everywhere else in this app. Paperback & Hardcover and
+   Magazines keep FORMAT_CARDS' own images (matched by id, below) —
+   they already match the reference mock's own photography closely
+   enough that swapping them would just be work for its own sake. */
 const SELL_FORMATS = [
-  { id: "photo", title: "Photo Books", formats: 3, papers: 7, sizes: 6,
-    desc: "From high-end photography albums to keepsake family books, photo books are our most premium format with multiple trim sizes and paper types." },
-  { id: "trade", title: "Paperback & Hardcover", formats: 3, papers: 3, sizes: 3,
-    desc: "Ideal for books that combine art with text or just text alone like portfolios, cookbooks, novels, children's books and the like." },
-  { id: "magazine", title: "Magazines", formats: 1, papers: 1, sizes: 1,
-    desc: "Great for a series or one-off custom projects. Impressive newsstand quality and easy distribution." },
-  { id: "notebook", title: "Notebooks & Journals", formats: 4, papers: 1, sizes: 3,
-    desc: "Choose from blank, lined, square, or dot-grid notebook pages, plus easily add photos or illustrations within the pages." },
+  { id: "photo", title: "Photo Books",
+    bestFor: "Photographers and visual storytellers building their audience.",
+    desc: "Sell photo books, wedding albums, and layflat photo books in premium papers and formats.",
+    img: "https://assets.blurb.com/_astro/linen-hardcover-dustjacket-optimized.DNuztDk1.webp",
+    alt: "Stack of linen hardcover with dust jacket photo books with a red scooter on the cover and the title “Life in Italy.”" },
+  { id: "trade", title: "Paperback & Hardcover",
+    bestFor: "Selling directly to your audience or through retail distribution.",
+    desc: "Create hardcover and paperback books, novels, cookbooks, children's books, and more." },
+  { id: "magazine", title: "Magazines",
+    bestFor: "Ongoing series, zines, and one-off editorial projects.",
+    desc: "Sell magazines with newsstand-quality printing, perfect for lookbooks, zines, or serial content." },
+  { id: "notebook", title: "Notebooks & Journals",
+    bestFor: "Creators building a branded product line alongside their books.",
+    desc: "Sell notebooks and journals in blank, lined, or dot-grid formats, a natural companion to your books.",
+    img: "https://assets.blurb.com/_astro/linen-hardcover-with-dustjacket-notebook-optimized.CQRJ330f.webp",
+    alt: "Open linen hardcover notebook with dust jacket showing travel photography of Greece on one side, and blank lined paper on the other." },
 ];
 
 /* Real stories, images and quotes lifted from blurb.com/stories-that-bind
@@ -769,13 +782,21 @@ export default function SellLandingV2({ onGo }) {
         </div>
       </section>
 
-      {/* ── What can you sell ── same copy as Instant Store v2's version
-          of this section, not retyped. */}
+      {/* ── What can you sell ── heading, subheading and "Best for" cards
+          revised from a reference mock (Ana); see SELL_FORMATS' own note
+          above for the copy and imagery reasoning. Heading also picks up
+          the SEO doc's own general direction (naming "photo books,
+          magazines, notebooks" rather than the generic "product"). */}
       <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <CardList heading="What you can sell with Blurb" headingAlign="center" layout={{ mobile: 1, tablet: 2, desktop: 4 }}>
+          <CardList
+            heading="Sell photo books, magazines, notebooks & more"
+            subheading="Whatever you create, Blurb has a print-on-demand format and a selling path to match."
+            headingAlign="center"
+            layout={{ mobile: 1, tablet: 2, desktop: 4 }}
+          >
             {SELL_FORMATS.map(f => {
-              const photo = FORMAT_CARDS.find(c => c.id === f.id);
+              const photo = f.img ? f : FORMAT_CARDS.find(c => c.id === f.id);
               return (
                 <Card
                   key={f.id}
@@ -787,9 +808,8 @@ export default function SellLandingV2({ onGo }) {
                       style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", display: "block", borderRadius: R.lg }}
                     />
                   }
-                  eyebrow={`${plural(f.formats, "format")} · ${plural(f.papers, "paper")} · ${plural(f.sizes, "size")}`}
                   title={f.title}
-                  description={f.desc}
+                  description={`**Best for:** ${f.bestFor}\n\n${f.desc}`}
                 />
               );
             })}

@@ -225,24 +225,31 @@ const FULFILMENT_POINTS = [
   ["schedule", "No setup required", "No warehouse, no carrier accounts, no fulfilment integrations. It works the moment you share your link."],
 ];
 
-/* The outline writes its own copy for this section rather than reusing
-   FormatCards.jsx's sitewide descriptions (they read differently) —
-   real Blurb photography stays, via FORMAT_CARDS' img/alt, matched by id.
-   Same shape as Sell v2's own version of this section now (Ana): the
-   formats/papers/sizes counts, read off blurb.com/pricing (2026-09-06),
-   not the local catalog matrix — see SellLandingV2.jsx's own note on
-   what each count means and why it's sourced from the live page. */
-const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
-
+/* Revised (Ana, working from a reference mock): "Best for" per format
+   in place of the formats/papers/sizes count line, same change and same
+   reasoning as SellLandingV2.jsx's own SELL_FORMATS — kept in sync
+   rather than retyped, see that file's note for the full reasoning on
+   the copy (why the reference's own repeated "Best for" text isn't
+   reused verbatim as the description) and the imagery (why Photo Books
+   and Notebooks & Journals get their own photos instead of FORMAT_CARDS'
+   shared ones). */
 const SELL_FORMATS = [
-  { id: "photo", title: "Photo Books", formats: 3, papers: 7, sizes: 6,
-    desc: "From high-end photography albums to keepsake family books, photo books are our most premium format with multiple trim sizes and paper types." },
-  { id: "trade", title: "Paperback & Hardcover", formats: 3, papers: 3, sizes: 3,
-    desc: "Ideal for books that combine art with text or just text alone like portfolios, cookbooks, novels, children's books and the like." },
-  { id: "magazine", title: "Magazines", formats: 1, papers: 1, sizes: 1,
-    desc: "Great for a series or one-off custom projects. Impressive newsstand quality and easy distribution." },
-  { id: "notebook", title: "Notebooks & Journals", formats: 4, papers: 1, sizes: 3,
-    desc: "Choose from blank, lined, square, or dot-grid notebook pages, plus easily add photos or illustrations within the pages." },
+  { id: "photo", title: "Photo Books",
+    bestFor: "Photographers and visual storytellers building their audience.",
+    desc: "Sell photo books, wedding albums, and layflat photo books in premium papers and formats.",
+    img: "https://assets.blurb.com/_astro/linen-hardcover-dustjacket-optimized.DNuztDk1.webp",
+    alt: "Stack of linen hardcover with dust jacket photo books with a red scooter on the cover and the title “Life in Italy.”" },
+  { id: "trade", title: "Paperback & Hardcover",
+    bestFor: "Selling directly to your audience or through retail distribution.",
+    desc: "Create hardcover and paperback books, novels, cookbooks, children's books, and more." },
+  { id: "magazine", title: "Magazines",
+    bestFor: "Ongoing series, zines, and one-off editorial projects.",
+    desc: "Sell magazines with newsstand-quality printing, perfect for lookbooks, zines, or serial content." },
+  { id: "notebook", title: "Notebooks & Journals",
+    bestFor: "Creators building a branded product line alongside their books.",
+    desc: "Sell notebooks and journals in blank, lined, or dot-grid formats, a natural companion to your books.",
+    img: "https://assets.blurb.com/_astro/linen-hardcover-with-dustjacket-notebook-optimized.CQRJ330f.webp",
+    alt: "Open linen hardcover notebook with dust jacket showing travel photography of Greece on one side, and blank lined paper on the other." },
 ];
 
 /* ────────────────────────────────────────────────────────────────
@@ -425,7 +432,14 @@ const FEATURES = [
    "author and personal-use orders" became "orders you place for
    yourself" — the CRO brief is explicit that "author" is an internal
    segment name only, never customer-facing ("buy your own book" / "order
-   copies for yourself" is what a seller should actually read). */
+   copies for yourself" is what a seller should actually read).
+
+   "Can I buy my own book through my Instant Store link?" had the wrong
+   answer (Ana: "no the answer is no, its only for DTC sales") — the CRO
+   brief's own FAQ for this exact question is explicit: "No, checkout
+   links are for your buyers. Order copies for yourself at standard
+   pricing." Fixed to match; the old "Yes... at the price you set" had
+   it backwards. */
 const FAQS = [
   ["How do I set up an online store for my book?",
    "Open the Instant Store page from your dashboard, choose the project you want to sell, and set your listing details and price. You can preview your page before it goes live, and there's no separate sign-up."],
@@ -454,7 +468,7 @@ const FAQS = [
   ["Where can I see reporting on my sales?",
    "Your dashboard's Earnings and Monthly Profit Reports pages show what you've made from every route, Instant Store included."],
   ["Can I buy my own book through my Instant Store link?",
-   "Yes. The same link works for you, at the price you set."],
+   "No. Your Instant Store link is for direct-to-consumer sales to your buyers, the ones your listing price and profit are built around. Order copies for yourself separately, at standard pricing."],
   ["Can I turn my Instant Store link off?",
    "Yes, any time. Turning it off stops new orders; anything already placed still ships."],
 ];
@@ -837,16 +851,24 @@ export default function InstantStoreV2({ onGo }) {
         </div>
       </section>
 
-      {/* ── What can you sell ── the same four product-type cards used
-          elsewhere, not retyped. Padding cut roughly in half (Ana: too
-          large) — same clamp(32px,4vw,48px) Sell v2's own "Included with
-          every way you sell" section uses for the same reason: it sits
-          between two dense sections and doesn't need that much air. */}
+      {/* ── What can you sell ── heading, subheading and "Best for" cards
+          revised from a reference mock (Ana), kept in sync with Sell
+          v2's own version rather than retyped; see SELL_FORMATS' own
+          note above for the copy and imagery reasoning. Padding cut
+          roughly in half (Ana: too large) — same clamp(32px,4vw,48px)
+          Sell v2's own "Included with every way you sell" section uses
+          for the same reason: it sits between two dense sections and
+          doesn't need that much air. */}
       <section style={{ background: C.gray50, padding: "clamp(32px, 4vw, 48px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <CardList heading="What you can sell with Blurb" headingAlign="center" layout={{ mobile: 1, tablet: 2, desktop: 4 }}>
+          <CardList
+            heading="Sell photo books, magazines, notebooks & more"
+            subheading="Whatever you create, Blurb has a print-on-demand format and a selling path to match."
+            headingAlign="center"
+            layout={{ mobile: 1, tablet: 2, desktop: 4 }}
+          >
             {SELL_FORMATS.map(f => {
-              const photo = FORMAT_CARDS.find(c => c.id === f.id);
+              const photo = f.img ? f : FORMAT_CARDS.find(c => c.id === f.id);
               return (
                 <Card
                   key={f.id}
@@ -858,9 +880,8 @@ export default function InstantStoreV2({ onGo }) {
                       style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", display: "block", borderRadius: R.lg }}
                     />
                   }
-                  eyebrow={`${plural(f.formats, "format")} · ${plural(f.papers, "paper")} · ${plural(f.sizes, "size")}`}
                   title={f.title}
-                  description={f.desc}
+                  description={`**Best for:** ${f.bestFor}\n\n${f.desc}`}
                 />
               );
             })}
