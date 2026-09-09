@@ -282,9 +282,20 @@ export default function ShippingPage({ onGo, lean }) {
           calculation for ShippingSection.jsx's own postcode calculator;
           reused here with "if ordered today" stated in the label so the
           assumption is never silent. The business-day range stays
-          alongside it rather than being replaced — that's the shape
-          Ana asked for (both things), and it's also the number that
-          still holds for a visitor who isn't ordering today. */}
+          rather than being replaced — that's the shape Ana asked for
+          (both things), and it's also the number that still holds for
+          a visitor who isn't ordering today.
+
+          First pass gave the two facts their own columns (label,
+          business-days, arrival date, price) — four columns fighting
+          for the same row read as clutter (Ana: "it looks a mess").
+          Collapsed to three: the business-day count folds into the
+          "Arrives" caption as one sentence ("Arrives in 11-15 business
+          days, if ordered today") sitting above the bold calendar date,
+          the same subtle-label/bold-value shape ShippingSection.jsx's
+          own "Arrives" block already uses — one fact stated, then the
+          other explained in terms of it, instead of two facts
+          competing side by side. */}
       <Section title="What it costs, wherever it's going">
         <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
           <Select
@@ -322,14 +333,13 @@ export default function ShippingPage({ onGo, lean }) {
               <div key={s.id} style={{
                 background: "#fff", border: `1px solid ${C.charcoal200}`, borderRadius: R.md,
                 padding: 16, display: "grid", gap: 10, alignItems: "center",
-                gridTemplateColumns: "minmax(0,1fr) auto auto auto",
+                gridTemplateColumns: "minmax(0,1fr) auto auto",
               }}>
                 <span style={{ fontSize: TYPE.lg, fontWeight: 700 }}>{s.label}</span>
-                <span style={{ fontSize: TYPE.base, color: T.textSubtle, whiteSpace: "nowrap" }}>
-                  {s.days[0] + PRINT_RANGE[0]}–{s.days[1] + PRINT_RANGE[1]} business days
-                </span>
                 <span style={{ display: "grid", gap: 2, justifyItems: "end", whiteSpace: "nowrap" }}>
-                  <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>Arrives if ordered today</span>
+                  <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
+                    Arrives in {s.days[0] + PRINT_RANGE[0]}–{s.days[1] + PRINT_RANGE[1]} business days, if ordered today
+                  </span>
                   <span style={{ fontSize: TYPE.base, fontWeight: 700 }}>
                     {formatDay(w.earliest)} – {formatDay(w.latest)}
                   </span>
