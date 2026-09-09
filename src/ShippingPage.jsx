@@ -5,7 +5,7 @@ import Faq from "./Faq.jsx";
 import ShippingSection from "./ShippingSection.jsx";
 import InstantStoreLane from "./InstantStoreLane.jsx";
 import { FORMAT_CARDS } from "./FormatCards.jsx";
-import { SHIPPING, PRINT_RANGE, shippingFor, money } from "./catalog.js";
+import { SHIPPING, PRINT_RANGE, shippingFor, money, BULK_MIN } from "./catalog.js";
 
 /* ────────────────────────────────────────────────────────────────
    /shipping — a calculator again, without a postcode or a date.
@@ -88,11 +88,28 @@ import { SHIPPING, PRINT_RANGE, shippingFor, money } from "./catalog.js";
      together) — this was the one caller still hardcoding 1. Options
      stop at 50, one below BULK_MIN (100): "Ordering in volume" below
      already sends a triple-digit order to Large Order Services, so
-     this dropdown never offers a quantity that section would contest. */
+     this dropdown never offers a quantity that section would contest.
 
-/* Stops one short of BULK_MIN (100): past that, "Ordering in volume"
-   below already sends the order to Large Order Services instead. */
-const QUANTITIES = [1, 2, 5, 10, 25, 50];
+   REVISED AGAIN 2026-09-10 (Ana: "What it costs, wherever it's going
+   section should be white bg. if user picks 100 copies or more, show
+   a banner to go to Bulk Printing Services"):
+   - That section dropped `tinted`, so it's white like the section
+     below it rather than gray50.
+   - The Quantity dropdown now runs one option past where it used to
+     stop — BULK_MIN itself, labelled "100+ copies" — so picking it is
+     possible at all. At BULK_MIN or above, `BulkBanner` replaces the
+     speed-rows grid outright rather than sitting beside it: a per-copy
+     rate multiplied out to 100+ is exactly the number "Ordering in
+     volume" already warns isn't the one to read, so showing it as a
+     quote would contradict this page's own caveat. Named and linked
+     the way Sell v2, Instant Store v2 and the nav already do — Bulk
+     Printing Services, blurb.com/large-order-services — not "Large
+     Order Services", which the caveat text below still uses; left that
+     alone since renaming it wasn't asked for. */
+
+/* Runs one past BULK_MIN (100) rather than stopping short of it, so
+   picking it is how the bulk banner below gets triggered at all. */
+const QUANTITIES = [1, 2, 5, 10, 25, 50, BULK_MIN];
 
 function Section({ title, lede, children, id, tinted }) {
   return (
@@ -114,6 +131,40 @@ function Section({ title, lede, children, id, tinted }) {
         {children}
       </div>
     </section>
+  );
+}
+
+/* At BULK_MIN and past it, this is stock, not a calculator row —
+   the same handoff SummaryPanel's BulkHandoff makes on the pricing
+   side, named here the way Sell v2, Instant Store v2 and the nav
+   already renamed it: Bulk Printing Services, linking to the same
+   blurb.com/large-order-services URL those pages use. Replaces the
+   speed rows rather than sitting beside them, because a per-copy rate
+   multiplied out to 100+ is exactly the number "Ordering in volume"
+   below warns isn't the one to read. */
+function BulkBanner({ qty }) {
+  return (
+    <div style={{
+      background: C.blue50, border: `1px solid ${C.blue100}`, borderRadius: R.md,
+      padding: 20, display: "grid", gap: 8,
+    }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <span className="ms" style={{ fontSize: 20, color: C.blue600 }}>local_shipping</span>
+        <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase", color: C.blue950 }}>
+          {qty}+ copies is a large order
+        </span>
+      </div>
+      <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.6, color: T.textNeutral }}>
+        At this quantity you're buying stock, not a single copy, so this table isn't the one to read. Bulk
+        Printing Services quotes the run and the delivery together.
+      </p>
+      <Button
+        as="a" href="https://www.blurb.com/large-order-services" target="_blank" rel="noopener noreferrer"
+        variant="outlined" style={{ justifySelf: "start", marginTop: 4 }}
+      >
+        Get a bulk quote
+      </Button>
+    </div>
   );
 }
 
@@ -191,7 +242,7 @@ export default function ShippingPage({ onGo, lean }) {
           change with it — only the country does — and no calendar date,
           because this page doesn't know when the order is placed.
           A range in business days is what it can honestly say. */}
-      <Section title="What it costs, wherever it's going" tinted>
+      <Section title="What it costs, wherever it's going">
         <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
           <Select
             label="Product"
@@ -207,36 +258,45 @@ export default function ShippingPage({ onGo, lean }) {
           />
           <Select
             label="Quantity"
-            options={QUANTITIES.map(n => ({ value: String(n), label: `${n} ${n === 1 ? "copy" : "copies"}` }))}
+            options={QUANTITIES.map(n => ({
+              value: String(n),
+              label: n >= BULK_MIN ? `${n}+ copies` : `${n} ${n === 1 ? "copy" : "copies"}`,
+            }))}
             value={String(qty)}
             onValueChange={v => setQty(Number(v))}
           />
         </div>
 
-        <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
-          Printing takes {PRINT_RANGE[0]}–{PRINT_RANGE[1]} days, whichever speed you choose below — then:
-        </span>
+        {qty >= BULK_MIN ? (
+          <BulkBanner qty={qty} />
+        ) : (
+          <>
+            <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
+              Printing takes {PRINT_RANGE[0]}–{PRINT_RANGE[1]} days, whichever speed you choose below — then:
+            </span>
 
-        <div style={{ display: "grid", gap: 10 }}>
-          {speeds.map(s => {
-            const quote = shippingFor(ship.country, s.id, qty);
-            return (
-              <div key={s.id} style={{
-                background: "#fff", border: `1px solid ${C.charcoal200}`, borderRadius: R.md,
-                padding: 16, display: "grid", gap: 10, alignItems: "center",
-                gridTemplateColumns: "minmax(0,1fr) auto auto",
-              }}>
-                <span style={{ fontSize: TYPE.lg, fontWeight: 700 }}>{s.label}</span>
-                <span style={{ fontSize: TYPE.base, color: T.textSubtle, whiteSpace: "nowrap" }}>
-                  {s.days[0] + PRINT_RANGE[0]}–{s.days[1] + PRINT_RANGE[1]} business days
-                </span>
-                <span style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 700, whiteSpace: "nowrap" }}>
-                  {quote ? money(quote.cost) : "—"}
-                </span>
-              </div>
-            );
-          })}
-        </div>
+            <div style={{ display: "grid", gap: 10 }}>
+              {speeds.map(s => {
+                const quote = shippingFor(ship.country, s.id, qty);
+                return (
+                  <div key={s.id} style={{
+                    background: "#fff", border: `1px solid ${C.charcoal200}`, borderRadius: R.md,
+                    padding: 16, display: "grid", gap: 10, alignItems: "center",
+                    gridTemplateColumns: "minmax(0,1fr) auto auto",
+                  }}>
+                    <span style={{ fontSize: TYPE.lg, fontWeight: 700 }}>{s.label}</span>
+                    <span style={{ fontSize: TYPE.base, color: T.textSubtle, whiteSpace: "nowrap" }}>
+                      {s.days[0] + PRINT_RANGE[0]}–{s.days[1] + PRINT_RANGE[1]} business days
+                    </span>
+                    <span style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 700, whiteSpace: "nowrap" }}>
+                      {quote ? money(quote.cost) : "—"}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </>
+        )}
       </Section>
 
       {/* ── The honest caveats, in one place ── */}
