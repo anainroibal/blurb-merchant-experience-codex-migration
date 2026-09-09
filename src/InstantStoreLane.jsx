@@ -32,8 +32,15 @@ import { C, T, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 
    NO FIGURES ON IT, anywhere it appears. What a seller keeps depends on
    the book, and that arithmetic lives behind the door.
+
+   Default CTA revised 2026-09-10 (Ana, on the Shipping page instance:
+   "Learn more about Instant Stores >> Learn more about the Blurb
+   Instant Store") — changed here rather than only on that one caller,
+   since it's the shared default every instance but InstantStorePage.jsx
+   (which already passes its own) renders verbatim: Estimator.jsx,
+   ShippingPage.jsx, and PricingToday.jsx all pick it up.
    ──────────────────────────────────────────────────────────────── */
-export default function InstantStoreLane({ title, children, cta = "Learn more about Instant Stores", onGo, isNew }) {
+export default function InstantStoreLane({ title, children, cta = "Learn more about the Blurb Instant Store", onGo, isNew }) {
   return (
     <section style={{
       display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 380px), 1fr))",

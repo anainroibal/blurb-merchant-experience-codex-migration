@@ -289,13 +289,19 @@ export default function ShippingPage({ onGo, lean }) {
           First pass gave the two facts their own columns (label,
           business-days, arrival date, price) — four columns fighting
           for the same row read as clutter (Ana: "it looks a mess").
-          Collapsed to three: the business-day count folds into the
-          "Arrives" caption as one sentence ("Arrives in 11-15 business
-          days, if ordered today") sitting above the bold calendar date,
-          the same subtle-label/bold-value shape ShippingSection.jsx's
-          own "Arrives" block already uses — one fact stated, then the
-          other explained in terms of it, instead of two facts
-          competing side by side. */}
+          Second pass folded the business-day count into the "Arrives"
+          caption as one long sentence ("Arrives in 11-15 business days,
+          if ordered today") — still cramped (Ana: "it still looks
+          cramped"), because it packed both facts into the same narrow
+          right-aligned block while the wide label column sat empty.
+
+          Third pass spreads the two facts across the row's own width
+          instead: the business-day range moves under the speed name in
+          the label column (which had the room), and the "Arrives"
+          caption goes back to two words over the bold calendar date,
+          the exact subtle-label/bold-value shape ShippingSection.jsx's
+          own "Arrives" block already uses. Three short blocks reading
+          left to right, not one block carrying two sentences. */}
       <Section title="What it costs, wherever it's going">
         <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
           <Select
@@ -335,11 +341,14 @@ export default function ShippingPage({ onGo, lean }) {
                 padding: 16, display: "grid", gap: 10, alignItems: "center",
                 gridTemplateColumns: "minmax(0,1fr) auto auto",
               }}>
-                <span style={{ fontSize: TYPE.lg, fontWeight: 700 }}>{s.label}</span>
-                <span style={{ display: "grid", gap: 2, justifyItems: "end", whiteSpace: "nowrap" }}>
+                <span style={{ display: "grid", gap: 2 }}>
+                  <span style={{ fontSize: TYPE.lg, fontWeight: 700 }}>{s.label}</span>
                   <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
-                    Arrives in {s.days[0] + PRINT_RANGE[0]}–{s.days[1] + PRINT_RANGE[1]} business days, if ordered today
+                    {s.days[0] + PRINT_RANGE[0]}–{s.days[1] + PRINT_RANGE[1]} business days
                   </span>
+                </span>
+                <span style={{ display: "grid", gap: 2, justifyItems: "end", whiteSpace: "nowrap" }}>
+                  <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>Arrives if ordered today</span>
                   <span style={{ fontSize: TYPE.base, fontWeight: 700 }}>
                     {formatDay(w.earliest)} – {formatDay(w.latest)}
                   </span>
@@ -366,14 +375,14 @@ export default function ShippingPage({ onGo, lean }) {
       >
         <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
           <Lane
-            heading="Ordering copies?"
+            heading="Ordering for yourself?"
             body="Price your book, add your postcode, and you'll see every speed with its cost and the day it would arrive, side by side. Choose a date, not a number of business days. Delivery joins your total."
             action="Open the pricing calculator"
             onClick={() => onGo("pricing")}
           />
           <Lane
             heading="Selling your book?"
-            body="Your buyer pays the delivery, so it never comes out of your cost, your price or your profit. The Instant Store profit calculator can show you what a buyer would see at checkout, right beside your margin without ever touching it."
+            body="Your buyer pays the delivery, so it never comes out of your profit. The Instant Store profit calculator can show you what a buyer would see at checkout."
             action="Open the profit calculator"
             onClick={() => onGo("margin")}
           />
@@ -383,16 +392,28 @@ export default function ShippingPage({ onGo, lean }) {
       {/* ── The one change the lean scope makes here ──
           After the page's own content, as on the catalogue and the price
           list: someone reading about delivery is working out what an order
-          costs, and selling is the second question. */}
+          costs, and selling is the second question.
+
+          RETITLED 2026-09-10 (Ana): title and body both revised. This
+          instance's title used to be its own page-contextual line
+          ("Selling your book? We ship to your buyers"), matching
+          InstantStoreLane.jsx's own stated intent that each caller's
+          words differ by where it sits — but Ana asked to match the
+          ISV2 hero exactly instead ("Sell direct, maximize your
+          profit"), so this one instance now breaks from that per-page
+          pattern deliberately. Body trimmed too, dropping "wherever
+          they are" and "so it never comes out of what you earn" for
+          two short sentences with no shipping-specific claim, since
+          that claim is what the rest of this page already makes. */}
       <section style={{ padding: "clamp(40px, 6vw, 72px) 24px 0" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <InstantStoreLane
-            title="Selling your book? We ship to your buyers"
+            title="Sell direct, maximize your profit"
             isNew
             onGo={() => onGo?.("instantstore")}
           >
-            An Instant Store is one link you share, and every order is printed and posted to the buyer for
-            you, wherever they are. They pay the delivery, so it never comes out of what you earn.
+            An Instant Store is one link you share, and every order is printed and posted for you. No extra
+            fees, no tech skills required.
           </InstantStoreLane>
         </div>
       </section>

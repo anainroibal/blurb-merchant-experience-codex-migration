@@ -425,7 +425,7 @@ const STEPS = [
      customizable URL and a QR code), not just the destinations. */
 const FEATURES = [
   ["payments", "Maximum profit, zero fees",
-   "With print costs up to 70% lower than standard Blurb prices and no subscription or platform fees, you keep more of every sale."],
+   "With print costs up to 70% lower than Blurb retail pricing and no subscription or platform fees, you keep more of every sale."],
   ["auto_awesome", "AI-powered listings",
    "Our AI drafts your title, description, and keywords, so you're never starting from a blank page."],
   ["storefront", "Your custom product page",
@@ -566,7 +566,7 @@ const FAQS = onGo => [
   ["Where can I see reporting on my sales?",
    "Your dashboard's Earnings and Monthly Profit Reports pages show what you've made from every route, Instant Store included."],
   ["Can I buy my own book through my Instant Store link?",
-   "No. Your Instant Store link is for direct-to-consumer sales to your buyers, the ones your listing price and profit are built around. Order copies for yourself separately, at standard pricing."],
+   "No. Your Instant Store link is for direct-to-consumer sales to your buyers, the ones your listing price and profit are built around. Order copies for yourself separately, at Blurb retail pricing."],
 ];
 
 export default function InstantStoreV2({ onGo }) {
@@ -685,11 +685,19 @@ export default function InstantStoreV2({ onGo }) {
                 distro but not getting the price so it's not a good name
                 for it") — renamed everywhere on this page, though this
                 one line dropped the label again (Ana) in favor of
-                naming what the 70% is actually relative to. */}
+                naming what the 70% is actually relative to.
+
+                "Standard Blurb pricing" -> "Blurb retail pricing"
+                (Ana: "we want to use the term Blurb retail pricing
+                instead of standard Blurb pricing, everywhere") —
+                renamed here, in the FEATURES grid's "Maximum profit"
+                tile (same 70% claim), and in the "buy my own book" FAQ
+                answer, which said "standard pricing" without "Blurb"
+                but meant the same thing. */}
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span className="ms" aria-hidden style={{ fontSize: 20, color: C.blue600 }}>trending_up</span>
               <span style={{ fontSize: TYPE.sm, fontWeight: 600 }}>
-                Access up to 70% lower print costs than standard Blurb pricing
+                Access up to 70% lower print costs than Blurb retail pricing
               </span>
             </div>
           </div>
