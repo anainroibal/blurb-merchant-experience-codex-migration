@@ -838,36 +838,24 @@ export default function InstantStoreV2({ onGo }) {
       {/* ── Keep More of What You Earn ── */}
       <section style={{ padding: "clamp(40px, 5vw, 56px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 24 }}>
-          {/* Button moved out to the row's right edge (Ana: "the calculate
-              your profit cta on the table should maybe be aligned right?
-              it's a bit awkward there") — it sat stacked under the lede
-              before, on its own line inside the same narrow column,
-              which read like a third paragraph rather than an action.
-              Same heading-left/CTA-right shape as Home.jsx's "Inspiring
-              examples" section. */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 24, flexWrap: "wrap" }}>
-            <div style={{ display: "grid", gap: 12, maxWidth: 720 }}>
-              <h2 style={{
-                fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
-                lineHeight: 1.25, margin: 0,
-              }}>
-                Keep more of what you earn
-              </h2>
-              {/* Two paragraphs collapsed into one (Ana: "lots of words but
-                  looks off") — same two facts (you set the price with no
-                  extra fees; that's worth up to 3x more) in one sentence
-                  rather than two lines of near-equal visual weight fighting
-                  each other. The standalone "listing price / print cost /
-                  profit" card that used to sit beside this text is gone too
-                  (Ana: "it should be incorporated in the table") — those
-                  three numbers are now rows in the table itself. */}
-              <p style={{ margin: 0, fontSize: TYPE.base, color: T.textNeutral }}>
-                You set the price, and what's left after your printing cost is yours, up to 3x more profit than selling through other distribution channels.
-              </p>
-            </div>
-            <Button variant="outlined" onClick={() => onGo?.("margin")} style={{ flex: "0 0 auto" }}>
-              Calculate your profit
-            </Button>
+          <div style={{ display: "grid", gap: 12, maxWidth: 720 }}>
+            <h2 style={{
+              fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
+              lineHeight: 1.25, margin: 0,
+            }}>
+              Keep more of what you earn
+            </h2>
+            {/* Two paragraphs collapsed into one (Ana: "lots of words but
+                looks off") — same two facts (you set the price with no
+                extra fees; that's worth up to 3x more) in one sentence
+                rather than two lines of near-equal visual weight fighting
+                each other. The standalone "listing price / print cost /
+                profit" card that used to sit beside this text is gone too
+                (Ana: "it should be incorporated in the table") — those
+                three numbers are now rows in the table itself. */}
+            <p style={{ margin: 0, fontSize: TYPE.base, color: T.textNeutral }}>
+              You set the price, and what's left after your printing cost is yours, up to 3x more profit than selling through other distribution channels.
+            </p>
           </div>
 
           {/* $50.00 rather than a mechanically-derived $60.80 (Ana:
@@ -877,10 +865,27 @@ export default function InstantStoreV2({ onGo }) {
               conventions rather than being invented from scratch — see
               the file header note for the full arithmetic and the
               caveats that still apply (Amazon/Bookstore's $31.00 print
-              cost is Ana's own guess, same as before). */}
-          <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle }}>
-            Figures below assume a $50.00 list price for an 8×10 hardcover photo book. Actual costs vary by format, size, and page count.
-          </p>
+              cost is Ana's own guess, same as before).
+
+              CTA moved here 2026-09-10, twice over. First pass put it at
+              the top, right-aligned against the H2 (Ana: "the calculate
+              your profit cta on the table should maybe be aligned right?
+              it's a bit awkward there") — fixed the awkward stacked-
+              under-the-lede placement, but next to a two-line heading
+              block it still read adrift (Ana: "is now a bit lost, maybe
+              align bottom to the 'figures below'?"). Pairing it with
+              this caption instead gives the button a fixed, single-line
+              partner to align against rather than a heading of variable
+              height, and puts the action right where a reader's eye
+              lands right before the numbers start. */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 24, flexWrap: "wrap" }}>
+            <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, maxWidth: 720 }}>
+              Figures below assume a $50.00 list price for an 8×10 hardcover photo book. Actual costs vary by format, size, and page count.
+            </p>
+            <Button variant="outlined" onClick={() => onGo?.("margin")} style={{ flex: "0 0 auto" }}>
+              Calculate your profit
+            </Button>
+          </div>
 
           {/* Hand-built, not Codex's ComparisonTable (Ana: "it doesn't
               sell it, it needs colour, highlights, pills" — see the file
@@ -1017,8 +1022,17 @@ export default function InstantStoreV2({ onGo }) {
           restated here as a standalone strip rather than new claims.
           Plain background, not gray50 — "What you can sell" right after
           it already is gray50, and back-to-back would merge the two
-          into one block with no visible seam. */}
-      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px" }}>
+          into one block with no visible seam.
+
+          TOP BORDER ADDED 2026-09-10 (Ana: "'blurb handles everything
+          after the sale' section is also white so it's a bit lost,
+          needs diff bg or a line") — "Keep more of what you earn" right
+          above it is white too, so the same no-seam problem the gray50
+          note above already solved on one side was still open on the
+          other. A background change would have reopened that first
+          problem, so this gets a hairline rule instead, the same
+          `T.border` colour `tinted` sections already put under theirs. */}
+      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px", borderTop: `1px solid ${T.border}` }}>
         <div style={{ maxWidth: 1160, margin: "0 auto", display: "grid", gap: 32 }}>
           <h2 style={{
             fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
