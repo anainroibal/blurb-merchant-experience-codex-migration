@@ -333,14 +333,17 @@ const SELL_FORMATS = [
 /* "Keep more of what you earn" table data — see the file header note
    above for where every figure comes from. Instant Store and RPI Print
    API share seller pricing, so they share every cell; "Other print-on-
-   demand solutions" can't be priced at all, so it stays qualitative. */
+   demand solutions" can't be priced at all except the listing price
+   itself (Ana) — that's the same $50.00 everywhere, since it's the
+   seller who sets it, not the platform; only cost and fees vary by
+   provider. */
 const KEEP_MORE_COLUMNS = ["Instant Store", "Blurb Bookstore", "Amazon", "RPI Print API", "Other print-on-demand solutions"];
 
 const KEEP_MORE_ROWS = [
-  { label: "Your listing price", cells: ["$50.00", "$50.00", "$50.00", "$50.00", "Varies"] },
+  { label: "Your listing price", cells: ["$50.00", "$50.00", "$50.00", "$50.00", "$50.00"] },
   { label: "Print cost", cells: ["$17.50", "$31.00", "$31.00", "$17.50", "Varies by provider"] },
   { label: "Commission", cells: ["0%", "0%", "$1.35 + 15% of list price", "0%", "Varies by provider"] },
-  { label: "Other fees", cells: ["None", "None", "None", "None", "Processing, platform & hosting fees"] },
+  { label: "Other fees", cells: ["None", "None", "None", "None", "Processing, platform and subscription fees, varies by provider"] },
 ];
 
 const KEEP_MORE_PROFIT = ["$32.50", "$19.00", "$10.15", "$32.50", "Varies"];
@@ -390,23 +393,54 @@ const FEATURES = [
    "Post your link in a bio, a newsletter, a story, or a DM. However your audience finds you, they can buy there too."],
 ];
 
+/* Consolidated from two sources (Ana): the SEO team's 10 required
+   questions (verbatim, including their exact wording and the "no
+   minimum order" keyword note on #6) and a set of already-drafted
+   answers from elsewhere (a checkout-link FAQ doc), reworded into this
+   page's own voice and terminology — "checkout link" -> "Instant
+   Store", "seller pricing" -> "Instant Store pricing" (this session's
+   own rename). Overlapping questions merged into one rather than kept
+   as near-duplicates (Ana: "do your best to consolidate") — the setup-
+   fees question folded into "how much does Blurb take", and "what
+   happens once an order is placed" dropped since FULFILMENT_POINTS
+   below already covers it as its own section, not just an FAQ line.
+   Two more pulled in from that same doc for their own value even
+   though the SEO list didn't ask for them: the proof requirement
+   (ties to CLAUDE.md's own Quality Gate rule, not invented here) and
+   the full pricing-scope answer (matches the CRO brief's confirmed
+   "seller pricing is Instant Store/RPI Print API only" rule already
+   used elsewhere on this page). The refund-policy answer is the one
+   exception — no refund policy exists anywhere in this codebase to
+   draw from, so it's deliberately generic rather than inventing terms;
+   worth Legal/CS supplying real language before this ships anywhere
+   real. */
 const FAQS = [
   ["How do I set up an online store for my book?",
-   "Pick a project already in your account (or start one), set your price, and your Instant Store page is ready to share, with no separate sign-up."],
-  ["Is there a minimum order to sell through my Instant Store?",
-   "No. Sell one copy or a thousand; there is no minimum."],
+   "Open the Instant Store page from your dashboard, choose the project you want to sell, and set your listing details and price. You can preview your page before it goes live, and there's no separate sign-up."],
   ["How much does Blurb take from each sale?",
-   "Nothing off the top. You set the price, we charge you our printing cost to fulfil the order, and what's left is yours."],
+   "Nothing off the top, and there's no setup fee to use it. You only pay for printing. What's left after that is yours."],
+  ["How do I take payments from my book?",
+   "Buyers can pay by credit or debit card, Apple Pay, Google Pay, or PayPal right at checkout. You don't need a merchant account or payment processor of your own."],
   ["How do I get paid for my sales?",
-   "Payouts follow the same US $25 minimum and cadence as the rest of Blurb's print-on-demand routes: by PayPal or check once that threshold is reached."],
+   "Just as when you sell through the Blurb Bookstore, you'll receive your profit at the end of each month by check or PayPal, once you've reached the $25 minimum payment threshold."],
   ["Who handles sales tax and shipping on each order?",
    "We calculate and collect sales tax automatically. Your buyer pays shipping at checkout, so it's never taken out of what you keep."],
+  ["Is there a minimum order?",
+   "No minimum order. Sell one copy or a thousand, whenever you're ready."],
+  ["Do I need to order a proof before I can sell through my Instant Store?",
+   "Yes. Ordering and reviewing a proof, either a discounted physical copy or a free PDF, is required before your Instant Store can go live. It's the same quality check every Blurb book goes through before it's offered for sale."],
   ["Can I sell books to readers internationally?",
    "Yes. Your Instant Store link works for any buyer, and each order prints at the facility nearest them."],
+  ["How fast does an order ship after someone purchases my book?",
+   "Print and shipping times vary by product, shipping method, and destination. Your buyer picks a shipping speed at checkout, and Blurb's shipping page has current timelines for each."],
   ["How do I share my Instant Store?",
    "Anywhere a link goes: a social bio, a newsletter, a QR code on a stall, or behind a button on a site you already run."],
-  ["Is Instant Store pricing available on every order?",
-   "Yes. The price you set is the price your buyer pays on every order, with no separate wholesale or retail tiers to track."],
+  ["Is Instant Store pricing also available if I sell through the Blurb Bookstore, Amazon, or Ingram?",
+   "No. Pricing on the Blurb Bookstore, Amazon, and Ingram is unchanged, and so are author and personal-use orders. Instant Store pricing is a separate, stable print cost available only on orders your buyers place directly through your Instant Store link, not a volume discount. If you're ordering 100 or more copies for an event, inventory, or your own use, Bulk Printing Services' existing volume discounts still apply instead."],
+  ["What is Blurb's refund policy on Instant Store books?",
+   "The same return policy that covers every Blurb order applies to Instant Store sales too."],
+  ["Where can I see reporting on my sales?",
+   "Your dashboard's Earnings and Monthly Profit Reports pages show what you've made from every route, Instant Store included."],
   ["Can I buy my own book through my Instant Store link?",
    "Yes. The same link works for you, at the price you set."],
   ["Can I turn my Instant Store link off?",
@@ -824,7 +858,15 @@ export default function InstantStoreV2({ onGo }) {
           <p style={{ margin: 0, fontSize: TYPE.lg, color: T.textSubtle, lineHeight: 1.6 }}>
             It takes just a few minutes to get started.
           </p>
-          <Button>Create your Instant Store</Button>
+          {/* Secondary CTA added alongside the primary one (Ana) — a
+              reader who isn't ready to commit yet still has somewhere to
+              go rather than a dead end, same "Calculate your profit"
+              destination the hero and "Keep more of what you earn"
+              already point to. */}
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
+            <Button>Create your Instant Store</Button>
+            <Button variant="outlined" onClick={() => onGo?.("margin")}>Calculate your profit</Button>
+          </div>
         </div>
       </section>
     </div>
