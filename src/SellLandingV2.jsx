@@ -637,22 +637,23 @@ export default function SellLandingV2({ onGo }) {
                 {/* Ticks beef up what used to be just the description
                     (Ana, working from her own reference mock) — short
                     scannable value props from the CRO brief rather than
-                    the mock's own full sentences. The one clickable tick
-                    (Instant Store's profit claim) used to be blue and
-                    underlined like a normal link; Ana felt that plus the
-                    PathLinks below plus the table's own links added up
-                    to too much blue on one card ("even if they're just
-                    black/the font colour"). It's still a real link
-                    (same onClick, same onGo) — just styled as plain body
-                    text, no color or underline cue, so it doesn't visually
-                    compete with the links whose whole job is to be
-                    clicked. */}
+                    the mock's own full sentences. First pass at "too
+                    much blue" de-styled the one clickable tick itself
+                    (Instant Store's profit claim) to plain text —
+                    wrong fix (Ana: "up to 3x more profit still should
+                    have the hyperlink treatment... i meant the ticks
+                    with the circle should be in font colour"). The
+                    actual source of the blue overload is the
+                    check_circle icon repeated on every tick of every
+                    card — four cards, up to three ticks each, all in
+                    C.blue600 — not the one real link, which reverts to
+                    looking like a link again. */}
                 <ul style={{ display: "grid", gap: 6, margin: 0, padding: 0, listStyle: "none", width: "100%" }}>
                   {card.ticks.map(tick => {
                     const { text, linkStage, suffix } = typeof tick === "string" ? { text: tick, linkStage: null, suffix: "" } : tick;
                     return (
                       <li key={text} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
-                        <span className="ms" aria-hidden style={{ fontSize: 18, color: C.blue600, flex: "0 0 auto", lineHeight: "var(--codex-font-line-height-snug)" }}>
+                        <span className="ms" aria-hidden style={{ fontSize: 18, color: "var(--codex-color-semantic-text-bold)", flex: "0 0 auto", lineHeight: "var(--codex-font-line-height-snug)" }}>
                           check_circle
                         </span>
                         <span style={{ fontSize: TYPE.sm, color: "var(--codex-color-semantic-text-bold)", lineHeight: 1.4 }}>
@@ -660,7 +661,7 @@ export default function SellLandingV2({ onGo }) {
                             <a
                               href="#"
                               onClick={e => { e.preventDefault(); onGo?.(linkStage); }}
-                              style={{ color: "inherit", textDecoration: "none" }}
+                              style={{ color: C.blue600, textDecoration: "underline" }}
                             >
                               {text}
                             </a>
