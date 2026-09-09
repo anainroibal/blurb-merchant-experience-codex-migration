@@ -535,26 +535,32 @@ export default function InstantStoreV2({ onGo }) {
           gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 48, alignItems: "center",
         }}>
           <div style={{ display: "grid", gap: 20 }}>
-            {/* "Your book, your audience, your profit" didn't sell it
-                (Ana). "Audience" was the weak beat — an Instant Store
-                doesn't give you an audience, you already have one
-                regardless of channel; what it actually gives you is
-                control over price, which is what turns into profit.
-                Swapped for the real differentiator instead, same
-                three-beat rhythm. Deliberately not "your own online
-                bookstore" despite that being the SEO doc's own primary
-                keyword for this page — "online store" already got cut
-                once for overselling it above (an Instant Store is one
-                product page behind one link, not a browsable multi-book
-                storefront); the subhead below carries the actual
-                keyword-bearing specifics instead, same division of
-                labor CLAUDE.md documents for the margin estimator's own
-                hero (hook up top, specifics in the lede). */}
+            {/* Third pass at this headline. First, "Your book, your
+                audience, your profit" didn't sell it (Ana) — "audience"
+                was the weak beat, since an Instant Store doesn't give
+                you an audience, you already have one regardless of
+                channel. Second, "Your book. Your price. Your profit."
+                swapped in the real differentiator (price control) but
+                Ana still didn't like it ("i don't know, like what does
+                that mean") — three bare nouns in a row read as abstract
+                without a verb tying them together, whichever nouns they
+                are.
+
+                Third pass names the product directly instead (Ana,
+                after reviewing options: "how about incorporating
+                instant store"), and gives it an actual verb-led clause
+                rather than another noun-only fragment. Still
+                deliberately not "your own online bookstore" for the
+                product name itself, despite that being the SEO doc's
+                own primary keyword for this page — "online store" got
+                cut once already for overselling an Instant Store as a
+                browsable multi-book storefront rather than the one
+                product page behind one link that it actually is. */}
             <h1 style={{
               fontFamily: FONT_DISPLAY, fontWeight: 400, letterSpacing: "-0.01em",
               fontSize: "clamp(2rem, 4.6vw, 2.75rem)", lineHeight: 1.2, margin: 0,
             }}>
-              Your book. Your price. Your profit.
+              Your Instant Store. Sell directly, keep the profit.
             </h1>
             {/* "Set up an online store" oversold it (Ana) — an Instant
                 Store is one product page behind one link, not a
@@ -570,18 +576,17 @@ export default function InstantStoreV2({ onGo }) {
                 carries it in close to that exact form.
 
                 "Instant Store" itself named here now (Ana: "it's odd we
-                don't say 'instant store' on the hero anywhere") — the
-                H1 never names it either (three short "your X" beats,
-                no room for the product name without breaking that
-                rhythm — see its own comment), so the lede was the one
-                place left to say it before the page's first button
-                does. Restructured around the name rather than just
-                inserting "with an Instant Store" (Ana's own suggested
-                minimum) — naming it as the noun the sentence is about
-                reads more like an actual answer to "what is this" than
-                a name tacked on midway through. */}
+                don't say 'instant store' on the hero anywhere"), back
+                when the H1 didn't name it either. The H1 has since
+                picked up the name too ("Your Instant Store. Sell
+                directly, keep the profit.") — so this line dropped
+                "Instant Store" and "directly" itself to avoid saying
+                both twice in the same breath, pivoting instead to the
+                specifics the H1 has no room for: what it actually is
+                (a product page), and the speed/no-fees/no-tech-skills
+                facts that back up the H1's claim. */}
             <p style={{ fontSize: TYPE.lg, lineHeight: 1.55, color: T.textSubtle, margin: 0, maxWidth: 520 }}>
-              Turn your book into an Instant Store, a shareable product page that sells directly to your readers. Live in minutes, no hidden fees, and no website or tech skills needed.
+              It's a shareable product page for your book, live in minutes, with no hidden fees and no website or tech skills needed.
             </p>
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
               <Button>Create your Instant Store</Button>
