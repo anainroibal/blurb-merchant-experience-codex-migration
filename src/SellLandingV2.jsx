@@ -273,13 +273,18 @@ function Chip({ children }) {
   );
 }
 
+/* No dot when a row has no status (Ana: "Best for" isn't comparing
+   anything, so a green dot on all four cells implied a judgment that
+   isn't there) — renders transparent rather than not rendering at all,
+   so that row's text still lines up with the dot-carrying rows below
+   it instead of shifting left on its own. */
 function StatusDot({ status }) {
   return (
     <span
       aria-hidden
       style={{
         display: "inline-block", width: 8, height: 8, borderRadius: "50%",
-        background: STATUS_COLOR[status], margin: "6px 10px 0 0", flex: "0 0 auto",
+        background: status ? STATUS_COLOR[status] : "transparent", margin: "6px 10px 0 0", flex: "0 0 auto",
       }}
     />
   );
@@ -288,11 +293,15 @@ function StatusDot({ status }) {
 const COMPARE_COLUMNS = ["Instant Store", "Retail Distribution", "Bulk Printing Services", "RPI Print API"];
 
 const COMPARE_ROWS = [
+  /* No status on this row (Ana: "remove the green dots on the first
+     row as that doesn't make sense there, it's not comparing") — every
+     other row scores the four routes against each other; this one just
+     says who each is for, which isn't a green/yellow/red judgment. */
   { label: "Best for", cells: [
-    { status: "success", text: "Sellers with their own audience: followers, a newsletter, no store yet" },
-    { status: "success", text: "Reaching new readers who don't know you yet" },
-    { status: "success", text: "Bulk printing for an event, gift, or resale" },
-    { status: "success", text: "Developers building print into their own product" },
+    { text: "Sellers with their own audience: followers, a newsletter, no store yet" },
+    { text: "Reaching new readers who don't know you yet" },
+    { text: "Bulk printing for an event, gift, or resale" },
+    { text: "Developers building print into their own product" },
   ] },
   { label: "Setup", cells: [
     { status: "success", text: "AI-assisted, live in minutes" },
