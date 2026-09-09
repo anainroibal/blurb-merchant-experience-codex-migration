@@ -220,10 +220,12 @@ function InstantStoreMockup() {
    the *buyer* does on the page. "All your books in one place" sidesteps
    it by naming the fact instead of commanding an action. Its own body
    text dropped "in one place" (now the title's line) so the two don't
-   repeat the same phrase back to back. */
+   repeat the same phrase back to back — then trimmed further (Ana) to
+   drop the redundant "without leaving": the point is already made by
+   "right on the page," so it doesn't need restating. */
 const WALKTHROUGH = [
   ["Showcase your work", "Cover, description, and pricing, plus an interactive preview so buyers can flip through real pages before they buy."],
-  ["All your books in one place", "Every other book you sell shows up right on the page, so buyers can find your full catalog without leaving."],
+  ["All your books in one place", "Every other book you sell shows up right on the page, so buyers can find your full catalog."],
   ["One click to buy", "A single 'Buy now' takes buyers straight to checkout, including Apple Pay, Google Pay, and PayPal. No cart to build, no plugins to configure."],
   ["Blurb prints and ships it", "No inventory to buy upfront: every order triggers a fresh print run, and you only pay for what ships. Your buyer gets a tracked delivery, and you never touch a box."],
 ];
@@ -350,21 +352,30 @@ const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
 /* "Keep more of what you earn" table data — see the file header note
    above for where every figure comes from. Instant Store and RPI Print
-   API share seller pricing, so they share every cell; "Other print-on-
-   demand solutions" can't be priced at all except the listing price
-   itself (Ana) — that's the same $50.00 everywhere, since it's the
-   seller who sets it, not the platform; only cost and fees vary by
-   provider. */
-const KEEP_MORE_COLUMNS = ["Instant Store", "Blurb Bookstore", "Amazon", "RPI Print API", "Other print-on-demand solutions"];
+   API share seller pricing, so they share every cell.
+
+   DROPPED 2026-09-10 (Ana: "Other print-on-demand solutions doesn't
+   quite live there... calling out no other fees that other competitors
+   do have is key but can be done outside the table"): the column
+   couldn't actually be priced — every cell but the listing price itself
+   was "Varies by provider," which is exactly the kind of row-of-
+   identical-nothing the original "Other fees" row (see the file header
+   note) replaced Setup fees for being. Removing the column took the
+   "Other fees" row with it, since without a column that actually
+   charges one, four "None"s in a row proved nothing either — the real
+   point (Blurb doesn't charge a separate processing/platform/
+   subscription fee the way generic print-on-demand platforms do) now
+   lives in a caption under the table instead, where it can say the
+   comparison without needing a whole unpriceable column to hold it. */
+const KEEP_MORE_COLUMNS = ["Instant Store", "Blurb Bookstore", "Amazon", "RPI Print API"];
 
 const KEEP_MORE_ROWS = [
-  { label: "Your listing price (example)", cells: ["$50.00", "$50.00", "$50.00", "$50.00", "$50.00"] },
-  { label: "Print cost", cells: ["$17.50", "$31.00", "$31.00", "$17.50", "Varies by provider"] },
-  { label: "Commission", cells: ["0%", "0%", "$1.35 + 15% of list price", "0%", "Varies by provider"] },
-  { label: "Other fees", cells: ["None", "None", "None", "None", "Processing, platform and subscription fees, varies by provider"] },
+  { label: "Your listing price (example)", cells: ["$50.00", "$50.00", "$50.00", "$50.00"] },
+  { label: "Print cost", cells: ["$17.50", "$31.00", "$31.00", "$17.50"] },
+  { label: "Commission", cells: ["0%", "0%", "$1.35 + 15% of list price", "0%"] },
 ];
 
-const KEEP_MORE_PROFIT = ["$32.50", "$19.00", "$10.15", "$32.50", "Varies"];
+const KEEP_MORE_PROFIT = ["$32.50", "$19.00", "$10.15", "$32.50"];
 
 const STEPS = [
   /* "70% more of every sale" -> the calculated "3x more profit than
@@ -605,18 +616,19 @@ export default function InstantStoreV2({ onGo }) {
                 Considered leading with the page's own "up to 3x more
                 profit" figure directly, but Ana was nervous about
                 putting a specific multiple in the headline itself — so
-                this pivots to "maximize your earnings" instead: active
-                and money-forward, same word ("earnings") the review
-                room responded to, without asserting a number this
-                prototype's own figures (placeholders throughout) can't
-                back up in a headline. The real 3x still lives in "Set
-                your price" and on Sell v2's comparison, where a
-                specific claim belongs. */}
+                this pivots to a plain money-forward verb instead of a
+                number. First landed on "maximize your earnings," then
+                Ana swapped the noun back to "maximize your profit" —
+                same active shape, the word this page's own facts
+                actually pay off ("profit" is what the rest of the page
+                calculates; "earnings" never appears again after the
+                hero). The real 3x still lives in "Set your price" and
+                on Sell v2's comparison, where a specific claim belongs. */}
             <h1 style={{
               fontFamily: FONT_DISPLAY, fontWeight: 400, letterSpacing: "-0.01em",
               fontSize: "clamp(2rem, 4.6vw, 2.75rem)", lineHeight: 1.2, margin: 0,
             }}>
-              Your Instant Store. Sell direct, maximize your earnings.
+              Your Instant Store. Sell direct, maximize your profit.
             </h1>
             {/* "Set up an online store" oversold it (Ana) — an Instant
                 Store is one product page behind one link, not a
@@ -818,27 +830,36 @@ export default function InstantStoreV2({ onGo }) {
       {/* ── Keep More of What You Earn ── */}
       <section style={{ padding: "clamp(40px, 5vw, 56px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 24 }}>
-          <div style={{ display: "grid", gap: 12, maxWidth: 720 }}>
-            <h2 style={{
-              fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
-              lineHeight: 1.25, margin: 0,
-            }}>
-              Keep more of what you earn
-            </h2>
-            {/* Two paragraphs collapsed into one (Ana: "lots of words but
-                looks off") — same two facts (you set the price with no
-                extra fees; that's worth up to 3x more) in one sentence
-                rather than two lines of near-equal visual weight fighting
-                each other. The standalone "listing price / print cost /
-                profit" card that used to sit beside this text is gone too
-                (Ana: "it should be incorporated in the table") — those
-                three numbers are now rows in the table itself. */}
-            <p style={{ margin: 0, fontSize: TYPE.base, color: T.textNeutral }}>
-              You set the price, and what's left after your printing cost is yours, up to 3x more profit than selling through other distribution channels.
-            </p>
-            <div>
-              <Button variant="outlined" onClick={() => onGo?.("margin")}>Calculate your profit</Button>
+          {/* Button moved out to the row's right edge (Ana: "the calculate
+              your profit cta on the table should maybe be aligned right?
+              it's a bit awkward there") — it sat stacked under the lede
+              before, on its own line inside the same narrow column,
+              which read like a third paragraph rather than an action.
+              Same heading-left/CTA-right shape as Home.jsx's "Inspiring
+              examples" section. */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 24, flexWrap: "wrap" }}>
+            <div style={{ display: "grid", gap: 12, maxWidth: 720 }}>
+              <h2 style={{
+                fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
+                lineHeight: 1.25, margin: 0,
+              }}>
+                Keep more of what you earn
+              </h2>
+              {/* Two paragraphs collapsed into one (Ana: "lots of words but
+                  looks off") — same two facts (you set the price with no
+                  extra fees; that's worth up to 3x more) in one sentence
+                  rather than two lines of near-equal visual weight fighting
+                  each other. The standalone "listing price / print cost /
+                  profit" card that used to sit beside this text is gone too
+                  (Ana: "it should be incorporated in the table") — those
+                  three numbers are now rows in the table itself. */}
+              <p style={{ margin: 0, fontSize: TYPE.base, color: T.textNeutral }}>
+                You set the price, and what's left after your printing cost is yours, up to 3x more profit than selling through other distribution channels.
+              </p>
             </div>
+            <Button variant="outlined" onClick={() => onGo?.("margin")} style={{ flex: "0 0 auto" }}>
+              Calculate your profit
+            </Button>
           </div>
 
           {/* $50.00 rather than a mechanically-derived $60.80 (Ana:
@@ -870,8 +891,8 @@ export default function InstantStoreV2({ onGo }) {
           }}>
             <div style={{
               display: "grid",
-              gridTemplateColumns: "160px repeat(5, minmax(160px, 1fr))",
-              minWidth: 980,
+              gridTemplateColumns: "160px repeat(4, minmax(160px, 1fr))",
+              minWidth: 800,
             }}>
               {["", ...KEEP_MORE_COLUMNS].map((col, ci) => (
                 <div
@@ -880,7 +901,7 @@ export default function InstantStoreV2({ onGo }) {
                     position: ci === 0 ? "sticky" : "static", left: 0, zIndex: 2,
                     background: ci === 1 ? T.bgAccentSubtle : "#fff",
                     borderBottom: `1px solid ${C.charcoal200}`,
-                    borderRight: ci < 5 ? `1px solid ${C.charcoal200}` : "none",
+                    borderRight: ci < 4 ? `1px solid ${C.charcoal200}` : "none",
                     padding: 16, fontFamily: FONT_DISPLAY, fontWeight: 500,
                     fontSize: TYPE.sm, color: T.textNeutral,
                     display: "flex", alignItems: "center", gap: 8,
@@ -914,7 +935,7 @@ export default function InstantStoreV2({ onGo }) {
                       <div key={ci} style={{
                         background: ci === 0 ? T.bgAccentSubtle : rowBg,
                         borderBottom: `1px solid ${C.charcoal200}`,
-                        borderRight: ci < 4 ? `1px solid ${C.charcoal200}` : "none",
+                        borderRight: ci < 3 ? `1px solid ${C.charcoal200}` : "none",
                         padding: 16, fontSize: TYPE.sm, color: T.textNeutral, lineHeight: 1.5,
                         fontWeight: ci === 0 ? 600 : 400,
                       }}>
@@ -944,7 +965,7 @@ export default function InstantStoreV2({ onGo }) {
                 return (
                   <div key={ci} style={{
                     background: ci === 0 ? T.bgAccentSubtle : "#fff",
-                    borderRight: ci < 4 ? `1px solid ${C.charcoal200}` : "none",
+                    borderRight: ci < 3 ? `1px solid ${C.charcoal200}` : "none",
                     padding: 16, display: "flex", alignItems: "center",
                   }}>
                     {priced ? (
@@ -963,6 +984,14 @@ export default function InstantStoreV2({ onGo }) {
               })}
             </div>
           </div>
+
+          {/* Carries the point the "Other print-on-demand solutions"
+              column used to make (see the file header note) now that
+              the column itself is gone. */}
+          <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle }}>
+            None of these routes charge a separate processing, platform, or subscription fee — a real cost
+            on many other print-on-demand platforms.
+          </p>
         </div>
       </section>
 
