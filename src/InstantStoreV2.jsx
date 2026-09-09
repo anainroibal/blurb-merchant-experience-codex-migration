@@ -348,7 +348,7 @@ const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
 const KEEP_MORE_COLUMNS = ["Instant Store", "Blurb Bookstore", "Amazon", "RPI Print API", "Other print-on-demand solutions"];
 
 const KEEP_MORE_ROWS = [
-  { label: "Your listing price", cells: ["$50.00", "$50.00", "$50.00", "$50.00", "$50.00"] },
+  { label: "Your listing price (example)", cells: ["$50.00", "$50.00", "$50.00", "$50.00", "$50.00"] },
   { label: "Print cost", cells: ["$17.50", "$31.00", "$31.00", "$17.50", "Varies by provider"] },
   { label: "Commission", cells: ["0%", "0%", "$1.35 + 15% of list price", "0%", "Varies by provider"] },
   { label: "Other fees", cells: ["None", "None", "None", "None", "Processing, platform and subscription fees, varies by provider"] },
@@ -506,7 +506,9 @@ const FEATURES = [
      the question was dropped entirely (Ana) rather than kept as a
      link-only answer.
    - "Can I turn my Instant Store link off?" dropped too (Ana) — down
-     to 13 questions, then 11. */
+     to 13 questions, then 11.
+   - "How do I share my Instant Store?" dropped (Ana) — down to 10;
+     "Share anywhere" in the FEATURES grid above already answers it. */
 const FAQS = onGo => [
   ["How do I set up an online store for my book?",
    "Open the Instant Store page from your dashboard, choose the project you want to sell, and set your listing details and price. You can preview your page before it goes live, and there's no separate sign-up."],
@@ -528,8 +530,6 @@ const FAQS = onGo => [
      </a>{" "}
      for delivery times and rates by country.
    </>],
-  ["How do I share my Instant Store?",
-   "Anywhere a link goes: a social bio, a newsletter, a QR code on a stall, or behind a button on a site you already run."],
   ["Is Instant Store pricing also available if I sell through the Blurb Bookstore, Amazon, or Ingram?",
    <>
      <p style={{ margin: "0 0 12px" }}>
@@ -678,6 +678,34 @@ export default function InstantStoreV2({ onGo }) {
         </div>
       </section>
 
+      {/* ── Three simple steps ── swapped to before "What buyers see"
+          (Ana) — this is the seller's view of setting it up; leading
+          with it means a reader sees how to create the thing before
+          seeing what it looks like once it's live, rather than the
+          other way around. */}
+      <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
+        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+          <CardList
+            heading="Create your Instant Store in three steps"
+            headingAlign="center"
+            layout={{ mobile: 1, tablet: 3, desktop: 3 }}
+          >
+            {STEPS.map(([title, body], i) => (
+              <Card
+                key={title}
+                icon={
+                  <span style={{ fontFamily: FONT_DISPLAY, fontSize: 40, fontWeight: 500, lineHeight: 1, color: C.blue600 }}>
+                    {i + 1}
+                  </span>
+                }
+                title={title}
+                description={body}
+              />
+            ))}
+          </CardList>
+        </div>
+      </section>
+
       {/* ── What buyers see ──
           Was "More than a checkout. A whole store in one link." — "a
           whole store" oversold it the same way "online store"/"online
@@ -688,8 +716,9 @@ export default function InstantStoreV2({ onGo }) {
           page mockup with numbered annotations rather than describing it
           in the abstract — the one place InstantStoreMockup appears
           (Ana: not duplicated with the hero any more). This is the
-          buyer's view of the page; "Three steps" below is the seller's
-          view of setting it up, complementary, not overlapping. */}
+          buyer's view of the page; "Three steps" above is the seller's
+          view of setting it up, complementary, not overlapping — now
+          shown after it (Ana: swap the two), so setup comes before payoff. */}
       <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
         <div style={{
           maxWidth: 1160, margin: "0 auto", display: "grid",
@@ -721,30 +750,6 @@ export default function InstantStoreV2({ onGo }) {
             ))}
           </div>
           <InstantStoreMockup />
-        </div>
-      </section>
-
-      {/* ── Three simple steps ── */}
-      <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <CardList
-            heading="Create your Instant Store in three steps"
-            headingAlign="center"
-            layout={{ mobile: 1, tablet: 3, desktop: 3 }}
-          >
-            {STEPS.map(([title, body], i) => (
-              <Card
-                key={title}
-                icon={
-                  <span style={{ fontFamily: FONT_DISPLAY, fontSize: 40, fontWeight: 500, lineHeight: 1, color: C.blue600 }}>
-                    {i + 1}
-                  </span>
-                }
-                title={title}
-                description={body}
-              />
-            ))}
-          </CardList>
         </div>
       </section>
 
