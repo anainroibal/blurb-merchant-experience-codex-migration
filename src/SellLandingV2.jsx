@@ -795,22 +795,46 @@ export default function SellLandingV2({ onGo }) {
             headingAlign="center"
             layout={{ mobile: 1, tablet: 2, desktop: 4 }}
           >
+            {/* Hand-built, not Codex's Card (Ana: "style the best for text
+                a bit better, it looks like the same paragraph") — Card's
+                own CSS reset zeroes every <p> margin inside it
+                ([data-codex-component] p { margin: 0 }), and its
+                Markdown description has no way to style one paragraph
+                differently from the next, so "Best for: X" and the
+                sentence after it rendered flush together as one block
+                with no visual break. This gives "Best for:" its own
+                bold, brand-blue label distinct from the value after it,
+                real spacing before the description, and a lighter,
+                subtler color on the description so the two read as two
+                different things rather than one paragraph split by a
+                bolded word. */}
             {SELL_FORMATS.map(f => {
               const photo = f.img ? f : FORMAT_CARDS.find(c => c.id === f.id);
               return (
-                <Card
-                  key={f.id}
-                  icon={
-                    <img
-                      src={photo.img}
-                      alt={photo.alt}
-                      loading="lazy"
-                      style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", display: "block", borderRadius: R.lg }}
-                    />
-                  }
-                  title={f.title}
-                  description={`**Best for:** ${f.bestFor}\n\n${f.desc}`}
-                />
+                <div key={f.id} style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", width: "100%", gap: "var(--codex-spacing-3)" }}>
+                  <img
+                    src={photo.img}
+                    alt={photo.alt}
+                    loading="lazy"
+                    style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", display: "block", borderRadius: R.lg }}
+                  />
+                  <h3 style={{
+                    fontFamily: "var(--codex-font-family-heading)", fontWeight: "var(--codex-font-weight-normal)",
+                    color: "var(--codex-color-semantic-text-bold)", fontSize: "var(--codex-font-size-3xl)",
+                    lineHeight: "var(--codex-font-line-height-tight)", margin: 0,
+                  }}>
+                    {f.title}
+                  </h3>
+                  <div style={{ display: "grid", gap: 6 }}>
+                    <p style={{ margin: 0, fontSize: TYPE.sm, lineHeight: "var(--codex-font-line-height-snug)" }}>
+                      <span style={{ fontWeight: 700, color: C.blue600 }}>Best for:</span>{" "}
+                      <span style={{ color: "var(--codex-color-semantic-text-bold)" }}>{f.bestFor}</span>
+                    </p>
+                    <p style={{ margin: 0, fontSize: TYPE.sm, color: "var(--codex-color-semantic-text-subtle)", lineHeight: "var(--codex-font-line-height-snug)" }}>
+                      {f.desc}
+                    </p>
+                  </div>
+                </div>
               );
             })}
           </CardList>
