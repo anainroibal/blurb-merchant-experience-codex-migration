@@ -61,20 +61,26 @@ const QUALITY = [
 ];
 
 /* Blurb's own illustrations, reused from SellerLanding.jsx rather than
-   re-hosted or re-described. RPI Print API has no illustration of its
-   own yet — see the file header note. */
+   re-hosted or re-described. RPI Print API now has one too (see below). */
 const ILLUS = "https://assets.blurb.com/_astro/";
 
-/* Icons, not illustrations, for all four (Ana: "inconsistent sized
+/* Icons for all four, not illustrations (Ana: "inconsistent sized
    images" — the real problem was style, not size: two hand-drawn
    illustrations, one real photograph (large-order.Dolls1H4_A7dqn.webp),
-   and one bare icon, side by side. No illustration exists for the API
-   card at all, so icon-only is the one treatment every card can share
-   without fabricating new art. Links are `[label, url]` pairs — every
-   card gets the same shape, one entry for the three that have a single
-   destination, three for Retail Distribution — rendered by the same
-   plain-anchor code below rather than Card's `link` slot (see the note
-   there on why). */
+   and one bare icon, side by side. No illustration existed for the API
+   card at all at the time, so icon-only was the one treatment every
+   card could share without fabricating new art.
+
+   Ana later shared a reference mock with a matching illustration for
+   all four cards — Instant Store, Retail Distribution, Bulk Printing
+   Services, and RPI Print API — in one consistent style. Only RPI
+   Print API's has a confirmed real source so far: the exact
+   illustration blurb.com/print-api-software already uses ("code editor
+   interface, books, and print mechanics"), added below as `illus`.
+   PathTile renders `illus` in place of the icon when a card has one,
+   so the other three stay icons until their own real illustrations are
+   available — still no fabricated art, same rule as before, just
+   applied per card now instead of icons-for-all as the fallback. */
 /* Ticks and "Best for" are from the CRO brief's own per-tool "Value"
    sections (New landing pages - CRO Brief.docx), trimmed to short
    scannable phrases rather than the brief's full sentences — Ana's own
@@ -181,6 +187,7 @@ const SELL_PATHS = [
   },
   {
     id: "api", name: "RPI Print API", icon: "integration_instructions",
+    illus: "https://assets.blurb.com/_astro/switchback-image.DCOjS4vy.png",
     bestFor: "Developers & platforms",
     /* Ana: "too bold" was about the nav mention specifically, not this
        page — the CRO brief actually confirms this as a real value prop
@@ -217,7 +224,11 @@ function PathTile({ card }) {
           Best for: {card.bestFor}
         </span>
       )}
-      <span className="ms" aria-hidden style={{ fontSize: 56, color: C.blue600 }}>{card.icon}</span>
+      {card.illus ? (
+        <img src={card.illus} alt="" aria-hidden loading="lazy" style={{ width: "60%", height: "auto", display: "block" }} />
+      ) : (
+        <span className="ms" aria-hidden style={{ fontSize: 56, color: C.blue600 }}>{card.icon}</span>
+      )}
     </div>
   );
 }
