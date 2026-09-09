@@ -105,7 +105,19 @@ import { SHIPPING, PRINT_RANGE, shippingFor, money, BULK_MIN } from "./catalog.j
      the way Sell v2, Instant Store v2 and the nav already do — Bulk
      Printing Services, blurb.com/large-order-services — not "Large
      Order Services", which the caveat text below still uses; left that
-     alone since renaming it wasn't asked for. */
+     alone since renaming it wasn't asked for.
+
+   REVISED AGAIN 2026-09-10 (Ana pasted a reference banner — info icon,
+   "100 copies or more?", "Our team can help with planning and volume
+   pricing.", a "Learn more" link — and asked to match its copy, align
+   it to the current Bulk Printing Services name, and use "custom
+   quote" the way Sell v2's own CTA does):
+   - `BulkBanner` rewritten to that shape: an info glyph beside a plain
+     (not uppercase-eyebrow) heading, one plain sentence naming Bulk
+     Printing Services rather than "our team" so the banner is
+     self-contained without a page's worth of context, and the CTA
+     relabelled "Get a custom quote" to match Sell v2's own link text
+     instead of "Get a bulk quote" or "Learn more". */
 
 /* Runs one past BULK_MIN (100) rather than stopping short of it, so
    picking it is how the bulk banner below gets triggered at all. */
@@ -134,36 +146,45 @@ function Section({ title, lede, children, id, tinted }) {
   );
 }
 
-/* At BULK_MIN and past it, this is stock, not a calculator row —
-   the same handoff SummaryPanel's BulkHandoff makes on the pricing
-   side, named here the way Sell v2, Instant Store v2 and the nav
-   already renamed it: Bulk Printing Services, linking to the same
-   blurb.com/large-order-services URL those pages use. Replaces the
-   speed rows rather than sitting beside them, because a per-copy rate
-   multiplied out to 100+ is exactly the number "Ordering in volume"
-   below warns isn't the one to read. */
-function BulkBanner({ qty }) {
+/* At BULK_MIN and past it, this is stock, not a calculator row — the
+   same handoff SummaryPanel's BulkHandoff makes on the pricing side.
+   Copy and layout follow a reference info banner Ana supplied (info
+   icon inline with a plain question, one plain sentence, an
+   underlined link with an external-open glyph — SellerLanding.jsx's
+   own convention for a link that leaves the site) rather than
+   BulkHandoff's uppercase-eyebrow treatment. Named and linked the way
+   Sell v2, Instant Store v2 and the nav already do — Bulk Printing
+   Services, blurb.com/large-order-services — and the CTA label matches
+   Sell v2's own "Get a custom quote", not "Get a bulk quote". Replaces
+   the speed rows rather than sitting beside them, because a per-copy
+   rate multiplied out to 100+ is exactly the number "Ordering in
+   volume" below warns isn't the one to read. */
+function BulkBanner() {
   return (
     <div style={{
-      background: C.blue50, border: `1px solid ${C.blue100}`, borderRadius: R.md,
-      padding: 20, display: "grid", gap: 8,
+      background: C.blue50, borderRadius: R.md,
+      padding: 20, display: "grid", gap: 6,
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <span className="ms" style={{ fontSize: 20, color: C.blue600 }}>local_shipping</span>
-        <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase", color: C.blue950 }}>
-          {qty}+ copies is a large order
+        <span className="ms" style={{ fontSize: 20, color: C.blue600 }}>info</span>
+        <span style={{ fontSize: TYPE.base, fontWeight: 700, color: T.textNeutral }}>
+          100 copies or more?
         </span>
       </div>
-      <p style={{ margin: 0, fontSize: TYPE.base, lineHeight: 1.6, color: T.textNeutral }}>
-        At this quantity you're buying stock, not a single copy, so this table isn't the one to read. Bulk
-        Printing Services quotes the run and the delivery together.
+      <p style={{ margin: "0 0 0 28px", fontSize: TYPE.base, lineHeight: 1.6, color: T.textNeutral }}>
+        Bulk Printing Services can help with planning and volume pricing.
       </p>
-      <Button
-        as="a" href="https://www.blurb.com/large-order-services" target="_blank" rel="noopener noreferrer"
-        variant="outlined" style={{ justifySelf: "start", marginTop: 4 }}
+      <a
+        href="https://www.blurb.com/large-order-services" target="_blank" rel="noopener noreferrer"
+        style={{
+          margin: "2px 0 0 28px", justifySelf: "start", fontSize: TYPE.base, fontWeight: 700, color: T.textBrand,
+          display: "inline-flex", alignItems: "center", gap: 5,
+          textDecoration: "underline", textUnderlineOffset: 4,
+        }}
       >
-        Get a bulk quote
-      </Button>
+        Get a custom quote
+        <span className="ms" style={{ fontSize: 16 }}>open_in_new</span>
+      </a>
     </div>
   );
 }
@@ -268,7 +289,7 @@ export default function ShippingPage({ onGo, lean }) {
         </div>
 
         {qty >= BULK_MIN ? (
-          <BulkBanner qty={qty} />
+          <BulkBanner />
         ) : (
           <>
             <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
