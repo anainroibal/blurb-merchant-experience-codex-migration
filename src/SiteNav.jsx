@@ -194,7 +194,16 @@ const NAV = [
        category, so a second heading was drawing a line that wasn't
        there. Both stay listed under Services too (design review item 23). */
     { heading: "Ways to sell", items: [
-      ["Instant Store", "Create a link to a full product page. Maximum margins, no fees, no tech hassle.", "New", "instantstore"],
+      /* All four items here go to sellv2 now, Retail distribution the
+         one exception (Ana: "make all selling options link to sell v2,
+         and retail distribution link to sell") — sellv2 is the page
+         that introduces and compares every route, Instant Store
+         included, so it's the sensible landing point for a nav item
+         rather than deep-linking straight past it. Retail distribution
+         keeps going to "seller" (v1's Sell page), unchanged. Bulk
+         Printing Services and API previously had no stage at all —
+         this also fixes that gap rather than just moving Instant Store. */
+      ["Instant Store", "Create a link to a full product page. Maximum margins, no fees, no tech hassle.", "New", "sellv2"],
       /* ── Three channels, one item (Ana's mock, 2026-08-28) ──
          The Bookstore, Amazon and Ingram were three lines. They are one
          decision: somebody else brings the buyer, lists the book in their
@@ -209,8 +218,8 @@ const NAV = [
          "Volume orders" for SEO. "Bulk Printing Services" names what
          the route actually is rather than the quantity threshold that
          gets you there. */
-      ["Bulk Printing Services", "Volume discounts start at 100 copies. We quote the run and handle the logistics."],
-      ["API", "Integrate our print API infrastructure directly into your app or website."],
+      ["Bulk Printing Services", "Volume discounts start at 100 copies. We quote the run and handle the logistics.", null, "sellv2"],
+      ["API", "Integrate our print API infrastructure directly into your app or website.", null, "sellv2"],
     ]},
   ], featured: {
     /* The featured slot Switch to Blurb vacated goes to the profit
@@ -223,7 +232,7 @@ const NAV = [
     body: "Set your price and see what you keep on every copy you sell.",
     cta: "Open the calculator",
     stage: "margin",
-  }, seeAll: ["See all selling options", "seller"]},
+  }, seeAll: ["See all selling options", "sellv2"]},
 
   { label: "Services", href: "/large-order-services", columns: [
     { heading: "Services", items: [

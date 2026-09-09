@@ -5,7 +5,7 @@ import Faq from "./Faq.jsx";
 import ShippingSection from "./ShippingSection.jsx";
 import InstantStoreLane from "./InstantStoreLane.jsx";
 import { FORMAT_CARDS } from "./FormatCards.jsx";
-import { SHIPPING, PRINT_DAYS, PRINT_RANGE, shippingFor, speedDays, money } from "./catalog.js";
+import { SHIPPING, PRINT_RANGE, shippingFor, money } from "./catalog.js";
 
 /* ────────────────────────────────────────────────────────────────
    /shipping — a calculator again, without a postcode or a date.
@@ -36,11 +36,11 @@ import { SHIPPING, PRINT_DAYS, PRINT_RANGE, shippingFor, speedDays, money } from
 
    THE LIVE PAGE'S COPY IS KEPT WHERE IT STILL WORKS, as it was on the
    Sell page: the "Good Things on the Way" heading, the line about
-   printing and binding, the how-it-works sentences and the FAQ's own
-   question wording are blurb.com/shipping's, not ours. What we add is
-   what the live page cannot say now that it no longer calculates: which
-   of the two calculators to open, and the fact that a seller's buyer
-   pays the delivery.
+   printing and binding, and the FAQ's own question wording are
+   blurb.com/shipping's, not ours. What we add is what the live page
+   cannot say now that it no longer calculates: which of the two
+   calculators to open, and the fact that a seller's buyer pays the
+   delivery.
 
    One correction rather than a copy: the live page says "over 70
    countries and territories" above a list of 67. We print the count the
@@ -48,7 +48,19 @@ import { SHIPPING, PRINT_DAYS, PRINT_RANGE, shippingFor, speedDays, money } from
 
    Every rate here is a placeholder: Blurb publishes no shipping prices.
    The destinations and the print time are real, from blurb.com.
-   ──────────────────────────────────────────────────────────────── */
+
+   REVISED AGAIN 2026-09-10 (Ana):
+   - The standalone "How it works" section (print time + a per-speed
+     card grid) dropped entirely — it just restated, in isolation, the
+     same per-speed day ranges "What it costs, wherever it's going"
+     already shows, now attached to a real quote instead of a bare
+     range. Two sections making the same point once each is worse than
+     one section making it with the price attached.
+   - The "We deliver to X countries... rates are placeholders..."
+     paragraph under that section dropped too — the placeholder caveat
+     is already stated once, plainly, right here in this comment and in
+     the file's own figures documentation; repeating it as reader-facing
+     copy on every visit added a caveat nobody asked to read mid-quote. */
 
 function Section({ title, lede, children, id, tinted }) {
   return (
@@ -139,37 +151,6 @@ export default function ShippingPage({ onGo, lean }) {
         </section>
       )}
 
-      {/* ── Print time first, because it is the part nobody counts ── */}
-      <Section
-        title="How it works"
-        lede="Once you've uploaded and ordered your custom project, the printing process begins right away. Printing and binding requires 4 to 5 business days, and expedited printing is not available. You choose your delivery speed when placing your order."
-      >
-        <p style={{ margin: 0, fontSize: TYPE.base, color: T.textSubtle, lineHeight: 1.55 }}>
-          Printing takes {PRINT_DAYS.label} for every order — the same whichever speed you choose below.
-        </p>
-        <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))" }}>
-          {speeds.map(s => (
-            <div key={s.id} style={{
-              background: T.bgNeutral, border: `1px solid ${T.border}`, borderRadius: R.lg,
-              padding: 20, display: "grid", gap: 6,
-            }}>
-              <span style={{ fontSize: TYPE.lg, fontWeight: 700 }}>{s.label}</span>
-              <span style={{ fontSize: TYPE.base, color: T.textSubtle, lineHeight: 1.5 }}>
-                {speedDays(s)} once it ships — {s.days[0] + PRINT_RANGE[0]}–{s.days[1] + PRINT_RANGE[1]} days total
-              </span>
-              {!s.poBox && (
-                <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>
-                  Not available to a P.O. Box, as couriers don't deliver to one.
-                </span>
-              )}
-            </div>
-          ))}
-        </div>
-        <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.55 }}>
-          All the figures here are business days, so weekends don't count.
-        </p>
-      </Section>
-
       {/* ── What it costs, for the book and the country you pick ──
           Was a static region-by-speed table; now a product and a country
           choose the row, so what's on screen is a real quote rather than
@@ -221,13 +202,6 @@ export default function ShippingPage({ onGo, lean }) {
             );
           })}
         </div>
-
-        <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.55 }}>
-          We deliver to {SHIPPING.countries.length} countries and territories. The rates on this page are
-          placeholders: Blurb publishes no shipping prices, so read the shape as real and the figures as an
-          illustration. For a calendar date rather than a range, price the book itself — that's where the
-          order date joins in.
-        </p>
       </Section>
 
       {/* ── The honest caveats, in one place ── */}
