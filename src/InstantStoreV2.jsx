@@ -682,8 +682,19 @@ export default function InstantStoreV2({ onGo }) {
           (Ana) — this is the seller's view of setting it up; leading
           with it means a reader sees how to create the thing before
           seeing what it looks like once it's live, rather than the
-          other way around. */}
-      <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
+          other way around.
+
+          TIGHTENED 2026-09-10 (Ana: "section paddings are still too
+          large"): this and the next three sections (What buyers see,
+          Everything you need, Keep more of what you earn) dropped from
+          clamp(56,7,80) to clamp(40,5,56), and the fulfilment band
+          below from clamp(48,6,64) to the same clamp(40,5,56) so nothing
+          mid-page reads bigger than its neighbors. The hero and the
+          closing band are untouched — both share their padding scale
+          with Sell v2 (56,8,96 and 72,9,120/56,7,80), so shrinking them
+          here alone would break that consistency rather than fix a
+          page-specific problem. */}
+      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <CardList
             heading="Create your Instant Store in three steps"
@@ -719,7 +730,7 @@ export default function InstantStoreV2({ onGo }) {
           buyer's view of the page; "Three steps" above is the seller's
           view of setting it up, complementary, not overlapping — now
           shown after it (Ana: swap the two), so setup comes before payoff. */}
-      <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
+      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px" }}>
         <div style={{
           maxWidth: 1160, margin: "0 auto", display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 48, alignItems: "center",
@@ -754,7 +765,7 @@ export default function InstantStoreV2({ onGo }) {
       </section>
 
       {/* ── Everything you need — 8-tile feature grid ── */}
-      <section style={{ background: C.gray50, padding: "clamp(56px, 7vw, 80px) 24px" }}>
+      <section style={{ background: C.gray50, padding: "clamp(40px, 5vw, 56px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <CardList
             heading="Everything you need to sell your book online"
@@ -774,7 +785,7 @@ export default function InstantStoreV2({ onGo }) {
       </section>
 
       {/* ── Keep More of What You Earn ── */}
-      <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
+      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 24 }}>
           <div style={{ display: "grid", gap: 12, maxWidth: 720 }}>
             <h2 style={{
@@ -936,7 +947,7 @@ export default function InstantStoreV2({ onGo }) {
           Plain background, not gray50 — "What you can sell" right after
           it already is gray50, and back-to-back would merge the two
           into one block with no visible seam. */}
-      <section style={{ padding: "clamp(48px, 6vw, 64px) 24px" }}>
+      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px" }}>
         <div style={{ maxWidth: 1160, margin: "0 auto", display: "grid", gap: 32 }}>
           <h2 style={{
             fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
@@ -971,7 +982,7 @@ export default function InstantStoreV2({ onGo }) {
           clamp(32px,4vw,48px) Sell v2's own "Included with every way
           you sell" section uses for the same reason: it sits between
           two dense sections and doesn't need that much air. */}
-      <section style={{ background: C.gray50, padding: "clamp(32px, 4vw, 48px) 24px" }}>
+      <section style={{ background: C.gray50, padding: "clamp(28px, 4vw, 40px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <CardList
             heading="Sell photo books, magazines, notebooks & more"
