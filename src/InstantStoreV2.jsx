@@ -210,10 +210,20 @@ function InstantStoreMockup() {
    points again, same count as before the 1+2 merge, just redistributed
    rather than shortened. Titled "Browse your other books" rather than
    "More from the author" (Ana didn't like that title) — matches
-   "Showcase your work"'s own verb-first, second-person shape. */
+   "Showcase your work"'s own verb-first, second-person shape.
+
+   RETITLED 2026-09-10 (Ana: "'browse your other books' still doesn't
+   work because the seller isn't browsing, it's the buyer"): every
+   other point here is a fact stated at the seller ("your work," "your
+   buyer gets a tracked delivery"), so a bare imperative verb read as
+   an instruction to the seller — "go browse" — when browsing is what
+   the *buyer* does on the page. "All your books in one place" sidesteps
+   it by naming the fact instead of commanding an action. Its own body
+   text dropped "in one place" (now the title's line) so the two don't
+   repeat the same phrase back to back. */
 const WALKTHROUGH = [
   ["Showcase your work", "Cover, description, and pricing, plus an interactive preview so buyers can flip through real pages before they buy."],
-  ["Browse your other books", "All your other books are shown right on the page, so buyers can find your whole catalog in one place."],
+  ["All your books in one place", "Every other book you sell shows up right on the page, so buyers can find your full catalog without leaving."],
   ["One click to buy", "A single 'Buy now' takes buyers straight to checkout, including Apple Pay, Google Pay, and PayPal. No cart to build, no plugins to configure."],
   ["Blurb prints and ships it", "No inventory to buy upfront: every order triggers a fresh print run, and you only pay for what ships. Your buyer gets a tracked delivery, and you never touch a box."],
 ];
@@ -583,12 +593,30 @@ export default function InstantStoreV2({ onGo }) {
                 own primary keyword for this page — "online store" got
                 cut once already for overselling an Instant Store as a
                 browsable multi-book storefront rather than the one
-                product page behind one link that it actually is. */}
+                product page behind one link that it actually is.
+
+                Fourth pass (2026-09-10): the VP of marketing flagged
+                that the page never says, above the fold, that an
+                Instant Store makes a seller more money — that fact
+                lives in "Keep more of what you earn," well below where
+                someone decides whether to keep scrolling. "keep the
+                profit" gestured at it but read as neutral (keeping
+                what's already yours) rather than a reason to read on.
+                Considered leading with the page's own "up to 3x more
+                profit" figure directly, but Ana was nervous about
+                putting a specific multiple in the headline itself — so
+                this pivots to "maximize your earnings" instead: active
+                and money-forward, same word ("earnings") the review
+                room responded to, without asserting a number this
+                prototype's own figures (placeholders throughout) can't
+                back up in a headline. The real 3x still lives in "Set
+                your price" and on Sell v2's comparison, where a
+                specific claim belongs. */}
             <h1 style={{
               fontFamily: FONT_DISPLAY, fontWeight: 400, letterSpacing: "-0.01em",
               fontSize: "clamp(2rem, 4.6vw, 2.75rem)", lineHeight: 1.2, margin: 0,
             }}>
-              Your Instant Store. Sell directly, keep the profit.
+              Your Instant Store. Sell direct, maximize your earnings.
             </h1>
             {/* "Set up an online store" oversold it (Ana) — an Instant
                 Store is one product page behind one link, not a
