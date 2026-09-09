@@ -706,45 +706,6 @@ export default function InstantStoreV2({ onGo }) {
         </div>
       </section>
 
-      {/* ── Three simple steps ── swapped to before "What buyers see"
-          (Ana) — this is the seller's view of setting it up; leading
-          with it means a reader sees how to create the thing before
-          seeing what it looks like once it's live, rather than the
-          other way around.
-
-          TIGHTENED 2026-09-10 (Ana: "section paddings are still too
-          large"): this and the next three sections (What buyers see,
-          Everything you need, Keep more of what you earn) dropped from
-          clamp(56,7,80) to clamp(40,5,56), and the fulfilment band
-          below from clamp(48,6,64) to the same clamp(40,5,56) so nothing
-          mid-page reads bigger than its neighbors. The hero and the
-          closing band are untouched — both share their padding scale
-          with Sell v2 (56,8,96 and 72,9,120/56,7,80), so shrinking them
-          here alone would break that consistency rather than fix a
-          page-specific problem. */}
-      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <CardList
-            heading="Create your Instant Store in three steps"
-            headingAlign="center"
-            layout={{ mobile: 1, tablet: 3, desktop: 3 }}
-          >
-            {STEPS.map(([title, body], i) => (
-              <Card
-                key={title}
-                icon={
-                  <span style={{ fontFamily: FONT_DISPLAY, fontSize: 40, fontWeight: 500, lineHeight: 1, color: C.blue600 }}>
-                    {i + 1}
-                  </span>
-                }
-                title={title}
-                description={body}
-              />
-            ))}
-          </CardList>
-        </div>
-      </section>
-
       {/* ── What buyers see ──
           Was "More than a checkout. A whole store in one link." — "a
           whole store" oversold it the same way "online store"/"online
@@ -755,9 +716,24 @@ export default function InstantStoreV2({ onGo }) {
           page mockup with numbered annotations rather than describing it
           in the abstract — the one place InstantStoreMockup appears
           (Ana: not duplicated with the hero any more). This is the
-          buyer's view of the page; "Three steps" above is the seller's
-          view of setting it up, complementary, not overlapping — now
-          shown after it (Ana: swap the two), so setup comes before payoff. */}
+          buyer's view of the page; "Three steps" below is the seller's
+          view of setting it up, complementary, not overlapping.
+
+          Order history: shown first originally, then moved after
+          "Three simple steps" (Ana: "swap the two," reasoning setup
+          before payoff), now moved back here (Ana: "i meant the
+          order again") — back to payoff before setup.
+
+          TIGHTENED 2026-09-10 (Ana: "section paddings are still too
+          large"): this and the next three sections (Three simple steps,
+          Everything you need, Keep more of what you earn) dropped from
+          clamp(56,7,80) to clamp(40,5,56), and the fulfilment band
+          below from clamp(48,6,64) to the same clamp(40,5,56) so nothing
+          mid-page reads bigger than its neighbors. The hero and the
+          closing band are untouched — both share their padding scale
+          with Sell v2 (56,8,96 and 72,9,120/56,7,80), so shrinking them
+          here alone would break that consistency rather than fix a
+          page-specific problem. */}
       <section style={{ padding: "clamp(40px, 5vw, 56px) 24px" }}>
         <div style={{
           maxWidth: 1160, margin: "0 auto", display: "grid",
@@ -789,6 +765,33 @@ export default function InstantStoreV2({ onGo }) {
             ))}
           </div>
           <InstantStoreMockup />
+        </div>
+      </section>
+
+      {/* ── Three simple steps ──
+          The seller's view of setting it up, now shown after "What
+          buyers see" again (Ana: "i meant the order again") — payoff
+          before setup, the page's original order. */}
+      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px" }}>
+        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+          <CardList
+            heading="Create your Instant Store in three steps"
+            headingAlign="center"
+            layout={{ mobile: 1, tablet: 3, desktop: 3 }}
+          >
+            {STEPS.map(([title, body], i) => (
+              <Card
+                key={title}
+                icon={
+                  <span style={{ fontFamily: FONT_DISPLAY, fontSize: 40, fontWeight: 500, lineHeight: 1, color: C.blue600 }}>
+                    {i + 1}
+                  </span>
+                }
+                title={title}
+                description={body}
+              />
+            ))}
+          </CardList>
         </div>
       </section>
 
