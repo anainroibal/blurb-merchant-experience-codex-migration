@@ -355,23 +355,6 @@ export default function ShippingPage({ onGo, lean }) {
         {qty >= BULK_MIN && <BulkBanner />}
       </Section>
 
-      {/* ── The honest caveats, in one place ── */}
-      <Section title="What can change your date">
-        <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
-          {[
-            ["Sending to a P.O. Box", "Economy and Standard both deliver to a P.O. Box. Express doesn't, so we take it off the list rather than let you choose it and turn it down later."],
-            ["Crossing a border", "Anything going overseas can be held for inspection, and any duty is paid by whoever receives it. Neither is counted in the days above."],
-            ["Weekends and holidays", "Every figure on this page counts business days, for the printing and for the journey."],
-            ["Ordering in volume", "For a hundred copies or more, Large Order Services quotes the run and the delivery together, so this table isn't the one to read."],
-          ].map(([h, b]) => (
-            <div key={h} style={{ display: "grid", gap: 6, alignContent: "start" }}>
-              <span style={{ fontSize: TYPE.lg, fontWeight: 700 }}>{h}</span>
-              <span style={{ fontSize: TYPE.base, color: T.textSubtle, lineHeight: 1.65 }}>{b}</span>
-            </div>
-          ))}
-        </div>
-      </Section>
-
       {/* ── Where the calculating went ──
           This page used to be the calculator. Saying so plainly is the
           whole job of this section: two doors, named by which person is
@@ -414,6 +397,19 @@ export default function ShippingPage({ onGo, lean }) {
         </div>
       </section>
 
+      {/* FOLDED IN 2026-09-10 — the standalone "What can change your
+          date" section used to sit above this (four static caveats,
+          same headline+body shape as a benefit grid). Ana: "i don't get
+          the What can change your date section, like it's an FAQ rather
+          than like a benefit... yes remove and Fold it into the Faq
+          accordion below." Two of its four facts (P.O. Box, crossing a
+          border) were already near-duplicates of existing questions
+          here and were dropped rather than repeated; the other two
+          (weekends/holidays, ordering in volume) became new questions
+          below. The volume one also picked up "Large Order Services" ->
+          "Bulk Printing Services" and a real link while it was being
+          rewritten, matching the name and destination this same page's
+          own 100+-copies banner already uses. */}
       <Faq
         heading={<>Have a question?<br />Here are answers.</>}
         items={[
@@ -432,6 +428,11 @@ export default function ShippingPage({ onGo, lean }) {
              You can choose a faster delivery, but not faster printing. Express moves your book once it is
              made; it does not make it any sooner.
            </p>],
+          ["Do weekends or holidays affect my delivery?",
+           <p style={{ margin: 0 }}>
+             Every figure on this page counts business days, for the printing and for the journey. A
+             weekend or a holiday adds a day to the count either way.
+           </p>],
           ["Ship books to multiple addresses",
            <p style={{ margin: 0 }}>
              Copies ordered together are printed and sent together to one address, and cost less than the
@@ -446,6 +447,18 @@ export default function ShippingPage({ onGo, lean }) {
            <p style={{ margin: 0 }}>
              You might, on anything crossing a border. Duty is set by the destination country and paid by
              whoever receives the parcel, so it isn't part of the delivery cost we quote.
+           </p>],
+          ["What if I'm ordering 100 copies or more?",
+           <p style={{ margin: 0 }}>
+             Bulk Printing Services quotes the run and the delivery together, so the figures on this page
+             aren't the ones to use.{" "}
+             <a
+               href="https://www.blurb.com/large-order-services" target="_blank" rel="noopener noreferrer"
+               style={{ color: C.blue600, textDecoration: "underline" }}
+             >
+               Get a custom quote
+             </a>{" "}
+             instead.
            </p>],
           ["Where does Blurb ship?",
            <p style={{ margin: 0 }}>
