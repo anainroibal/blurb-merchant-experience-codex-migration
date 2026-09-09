@@ -117,6 +117,19 @@
         }
       }
 
+      /* "Sell photo books, magazines, notebooks & more" (Sell v2 and
+         ISV2's own "What you can sell" CardList) wraps to a second line
+         by about 7px at the desktop heading size (CardList's own h2 has
+         no className hook, so this reaches it by tag under the scoped
+         root class) — Ana: "it's a shame it goes over one line, can that
+         be fixed?" A hairline of negative tracking, the same amount this
+         prototype's own display headings already use (H1s throughout
+         carry -0.01em), closes a 7px gap easily without shrinking the
+         type or touching the copy. */
+      .format-heading-fit h2 {
+        letter-spacing: -0.01em;
+      }
+
       /* Menus and popovers: fade up from just below their trigger. */
       .pop-in {
         animation: pop-in var(--slow) var(--ease) both;

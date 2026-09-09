@@ -878,6 +878,7 @@ export default function SellLandingV2({ onGo }) {
       <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <CardList
+            className="format-heading-fit"
             heading="Sell photo books, magazines, notebooks & more"
             subheading="Whatever you create, Blurb has a print-on-demand format and a selling path to match."
             headingAlign="center"
@@ -938,7 +939,18 @@ export default function SellLandingV2({ onGo }) {
           not invented testimonials — see the SHOWCASE note above. No
           header button any more: the outline's own was an unsourced
           "Button text" placeholder, and each story now has its own real
-          link, so a generic top-level CTA had nothing left to point at. */}
+          link, so a generic top-level CTA had nothing left to point at.
+
+          SUBHEAD REVISED 2026-09-10 (Ana: "needs to be clear these are
+          sellers / using our selling tools on the title or subtitle plz
+          without calling them sellers"): this section sits on the Sell
+          page, but its own copy never said these creators sold anything
+          — "real creators, just like you" reads as true of any Blurb
+          customer on any page. Kept the title (it's the emotional hook,
+          and two of the three stories link straight to a real Bookstore
+          product page, so "real books" already checks out); rewrote the
+          subhead to name the selling fact directly, with "sold" as a
+          verb rather than "seller" as a label for the people. */}
       <section style={{ background: C.gray50, padding: "clamp(56px, 7vw, 80px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 40 }}>
           <div style={{ display: "grid", gap: 8, textAlign: "center" }}>
@@ -949,7 +961,7 @@ export default function SellLandingV2({ onGo }) {
               Real books by real creators, just like you
             </h2>
             <p style={{ margin: "0 auto", fontSize: TYPE.base, color: T.textSubtle, maxWidth: 620 }}>
-              Books build connections across time, space, and community. Yours will, too.
+              They used Blurb's tools to sell their work. Yours can too.
             </p>
           </div>
 

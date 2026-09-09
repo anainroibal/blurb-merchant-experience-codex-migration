@@ -987,10 +987,13 @@ export default function InstantStoreV2({ onGo }) {
 
           {/* Carries the point the "Other print-on-demand solutions"
               column used to make (see the file header note) now that
-              the column itself is gone. */}
+              the column itself is gone. Rewritten once already (Ana:
+              "'a real cost' with the mdash is so AI") — dropped the em
+              dash and the "a real cost" tag-on for a plain second
+              sentence instead. */}
           <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle }}>
-            None of these routes charge a separate processing, platform, or subscription fee — a real cost
-            on many other print-on-demand platforms.
+            None of these routes charge a separate processing, platform, or subscription fee. Many other
+            print-on-demand platforms do.
           </p>
         </div>
       </section>
@@ -1045,6 +1048,7 @@ export default function InstantStoreV2({ onGo }) {
       <section style={{ background: C.gray50, padding: "clamp(28px, 4vw, 40px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <CardList
+            className="format-heading-fit"
             heading="Sell photo books, magazines, notebooks & more"
             subheading="Whatever you create, your Instant Store is ready to sell it."
             headingAlign="center"
