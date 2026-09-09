@@ -225,32 +225,33 @@ const FULFILMENT_POINTS = [
   ["schedule", "No setup required", "No warehouse, no carrier accounts, no fulfilment integrations. It works the moment you share your link."],
 ];
 
-/* Revised (Ana, working from a reference mock): "Best for" per format
-   in place of the formats/papers/sizes count line, same change and same
-   reasoning as SellLandingV2.jsx's own SELL_FORMATS — kept in sync
-   rather than retyped, see that file's note for the full reasoning on
-   the copy (why the reference's own repeated "Best for" text isn't
-   reused verbatim as the description) and the imagery (why Photo Books
-   and Notebooks & Journals get their own photos instead of FORMAT_CARDS'
-   shared ones). */
+/* Revised (Ana, working from a reference mock) — new imagery for Photo
+   Books and Notebooks & Journals, and revised copy, same reasoning as
+   SellLandingV2.jsx's own SELL_FORMATS. No `bestFor` field here, though
+   (Ana, on reflection: "i actually think 'best for' makes sense on
+   sell v2 not in isv2") — Sell v2 is comparing four different ways to
+   sell, so "who's this format best for" fits there; this page is a
+   single Instant Store, so its own version of this section keeps the
+   formats/papers/sizes count line and the description, no Best-for
+   line. Counts are read directly off blurb.com/pricing (2026-09-06),
+   not the local catalog matrix — see SellLandingV2.jsx's own note on
+   what each count means and why it's sourced from the live page. */
 const SELL_FORMATS = [
-  { id: "photo", title: "Photo Books",
-    bestFor: "Photographers and visual storytellers building their audience.",
+  { id: "photo", title: "Photo Books", formats: 3, papers: 7, sizes: 6,
     desc: "Sell photo books, wedding albums, and layflat photo books in premium papers and formats.",
     img: "https://assets.blurb.com/_astro/linen-hardcover-dustjacket-optimized.DNuztDk1.webp",
     alt: "Stack of linen hardcover with dust jacket photo books with a red scooter on the cover and the title “Life in Italy.”" },
-  { id: "trade", title: "Paperback & Hardcover",
-    bestFor: "Selling directly to your audience or through retail distribution.",
+  { id: "trade", title: "Paperback & Hardcover", formats: 3, papers: 3, sizes: 3,
     desc: "Create hardcover and paperback books, novels, cookbooks, children's books, and more." },
-  { id: "magazine", title: "Magazines",
-    bestFor: "Ongoing series, zines, and one-off editorial projects.",
+  { id: "magazine", title: "Magazines", formats: 1, papers: 1, sizes: 1,
     desc: "Sell magazines with newsstand-quality printing, perfect for lookbooks, zines, or serial content." },
-  { id: "notebook", title: "Notebooks & Journals",
-    bestFor: "Creators building a branded product line alongside their books.",
+  { id: "notebook", title: "Notebooks & Journals", formats: 4, papers: 1, sizes: 3,
     desc: "Sell notebooks and journals in blank, lined, or dot-grid formats, a natural companion to your books.",
     img: "https://assets.blurb.com/_astro/linen-hardcover-with-dustjacket-notebook-optimized.CQRJ330f.webp",
     alt: "Open linen hardcover notebook with dust jacket showing travel photography of Greece on one side, and blank lined paper on the other." },
 ];
+
+const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
 /* ────────────────────────────────────────────────────────────────
    Instant Store — v2 (2026-09-06)
@@ -851,55 +852,46 @@ export default function InstantStoreV2({ onGo }) {
         </div>
       </section>
 
-      {/* ── What can you sell ── heading, subheading and "Best for" cards
-          revised from a reference mock (Ana), kept in sync with Sell
-          v2's own version rather than retyped; see SELL_FORMATS' own
-          note above for the copy and imagery reasoning. Padding cut
-          roughly in half (Ana: too large) — same clamp(32px,4vw,48px)
-          Sell v2's own "Included with every way you sell" section uses
-          for the same reason: it sits between two dense sections and
-          doesn't need that much air. */}
+      {/* ── What can you sell ── heading and copy revised from a
+          reference mock (Ana); see SELL_FORMATS' own note above for the
+          copy and imagery reasoning, and for why this page's version
+          has no "Best for" line. Subheading rewritten for this page
+          specifically (Ana: the Sell v2 line "matches better in sell
+          v2, not in isv2") — "a selling path to match" is about
+          choosing among four routes, which is Sell v2's own framing,
+          not a fit for a page that's already inside one Instant Store.
+          Back to Codex's own Card (no hand-built block needed) now that
+          there's no Best-for paragraph to style — eyebrow + title +
+          description is exactly the shape Card already renders. Padding
+          cut roughly in half (Ana: too large) — same
+          clamp(32px,4vw,48px) Sell v2's own "Included with every way
+          you sell" section uses for the same reason: it sits between
+          two dense sections and doesn't need that much air. */}
       <section style={{ background: C.gray50, padding: "clamp(32px, 4vw, 48px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <CardList
             heading="Sell photo books, magazines, notebooks & more"
-            subheading="Whatever you create, Blurb has a print-on-demand format and a selling path to match."
+            subheading="Whatever you create, your Instant Store is ready to sell it."
             headingAlign="center"
             layout={{ mobile: 1, tablet: 2, desktop: 4 }}
           >
-            {/* Hand-built, not Codex's Card — same fix and same reasoning
-                as Sell v2's own version of this section (Ana: "style the
-                best for text a bit better, it looks like the same
-                paragraph"): Card's CSS reset zeroes every <p> margin
-                inside it, so "Best for: X" and the sentence after it had
-                no visual break between them. */}
             {SELL_FORMATS.map(f => {
               const photo = f.img ? f : FORMAT_CARDS.find(c => c.id === f.id);
               return (
-                <div key={f.id} style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", width: "100%", gap: "var(--codex-spacing-3)" }}>
-                  <img
-                    src={photo.img}
-                    alt={photo.alt}
-                    loading="lazy"
-                    style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", display: "block", borderRadius: R.lg }}
-                  />
-                  <h3 style={{
-                    fontFamily: "var(--codex-font-family-heading)", fontWeight: "var(--codex-font-weight-normal)",
-                    color: "var(--codex-color-semantic-text-bold)", fontSize: "var(--codex-font-size-3xl)",
-                    lineHeight: "var(--codex-font-line-height-tight)", margin: 0,
-                  }}>
-                    {f.title}
-                  </h3>
-                  <div style={{ display: "grid", gap: 6 }}>
-                    <p style={{ margin: 0, fontSize: TYPE.sm, lineHeight: "var(--codex-font-line-height-snug)" }}>
-                      <span style={{ fontWeight: 700, color: C.blue600 }}>Best for:</span>{" "}
-                      <span style={{ color: "var(--codex-color-semantic-text-bold)" }}>{f.bestFor}</span>
-                    </p>
-                    <p style={{ margin: 0, fontSize: TYPE.sm, color: "var(--codex-color-semantic-text-subtle)", lineHeight: "var(--codex-font-line-height-snug)" }}>
-                      {f.desc}
-                    </p>
-                  </div>
-                </div>
+                <Card
+                  key={f.id}
+                  icon={
+                    <img
+                      src={photo.img}
+                      alt={photo.alt}
+                      loading="lazy"
+                      style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", display: "block", borderRadius: R.lg }}
+                    />
+                  }
+                  eyebrow={`${plural(f.formats, "format")} · ${plural(f.papers, "paper")} · ${plural(f.sizes, "size")}`}
+                  title={f.title}
+                  description={f.desc}
+                />
               );
             })}
           </CardList>

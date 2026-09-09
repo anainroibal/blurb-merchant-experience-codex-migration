@@ -341,16 +341,31 @@ const GET_STARTED = [
 
 /* Revised (Ana, working from a reference mock): "Best for" per format,
    same convention the SELL_PATHS cards above and /self-publish's own
-   "Choose how to sell your book" cards already use, in place of the
-   formats/papers/sizes count line. Rendered through Card's own
-   `description` (Markdown, per Card.d.ts) as a bold "Best for:" line
-   plus the sell-what-you-can sentence — two paragraphs in one string,
-   not two card slots, since Card has no third text slot to spare.
-   Copy follows the reference's own "Best for" lines closely, but the
-   longer sentence is freshly written rather than echoing it back
-   verbatim — the reference repeated its "Best for" text as the
-   description too on two of its four cards, which reads as
-   unfinished placeholder rather than real copy.
+   "Choose how to sell your book" cards already use, alongside the
+   formats/papers/sizes count line rather than replacing it (Ana: "i
+   also still liked the format/sizes thing, can you bring it back").
+   Rendered by hand (see below) as a bold "Best for:" line plus the
+   sell-what-you-can sentence. Copy follows the reference's own "Best
+   for" lines closely, but the longer sentence is freshly written
+   rather than echoing it back verbatim — the reference repeated its
+   "Best for" text as the description too on two of its four cards,
+   which reads as unfinished placeholder rather than real copy.
+
+   "Best for" stays a Sell v2 thing only (Ana, on reflection: "i
+   actually think 'best for' makes sense on sell v2 not in isv2") —
+   this page is comparing four different ways to sell, so "who's this
+   format best for" fits; ISV2 is a single Instant Store, so its own
+   version of this section keeps the eyebrow and description only, no
+   `bestFor` field. `formats`/`papers`/`sizes` are read directly off
+   blurb.com/pricing (2026-09-06), not the local catalog matrix —
+   CLAUDE.md already documents several gaps between the two (the "T7"
+   price gaps), and the live page is what a seller actually reads.
+     formats = distinct binding rows (Paperback / Imagewrap Hardcover /
+       Dust Jacket Hardcover / Wire-O Softcover)
+     papers  = distinct paper/finish sections (Standard, Premium,
+       Mohawk Superfine, layflat variants, etc. each count once)
+     sizes   = the count /pricing itself states in each card's own
+       "X sizes" line
 
    Photo Books and Notebooks & Journals get their own photography
    instead of FORMAT_CARDS' shared images (Ana: "and imagery") — real
@@ -362,23 +377,25 @@ const GET_STARTED = [
    they already match the reference mock's own photography closely
    enough that swapping them would just be work for its own sake. */
 const SELL_FORMATS = [
-  { id: "photo", title: "Photo Books",
+  { id: "photo", title: "Photo Books", formats: 3, papers: 7, sizes: 6,
     bestFor: "Photographers and visual storytellers building their audience.",
     desc: "Sell photo books, wedding albums, and layflat photo books in premium papers and formats.",
     img: "https://assets.blurb.com/_astro/linen-hardcover-dustjacket-optimized.DNuztDk1.webp",
     alt: "Stack of linen hardcover with dust jacket photo books with a red scooter on the cover and the title “Life in Italy.”" },
-  { id: "trade", title: "Paperback & Hardcover",
+  { id: "trade", title: "Paperback & Hardcover", formats: 3, papers: 3, sizes: 3,
     bestFor: "Selling directly to your audience or through retail distribution.",
     desc: "Create hardcover and paperback books, novels, cookbooks, children's books, and more." },
-  { id: "magazine", title: "Magazines",
+  { id: "magazine", title: "Magazines", formats: 1, papers: 1, sizes: 1,
     bestFor: "Ongoing series, zines, and one-off editorial projects.",
     desc: "Sell magazines with newsstand-quality printing, perfect for lookbooks, zines, or serial content." },
-  { id: "notebook", title: "Notebooks & Journals",
+  { id: "notebook", title: "Notebooks & Journals", formats: 4, papers: 1, sizes: 3,
     bestFor: "Creators building a branded product line alongside their books.",
     desc: "Sell notebooks and journals in blank, lined, or dot-grid formats, a natural companion to your books.",
     img: "https://assets.blurb.com/_astro/linen-hardcover-with-dustjacket-notebook-optimized.CQRJ330f.webp",
     alt: "Open linen hardcover notebook with dust jacket showing travel photography of Greece on one side, and blank lined paper on the other." },
 ];
+
+const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
 
 /* Real stories, images and quotes lifted from blurb.com/stories-that-bind
    (Ana: "use the imagery and copy on this page as placeholder") — this
@@ -818,6 +835,9 @@ export default function SellLandingV2({ onGo }) {
                     loading="lazy"
                     style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", display: "block", borderRadius: R.lg }}
                   />
+                  <p style={{ margin: 0, fontSize: "var(--codex-font-size-xs)", color: "var(--codex-color-semantic-text-subtle)", lineHeight: "var(--codex-font-line-height-snug)" }}>
+                    {plural(f.formats, "format")} · {plural(f.papers, "paper")} · {plural(f.sizes, "size")}
+                  </p>
                   <h3 style={{
                     fontFamily: "var(--codex-font-family-heading)", fontWeight: "var(--codex-font-weight-normal)",
                     color: "var(--codex-color-semantic-text-bold)", fontSize: "var(--codex-font-size-3xl)",
