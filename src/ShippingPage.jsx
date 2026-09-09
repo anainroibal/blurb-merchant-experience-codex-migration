@@ -5,7 +5,7 @@ import Faq from "./Faq.jsx";
 import ShippingSection from "./ShippingSection.jsx";
 import InstantStoreLane from "./InstantStoreLane.jsx";
 import { FORMAT_CARDS } from "./FormatCards.jsx";
-import { SHIPPING, PRINT_RANGE, shippingFor, money, BULK_MIN } from "./catalog.js";
+import { SHIPPING, PRINT_RANGE, shippingFor, money, BULK_MIN, arrivalWindow, formatDay } from "./catalog.js";
 
 /* ────────────────────────────────────────────────────────────────
    /shipping — a calculator again, without a postcode or a date.
@@ -266,10 +266,25 @@ export default function ShippingPage({ onGo, lean }) {
       {/* ── What it costs, for the book and the country you pick ──
           Was a static region-by-speed table; now a product and a country
           choose the row, so what's on screen is a real quote rather than
-          a grid to scan. No postcode, because the print time doesn't
-          change with it — only the country does — and no calendar date,
-          because this page doesn't know when the order is placed.
-          A range in business days is what it can honestly say. */}
+          a grid to scan. Still no postcode, because the print time
+          doesn't change with it — only the country does.
+
+          CALENDAR DATE ADDED BACK 2026-09-10 (Ana: "i'd like the
+          shipping calculator to work by giving you an ETA too, so it
+          works for people ordering for themselves. can we somehow show
+          both things, a date range and an estimated arrival date (as a
+          range too) if ordered today?"): this page had dropped the
+          calendar date entirely on the grounds that it doesn't know
+          when the order is placed — true for a browsing visitor, but
+          not for someone here today deciding whether to order right
+          now, who has exactly the one order date this page can assume:
+          today. `arrivalWindow` (catalog.js) already does this
+          calculation for ShippingSection.jsx's own postcode calculator;
+          reused here with "if ordered today" stated in the label so the
+          assumption is never silent. The business-day range stays
+          alongside it rather than being replaced — that's the shape
+          Ana asked for (both things), and it's also the number that
+          still holds for a visitor who isn't ordering today. */}
       <Section title="What it costs, wherever it's going">
         <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
           <Select
@@ -302,15 +317,22 @@ export default function ShippingPage({ onGo, lean }) {
         <div style={{ display: "grid", gap: 10 }}>
           {speeds.map(s => {
             const quote = shippingFor(ship.country, s.id, qty);
+            const w = arrivalWindow(s);
             return (
               <div key={s.id} style={{
                 background: "#fff", border: `1px solid ${C.charcoal200}`, borderRadius: R.md,
                 padding: 16, display: "grid", gap: 10, alignItems: "center",
-                gridTemplateColumns: "minmax(0,1fr) auto auto",
+                gridTemplateColumns: "minmax(0,1fr) auto auto auto",
               }}>
                 <span style={{ fontSize: TYPE.lg, fontWeight: 700 }}>{s.label}</span>
                 <span style={{ fontSize: TYPE.base, color: T.textSubtle, whiteSpace: "nowrap" }}>
                   {s.days[0] + PRINT_RANGE[0]}–{s.days[1] + PRINT_RANGE[1]} business days
+                </span>
+                <span style={{ display: "grid", gap: 2, justifyItems: "end", whiteSpace: "nowrap" }}>
+                  <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>Arrives if ordered today</span>
+                  <span style={{ fontSize: TYPE.base, fontWeight: 700 }}>
+                    {formatDay(w.earliest)} – {formatDay(w.latest)}
+                  </span>
                 </span>
                 <span style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 700, whiteSpace: "nowrap" }}>
                   {quote ? money(quote.cost) : "—"}
