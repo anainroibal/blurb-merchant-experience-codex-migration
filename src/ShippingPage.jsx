@@ -35,12 +35,12 @@ import { SHIPPING, PRINT_RANGE, shippingFor, money } from "./catalog.js";
    seller figures at all, because the estimator does.
 
    THE LIVE PAGE'S COPY IS KEPT WHERE IT STILL WORKS, as it was on the
-   Sell page: the "Good Things on the Way" heading, the line about
-   printing and binding, and the FAQ's own question wording are
-   blurb.com/shipping's, not ours. What we add is what the live page
-   cannot say now that it no longer calculates: which of the two
-   calculators to open, and the fact that a seller's buyer pays the
-   delivery.
+   Sell page: the line about printing and binding and the FAQ's own
+   question wording are blurb.com/shipping's, not ours (the "Good
+   Things on the Way" heading itself is gone now — see 2026-09-10
+   below). What we add is what the live page cannot say now that it no
+   longer calculates: which of the two calculators to open, and the
+   fact that a seller's buyer pays the delivery.
 
    One correction rather than a copy: the live page says "over 70
    countries and territories" above a list of 67. We print the count the
@@ -60,7 +60,20 @@ import { SHIPPING, PRINT_RANGE, shippingFor, money } from "./catalog.js";
      paragraph under that section dropped too — the placeholder caveat
      is already stated once, plainly, right here in this comment and in
      the file's own figures documentation; repeating it as reader-facing
-     copy on every visit added a caveat nobody asked to read mid-quote. */
+     copy on every visit added a caveat nobody asked to read mid-quote.
+
+   SIMPLIFIED FURTHER 2026-09-10 (Ana: "we don't need so many slogans,
+   maybe just the what it costs one. good things on the way makes no
+   sense"):
+   - Hero H1 "Good things on the way" -> "Shipping rates and delivery
+     times", the live page's own heading dropped in favor of one that
+     just says what the page is. "What it costs, wherever it's going"
+     is the one heading kept in that slogan-ish register, by name.
+   - "See it for your own book" -> "Get an exact price and date", and
+     its lede rewritten plainly: this page can only show a range, so
+     say that and point at the two calculators that can do better,
+     rather than a line built on "you'll find it where the book is"
+     wordplay. */
 
 function Section({ title, lede, children, id, tinted }) {
   return (
@@ -127,7 +140,7 @@ export default function ShippingPage({ onGo, lean }) {
             fontFamily: FONT_DISPLAY, fontWeight: 500, letterSpacing: "-0.01em",
             fontSize: "clamp(2rem, 4.6vw, 2.75rem)", lineHeight: 1.2, margin: 0,
           }}>
-            Good things on the way
+            Shipping rates and delivery times
           </h1>
           <p style={{ fontSize: TYPE.xl, lineHeight: 1.55, margin: 0, maxWidth: 660 }}>
             Blurb ships to {SHIPPING.countries.length} countries and territories. Printing and binding take
@@ -226,8 +239,8 @@ export default function ShippingPage({ onGo, lean }) {
           whole job of this section: two doors, named by which person is
           asking, and no figures on either. */}
       <Section
-        title="See it for your own book"
-        lede="Delivery is priced against a real book going to a real place, so you'll find it where the book is."
+        title="Get an exact price and date"
+        lede="This page can only show a range. For a real book and a real delivery date, use one of the calculators below."
         tinted
       >
         <div style={{ display: "grid", gap: 16, gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
