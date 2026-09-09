@@ -296,7 +296,7 @@ export default function ShippingPage({ onGo, lean }) {
         </div>
 
         <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
-          Printing takes {PRINT_RANGE[0]}–{PRINT_RANGE[1]} days no matter which speed you choose. The ranges below already include that time.
+          The date ranges below include {PRINT_RANGE[0]}–{PRINT_RANGE[1]} days of production time.
         </span>
 
         <div style={{ display: "grid", gap: 10 }}>
