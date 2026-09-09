@@ -117,22 +117,6 @@
         }
       }
 
-      /* Instant Store v2's "Keep more of what you earn" table: the last
-         column is the one comparison point that isn't Blurb, and needs to
-         read that way at a glance (Ana). ComparisonTable's cells are
-         plain Markdown strings with no per-cell style hook, so this
-         targets the real DOM instead: a `td` is only ever a data cell
-         (the row-header column is a `th`), so `td:last-child` is exactly
-         the last data column in every body row, and `thead th:last-child`
-         is the same column's header. Unlayered, so — same trick
-         `.radiocard-flush` already uses — it beats ComparisonTable's own
-         `@layer codex.components` styles without `!important`. */
-      .keep-more-table td:last-child,
-      .keep-more-table thead th:last-child {
-        background: var(--codex-color-primitive-light-gray-100);
-        font-style: italic;
-      }
-
       /* Menus and popovers: fade up from just below their trigger. */
       .pop-in {
         animation: pop-in var(--slow) var(--ease) both;

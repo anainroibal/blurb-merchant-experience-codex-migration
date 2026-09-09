@@ -1,4 +1,5 @@
-import { Button, CardList, Card, ComparisonTable } from "@blurb/codex-react";
+import React from "react";
+import { Button, CardList, Card } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { FORMAT_CARDS } from "./FormatCards.jsx";
 import Faq from "./Faq.jsx";
@@ -18,7 +19,7 @@ import Faq from "./Faq.jsx";
    image) stands in for the cover; title/author/description are a
    placeholder in the same spirit as this file's other honest
    placeholders (the Showcase section, "Share anywhere"'s lorem ipsum).
-   Price is a round $30 (Ana) rather than the margin table's own $60.80 —
+   Price is a round $30 (Ana) rather than the margin table's own $50.00 —
    this mockup is illustrating the page, not the table, so it doesn't
    need to carry that exact figure. */
 const MOCKUP_COVER = FORMAT_CARDS.find(c => c.id === "photo");
@@ -212,7 +213,7 @@ function InstantStoreMockup() {
    "Showcase your work"'s own verb-first, second-person shape. */
 const WALKTHROUGH = [
   ["Showcase your work", "Cover, description, and pricing, plus an interactive preview so buyers can flip through real pages before they buy."],
-  ["Browse your other books", "Shown right on the page, so one purchase leads to the next."],
+  ["Browse your other books", "All your other books are shown right on the page, so buyers can find your whole catalog in one place."],
   ["One click to buy", "A single 'Buy now' takes buyers straight to checkout, including Apple Pay, Google Pay, and PayPal. No cart to build, no plugins to configure."],
   ["Blurb prints and ships it", "No inventory to buy upfront: every order triggers a fresh print run, and you only pay for what ships. Your buyer gets a tracked delivery, and you never touch a box."],
 ];
@@ -223,44 +224,6 @@ const FULFILMENT_POINTS = [
   ["verified", "Tracking on every order", "Buyers get a tracking number automatically, so there's no support email asking where an order is."],
   ["schedule", "No setup required", "No warehouse, no carrier accounts, no fulfilment integrations. It works the moment you share your link."],
 ];
-
-/* The same POC that inspired InstantStoreMockup also had a tiny
-   "your price / print cost / you keep" widget for its own setup-steps
-   section — much more digestible at a glance than a table row, so it's
-   reused here as a companion to the comparison table rather than a
-   replacement for it (Ana wasn't sure the table alone was landing).
-   Same $60.80 / $21.28 / $39.52 the table already uses for this spec,
-   not a second set of numbers. Labels corrected against the CRO brief's
-   confirmed pricing terminology (Section 3.1): "Listing price" is the
-   named term for the price a seller sets, not a bare "Your price" that
-   relies on context to mean anything; "Your profit" is the confirmed
-   headline term in place of "margin". */
-function MiniProfitWidget() {
-  const ROWS = [["Your listing price", "$60.80"], ["Print cost", "$21.28"]];
-  return (
-    <div style={{
-      border: `1px solid ${T.border}`, borderRadius: R.lg, padding: 20,
-      display: "grid", gap: 12, maxWidth: 300, width: "100%",
-    }}>
-      {ROWS.map(([label, value]) => (
-        <div key={label} style={{ display: "flex", justifyContent: "space-between", fontSize: TYPE.sm, color: T.textSubtle }}>
-          <span>{label}</span>
-          <span>{value}</span>
-        </div>
-      ))}
-      <div style={{ height: 1, background: T.border }} />
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span style={{ fontWeight: 600 }}>Your profit</span>
-        <span style={{
-          background: "#d7f4e0", color: "#166640", padding: "4px 12px", borderRadius: 999,
-          fontWeight: 700, fontSize: TYPE.sm,
-        }}>
-          $39.52
-        </span>
-      </div>
-    </div>
-  );
-}
 
 /* The outline writes its own copy for this section rather than reusing
    FormatCards.jsx's sitewide descriptions (they read differently) —
@@ -321,27 +284,41 @@ const SELL_FORMATS = [
    generic POD stack does is a real, checkable difference instead).
 
    Second pass — the "$X.XX" placeholders made the table impossible to
-   actually read, so it's now pinned to one real spec: an 8×10 ImageWrap
-   Hardcover photo book, 80 pages. Blurb still publishes no fulfilment
-   pricing, so print cost is *estimated*, the same way every other
-   margin figure in this app is (Configurator.jsx, ProductOptions.jsx,
-   SellerLanding.jsx): this spec's own retail unit price from
-   catalog.js/pricing.data.js ($41 base at 20 pages + 60 extra pages at
-   $0.33/page = $60.80) times FULFILMENT_FACTOR (0.35) = $21.28. "Est.
-   margin" assumes a $60.80 sale — the same figure, so every channel is
-   priced against what Blurb itself would charge for the book at retail,
-   not an arbitrary sale price. Ingram is dropped for this specific
-   product — it's trade-only per catalog.js, so it doesn't carry photo
-   books — and RPI Print API takes its place, carrying Instant Store's
-   own cost structure (same infrastructure, same 0% Blurb-side
-   commission). Amazon's Commission cell keeps its real, already-sourced
-   figure (CLAUDE.md's own figures section: $1.35 + 15% of list price).
-   The 50% margin claim in the caption above the table is now 70% (Ana) —
-   still the outline's own unsourced figure otherwise, worth confirming
-   with Anain before this ships anywhere real. The "Other print-on-demand
-   solutions" column is styled distinctly (see the scoped
-   `.keep-more-table` rule in index.html) since it's the one column of
-   five that isn't Blurb.
+   actually read, so it was pinned to one real spec: an 8×10 ImageWrap
+   Hardcover photo book, 80 pages, with a $60.80 list price computed
+   from catalog.js/pricing.data.js ($41 base at 20 pages + 60 extra
+   pages at $0.33/page). Ingram is dropped for this specific product —
+   it's trade-only per catalog.js, so it doesn't carry photo books —
+   and RPI Print API takes its place, carrying Instant Store's own cost
+   structure (same infrastructure, same 0% Blurb-side commission).
+   Amazon's Commission cell keeps its real, already-sourced figure
+   (CLAUDE.md's own figures section: $1.35 + 15% of list price).
+
+   Third pass (Ana) — $60.80 "makes no sense" as the headline number on
+   a page meant to sell the idea, so the list price is now a round
+   $50.00 instead of a mechanically-derived one. Every other figure
+   still follows the same conventions as before: print cost for
+   Instant Store and RPI Print API is retail price × FULFILMENT_FACTOR
+   (0.35, catalog.js) = $17.50; Blurb Bookstore and Amazon's standard
+   print cost is still Ana's own guess (no real figure exists in this
+   codebase for it), re-picked at $31.00 so the "up to 3x" profit claim
+   used elsewhere on this page and on Sell v2 still holds ($32.50 /
+   $10.15 Amazon profit = 3.2x). Same table also absorbs the standalone
+   "your price / print cost / profit" widget that used to sit beside it
+   (Ana: "it should be incorporated in the table") — Listing price and
+   Print cost are now rows in the table itself rather than a separate
+   card repeating the same two numbers. Hand-built now instead of
+   Codex's ComparisonTable (Ana: "it doesn't sell it, it needs colour,
+   highlights, pills") — that component's cells are plain Markdown
+   strings with no way to render a colored pill inside one (confirmed
+   in its own Markdown.js, no rehype-raw plugin), so a styled grid was
+   needed anyway; same status-dot/zebra-row visual language Sell v2's
+   own hand-built comparison table already uses, adapted with a
+   highlighted Instant Store column and pill-styled profit figures
+   rather than dots, since every row here is a number, not a
+   included/limited/not-included judgment. The `.keep-more-table` CSS
+   rule in index.html targeted Codex's ComparisonTable DOM specifically
+   and no longer applies — removed rather than left as dead CSS.
 
    ── Corrected 2026-09-06 ──
    An earlier pass of this file invented body copy for the 3-step and
@@ -352,6 +329,21 @@ const SELL_FORMATS = [
    "Share anywhere"'s lorem ipsum and the FAQ answers (the outline has
    questions only, no answers — those stay drafted, and are flagged as
    such below). */
+
+/* "Keep more of what you earn" table data — see the file header note
+   above for where every figure comes from. Instant Store and RPI Print
+   API share seller pricing, so they share every cell; "Other print-on-
+   demand solutions" can't be priced at all, so it stays qualitative. */
+const KEEP_MORE_COLUMNS = ["Instant Store", "Blurb Bookstore", "Amazon", "RPI Print API", "Other print-on-demand solutions"];
+
+const KEEP_MORE_ROWS = [
+  { label: "Your listing price", cells: ["$50.00", "$50.00", "$50.00", "$50.00", "Varies"] },
+  { label: "Print cost", cells: ["$17.50", "$31.00", "$31.00", "$17.50", "Varies by provider"] },
+  { label: "Commission", cells: ["0%", "0%", "$1.35 + 15% of list price", "0%", "Varies by provider"] },
+  { label: "Other fees", cells: ["None", "None", "None", "None", "Processing, platform & hosting fees"] },
+];
+
+const KEEP_MORE_PROFIT = ["$32.50", "$19.00", "$10.15", "$32.50", "Varies"];
 
 const STEPS = [
   /* "70% more of every sale" -> the calculated "3x more profit than
@@ -600,113 +592,152 @@ export default function InstantStoreV2({ onGo }) {
 
       {/* ── Keep More of What You Earn ── */}
       <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 20 }}>
-          <div style={{
-            display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            gap: 24, alignItems: "center",
-          }}>
-            <div style={{ display: "grid", gap: 12, alignContent: "start" }}>
-              <h2 style={{
-                fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
-                lineHeight: 1.25, margin: 0,
-              }}>
-                Keep more of what you earn
-              </h2>
-              {/* Moved down from the "What buyers see" walkthrough
-                  (Ana): that section's own "Set your own price" point was
-                  redundant with this one, but she wanted this exact line
-                  kept rather than lost along with it. */}
-              <p style={{ margin: 0, fontSize: TYPE.base, color: T.textNeutral }}>
-                You choose what to charge. What's left after your printing cost is yours, with no listing or platform fees.
-              </p>
-              {/* The outline's own literal text, corrected (Ana: it's
-                  actually 70%, not 50%) — see the file header note on
-                  why this figure is still worth confirming before this
-                  ships anywhere real. No asterisk (Ana: "makes no
-                  sense") — it pointed at nothing, since the outline
-                  never carried a footnote to land on. "Margins" ->
-                  "profit" per the CRO brief's confirmed terminology.
-
-                  "70% higher profit" carried the same accuracy problem
-                  flagged elsewhere on this page and on Sell v2 (70% is
-                  the print-cost discount, not a profit multiple) —
-                  brought in line with the same calculated "3x" claim
-                  the hero callout and STEPS now make, not left as the
-                  odd one out once those were fixed. Not explicitly
-                  asked for this pass; flagged to Ana in case narrower
-                  scope was intended. */}
-              <p style={{ margin: 0, fontSize: TYPE.base, color: T.textSubtle }}>
-                Earn up to 3x more profit than selling through other distribution channels.
-              </p>
-              <div>
-                <Button variant="outlined" onClick={() => onGo?.("margin")}>Calculate your profit</Button>
-              </div>
+        <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 24 }}>
+          <div style={{ display: "grid", gap: 12, maxWidth: 720 }}>
+            <h2 style={{
+              fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
+              lineHeight: 1.25, margin: 0,
+            }}>
+              Keep more of what you earn
+            </h2>
+            {/* Two paragraphs collapsed into one (Ana: "lots of words but
+                looks off") — same two facts (you set the price with no
+                extra fees; that's worth up to 3x more) in one sentence
+                rather than two lines of near-equal visual weight fighting
+                each other. The standalone "listing price / print cost /
+                profit" card that used to sit beside this text is gone too
+                (Ana: "it should be incorporated in the table") — those
+                three numbers are now rows in the table itself. */}
+            <p style={{ margin: 0, fontSize: TYPE.base, color: T.textNeutral }}>
+              You set the price, and what's left after your printing cost is yours, up to 3x more profit than selling through other distribution channels.
+            </p>
+            <div>
+              <Button variant="outlined" onClick={() => onGo?.("margin")}>Calculate your profit</Button>
             </div>
-            <MiniProfitWidget />
           </div>
 
-          {/* Figures below assume one real spec (Ana) rather than "$X.XX"
-              placeholders, so the table can actually be read: an 8×10
-              ImageWrap Hardcover photo book, 80 pages. Blurb publishes no
-              fulfilment pricing, so — same as every other margin figure
-              in this app (Configurator.jsx, ProductOptions.jsx,
-              SellerLanding.jsx) — the retail unit price is estimated from
-              catalog.js ($41 base at 20 pages + 60 extra pages at $0.33
-              = $60.80), used as "Est. margin"'s assumed sale price on
-              every channel: the seller sets their own price everywhere
-              here (Ana), Instant Store and Bookstore/Amazon alike, so
-              $60.80 stands in for whatever a seller might charge, not a
-              price only Blurb controls.
-
-              Print cost is where channels actually differ (Ana,
-              correcting an earlier pass that gave every channel the same
-              cost): Instant Store and RPI Print API get the discounted
-              "seller pricing" rate this app already uses everywhere
-              else — retail price × FULFILMENT_FACTOR (0.35) = $21.28.
-              Blurb Bookstore and Amazon don't get that rate, and there's
-              no existing figure anywhere in this codebase for what they
-              pay instead, so $37.50 is a placeholder Ana explicitly
-              okayed guessing at, picked so Instant Store's margin lands
-              close to the page's own "up to 70% higher" claim rather
-              than an arbitrary number. Worth a real figure before this
-              ships anywhere real — everything else on this row chain is
-              at least traceable to a source; this one number isn't.
-
-              RPI Print API replaces Ingram (Ana: Ingram is trade-only,
-              per catalog.js — it doesn't carry photo books at all) and
-              carries Instant Store's own cost structure: same
-              infrastructure, same discounted print cost, same 0%
-              Blurb-side commission.
-
-              The spec itself is now stated on the page, not just here
-              in a comment (Ana: "you need to somehow say this is based
-              on a photobook") — a reader comparing five numbers has to
-              know what book they're pricing. */}
+          {/* $50.00 rather than a mechanically-derived $60.80 (Ana:
+              "makes no sense") — a round, memorable number for a table
+              meant to sell the idea, not a literal per-spec computation.
+              Print cost and profit below still follow this app's real
+              conventions rather than being invented from scratch — see
+              the file header note for the full arithmetic and the
+              caveats that still apply (Amazon/Bookstore's $31.00 print
+              cost is Ana's own guess, same as before). */}
           <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle }}>
-            Figures below are for an 8×10 ImageWrap Hardcover photo book, 80 pages. Actual costs vary by format, size, and page count.
+            Figures below assume a $50.00 list price for an 8×10 hardcover photo book. Actual costs vary by format, size, and page count.
           </p>
 
-          <ComparisonTable
-            className="keep-more-table"
-            columnHeaders={["", "Instant Store", "Blurb Bookstore", "Amazon", "RPI Print API", "Other print-on-demand solutions"]}
-            rows={[
-              { header: "Print cost", cells: ["$21.28", "$37.50", "$37.50", "$21.28", "Varies by provider"] },
-              { header: "Commission", cells: [
-                "0%", "0%",
-                "Amazon's distribution fee ($1.35 per book + 15% of your list price)",
-                "0%",
-                "Varies by provider",
-              ] },
-              /* The point of this row (Ana): every Blurb route charges
-                 none of these, which a shared "$0" Setup fees row (since
-                 dropped — nobody in this market has one) couldn't show. */
-              { header: "Other fees", cells: [
-                "None", "None", "None", "None",
-                "Payment processing fees, platform fees, hosting fees",
-              ] },
-              { header: "Est. profit on a $60.80 sale", cells: ["$39.52", "$23.30", "$12.83", "$39.52", "Varies by provider"] },
-            ]}
-          />
+          {/* Hand-built, not Codex's ComparisonTable (Ana: "it doesn't
+              sell it, it needs colour, highlights, pills" — see the file
+              header note on why that component can't render one anyway).
+              Same status-dot-table visual language as Sell v2's own
+              comparison table (zebra rows, sticky label column, charcoal
+              rules), but the "dot" language doesn't fit a table that's
+              all numbers — Instant Store gets a highlighted column
+              instead (light blue tint + a "Best value" badge), and the
+              profit row is pills rather than plain text so the one row
+              this table exists to make is the one row that looks
+              different from a plain spec sheet. */}
+          <div style={{
+            overflowX: "auto", WebkitOverflowScrolling: "touch",
+            border: `1px solid ${C.charcoal200}`, borderRadius: R.md,
+          }}>
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "160px repeat(5, minmax(160px, 1fr))",
+              minWidth: 980,
+            }}>
+              {["", ...KEEP_MORE_COLUMNS].map((col, ci) => (
+                <div
+                  key={col || "row-label"}
+                  style={{
+                    position: ci === 0 ? "sticky" : "static", left: 0, zIndex: 2,
+                    background: ci === 1 ? T.bgAccentSubtle : "#fff",
+                    borderBottom: `1px solid ${C.charcoal200}`,
+                    borderRight: ci < 5 ? `1px solid ${C.charcoal200}` : "none",
+                    padding: 16, fontFamily: FONT_DISPLAY, fontWeight: 500,
+                    fontSize: TYPE.sm, color: T.textNeutral,
+                    display: "flex", alignItems: "center", gap: 8,
+                  }}
+                >
+                  {col}
+                  {ci === 1 && (
+                    <span style={{
+                      padding: "2px 8px", borderRadius: 999, fontSize: 11, fontWeight: 700,
+                      letterSpacing: 0.4, textTransform: "uppercase", whiteSpace: "nowrap",
+                      background: C.blue600, color: "#fff",
+                    }}>
+                      Best value
+                    </span>
+                  )}
+                </div>
+              ))}
+
+              {KEEP_MORE_ROWS.map((row, ri) => {
+                const rowBg = ri % 2 === 1 ? C.gray50 : "#fff";
+                return (
+                  <React.Fragment key={row.label}>
+                    <div style={{
+                      position: "sticky", left: 0, zIndex: 1, background: rowBg,
+                      borderBottom: `1px solid ${C.charcoal200}`, borderRight: `1px solid ${C.charcoal200}`,
+                      padding: 16, fontSize: TYPE.sm, fontWeight: 500, color: T.textNeutral,
+                    }}>
+                      {row.label}
+                    </div>
+                    {row.cells.map((cell, ci) => (
+                      <div key={ci} style={{
+                        background: ci === 0 ? T.bgAccentSubtle : rowBg,
+                        borderBottom: `1px solid ${C.charcoal200}`,
+                        borderRight: ci < 4 ? `1px solid ${C.charcoal200}` : "none",
+                        padding: 16, fontSize: TYPE.sm, color: T.textNeutral, lineHeight: 1.5,
+                        fontWeight: ci === 0 ? 600 : 400,
+                      }}>
+                        {cell}
+                      </div>
+                    ))}
+                  </React.Fragment>
+                );
+              })}
+
+              {/* Every other row is neutral, so this is the one place
+                  color carries the argument: Instant Store and RPI Print
+                  API (both seller pricing) get a bright green pill, Blurb
+                  Bookstore and Amazon get a muted amber one, so the
+                  number that actually differs also *looks* different, not
+                  just reads different in the digits. */}
+              <div style={{
+                position: "sticky", left: 0, zIndex: 1, background: "#fff",
+                borderRight: `1px solid ${C.charcoal200}`, padding: 16,
+                fontSize: TYPE.sm, fontWeight: 700, color: T.textNeutral,
+              }}>
+                Your profit
+              </div>
+              {KEEP_MORE_PROFIT.map((value, ci) => {
+                const strong = ci === 0 || ci === 3; // Instant Store, RPI Print API
+                const priced = value !== "Varies";
+                return (
+                  <div key={ci} style={{
+                    background: ci === 0 ? T.bgAccentSubtle : "#fff",
+                    borderRight: ci < 4 ? `1px solid ${C.charcoal200}` : "none",
+                    padding: 16, display: "flex", alignItems: "center",
+                  }}>
+                    {priced ? (
+                      <span style={{
+                        padding: "4px 12px", borderRadius: 999, fontWeight: 700, fontSize: TYPE.sm,
+                        background: strong ? "#d7f4e0" : "#fdf1de",
+                        color: strong ? "#166640" : "#8e4412",
+                      }}>
+                        {value}
+                      </span>
+                    ) : (
+                      <span style={{ fontSize: TYPE.sm, color: T.textSubtle, fontStyle: "italic" }}>{value}</span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
         </div>
       </section>
 

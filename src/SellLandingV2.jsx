@@ -92,14 +92,14 @@ const SELL_PATHS = [
     /* Down to 3 ticks (Ana). First tick turned into a real margin claim
        (Ana: "help turn the 70% lower print cost into a margin claim...
        compare it to amazon"), calculated rather than guessed: same
-       $60.80/8x10 ImageWrap Hardcover spec and figures the "Keep more
-       of what you earn" table (InstantStoreV2.jsx) already uses — $21.28
-       print cost via seller pricing, 0% commission, so $39.52 profit;
-       Amazon pays the standard $37.50 print-cost tier (seller pricing
-       is Instant Store/RPI Print API only, confirmed by both the brief
-       and Ana directly) plus its real $1.35 + 15% commission, so $12.83
-       profit. $39.52 / $12.83 = 3.08x. Same caveat as the table itself:
-       Amazon's $37.50 print cost is Ana's own guess, not a verified
+       $50.00 illustrative list price and figures the "Keep more of what
+       you earn" table (InstantStoreV2.jsx) already uses — $17.50 print
+       cost via seller pricing, 0% commission, so $32.50 profit; Amazon
+       pays the standard $31.00 print-cost tier (seller pricing is
+       Instant Store/RPI Print API only, confirmed by both the brief and
+       Ana directly) plus its real $1.35 + 15% commission, so $10.15
+       profit. $32.50 / $10.15 = 3.2x. Same caveat as the table itself:
+       Amazon's $31.00 print cost is Ana's own guess, not a verified
        rate, so this number moves if that one does. "AI-drafted listing"
        swapped for the link/no-store point (Ana: not the strongest value
        here) — closer to how the brief itself pitches it ("post it
@@ -115,9 +115,9 @@ const SELL_PATHS = [
        "than selling through Amazon" -> "than selling through our
        retail distribution channels" (Ana) broadens the comparison from
        Amazon specifically to the whole Retail Distribution card
-       (Amazon, Ingram, Blurb Bookstore) — worth flagging that the 3.08x
+       (Amazon, Ingram, Blurb Bookstore) — worth flagging that the 3.2x
        figure above is Amazon's math only. Blurb Bookstore's own numbers
-       in the "Keep more of what you earn" table ($39.52 vs $23.30) work
+       in the "Keep more of what you earn" table ($32.50 vs $19.00) work
        out to about 1.7x, not 3x, since it charges no commission the way
        Amazon does; Ingram isn't costed anywhere in this app at all. The
        claim as worded now overstates the Bookstore/Ingram case. */
