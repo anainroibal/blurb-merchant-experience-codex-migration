@@ -73,7 +73,26 @@ import { SHIPPING, PRINT_RANGE, shippingFor, money } from "./catalog.js";
      its lede rewritten plainly: this page can only show a range, so
      say that and point at the two calculators that can do better,
      rather than a line built on "you'll find it where the book is"
-     wordplay. */
+     wordplay.
+
+   SIMPLIFIED AGAIN 2026-09-10 (Ana: "we can remove all this ... and we
+   should add a quantity dropdown ... we don't need another title for
+   'What it costs, wherever it's going', just get to the dropdowns"):
+   - The lede under "What it costs, wherever it's going" ("Pick a
+     product and a country to see delivery priced and timed for a
+     single copy. Order more than one and they travel together...")
+     is gone. The heading goes straight into the pickers now.
+   - A third picker, Quantity, replaces the single-copy assumption the
+     dropped lede used to explain. `shippingFor` already accepted a qty
+     argument (base + per-extra-copy, discounted for shipping
+     together) — this was the one caller still hardcoding 1. Options
+     stop at 50, one below BULK_MIN (100): "Ordering in volume" below
+     already sends a triple-digit order to Large Order Services, so
+     this dropdown never offers a quantity that section would contest. */
+
+/* Stops one short of BULK_MIN (100): past that, "Ordering in volume"
+   below already sends the order to Large Order Services instead. */
+const QUANTITIES = [1, 2, 5, 10, 25, 50];
 
 function Section({ title, lede, children, id, tinted }) {
   return (
@@ -127,6 +146,7 @@ export default function ShippingPage({ onGo, lean }) {
     country: "US", postal: "", state: "California", speed: "economy", poBox: false,
   });
   const [format, setFormat] = React.useState("photo");
+  const [qty, setQty] = React.useState(1);
 
   return (
     <div style={{ fontFamily: FONT_BODY, color: T.textNeutral }}>
@@ -171,11 +191,7 @@ export default function ShippingPage({ onGo, lean }) {
           change with it — only the country does — and no calendar date,
           because this page doesn't know when the order is placed.
           A range in business days is what it can honestly say. */}
-      <Section
-        title="What it costs, wherever it's going"
-        lede="Pick a product and a country to see delivery priced and timed for a single copy. Order more than one and they travel together, which costs less than sending them one at a time."
-        tinted
-      >
+      <Section title="What it costs, wherever it's going" tinted>
         <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
           <Select
             label="Product"
@@ -189,6 +205,12 @@ export default function ShippingPage({ onGo, lean }) {
             value={ship.country}
             onValueChange={v => setShip({ ...ship, country: v })}
           />
+          <Select
+            label="Quantity"
+            options={QUANTITIES.map(n => ({ value: String(n), label: `${n} ${n === 1 ? "copy" : "copies"}` }))}
+            value={String(qty)}
+            onValueChange={v => setQty(Number(v))}
+          />
         </div>
 
         <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
@@ -197,7 +219,7 @@ export default function ShippingPage({ onGo, lean }) {
 
         <div style={{ display: "grid", gap: 10 }}>
           {speeds.map(s => {
-            const quote = shippingFor(ship.country, s.id, 1);
+            const quote = shippingFor(ship.country, s.id, qty);
             return (
               <div key={s.id} style={{
                 background: "#fff", border: `1px solid ${C.charcoal200}`, borderRadius: R.md,
