@@ -52,7 +52,7 @@ function InstantStoreMockup() {
           marginLeft: 8, flex: 1, background: "#fff", border: `1px solid ${T.border}`, borderRadius: 6,
           padding: "3px 10px", fontSize: 11, color: T.textSubtle, fontFamily: "monospace",
         }}>
-          blurb.com/c/coastal-mornings
+          blurb.com/c/123/coastal-mornings
         </div>
       </div>
 
@@ -584,9 +584,15 @@ export default function InstantStoreV2({ onGo }) {
                 both twice in the same breath, pivoting instead to the
                 specifics the H1 has no room for: what it actually is
                 (a product page), and the speed/no-fees/no-tech-skills
-                facts that back up the H1's claim. */}
+                facts that back up the H1's claim.
+
+                "It's a..." dropped (Ana didn't like the opener) — a
+                bare noun phrase reads more like a lede than a sentence
+                explaining itself. Comma before "and" also dropped
+                (Ana's own draft had one) — two short items joined by
+                "and" don't need it, only a list of three or more would. */}
             <p style={{ fontSize: TYPE.lg, lineHeight: 1.55, color: T.textSubtle, margin: 0, maxWidth: 520 }}>
-              It's a shareable product page for your book, live in minutes, with no hidden fees and no website or tech skills needed.
+              A shareable product page for your book, live in minutes. No hidden fees and no website or tech skills needed.
             </p>
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
               <Button>Create your Instant Store</Button>
