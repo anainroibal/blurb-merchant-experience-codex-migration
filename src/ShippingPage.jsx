@@ -117,7 +117,14 @@ import { SHIPPING, PRINT_RANGE, shippingFor, money, BULK_MIN } from "./catalog.j
      Printing Services rather than "our team" so the banner is
      self-contained without a page's worth of context, and the CTA
      relabelled "Get a custom quote" to match Sell v2's own link text
-     instead of "Get a bulk quote" or "Learn more". */
+     instead of "Get a bulk quote" or "Learn more".
+
+   CORRECTED 2026-09-10 (Ana: "it should actually still give you a
+   shipping quote, that banner is additional"): the 100+ branch had
+   replaced the speed-rows grid with the banner outright. The quote
+   still calculates fine at any quantity `shippingFor` accepts, so the
+   grid stays for every quantity including 100+, and the banner now
+   renders underneath it as an addition, not a swap. */
 
 /* Runs one past BULK_MIN (100) rather than stopping short of it, so
    picking it is how the bulk banner below gets triggered at all. */
@@ -155,10 +162,10 @@ function Section({ title, lede, children, id, tinted }) {
    BulkHandoff's uppercase-eyebrow treatment. Named and linked the way
    Sell v2, Instant Store v2 and the nav already do — Bulk Printing
    Services, blurb.com/large-order-services — and the CTA label matches
-   Sell v2's own "Get a custom quote", not "Get a bulk quote". Replaces
-   the speed rows rather than sitting beside them, because a per-copy
-   rate multiplied out to 100+ is exactly the number "Ordering in
-   volume" below warns isn't the one to read. */
+   Sell v2's own "Get a custom quote", not "Get a bulk quote". Sits
+   under the speed rows as an addition, not a replacement — the quote
+   still calculates fine at 100+, and hiding it would answer "what
+   does this cost?" with a form instead of a number. */
 function BulkBanner() {
   return (
     <div style={{
@@ -288,36 +295,32 @@ export default function ShippingPage({ onGo, lean }) {
           />
         </div>
 
-        {qty >= BULK_MIN ? (
-          <BulkBanner />
-        ) : (
-          <>
-            <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
-              Printing takes {PRINT_RANGE[0]}–{PRINT_RANGE[1]} days, whichever speed you choose below — then:
-            </span>
+        <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
+          Printing takes {PRINT_RANGE[0]}–{PRINT_RANGE[1]} days, whichever speed you choose below — then:
+        </span>
 
-            <div style={{ display: "grid", gap: 10 }}>
-              {speeds.map(s => {
-                const quote = shippingFor(ship.country, s.id, qty);
-                return (
-                  <div key={s.id} style={{
-                    background: "#fff", border: `1px solid ${C.charcoal200}`, borderRadius: R.md,
-                    padding: 16, display: "grid", gap: 10, alignItems: "center",
-                    gridTemplateColumns: "minmax(0,1fr) auto auto",
-                  }}>
-                    <span style={{ fontSize: TYPE.lg, fontWeight: 700 }}>{s.label}</span>
-                    <span style={{ fontSize: TYPE.base, color: T.textSubtle, whiteSpace: "nowrap" }}>
-                      {s.days[0] + PRINT_RANGE[0]}–{s.days[1] + PRINT_RANGE[1]} business days
-                    </span>
-                    <span style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 700, whiteSpace: "nowrap" }}>
-                      {quote ? money(quote.cost) : "—"}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </>
-        )}
+        <div style={{ display: "grid", gap: 10 }}>
+          {speeds.map(s => {
+            const quote = shippingFor(ship.country, s.id, qty);
+            return (
+              <div key={s.id} style={{
+                background: "#fff", border: `1px solid ${C.charcoal200}`, borderRadius: R.md,
+                padding: 16, display: "grid", gap: 10, alignItems: "center",
+                gridTemplateColumns: "minmax(0,1fr) auto auto",
+              }}>
+                <span style={{ fontSize: TYPE.lg, fontWeight: 700 }}>{s.label}</span>
+                <span style={{ fontSize: TYPE.base, color: T.textSubtle, whiteSpace: "nowrap" }}>
+                  {s.days[0] + PRINT_RANGE[0]}–{s.days[1] + PRINT_RANGE[1]} business days
+                </span>
+                <span style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 700, whiteSpace: "nowrap" }}>
+                  {quote ? money(quote.cost) : "—"}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+
+        {qty >= BULK_MIN && <BulkBanner />}
       </Section>
 
       {/* ── The honest caveats, in one place ── */}
