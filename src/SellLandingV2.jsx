@@ -417,12 +417,28 @@ const TRUSTED_BY = ["Canva", "minted", "Treering", "Storyworth", "We Can Books"]
    carries no answer text (every section is closed, title only), so
    the answers below are drafted — a sentence to react to, same as the
    route cards on v1's Sell page were before Ana had copy to react to. */
+/* Aligned to the SEO team's own "Seller Hub" FAQ list ("SEO Recommendations
+   for Seller Hub & Instant Store" — Allison Wollman: "Let's tighten them up
+   to max. 8"), question wording kept verbatim where they gave it. Only two
+   real changes from the previous list: "Where's the best place to sell my
+   books online?" dropped for their "How do I start selling my book
+   online?" (the "which route fits me" ground it covered is already owned
+   by the last question here), and their own "Can I sell more than books,
+   like calendars, journals, magazines, or notebooks?" drops "calendars" —
+   Blurb doesn't sell calendars anywhere in this catalog, so it's not a
+   real answer here even though it's a real search phrase; worth flagging
+   to the SEO team rather than answering "yes" to a product that doesn't
+   exist. Answers lead with the direct fact first per their AEO/GEO note
+   ("the first sentence... should directly state the fact... since that's
+   the sentence most likely to get lifted verbatim into an AI Overview or
+   chatbot answer") — already true of every answer here, so no rewording
+   needed beyond the two question swaps. */
 const FAQS = [
-  ["What are the different ways to sell a self-published book with Blurb?",
+  ["What are the different ways to sell a self-published book?",
    "Four: your own Instant Store, Retail Distribution through Blurb's Bookstore, Amazon and Ingram, Bulk Printing Services for large-quantity orders, or the RPI Print API for your own storefront."],
-  ["Where's the best place to sell my books online?",
-   "It depends on your audience. An Instant Store is best if you already have followers to sell to directly; Retail Distribution reaches readers who are browsing rather than looking for you specifically."],
-  ["Can I sell books without holding inventory or paying upfront?",
+  ["How do I start selling my book online?",
+   "Pick a project you've already created, then choose a route above and follow its own setup. Most sellers start with an Instant Store, since it's live in minutes with no separate sign-up."],
+  ["Can I sell books without holding inventory or paying anything upfront?",
    "Yes. Instant Store and Retail Distribution both print a copy only once it's ordered, so there's nothing to buy or store in advance."],
   ["How does print-on-demand work for authors and creators?",
    "Your book prints only when a buyer orders it. There's no minimum run, no warehouse, and no upfront printing cost to cover before you make a sale."],
@@ -430,7 +446,7 @@ const FAQS = [
    "Only Amazon and Ingram, both under Retail Distribution, require retail listing. Your Instant Store link doesn't need one."],
   ["What's the difference between selling directly to readers and selling through Amazon or Ingram?",
    "On your Instant Store, you bring the buyer and set the price, so what's left after your printing cost is yours. Through Amazon or Ingram, the retailer brings the buyer and takes its own cut."],
-  ["Can I sell more than books, like magazines or notebooks, the same way?",
+  ["Can I sell more than books, like magazines, journals, or notebooks, the same way?",
    "Yes. Magazines and notebooks & journals are sellable through most of these routes; wall art isn't sellable through any of them yet. Availability varies by channel, so check each route's product page for specifics."],
   ["How do I decide which of Blurb's selling options is right for me?",
    "Start with the comparison table above. It lines up best-for, profit, storefront and audience across all four routes so you can compare at a glance."],
@@ -530,8 +546,13 @@ export default function SellLandingV2({ onGo }) {
              heading here on top of this outer grid's own `gap` stacked
              two spacings and left a much bigger gap than every other
              CardList-heading section on this page. */}
+          {/* "Four ways to sell" -> "Four ways to sell your books" — the
+              SEO doc's own general direction ("include keywords... if not
+              feasible, still beneficial to consider adding 'books'"),
+              modeled on its own example heading, "One platform, five ways
+              to sell books". */}
           <CardList
-            heading="Four ways to sell"
+            heading="Four ways to sell your books"
             subheading="Start with one channel and add more as your business grows. Each option works independently, or together."
             headingAlign="center"
             layout={{ mobile: 1, tablet: 2, desktop: 4 }}

@@ -413,7 +413,19 @@ const FEATURES = [
    exception — no refund policy exists anywhere in this codebase to
    draw from, so it's deliberately generic rather than inventing terms;
    worth Legal/CS supplying real language before this ships anywhere
-   real. */
+   real.
+
+   Cross-checked against the actual "SEO Recommendations for Seller Hub
+   & Instant Store" doc once Ana shared it (same 10 questions, so no
+   list changes needed) — two wording fixes came out of that pass. The
+   payout answer now leads with the actual fact ("By check or PayPal at
+   the end of each month...") rather than a comparison clause, per the
+   doc's own AEO/GEO note that the first sentence should be the one
+   liftable verbatim into an AI Overview. And the pricing-scope answer's
+   "author and personal-use orders" became "orders you place for
+   yourself" — the CRO brief is explicit that "author" is an internal
+   segment name only, never customer-facing ("buy your own book" / "order
+   copies for yourself" is what a seller should actually read). */
 const FAQS = [
   ["How do I set up an online store for my book?",
    "Open the Instant Store page from your dashboard, choose the project you want to sell, and set your listing details and price. You can preview your page before it goes live, and there's no separate sign-up."],
@@ -422,7 +434,7 @@ const FAQS = [
   ["How do I take payments from my book?",
    "Buyers can pay by credit or debit card, Apple Pay, Google Pay, or PayPal right at checkout. You don't need a merchant account or payment processor of your own."],
   ["How do I get paid for my sales?",
-   "Just as when you sell through the Blurb Bookstore, you'll receive your profit at the end of each month by check or PayPal, once you've reached the $25 minimum payment threshold."],
+   "By check or PayPal at the end of each month, once you've reached the $25 minimum payment threshold, the same schedule as the rest of Blurb's print-on-demand routes."],
   ["Who handles sales tax and shipping on each order?",
    "We calculate and collect sales tax automatically. Your buyer pays shipping at checkout, so it's never taken out of what you keep."],
   ["Is there a minimum order?",
@@ -436,7 +448,7 @@ const FAQS = [
   ["How do I share my Instant Store?",
    "Anywhere a link goes: a social bio, a newsletter, a QR code on a stall, or behind a button on a site you already run."],
   ["Is Instant Store pricing also available if I sell through the Blurb Bookstore, Amazon, or Ingram?",
-   "No. Pricing on the Blurb Bookstore, Amazon, and Ingram is unchanged, and so are author and personal-use orders. Instant Store pricing is a separate, stable print cost available only on orders your buyers place directly through your Instant Store link, not a volume discount. If you're ordering 100 or more copies for an event, inventory, or your own use, Bulk Printing Services' existing volume discounts still apply instead."],
+   "No. Pricing on the Blurb Bookstore, Amazon, and Ingram is unchanged, and so are orders you place for yourself. Instant Store pricing is a separate, stable print cost available only on orders your buyers place directly through your Instant Store link, not a volume discount. If you're ordering 100 or more copies for an event, inventory, or your own use, Bulk Printing Services' existing volume discounts still apply instead."],
   ["What is Blurb's refund policy on Instant Store books?",
    "The same return policy that covers every Blurb order applies to Instant Store sales too."],
   ["Where can I see reporting on my sales?",
@@ -462,11 +474,26 @@ export default function InstantStoreV2({ onGo }) {
           gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 48, alignItems: "center",
         }}>
           <div style={{ display: "grid", gap: 20 }}>
+            {/* "Your book, your audience, your profit" didn't sell it
+                (Ana). "Audience" was the weak beat — an Instant Store
+                doesn't give you an audience, you already have one
+                regardless of channel; what it actually gives you is
+                control over price, which is what turns into profit.
+                Swapped for the real differentiator instead, same
+                three-beat rhythm. Deliberately not "your own online
+                bookstore" despite that being the SEO doc's own primary
+                keyword for this page — "online store" already got cut
+                once for overselling it above (an Instant Store is one
+                product page behind one link, not a browsable multi-book
+                storefront); the subhead below carries the actual
+                keyword-bearing specifics instead, same division of
+                labor CLAUDE.md documents for the margin estimator's own
+                hero (hook up top, specifics in the lede). */}
             <h1 style={{
               fontFamily: FONT_DISPLAY, fontWeight: 400, letterSpacing: "-0.01em",
               fontSize: "clamp(2rem, 4.6vw, 2.75rem)", lineHeight: 1.2, margin: 0,
             }}>
-              Your book, your audience, your profit
+              Your book. Your price. Your profit.
             </h1>
             {/* "Set up an online store" oversold it (Ana) — an Instant
                 Store is one product page behind one link, not a
@@ -476,9 +503,12 @@ export default function InstantStoreV2({ onGo }) {
                 platform" corrected next (Ana: "i don't know what 3rd
                 party means") — plain language, no separate site to go
                 build. Ana's own line, verbatim, replaces an earlier pass
-                of this sentence. */}
+                of this sentence. "Your audience" -> "your readers": the
+                SEO doc marks "sell books directly to readers" as this
+                page's own primary phrase (not Sell v2's), so the lede
+                carries it in close to that exact form. */}
             <p style={{ fontSize: TYPE.lg, lineHeight: 1.55, color: T.textSubtle, margin: 0, maxWidth: 520 }}>
-              Turn your book into a shareable product page and sell directly to your audience. Live in minutes, no hidden fees, and no website or tech skills needed.
+              Turn your book into a shareable product page and sell directly to your readers. Live in minutes, no hidden fees, and no website or tech skills needed.
             </p>
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
               <Button>Create your Instant Store</Button>
