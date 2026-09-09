@@ -432,11 +432,25 @@ const SHOWCASE = [
   },
 ];
 
+/* Updated to 4 (Ana, from a reference screenshot: "21 years / 140
+   countries / 11M+"): the third stat splits out of the countries
+   caption's own "20M unique books" clause into a card of its own,
+   sustainability stays as the fourth. Existing captions kept verbatim
+   as asked ("keep the current subtitle copy") rather than rewritten to
+   match the new headline numbers — worth flagging that this leaves two
+   small inconsistencies: the years caption still says "20 years" under
+   a "21 years" headline, and the countries caption still says "20M"
+   inline while the new books card headlines "11M+" for what reads like
+   the same fact. Neither figure (21 years, 140 countries, 11M+) is
+   sourced or verified against blurb.com; they're Ana's own numbers from
+   the reference. */
 const STATS = [
-  ["verified_user", "20+ years",
+  ["verified_user", "21 years",
    "Backed by 20 years of in-house expertise and full production control, Blurb ensures consistent quality from start to finish. No outsourcing, no compromises."],
-  ["public", "70+ countries",
+  ["public", "140 countries",
    "Shipped to a global network of buyers and readers, with over 20M unique books and products created and sold."],
+  ["auto_stories", "11M+",
+   "Unique books and products created and sold, and counting."],
   ["eco", "Sustainable papers & practices",
    "Our photo books are crafted in the US with Forest Stewardship Council-certified papers and printed at the facility nearest you."],
 ];
@@ -623,7 +637,16 @@ export default function SellLandingV2({ onGo }) {
                 {/* Ticks beef up what used to be just the description
                     (Ana, working from her own reference mock) — short
                     scannable value props from the CRO brief rather than
-                    the mock's own full sentences. */}
+                    the mock's own full sentences. The one clickable tick
+                    (Instant Store's profit claim) used to be blue and
+                    underlined like a normal link; Ana felt that plus the
+                    PathLinks below plus the table's own links added up
+                    to too much blue on one card ("even if they're just
+                    black/the font colour"). It's still a real link
+                    (same onClick, same onGo) — just styled as plain body
+                    text, no color or underline cue, so it doesn't visually
+                    compete with the links whose whole job is to be
+                    clicked. */}
                 <ul style={{ display: "grid", gap: 6, margin: 0, padding: 0, listStyle: "none", width: "100%" }}>
                   {card.ticks.map(tick => {
                     const { text, linkStage, suffix } = typeof tick === "string" ? { text: tick, linkStage: null, suffix: "" } : tick;
@@ -637,7 +660,7 @@ export default function SellLandingV2({ onGo }) {
                             <a
                               href="#"
                               onClick={e => { e.preventDefault(); onGo?.(linkStage); }}
-                              style={{ color: C.blue600, textDecoration: "underline" }}
+                              style={{ color: "inherit", textDecoration: "none" }}
                             >
                               {text}
                             </a>
@@ -906,14 +929,13 @@ export default function SellLandingV2({ onGo }) {
         </div>
       </section>
 
-      {/* ── Stats ── a light blue tint (Ana: this and Trusted By were
-          both plain white, back to back, with nothing separating them).
-          Not gray50 — Showcase right above it already uses that, and
-          two grays in a row would just move the "both look the same"
-          problem rather than fix it. Trusted By below is back to white
-          now (see its own note) — this tint is what gives that section
-          something to contrast against. */}
-      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px", borderTop: `1px solid ${T.border}`, background: T.bgAccentSubtle }}>
+      {/* ── Stats ── white again (Ana, reversing the earlier call): this
+          section carries a lot of numbers now (four, up from three) and
+          reads more like a proof strip on a clean background than a
+          tinted callout. Trusted By below picks up the light blue tint
+          instead, so the two still contrast with each other rather than
+          both reading as the same washed-out white. */}
+      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px", borderTop: `1px solid ${T.border}`, background: T.bgNeutral }}>
         <div style={{
           maxWidth: 1240, margin: "0 auto", display: "grid", gap: 16,
           gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
@@ -932,12 +954,14 @@ export default function SellLandingV2({ onGo }) {
           Minted, Treering, Storyworth, We Can Books — names confirmed
           by Figma comment #63), exported straight off the frame rather
           than reproduced as styled text, so the real marks show up
-          instead of a guess at their wordmarks. White, not gray50 (Ana:
-          it and Stats' light blue tint sit back to back and read as two
-          near-identical washed-out tones rather than two distinct
-          sections) — white gives Stats' tint something to actually
-          contrast against. */}
-      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px", background: T.bgNeutral }}>
+          instead of a guess at their wordmarks. Light blue tint now,
+          not white (Ana: "the 20+ years bar needs to be white
+          background, and so the trusted by section needs to be light
+          grey or light blue") — picked blue over grey since Showcase
+          right above Stats already uses gray50, and a second gray here
+          would repeat that tone two sections down rather than
+          contrasting with it. */}
+      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px", background: T.bgAccentSubtle }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <img
             src="/assets/trusted-by-logos.png"
