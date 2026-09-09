@@ -275,16 +275,22 @@ function Chip({ children }) {
 
 /* No dot when a row has no status (Ana: "Best for" isn't comparing
    anything, so a green dot on all four cells implied a judgment that
-   isn't there) — renders transparent rather than not rendering at all,
-   so that row's text still lines up with the dot-carrying rows below
-   it instead of shifting left on its own. */
+   isn't there). First pass kept the dot's reserved space so the row's
+   text lined up with the dot-carrying rows below — wrong call (Ana:
+   "indentation is still there, should be aligned to the start of the
+   bullet points"): she wants this row's text flush with where the
+   dots themselves start, not with where dotted rows' text happens to
+   land once indented past them. Renders nothing at all now, so the
+   cell's flex layout collapses that space and the text starts at the
+   cell's own left edge. */
 function StatusDot({ status }) {
+  if (!status) return null;
   return (
     <span
       aria-hidden
       style={{
         display: "inline-block", width: 8, height: 8, borderRadius: "50%",
-        background: status ? STATUS_COLOR[status] : "transparent", margin: "6px 10px 0 0", flex: "0 0 auto",
+        background: STATUS_COLOR[status], margin: "6px 10px 0 0", flex: "0 0 auto",
       }}
     />
   );
