@@ -463,7 +463,18 @@ const STEPS = [
      now a real link to the profit calculator (Ana), matching the
      STEPS card's own [text](?stage=margin) pattern.
    - "Share anywhere" now names the brief's own mechanism (a
-     customizable URL and a QR code), not just the destinations. */
+     customizable URL and a QR code), not just the destinations.
+
+   QUALITY ADDED 2026-09-10 (Ana: "i think we need the quality point in
+   'everything you need to sell' benefits too. maybe swap it out for
+   the sales tax one. OR wrap it into effortless fulfilment one.
+   Blurb's industry leading quality"). Wrapped into "Effortless
+   fulfillment" rather than swapped for "Automated sales tax": tax
+   automation is a distinct, concrete fact stated nowhere else on this
+   page, while fulfillment already restates fact also covered in "Blurb
+   handles everything after the sale" below — so quality has a natural
+   home right where printing itself is described, and nothing gets
+   dropped to make room for it. */
 const FEATURES = [
   ["payments", "Maximum profit, zero fees",
    "With print costs up to 70% lower than Blurb retail pricing and no subscription or platform fees, you keep more of every sale."],
@@ -472,7 +483,7 @@ const FEATURES = [
   ["storefront", "Your custom product page",
    "Showcase your work with an interactive preview, author bio, and one-tap checkout via Apple Pay, Google Pay, or PayPal, no buyer account needed."],
   ["local_shipping", "Effortless fulfillment",
-   "We handle printing, white-label packaging, global shipping, and order tracking directly to your customer."],
+   "Backed by Blurb's industry leading quality, we handle printing, white-label packaging, global shipping, and order tracking directly to your customer."],
   ["receipt_long", "Automated sales tax",
    "Sales tax is automatically collected and remitted, so you don't have to manage it."],
   ["auto_stories", "Sell books, magazines & more",
