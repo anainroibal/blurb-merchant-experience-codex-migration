@@ -767,10 +767,12 @@ export default function SellLandingV2({ onGo }) {
               SEO doc's own general direction ("include keywords... if not
               feasible, still beneficial to consider adding 'books'"),
               modeled on its own example heading, "One platform, five ways
-              to sell books". */}
+              to sell books".
+              Subheading dropped 2026-09-10 (Ana: "too complicated") —
+              the four cards below already show, not tell, that each
+              option stands on its own. */}
           <CardList
             heading="Four ways to sell your books"
-            subheading="Start with one channel and add more as your business grows. Each option works independently, or together."
             headingAlign="center"
             layout={{ mobile: 1, tablet: 2, desktop: 4 }}
           >
