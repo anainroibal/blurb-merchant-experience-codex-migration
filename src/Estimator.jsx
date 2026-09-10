@@ -418,7 +418,7 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
           {selling && (
             <InstantStoreLane
               title="Next, the shop it sells from"
-              onGo={() => onGo?.("instantstore")}
+              onGo={() => onGo?.("instantstorev2")}
             >
               An Instant Store is one link for this book, set up in minutes. Share it wherever your readers
               already are, and we print and ship every order as it comes in. Nothing to build, and no

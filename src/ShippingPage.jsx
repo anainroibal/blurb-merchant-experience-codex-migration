@@ -4,6 +4,7 @@ import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import Faq from "./Faq.jsx";
 import ShippingSection from "./ShippingSection.jsx";
 import InstantStoreLane from "./InstantStoreLane.jsx";
+import { MiniStepper } from "./Configurator.jsx";
 import { FORMAT_CARDS } from "./FormatCards.jsx";
 import { SHIPPING, PRINT_RANGE, shippingFor, money, BULK_MIN, arrivalWindow, formatDay } from "./catalog.js";
 
@@ -125,10 +126,6 @@ import { SHIPPING, PRINT_RANGE, shippingFor, money, BULK_MIN, arrivalWindow, for
    still calculates fine at any quantity `shippingFor` accepts, so the
    grid stays for every quantity including 100+, and the banner now
    renders underneath it as an addition, not a swap. */
-
-/* Runs one past BULK_MIN (100) rather than stopping short of it, so
-   picking it is how the bulk banner below gets triggered at all. */
-const QUANTITIES = [1, 2, 5, 10, 25, 50, BULK_MIN];
 
 function Section({ title, lede, children, id, tinted }) {
   return (
@@ -364,14 +361,17 @@ export default function ShippingPage({ onGo, lean }) {
             value={ship.country}
             onValueChange={v => setShip({ ...ship, country: v })}
           />
-          <Select
+          {/* Dropdown of preset quantities -> a stepper (Ana: "i think
+              quantity needs to be text + counter tbh rather than
+              dropdown options") — `MiniStepper`, the same text-input-
+              plus-+/- control SummaryPanel.jsx already uses for its own
+              "Copies" field, rather than a new control invented for
+              this page. Any quantity can be typed or stepped to now,
+              not just the seven preset values the dropdown offered. */}
+          <MiniStepper
             label="Quantity"
-            options={QUANTITIES.map(n => ({
-              value: String(n),
-              label: n >= BULK_MIN ? `${n}+ copies` : `${n} ${n === 1 ? "copy" : "copies"}`,
-            }))}
-            value={String(qty)}
-            onValueChange={v => setQty(Number(v))}
+            value={qty} min={1} max={9999}
+            onChange={setQty}
           />
         </div>
 
@@ -388,7 +388,7 @@ export default function ShippingPage({ onGo, lean }) {
             gridTemplateColumns: "140px repeat(3, minmax(160px, 1fr))",
             minWidth: 700,
           }}>
-            {["", "Estimated date range", "Arrival date if ordered today", "Price"].map((col, ci) => (
+            {["", "Estimated date range", "Arrival date if ordered today", "Shipping price"].map((col, ci) => (
               <div
                 key={col || "row-label"}
                 style={{
@@ -484,7 +484,7 @@ export default function ShippingPage({ onGo, lean }) {
           <InstantStoreLane
             title="Sell direct, maximize your profit"
             isNew
-            onGo={() => onGo?.("instantstore")}
+            onGo={() => onGo?.("instantstorev2")}
           >
             An Instant Store is one link you share, and every order is printed and posted for you. No extra
             fees, no tech skills required.

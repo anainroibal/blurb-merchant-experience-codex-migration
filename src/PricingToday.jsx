@@ -100,7 +100,7 @@ export default function PricingToday({ onGo }) {
           <InstantStoreLane
             title="Making it to sell? Open an Instant Store"
             isNew
-            onGo={() => onGo?.("instantstore")}
+            onGo={() => onGo?.("instantstorev2")}
           >
             {sellableSentence()} can be sold from one link you share. You set the price, we print and ship
             every order, and there is no shopfront to run.

@@ -235,8 +235,10 @@ const PRINT_TIERS = [
 const SELL_CARDS = [
   {
     id: "link", name: "Instant Store", isNew: true, stage: "margin", cta: "See what you would keep",
-    /* Where it goes when there is no estimator to go to. */
-    leanStage: "instantstore", leanCta: "About Instant Stores",
+    /* Where it goes when there is no estimator to go to. Was the v1
+       `instantstore` placeholder, retired 2026-09-10 (Ana) in favor of
+       the reviewed v2 rebuild. */
+    leanStage: "instantstorev2", leanCta: "About Instant Stores",
     img: ILLUS + "blurb-dashboard.YPDjPrK8_Z1bvCol.webp",
     alt: "An illustration of a person setting up a book listing.",
     line: "Share one link — a newsletter, a bio, a talk, a stall — and we print and ship every order.",
@@ -706,7 +708,7 @@ export default function SellerLanding({ onGo, lean = false }) {
             )}
           </p>
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center", marginTop: 8 }}>
-            <Button onClick={() => onGo?.(lean ? "instantstore" : "margin")}>
+            <Button onClick={() => onGo?.(lean ? "instantstorev2" : "margin")}>
               {lean ? "About Instant Stores" : "See what you would keep"}
             </Button>
             <Button

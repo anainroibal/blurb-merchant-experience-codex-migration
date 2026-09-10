@@ -345,7 +345,7 @@ export default function ProductPage({ onGo, seed = null, lean = false }) {
               <button
                 onClick={() =>
                   lean
-                    ? onGo("instantstore")
+                    ? onGo("instantstorev2")
                     : onGo("margin", { seed: { formatId, sel: { cover, size, paper, pages } } })}
                 style={{
                   font: "inherit", fontWeight: 600, color: T.textBrand, textDecoration: "underline",

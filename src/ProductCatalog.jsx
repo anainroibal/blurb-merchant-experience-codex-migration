@@ -292,7 +292,7 @@ export default function ProductCatalog({ onGo, lean }) {
               )}
               <Button
                 variant={lean ? "filled" : "outlined"}
-                onClick={() => onGo?.("instantstore")}
+                onClick={() => onGo?.("instantstorev2")}
               >
                 About Instant Stores
               </Button>

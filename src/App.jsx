@@ -7,7 +7,6 @@ import SiteFooter from "./SiteFooter.jsx";
 import Estimator from "./Estimator.jsx";
 import Home from "./Home.jsx";
 import ProductCatalog from "./ProductCatalog.jsx";
-import InstantStorePage from "./InstantStorePage.jsx";
 import SellLandingV2 from "./SellLandingV2.jsx";
 import InstantStoreV2 from "./InstantStoreV2.jsx";
 import ShippingPage from "./ShippingPage.jsx";
@@ -89,17 +88,21 @@ const STAGES = [
      the public pricing pages retail-only. */
   { id: "pricing",    short: "Pricing",      label: "Pricing calculator — under Pricing" },
   { id: "margin",     short: "Profit",       label: "Instant Store profit calculator — under Sell & Self-Publish" },
-  /* Crometrics' page. A placeholder so the links into it can be reviewed.
-     Tile renamed 2026-09-10 (Ana asked to rename Sell/Sell v2/Instant
-     Store v2's tiles, and to make Instant Store v2's tile plain "Instant
-     Store") — that plain name was already taken by this stage, so this
-     one picks up "(v1)" to stay distinct rather than two tiles reading
-     identically in the demo bar. Flagged rather than silently dropped:
-     say if this placeholder should read differently. */
-  { id: "instantstore", short: "Instant Store (v1)", label: "The Instant Store page — placeholder, built by Crometrics" },
-  /* Figma content-outline rebuild (2026-09-06), same reason as Sell v2:
-     kept as its own stage rather than replacing `instantstore` while
-     open Figma comments still have parts of it in flux. */
+  /* Figma content-outline rebuild (2026-09-06) of Crometrics' original
+     placeholder page. That placeholder (`instantstore`, InstantStorePage.jsx)
+     was dropped as a live stage entirely 2026-09-10 (Ana: "just get rid of
+     instant store v1. it will still live in anain's history") after a
+     brief tile-renaming collision surfaced the fact both existed side by
+     side. The file itself (InstantStorePage.jsx) is untouched on disk,
+     just no longer reachable from the demo bar — every internal
+     `onGo("instantstore")` link elsewhere in the app (Estimator.jsx,
+     ProductCatalog.jsx, MarginLadder.jsx, PricingToday.jsx,
+     ProductPage.jsx, SellerLanding.jsx, ShippingPage.jsx) now points to
+     `instantstorev2` instead.
+
+     Tile itself back to plain "Instant Store" (Ana: "instant store v2
+     can just be instant store since we got rid of v1") — the naming
+     collision that blocked this earlier no longer exists. */
   { id: "instantstorev2", short: "Instant Store", label: "Instant Store — Figma content-outline rebuild, reviewed alongside v1" },
   /* /shipping, after both calculators, because what it now does is explain
      what they compute — 2026-08-27. */
@@ -139,8 +142,10 @@ const VERSIONS = [
 ];
 
 /* The lean set, in journey order. Anything not listed here is a page the
-   minimum-effort version does not touch. */
-const LEAN_STAGES = ["home", "catalog", "product", "pricing", "shipping", "seller", "instantstore"];
+   minimum-effort version does not touch. `instantstore` (v1) ->
+   `instantstorev2` 2026-09-10 along with every other reference to that
+   retired stage — see the instantstorev2 STAGES entry above. */
+const LEAN_STAGES = ["home", "catalog", "product", "pricing", "shipping", "seller", "instantstorev2"];
 
 const stagesFor = version =>
   version === "lean" ? STAGES.filter(s => LEAN_STAGES.includes(s.id)) : STAGES;
@@ -401,7 +406,6 @@ export default function App() {
             four surfaces point, and nothing else. See VERSIONS above. */}
         {stage === "home"       && <Home onGo={go} lean={lean} />}
         {stage === "catalog"    && <ProductCatalog onGo={go} lean={lean} />}
-        {stage === "instantstore" && <InstantStorePage onGo={go} lean={lean} />}
         {stage === "product"    && <ProductPage onGo={go} seed={entry?.seed} lean={lean} />}
         {stage === "getstarted" && (
           <GetStarted

@@ -199,7 +199,7 @@ function CostSub({ onGo }) {
       What Blurb charges you for your{" "}
       {onGo ? (
         <button
-          onClick={() => onGo("instantstore")}
+          onClick={() => onGo("instantstorev2")}
           style={{
             font: "inherit", color: "inherit", textDecoration: "underline",
             background: "transparent", border: 0, padding: 0, cursor: "pointer",
