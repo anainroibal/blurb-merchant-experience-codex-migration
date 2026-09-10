@@ -881,24 +881,27 @@ export default function InstantStoreV2({ onGo }) {
               caveats that still apply (Amazon/Bookstore's $31.00 print
               cost is Ana's own guess, same as before).
 
-              CTA moved here 2026-09-10, twice over. First pass put it at
-              the top, right-aligned against the H2 (Ana: "the calculate
-              your profit cta on the table should maybe be aligned right?
-              it's a bit awkward there") — fixed the awkward stacked-
+              CTA placement, three passes on 2026-09-10. First: top,
+              right-aligned against the H2 (Ana: "the calculate your
+              profit cta on the table should maybe be aligned right?
+              it's a bit awkward there") — fixed the original stacked-
               under-the-lede placement, but next to a two-line heading
-              block it still read adrift (Ana: "is now a bit lost, maybe
-              align bottom to the 'figures below'?"). Pairing it with
-              this caption instead gives the button a fixed, single-line
-              partner to align against rather than a heading of variable
-              height, and puts the action right where a reader's eye
-              lands right before the numbers start. */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 24, flexWrap: "wrap" }}>
-            <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, maxWidth: 720 }}>
-              Figures below assume a $50.00 list price for an 8×10 hardcover photo book. Actual costs vary by format, size, and page count.
-            </p>
-            <Button variant="outlined" onClick={() => onGo?.("margin")} style={{ flex: "0 0 auto" }}>
-              Calculate your profit
-            </Button>
+              block it read adrift (Ana: "is now a bit lost, maybe align
+              bottom to the 'figures below'?"). Second: paired with this
+              caption on one row, bottom-aligned — at this section's
+              full 1240px width that put a short line of text on the
+              left and the button stranded far over on the right with a
+              wide gap between them (Ana: "i don't like this. maybe
+              button should be stacked again, so everything is one
+              line"). Third, back to stacked, but under this caption
+              rather than under the lede: the caption no longer has to
+              share its row with anything, so it renders as one line
+              instead of wrapping to two. */}
+          <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle }}>
+            Figures below assume a $50.00 list price for an 8×10 hardcover photo book. Actual costs vary by format, size, and page count.
+          </p>
+          <div>
+            <Button variant="outlined" onClick={() => onGo?.("margin")}>Calculate your profit</Button>
           </div>
 
           {/* Hand-built, not Codex's ComparisonTable (Ana: "it doesn't
