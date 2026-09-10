@@ -845,9 +845,22 @@ export default function InstantStoreV2({ onGo }) {
                 bare noun phrase reads more like a lede than a sentence
                 explaining itself. Comma before "and" also dropped
                 (Ana's own draft had one) — two short items joined by
-                "and" don't need it, only a list of three or more would. */}
+                "and" don't need it, only a list of three or more would.
+
+                REVISED 2026-09-10 (Ana): "no website" -> "no inventory,"
+                dropped to a three-item list ("no hidden fees, no
+                inventory, and no tech skills needed") — which is
+                exactly the three-or-more case the comment above says
+                wants its comma back, so it's restored here. Ana's own
+                message dropped the "no" before "tech skills needed"
+                ("and tech skills needed"), which reads as the opposite
+                of the intended claim (tech skills ARE needed) and
+                contradicts every other "no tech skills required" line
+                on this page — read as a typo and corrected rather than
+                implemented literally; flagging it here rather than
+                silently guessing. */}
             <p style={{ fontSize: TYPE.lg, lineHeight: 1.55, color: T.textSubtle, margin: 0, maxWidth: 520 }}>
-              A shareable product page for your book, live in minutes. No hidden fees and no website or tech skills needed.
+              A shareable product page for your book, live in minutes. No hidden fees, no inventory, and no tech skills needed.
             </p>
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
               <Button>Create your Instant Store</Button>
