@@ -401,9 +401,11 @@ const KEEP_MORE_PROFIT = ["$32.50", "$19.00", "$10.15", "$32.50"];
    divided into every profit figure already above it, so it repeats
    the row directly overhead rather than adding a fact. Profit ÷ $50.00
    list price, rounded to a whole percent: $32.50 -> 65%, $19.00 ->
-   38%, $10.15 -> 20.3% -> 20%. Labelled "profit margin" in full (Ana:
-   "margin > profit margin or just profit") rather than bare "margin,"
-   which reads as an unexplained fragment next to a dollar figure. */
+   38%, $10.15 -> 20.3% -> 20%. Labelled "profit" rather than "margin"
+   or "profit margin" (Ana: "margin > profit margin or just profit" ->
+   "do you think just profit is fine? like 65% profit") — plainer
+   language than the accounting term, and reads as an extension of the
+   row's own "Your profit" label rather than a second, separate metric. */
 const KEEP_MORE_MARGIN = ["65%", "38%", "20%", "65%"];
 
 const STEPS = [
@@ -1052,7 +1054,7 @@ export default function InstantStoreV2({ onGo }) {
                         color: strong ? "#166640" : "#8e4412",
                       }}>
                         <span style={{ fontWeight: 700 }}>{value}</span>
-                        <span style={{ fontWeight: 500 }}> ({KEEP_MORE_MARGIN[ci]} profit margin)</span>
+                        <span style={{ fontWeight: 500 }}> ({KEEP_MORE_MARGIN[ci]} profit)</span>
                       </span>
                     ) : (
                       <span style={{ fontSize: TYPE.sm, color: T.textSubtle, fontStyle: "italic" }}>{value}</span>
