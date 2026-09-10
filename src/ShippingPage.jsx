@@ -334,6 +334,17 @@ export default function ShippingPage({ onGo, lean }) {
           typography as the rest of this pass, sitting beside the
           calendar date rather than replaced by it.
 
+          SEVENTH PASS 2026-09-10 (Ana, spelling out both header labels
+          this time, prefixed "AGAIN": "Business days > Estimate date
+          range" / "Estimated date range > Arrival date if ordered
+          today"): both columns kept their content from the sixth pass
+          exactly — this was headers only. "Business days" (day-count
+          content unchanged) -> "Estimated date range"; the calendar-
+          date column's own former "Estimated date range" header ->
+          "Arrival date if ordered today", naming the "if ordered
+          today" assumption in the header itself rather than only in
+          the sentence above the table.
+
           Tracking folded into the sentence above the table instead of
           its own line below it or a fourth column (Ana: "should be part
           of the previous line ... OR as a column ... i don't like it
@@ -377,7 +388,7 @@ export default function ShippingPage({ onGo, lean }) {
             gridTemplateColumns: "140px repeat(3, minmax(160px, 1fr))",
             minWidth: 700,
           }}>
-            {["", "Business days", "Estimated date range", "Price"].map((col, ci) => (
+            {["", "Estimated date range", "Arrival date if ordered today", "Price"].map((col, ci) => (
               <div
                 key={col || "row-label"}
                 style={{
