@@ -299,17 +299,39 @@ export default function ShippingPage({ onGo, lean }) {
           instead — still too dense (Ana: "arrives if ordered & shipping
           price is too crammed, i really think you need to just rethink
           the design of that. like maybe it's a table"). Fourth pass: an
-          actual table, one column per fact (business days, arrival
-          date, price) instead of stacking facts inside a card per
-          speed. Same grid-table visual language as this file's own
-          "Keep more of what you earn" table and Sell v2's comparison
-          table (charcoal rules, zebra rows, sticky label column), just
-          shaped as rows-are-speeds instead of columns-are-options,
-          since three speeds compared on the same three facts is a
-          plainer table than a comparison across products. Also adds the
-          fact those cards never stated (Ana: "say tracking is available
-          on all") as one caption line under the table rather than a
-          fourth column repeating "Included" three times. */}
+          actual table, one column per fact instead of stacking facts
+          inside a card per speed.
+
+          FIFTH PASS 2026-09-10 (Ana: "font sizes & styles are now all
+          over the place and it seems standard is highlighted as it's
+          the only grey bg one"): the fourth pass copied this file's own
+          "Keep more of what you earn" table's zebra-row convention
+          without checking whether it still made sense at three rows —
+          it doesn't. Zebra striping reads as structure across a table
+          of many rows; on exactly three, the one striped row (Standard)
+          reads as singled out, which nothing here intends. Dropped it —
+          every row is plain white, separated by rules only. Cell
+          styling also mixed FONT_DISPLAY-at-2xl for price against plain
+          body text for everything else, its own kind of "all over the
+          place" — unified to this app's actual table convention (see
+          Sell v2's own comparison table and this file's Keep More
+          table): TYPE.sm throughout, FONT_DISPLAY reserved for the
+          header row same as those two, row labels at fontWeight 500 to
+          match rather than standing out as bold TYPE.base.
+
+          Also merged the two timing columns Ana felt were redundant
+          once real dates existed ("business days > Estimated date
+          range") — business days as its own column is the abstraction
+          the calendar date already replaces, so it's gone, and
+          "Arrives if ordered today" is renamed "Estimated date range"
+          rather than kept as a second column saying nearly the same
+          thing.
+
+          Tracking folded into the sentence above the table instead of
+          its own line below it or a fourth column (Ana: "should be part
+          of the previous line ... OR as a column ... i don't like it
+          there") — a column repeating "Included" for every one of three
+          rows states nothing a sentence can't say once. */}
       <Section title="What it costs, wherever it's going">
         <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
           <Select
@@ -336,7 +358,7 @@ export default function ShippingPage({ onGo, lean }) {
         </div>
 
         <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
-          The date ranges below include {PRINT_RANGE[0]}–{PRINT_RANGE[1]} days of production time.
+          The date ranges below include {PRINT_RANGE[0]}–{PRINT_RANGE[1]} days of production time, and every order ships with tracking.
         </span>
 
         <div style={{
@@ -345,16 +367,16 @@ export default function ShippingPage({ onGo, lean }) {
         }}>
           <div style={{
             display: "grid",
-            gridTemplateColumns: "140px repeat(3, minmax(160px, 1fr))",
-            minWidth: 640,
+            gridTemplateColumns: "140px repeat(2, minmax(180px, 1fr))",
+            minWidth: 520,
           }}>
-            {["", "Business days", "Arrives if ordered today", "Price"].map((col, ci) => (
+            {["", "Estimated date range", "Price"].map((col, ci) => (
               <div
                 key={col || "row-label"}
                 style={{
                   position: ci === 0 ? "sticky" : "static", left: 0, zIndex: 2, background: "#fff",
                   borderBottom: `1px solid ${C.charcoal200}`,
-                  borderRight: ci < 3 ? `1px solid ${C.charcoal200}` : "none",
+                  borderRight: ci < 2 ? `1px solid ${C.charcoal200}` : "none",
                   padding: 16, fontFamily: FONT_DISPLAY, fontWeight: 500,
                   fontSize: TYPE.sm, color: T.textNeutral,
                 }}
@@ -366,29 +388,24 @@ export default function ShippingPage({ onGo, lean }) {
             {speeds.map((s, ri) => {
               const quote = shippingFor(ship.country, s.id, qty);
               const w = arrivalWindow(s);
-              const rowBg = ri % 2 === 1 ? C.gray50 : "#fff";
               const last = ri === speeds.length - 1;
               const cellStyle = {
-                background: rowBg,
+                background: "#fff",
                 borderBottom: last ? "none" : `1px solid ${C.charcoal200}`,
-                padding: 16,
+                padding: 16, fontSize: TYPE.sm, color: T.textNeutral,
               };
               return (
                 <React.Fragment key={s.id}>
                   <div style={{
                     ...cellStyle, position: "sticky", left: 0, zIndex: 1,
-                    borderRight: `1px solid ${C.charcoal200}`,
-                    fontSize: TYPE.base, fontWeight: 700, color: T.textNeutral,
+                    borderRight: `1px solid ${C.charcoal200}`, fontWeight: 500,
                   }}>
                     {s.label}
                   </div>
-                  <div style={{ ...cellStyle, borderRight: `1px solid ${C.charcoal200}`, fontSize: TYPE.sm, color: T.textSubtle }}>
-                    {s.days[0] + PRINT_RANGE[0]}–{s.days[1] + PRINT_RANGE[1]} business days
-                  </div>
-                  <div style={{ ...cellStyle, borderRight: `1px solid ${C.charcoal200}`, fontSize: TYPE.base, fontWeight: 700, color: T.textNeutral }}>
+                  <div style={{ ...cellStyle, borderRight: `1px solid ${C.charcoal200}` }}>
                     {formatDay(w.earliest)} – {formatDay(w.latest)}
                   </div>
-                  <div style={{ ...cellStyle, fontFamily: FONT_DISPLAY, fontSize: TYPE["2xl"], fontWeight: 700, color: T.textNeutral }}>
+                  <div style={{ ...cellStyle, fontWeight: 700 }}>
                     {quote ? money(quote.cost) : "—"}
                   </div>
                 </React.Fragment>
@@ -396,10 +413,6 @@ export default function ShippingPage({ onGo, lean }) {
             })}
           </div>
         </div>
-
-        <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
-          Tracking is included on every order, at every speed.
-        </span>
 
         {qty >= BULK_MIN && <BulkBanner />}
       </Section>

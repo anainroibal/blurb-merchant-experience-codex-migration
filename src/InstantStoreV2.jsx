@@ -377,6 +377,16 @@ const KEEP_MORE_ROWS = [
 
 const KEEP_MORE_PROFIT = ["$32.50", "$19.00", "$10.15", "$32.50"];
 
+/* Added 2026-09-10 (Ana: "add profit margin as well as profit on the
+   earnings table. not sure if as a line or alongside, see what you
+   think"). Alongside, in the same "Your profit" pill, rather than a
+   fifth row: a margin row would just be this same $50.00 list price
+   divided into every profit figure already above it, so it repeats
+   the row directly overhead rather than adding a fact. Profit ÷ $50.00
+   list price, rounded to a whole percent: $32.50 -> 65%, $19.00 ->
+   38%, $10.15 -> 20.3% -> 20%. */
+const KEEP_MORE_MARGIN = ["65%", "38%", "20%", "65%"];
+
 const STEPS = [
   /* "70% more of every sale" -> the calculated "3x more profit than
      selling through Amazon" claim (Ana: align it to the 3x we agreed) —
@@ -874,7 +884,7 @@ export default function InstantStoreV2({ onGo }) {
                 what forced this sentence onto two lines; at this
                 section's full 1240px width it fits on one. */}
             <p style={{ margin: 0, fontSize: TYPE.base, color: T.textNeutral }}>
-              You set the price, and what's left after your printing cost is yours, up to 3x more profit than selling through the Blurb Bookstore, Amazon, or Ingram.
+              You set the price, and what's left after your print cost is yours, up to 3x more profit than selling through the Blurb Bookstore, Amazon, or Ingram.
             </p>
           </div>
 
@@ -887,7 +897,7 @@ export default function InstantStoreV2({ onGo }) {
               caveats that still apply (Amazon/Bookstore's $31.00 print
               cost is Ana's own guess, same as before).
 
-              CTA placement, three passes on 2026-09-10. First: top,
+              CTA placement, four passes on 2026-09-10. First: top,
               right-aligned against the H2 (Ana: "the calculate your
               profit cta on the table should maybe be aligned right?
               it's a bit awkward there") — fixed the original stacked-
@@ -899,16 +909,18 @@ export default function InstantStoreV2({ onGo }) {
               left and the button stranded far over on the right with a
               wide gap between them (Ana: "i don't like this. maybe
               button should be stacked again, so everything is one
-              line"). Third, back to stacked, but under this caption
-              rather than under the lede: the caption no longer has to
-              share its row with anything, so it renders as one line
-              instead of wrapping to two. */}
-          <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle }}>
-            Figures below assume a $50.00 list price for an 8×10 hardcover photo book. Actual costs vary by format, size, and page count.
-          </p>
+              line"). Third: stacked under this caption — fixed the
+              two-line wrap (that was `maxWidth:720`, not the button,
+              per the note above), but left the button after the
+              caption. Fourth (Ana: "move figures below line below the
+              calculate your profit button"): button first, caption
+              after, right before the table it describes. */}
           <div>
             <Button variant="outlined" onClick={() => onGo?.("margin")}>Calculate your profit</Button>
           </div>
+          <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle }}>
+            Figures below assume a $50.00 list price for an 8×10 hardcover photo book. Actual costs vary by format, size, and page count.
+          </p>
 
           {/* Hand-built, not Codex's ComparisonTable (Ana: "it doesn't
               sell it, it needs colour, highlights, pills" — see the file
@@ -1006,11 +1018,12 @@ export default function InstantStoreV2({ onGo }) {
                   }}>
                     {priced ? (
                       <span style={{
-                        padding: "4px 12px", borderRadius: 999, fontWeight: 700, fontSize: TYPE.sm,
+                        padding: "4px 12px", borderRadius: 999, fontSize: TYPE.sm,
                         background: strong ? "#d7f4e0" : "#fdf1de",
                         color: strong ? "#166640" : "#8e4412",
                       }}>
-                        {value}
+                        <span style={{ fontWeight: 700 }}>{value}</span>
+                        <span style={{ fontWeight: 500 }}> ({KEEP_MORE_MARGIN[ci]} margin)</span>
                       </span>
                     ) : (
                       <span style={{ fontSize: TYPE.sm, color: T.textSubtle, fontStyle: "italic" }}>{value}</span>
