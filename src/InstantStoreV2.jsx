@@ -386,8 +386,13 @@ const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
    comparison without needing a whole unpriceable column to hold it. */
 const KEEP_MORE_COLUMNS = ["Instant Store", "Blurb Bookstore", "Amazon", "RPI Print API"];
 
+/* "(example)" dropped from this row's own label 2026-09-10 — the new
+   in-table "Example: 8×10 hardcover, $50 list price" row (design's own
+   suggestion, see the section's render code) now carries that framing
+   for the whole table, so repeating it on just this one row read as
+   redundant once both existed. */
 const KEEP_MORE_ROWS = [
-  { label: "Your listing price (example)", cells: ["$50.00", "$50.00", "$50.00", "$50.00"] },
+  { label: "Your listing price", cells: ["$50.00", "$50.00", "$50.00", "$50.00"] },
   { label: "Print cost", cells: ["$17.50", "$31.00", "$31.00", "$17.50"] },
   { label: "Commission", cells: ["0%", "0%", "$1.35 + 15% of list price", "0%"] },
 ];
@@ -1003,39 +1008,36 @@ export default function InstantStoreV2({ onGo }) {
             </p>
           </div>
 
-          {/* $50.00 rather than a mechanically-derived $60.80 (Ana:
-              "makes no sense") — a round, memorable number for a table
-              meant to sell the idea, not a literal per-spec computation.
-              Print cost and profit below still follow this app's real
-              conventions rather than being invented from scratch — see
-              the file header note for the full arithmetic and the
-              caveats that still apply (Amazon/Bookstore's $31.00 print
-              cost is Ana's own guess, same as before).
+          {/* NINTH PASS 2026-09-10 — head of design's review of this whole
+              section, verbatim:
 
-              CTA placement, four passes on 2026-09-10. First: top,
-              right-aligned against the H2 (Ana: "the calculate your
-              profit cta on the table should maybe be aligned right?
-              it's a bit awkward there") — fixed the original stacked-
-              under-the-lede placement, but next to a two-line heading
-              block it read adrift (Ana: "is now a bit lost, maybe align
-              bottom to the 'figures below'?"). Second: paired with this
-              caption on one row, bottom-aligned — at this section's
-              full 1240px width that put a short line of text on the
-              left and the button stranded far over on the right with a
-              wide gap between them (Ana: "i don't like this. maybe
-              button should be stacked again, so everything is one
-              line"). Third: stacked under this caption — fixed the
-              two-line wrap (that was `maxWidth:720`, not the button,
-              per the note above), but left the button after the
-              caption. Fourth (Ana: "move figures below line below the
-              calculate your profit button"): button first, caption
-              after, right before the table it describes. */}
-          <div>
-            <Button variant="outlined" onClick={() => onGo?.("margin")}>Calculate your profit</Button>
-          </div>
-          <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle }}>
-            Figures below assume a $50.00 list price for an 8×10 hardcover photo book. Actual costs vary by format, size, and page count.
-          </p>
+              "Title and subhead stay as-is. Table comes next, no text
+              before it. Let the comparison land at full strength. Add a
+              small in-table label ('Example: 8×10 hardcover, $50 list
+              price') so it's still marked as an example, without a
+              paragraph in front of it... A short note goes below the
+              table, combining the example disclaimer and the fee
+              reassurance — the right moment to reassure, after the
+              number has landed... Button moves to the very bottom, after
+              that note — the last thing on the page. Why: this page's
+              job is to persuade a prospect, not document policy, and
+              this section's job within that is proof. The number needs
+              to land and do its persuasive work first; the caveat and
+              fee reassurance exist to support that persuasion by
+              handling objections after interest is created, not to
+              precede or qualify the claim before it's had a chance to
+              work."
+
+              Reordered top-to-bottom: table immediately after the lede
+              (the button and the "$50.00 list price" caption that used
+              to sit here are both gone from this spot); an in-table
+              example row now carries what that caption said; a single
+              combined note (example caveat + fee reassurance, the two
+              paragraphs that used to bookend this section) sits under
+              the table; the button is last. $50.00 itself is still
+              Ana's own round, memorable number (see the file header
+              note for the full pricing arithmetic) — only where it's
+              stated moved, not the figure itself. */}
 
           {/* Hand-built, not Codex's ComparisonTable (Ana: "it doesn't
               sell it, it needs colour, highlights, pills" — see the file
@@ -1083,6 +1085,21 @@ export default function InstantStoreV2({ onGo }) {
                 </div>
               ))}
 
+              {/* The in-table example label design asked for, spanning
+                  every column as one row — carries what the "$50.00
+                  list price for an 8×10 hardcover photo book" caption
+                  above the table used to say, now that the caption
+                  itself is gone. gray50, not the accent-blue Instant
+                  Store column uses, so it doesn't read as endorsing one
+                  column — it's about the whole table. */}
+              <div style={{
+                gridColumn: "1 / -1", background: C.gray50,
+                borderBottom: `1px solid ${C.charcoal200}`,
+                padding: "10px 16px", fontSize: TYPE.sm, color: T.textSubtle,
+              }}>
+                Example: 8×10 hardcover, $50 list price
+              </div>
+
               {KEEP_MORE_ROWS.map((row, ri) => {
                 const rowBg = ri % 2 === 1 ? C.gray50 : "#fff";
                 return (
@@ -1109,12 +1126,23 @@ export default function InstantStoreV2({ onGo }) {
                 );
               })}
 
-              {/* Every other row is neutral, so this is the one place
-                  color carries the argument: Instant Store and RPI Print
-                  API (both seller pricing) get a bright green pill, Blurb
-                  Bookstore and Amazon get a muted amber one, so the
-                  number that actually differs also *looks* different, not
-                  just reads different in the digits. */}
+              {/* COLOR FIXED 2026-09-10 — head of design: "Fix the
+                  profit row colors. In Codex, this type of treatment
+                  are labels and status. Orange signals a warning,
+                  green signals success. Applying that here flags 38%
+                  and 20% profit as errors when they're just lower
+                  numbers. It also styles Blurb Bookstore, our own
+                  channel, as a warning. Suggest: green only for the
+                  winning option(s) (Instant Store, RPI Print API),
+                  neutral gray for the rest." The previous green/amber
+                  split borrowed Codex's real success/warning colors to
+                  mean "high number/low number," which is exactly the
+                  status meaning those colors already carry elsewhere —
+                  Bookstore and Amazon aren't failing at anything, they
+                  just aren't the two routes with 0% commission. Amber
+                  -> neutral gray (C.gray100 / T.textNeutral); green
+                  stays for Instant Store and RPI Print API, the two
+                  actually-winning options. */}
               <div style={{
                 position: "sticky", left: 0, zIndex: 1, background: "#fff",
                 borderRight: `1px solid ${C.charcoal200}`, padding: 16,
@@ -1134,8 +1162,8 @@ export default function InstantStoreV2({ onGo }) {
                     {priced ? (
                       <span style={{
                         padding: "4px 12px", borderRadius: 999, fontSize: TYPE.sm,
-                        background: strong ? "#d7f4e0" : "#fdf1de",
-                        color: strong ? "#166640" : "#8e4412",
+                        background: strong ? "#d7f4e0" : C.gray100,
+                        color: strong ? "#166640" : T.textNeutral,
                       }}>
                         <span style={{ fontWeight: 700 }}>{value}</span>
                         <span style={{ fontWeight: 500 }}> ({KEEP_MORE_MARGIN[ci]} profit)</span>
@@ -1149,16 +1177,28 @@ export default function InstantStoreV2({ onGo }) {
             </div>
           </div>
 
-          {/* Carries the point the "Other print-on-demand solutions"
-              column used to make (see the file header note) now that
-              the column itself is gone. Rewritten once already (Ana:
-              "'a real cost' with the mdash is so AI") — dropped the em
-              dash and the "a real cost" tag-on for a plain second
-              sentence instead. */}
+          {/* Combined note, per design's review: "A short note goes
+              below the table, combining the example disclaimer and the
+              fee reassurance — the right moment to reassure, after the
+              number has landed." Two facts that used to bookend this
+              section (the "$50.00 list price" caveat above the table,
+              the "no processing/platform/subscription fee" line below
+              it) now live here as one note, in the order design's own
+              suggested fee line implies: the disclaimer first, then the
+              reassurance. Fee line is design's own wording verbatim. */}
           <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle }}>
-            None of these routes charge a separate processing, platform, or subscription fee. Many other
-            print-on-demand platforms do.
+            Actual costs vary by format, size, and page count. Unlike many print-on-demand companies, none
+            of the options above charge extra processing, platform, or subscription fees.
           </p>
+
+          {/* Button moved to the very bottom, per design's review: "the
+              last thing on the page" for this section — after the
+              number has landed and the objections it raises (is this a
+              real price? are there hidden fees?) have already been
+              answered by the note above, not before. */}
+          <div>
+            <Button variant="outlined" onClick={() => onGo?.("margin")}>Calculate your profit</Button>
+          </div>
         </div>
       </section>
 
