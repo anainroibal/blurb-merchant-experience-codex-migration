@@ -438,6 +438,21 @@ const STEPS = [
   ["Share & sell", "Share your unique link or QR code on your bio, newsletter, or social media. We handle the printing, shipping, and sales tax."],
 ];
 
+/* Illustrations added 2026-09-10 (Ana: "can you add these illustrations
+   to the 1 2 3, as in the figma attached"), exported directly off the
+   named Figma file (Cro Seller LP, node "Steps" > "Frame 238718" >
+   "Card - Steps" 1/2/3 > "Image") rather than redrawn or approximated —
+   same "no fabricated art" rule this codebase has followed for every
+   other illustration (see SellLandingV2.jsx's own PathTile note).
+   Order matches STEPS above 1:1. Hosted the same way this app already
+   hosts its other exported-from-Figma assets (public/assets/
+   instant-store-lane.png, trusted-by-logos.png). */
+const STEP_ILLUSTRATIONS = [
+  { src: "/assets/step-1-set-your-price.png", alt: "Illustration of a seller holding up a large price tag" },
+  { src: "/assets/step-2-create-product-page.png", alt: "Illustration of a seller arranging the elements of a product page" },
+  { src: "/assets/step-3-share-and-sell.png", alt: "Illustration of three people holding up books, celebrating a sale" },
+];
+
 /* Revised (Ana: "give the benefits a whirl, based on the SEO brief and
    the CRO brief") — same 8 topics as before, since between them they
    already map cleanly onto the CRO brief's own "Value" bullets for
@@ -910,10 +925,14 @@ export default function InstantStoreV2({ onGo }) {
               <Card
                 key={title}
                 icon={
-                  <span style={{ fontFamily: FONT_DISPLAY, fontSize: 40, fontWeight: 500, lineHeight: 1, color: C.blue600 }}>
-                    {i + 1}
-                  </span>
+                  <img
+                    src={STEP_ILLUSTRATIONS[i].src}
+                    alt={STEP_ILLUSTRATIONS[i].alt}
+                    loading="lazy"
+                    style={{ width: 120, height: 120, objectFit: "contain", display: "block" }}
+                  />
                 }
+                eyebrow={`Step ${i + 1}`}
                 title={title}
                 description={body}
               />
