@@ -254,11 +254,18 @@ const SELL_PATHS = [
    the Figma frame; cropped out of the exported asset since this page
    already marks that card "New" with its own Chip next to the title,
    and two different NEW markers on one card would read as a mistake,
-   not emphasis. */
+   not emphasis.
+
+   Tile background flipped cream -> white the same day (Ana: "the bg of
+   the four ways to sell illustration needs to be white, as per the
+   figma") — the section around these tiles just went the other
+   direction (gray50 -> cream, see the section's own comment), so the
+   tile now needs to read as a white card lifted off that cream
+   surface rather than blending into it. */
 function PathTile({ card }) {
   return (
     <div style={{
-      width: "100%", background: "#f5f0ea", borderRadius: R.lg,
+      width: "100%", background: "#fff", borderRadius: R.lg,
       display: "flex", flexDirection: "column", overflow: "hidden",
     }}>
       {card.bestFor && (
@@ -654,46 +661,24 @@ export default function SellLandingV2({ onGo }) {
         </div>
       </section>
 
-      {/* ── Included with every way you sell ──
-          Was "Built-in quality, flexibility, and support" — a heading
-          that describes itself rather than saying what's in the
-          section (Ana: "I don't know what that means"). These three
-          are the CRO brief's own "Overall benefits applicable to all
-          seller tools", so the heading says exactly that now. Padding
-          cut roughly in half (was clamp(56px,7vw,80px), matching the
-          page's heavier hero-adjacent sections) — this one sits
-          between two dense sections and doesn't need that much air. */}
-      <section style={{ padding: "clamp(32px, 4vw, 48px) 24px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <CardList
-            heading="Included with every way you sell"
-            headingAlign="center"
-            layout={{ mobile: 1, tablet: 3, desktop: 3 }}
-          >
-            {QUALITY.map(([icon, title, body]) => (
-              <Card
-                key={title}
-                icon={<span className="ms" aria-hidden style={{ fontSize: 40, color: C.blue600 }}>{icon}</span>}
-                title={title}
-                description={body}
-              />
-            ))}
-          </CardList>
-        </div>
-      </section>
-
       {/* ── Four ways to sell, and the same four side by side ──
           One section, not two — same reasoning SellerLanding's own
           comment gives: the cards and the table are one question asked
-          twice, once skimmed and once read across. */}
+          twice, once skimmed and once read across.
+          Background swapped from gray50 to Blurb's own cream/foam tone
+          2026-09-10 (Ana: "on the figma, we're using beige bg rather
+          than the grey") — same #f5f0ea already used for illustration
+          tiles and gradients elsewhere in this codebase (ProductCatalog,
+          Home, SellerLanding), not a new color introduced for this one
+          section. */}
       <section
         id="paths"
         style={{
-          background: T.bgSubtle, borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`,
+          background: "#f5f0ea", borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`,
           padding: "clamp(56px, 7vw, 80px) 24px", scrollMarginTop: 140,
         }}
       >
-        <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 48 }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto", display: "grid", gap: 48 }}>
           {/* Heading passed to CardList itself, not a separate div above
              it — CardList's own layout already reserves top padding for
              a heading area whether or not one is given, so a manual
@@ -943,13 +928,41 @@ export default function SellLandingV2({ onGo }) {
         </div>
       </section>
 
+      {/* ── Included with every way you sell ──
+          Was "Built-in quality, flexibility, and support" — a heading
+          that describes itself rather than saying what's in the
+          section (Ana: "I don't know what that means"). These three
+          are the CRO brief's own "Overall benefits applicable to all
+          seller tools", so the heading says exactly that now. Padding
+          cut roughly in half (was clamp(56px,7vw,80px), matching the
+          page's heavier hero-adjacent sections) — this one sits
+          between two dense sections and doesn't need that much air. */}
+      <section style={{ padding: "clamp(32px, 4vw, 48px) 24px" }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+          <CardList
+            heading="Included with every way you sell"
+            headingAlign="center"
+            layout={{ mobile: 1, tablet: 3, desktop: 3 }}
+          >
+            {QUALITY.map(([icon, title, body]) => (
+              <Card
+                key={title}
+                icon={<span className="ms" aria-hidden style={{ fontSize: 40, color: C.blue600 }}>{icon}</span>}
+                title={title}
+                description={body}
+              />
+            ))}
+          </CardList>
+        </div>
+      </section>
+
       {/* ── What can you sell ── heading, subheading and "Best for" cards
           revised from a reference mock (Ana); see SELL_FORMATS' own note
           above for the copy and imagery reasoning. Heading also picks up
           the SEO doc's own general direction (naming "photo books,
           magazines, notebooks" rather than the generic "product"). */}
       <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
           <CardList
             className="format-heading-fit"
             heading="Sell photo books, magazines, notebooks & more"
@@ -1025,7 +1038,7 @@ export default function SellLandingV2({ onGo }) {
           subhead to name the selling fact directly, with "sold" as a
           verb rather than "seller" as a label for the people. */}
       <section style={{ background: C.gray50, padding: "clamp(56px, 7vw, 80px) 24px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 40 }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto", display: "grid", gap: 40 }}>
           <div style={{ display: "grid", gap: 8, textAlign: "center" }}>
             <h2 style={{
               fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
@@ -1071,16 +1084,26 @@ export default function SellLandingV2({ onGo }) {
           Back to three cards and a hand-inked number image per card
           (see the STATS comment above) — the icon-plus-text-headline
           treatment is gone, replaced by the illustration with its own
-          word underneath, tight against it the way Figma stacks them. */}
-      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px", borderTop: `1px solid ${T.border}`, background: T.bgNeutral }}>
+          word underneath, tight against it the way Figma stacks them.
+          Padding widened and the numbers sized up 2026-09-10 (Ana:
+          "the stats numbers look smaller than on figma" / "stats bar
+          is wider height on the figma which i think looks nicer") —
+          56px was matched to Trusted By below; the two now read as
+          deliberately different weights (this section carries the
+          proof, Trusted By is a quieter logo strip) instead of two
+          bars of the same height back to back. Number height (56px)
+          matches "140"'s own native rendered height in Figma at 100%
+          zoom — the tallest of the three real assets — rather than
+          the smaller shared value used before. */}
+      <section style={{ padding: "clamp(56px, 7vw, 88px) 24px", borderTop: `1px solid ${T.border}`, background: T.bgNeutral }}>
         <div style={{
-          maxWidth: 1240, margin: "0 auto", display: "grid", gap: 16,
+          maxWidth: 1280, margin: "0 auto", display: "grid", gap: 16,
           gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
         }}>
           {STATS.map(([img, word, caption]) => (
             <div key={word} style={{ display: "grid", gap: 8 }}>
               <div>
-                <img src={img} alt="" aria-hidden loading="lazy" style={{ height: 44, width: "auto", display: "block" }} />
+                <img src={img} alt="" aria-hidden loading="lazy" style={{ height: 56, width: "auto", display: "block" }} />
                 <div style={{
                   fontFamily: FONT_DISPLAY, fontSize: TYPE["2xl"], fontWeight: 600,
                   color: T.textNeutral, marginTop: -4,
@@ -1104,9 +1127,13 @@ export default function SellLandingV2({ onGo }) {
           grey or light blue") — picked blue over grey since Showcase
           right above Stats already uses gray50, and a second gray here
           would repeat that tone two sections down rather than
-          contrasting with it. */}
-      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px", background: T.bgAccentSubtle }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+          contrasting with it.
+          Padding cut 2026-09-10 (Ana: "trusted by is lower height...
+          on the figma which i think looks nicer") — a logo strip
+          doesn't carry the same weight as the proof numbers above it,
+          so it shouldn't claim the same amount of vertical space. */}
+      <section style={{ padding: "clamp(24px, 3vw, 32px) 24px", background: T.bgAccentSubtle }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
           <img
             src="/assets/trusted-by-logos.png"
             alt={`Trusted by ${TRUSTED_BY.join(", ")}`}

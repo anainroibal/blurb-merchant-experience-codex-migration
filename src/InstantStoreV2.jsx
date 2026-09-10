@@ -389,14 +389,28 @@ const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
    comparison without needing a whole unpriceable column to hold it. */
 const KEEP_MORE_COLUMNS = ["Instant Store", "Blurb Bookstore", "Amazon", "RPI Print API"];
 
-/* "(example)" dropped from this row's own label 2026-09-10 — the new
-   in-table "Example: 8×10 hardcover, $50 list price" row (design's own
-   suggestion, see the section's render code) now carries that framing
-   for the whole table, so repeating it on just this one row read as
-   redundant once both existed. */
+/* "(example)" dropped from this row's own label 2026-09-10, then
+   restored the same day (Ana: "revert to Your listing price
+   (example)") once the in-table example row moved and got a real
+   product spec of its own instead of repeating "$50 list price" —
+   with the label row itself no longer next to that exact phrase, it
+   reads as a plain instruction rather than an example without its own
+   qualifier back on it.
+
+   Print cost updated 2026-09-10 (Ana: "i checked the costs; it's
+   $27.90 for Instant Store and RPA, and 62.78 for Bookstore and
+   Amazon") — real figures in place of the earlier $17.50/$31.00
+   guesses. NOT YET reflected below in KEEP_MORE_PROFIT/KEEP_MORE_MARGIN
+   or the "up to 3x" lede above: at this row's own $50.00 example
+   listing price, $62.78 print cost puts Blurb Bookstore and Amazon's
+   profit at -$12.78, which breaks this app's own documented rule that
+   the seller's price floors at their cost and can never show a loss.
+   Left the profit numbers on their old figures rather than publish a
+   negative one — needs a listing price to pair with these real costs
+   before that row (and the 3x claim built on it) can be recalculated. */
 const KEEP_MORE_ROWS = [
-  { label: "Your listing price", cells: ["$50.00", "$50.00", "$50.00", "$50.00"] },
-  { label: "Print cost", cells: ["$17.50", "$31.00", "$31.00", "$17.50"] },
+  { label: "Your listing price (example)", cells: ["$50.00", "$50.00", "$50.00", "$50.00"] },
+  { label: "Print cost", cells: ["$27.90", "$62.78", "$62.78", "$27.90"] },
   { label: "Commission", cells: ["0%", "0%", "$1.35 + 15% of list price", "0%"] },
 ];
 
@@ -964,7 +978,7 @@ export default function InstantStoreV2({ onGo }) {
           before every instance would be a bigger change than the one
           spot named. */}
       <section style={{ padding: "clamp(40px, 5vw, 56px) 24px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
           <CardList
             heading="Create your Blurb Instant Store in three steps"
             headingAlign="center"
@@ -992,7 +1006,7 @@ export default function InstantStoreV2({ onGo }) {
 
       {/* ── Everything you need — 8-tile feature grid ── */}
       <section style={{ background: C.gray50, padding: "clamp(40px, 5vw, 56px) 24px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
           <CardList
             heading="Everything you need to sell your book online"
             headingAlign="center"
@@ -1036,8 +1050,18 @@ export default function InstantStoreV2({ onGo }) {
           stays right if the header's height ever changes (it does, per
           App.jsx's own note, when the demo bar wraps). */}
       <section id="keep-more" style={{ padding: "clamp(40px, 5vw, 56px) 24px", scrollMarginTop: "calc(var(--nav-h, 124px) + 16px)" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 24 }}>
-          <div style={{ display: "grid", gap: 12 }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto", display: "grid", gap: 24 }}>
+          {/* Button moved back up here and back to filled/blue (2026-09-10,
+              Ana: "'calculate your profit' should be main CTA colour (blue
+              bg) with placement on the top right of the table, like the
+              figma") — reverses the head-of-design placement from the
+              NINTH PASS note below (button at the very bottom, outlined).
+              That call was reasoned through carefully at the time; this
+              one is Ana's own explicit read of the Figma source overriding
+              it, not an oversight, so it stands without re-litigating the
+              earlier note — left in place below for the history. */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 24, flexWrap: "wrap" }}>
+            <div style={{ display: "grid", gap: 12, flex: "1 1 480px" }}>
             <h2 style={{
               fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
               lineHeight: 1.25, margin: 0,
@@ -1061,10 +1085,27 @@ export default function InstantStoreV2({ onGo }) {
                 "it's still two lines each so hasn't improved, make it
                 one line each") — that cap, not the CTA's position, was
                 what forced this sentence onto two lines; at this
-                section's full 1240px width it fits on one. */}
+                section's full 1240px width it fits on one.
+
+                Trimmed further 2026-09-10 (Ana: drop the leading "You
+                set the price, and what's left after your print cost is
+                yours" clause, keep just the claim) — the H2 and the
+                table itself already establish "you set the price," so
+                the lede's only job left is the number.
+                NOTE: the "up to 3x" figure itself is NOT recalculated
+                yet — see the KEEP_MORE_ROWS comment below on the new
+                $27.90 / $62.78 print costs Ana provided. At the
+                table's current $50.00 example price those costs put
+                Blurb Bookstore and Amazon's profit below zero, which
+                this app's own documented rule forbids ("the seller's
+                price floors at their cost, so the ladder can never
+                show negative profit"). Flagging rather than guessing a
+                new list price to paper over it. */}
             <p style={{ margin: 0, fontSize: TYPE.base, color: T.textNeutral }}>
-              You set the price, and what's left after your print cost is yours, up to 3x more profit than selling through the Blurb Bookstore, Amazon, or Ingram.
+              Up to 3x more profit than selling through the Blurb Bookstore, Amazon, or Ingram.
             </p>
+            </div>
+            <Button onClick={() => onGo?.("margin")} style={{ flex: "0 0 auto" }}>Calculate your profit</Button>
           </div>
 
           {/* NINTH PASS 2026-09-10 — head of design's review of this whole
@@ -1144,23 +1185,16 @@ export default function InstantStoreV2({ onGo }) {
                 </div>
               ))}
 
-              {/* The in-table example label design asked for, spanning
-                  every column as one row — carries what the "$50.00
-                  list price for an 8×10 hardcover photo book" caption
-                  above the table used to say, now that the caption
-                  itself is gone. gray50, not the accent-blue Instant
-                  Store column uses, so it doesn't read as endorsing one
-                  column — it's about the whole table. */}
-              <div style={{
-                gridColumn: "1 / -1", background: C.gray50,
-                borderBottom: `1px solid ${C.charcoal200}`,
-                padding: "10px 16px", fontSize: TYPE.sm, color: T.textSubtle,
-              }}>
-                Example: 8×10 hardcover, $50 list price
-              </div>
-
               {KEEP_MORE_ROWS.map((row, ri) => {
-                const rowBg = ri % 2 === 1 ? C.gray50 : "#fff";
+                /* Print cost stays plain white, not zebra-grey
+                   (2026-09-10, Ana: "the print cost row doesn't have
+                   to be grey") — no reason given beyond the row
+                   reading busier than it needs to; there's no other
+                   row this table singles out for a treatment, so
+                   leaving it off is the simplest way to satisfy that
+                   without inventing a new rule for why every OTHER
+                   odd row still gets it. */
+                const rowBg = ri % 2 === 1 && row.label !== "Print cost" ? C.gray50 : "#fff";
                 return (
                   <React.Fragment key={row.label}>
                     <div style={{
@@ -1181,6 +1215,27 @@ export default function InstantStoreV2({ onGo }) {
                         {cell}
                       </div>
                     ))}
+                    {/* Example label, repositioned 2026-09-10 (Ana: "the
+                        placement of 'Example: 8×10 hardcover, $50 list
+                        price' is odd there") — it sat directly under the
+                        column headers before, reading as a continuation
+                        of them rather than an annotation on the numbers.
+                        Moved to sit right after the row it's actually
+                        annotating (the example listing price itself),
+                        before Print cost. Spec updated to a real one
+                        (Ana): "Example for a 10×8 Photo Book Standard
+                        ImageWrap, Hardcover, 85 pages" — still gray50,
+                        not the accent-blue Instant Store column, since
+                        it's about the whole table, not one column. */}
+                    {ri === 0 && (
+                      <div style={{
+                        gridColumn: "1 / -1", background: C.gray50,
+                        borderBottom: `1px solid ${C.charcoal200}`,
+                        padding: "10px 16px", fontSize: TYPE.sm, color: T.textSubtle,
+                      }}>
+                        Example for a 10×8 Photo Book Standard ImageWrap, Hardcover, 85 pages
+                      </div>
+                    )}
                   </React.Fragment>
                 );
               })}
@@ -1244,20 +1299,14 @@ export default function InstantStoreV2({ onGo }) {
               the "no processing/platform/subscription fee" line below
               it) now live here as one note, in the order design's own
               suggested fee line implies: the disclaimer first, then the
-              reassurance. Fee line is design's own wording verbatim. */}
+              reassurance. Fee line is design's own wording verbatim.
+              "Actual costs" -> "Costs" (2026-09-10, Ana) — "actual" was
+              doing no work the note doesn't already do by being a
+              caveat in the first place. */}
           <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle }}>
-            Actual costs vary by format, size, and page count. Unlike many print-on-demand companies, none
+            Costs vary by format, size, and page count. Unlike many print-on-demand companies, none
             of the options above charge extra processing, platform, or subscription fees.
           </p>
-
-          {/* Button moved to the very bottom, per design's review: "the
-              last thing on the page" for this section — after the
-              number has landed and the objections it raises (is this a
-              real price? are there hidden fees?) have already been
-              answered by the note above, not before. */}
-          <div>
-            <Button variant="outlined" onClick={() => onGo?.("margin")}>Calculate your profit</Button>
-          </div>
         </div>
       </section>
 
@@ -1331,7 +1380,7 @@ export default function InstantStoreV2({ onGo }) {
           its own note), so the two sections still contrast with each
           other rather than both going white. */}
       <section style={{ padding: "clamp(28px, 4vw, 40px) 24px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
           <CardList
             className="format-heading-fit"
             heading="Sell photo books, magazines, notebooks & more"
