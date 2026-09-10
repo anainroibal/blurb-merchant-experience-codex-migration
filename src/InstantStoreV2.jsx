@@ -1,12 +1,5 @@
 import React from "react";
 import { Button, CardList, Card } from "@blurb/codex-react";
-import {
-  AttachMoneyIcon,
-  IntegrationInstructionsIcon,
-  DescriptionIcon,
-  Book5Icon,
-  ShareIcon,
-} from "@blurb/codex-react/icons";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { FORMAT_CARDS } from "./FormatCards.jsx";
 import Faq from "./Faq.jsx";
@@ -563,39 +556,45 @@ const FEATURES = [
    "Get a shareable URL and QR code to post in a bio, a newsletter, a story, or a DM. However your audience finds you, they can buy there too."],
 ];
 
-/* Ana (2026-09-10): "are the icons in Everything you need to sell your
-   book online from codex? they're diff from the ones in the figma."
-   They weren't — this whole grid was raw Material Symbols glyphs
-   (<span className="ms">), the honest-placeholder pattern this repo
-   uses when no real asset exists. But a real asset DOES exist here:
-   the Figma frame's "Value Props" node is an actual Codex Foundation
-   Design System Card List component, and this repo already ships real
-   Codex icon components for exactly this (@blurb/codex-react/icons,
-   already used in Alert.jsx and InstantStoreLane.jsx). Swapped in
-   wherever Codex's curated set (~60 icons) has a real match — checked
-   by exporting the Figma frame itself (browser-based Export > Preview,
-   no Figma API available) and reading its icons directly, since the
-   glyphs there don't match Material Symbols' default names 1:1: e.g.
-   "AI-powered listings" is Figma's `</>` code icon, not a sparkle, so
-   it maps to IntegrationInstructionsIcon, not AutoAwesomeIcon.
-   Three tiles (workspace_premium, receipt_long, all_inclusive) have NO
-   match in Codex's curated set at all — no premium/quality, sales-tax,
-   or "no minimums" glyph exists yet — so those three stay on Material
-   Symbols, same mixed real-Codex-plus-MS-fallback pattern
-   SellLandingV2.jsx already uses for the same reason.
-   Separately: Figma's 4th tile in this same row is titled "Effortless
-   fulfillment" ("We handle printing, white-label packaging, global
-   shipping, and order tracking directly to your customer"), not
-   "Industry-leading quality" — a genuine copy difference from what's
-   live here, not just a styling one. Left as-is since that's a content
-   call, not an icon swap; flagging it for Ana/Anain rather than
-   changing it unasked. */
+/* Ana (2026-09-10), round two: "add all the actual icons that are on
+   the figma. our head of design confirmed those are the right ones."
+   The first pass (below, superseded) swapped in the nearest-sounding
+   icon from @blurb/codex-react's ~60-icon Material-based product set —
+   a reasonable guess, but a guess. Drilling into the Figma "Value
+   Props" cards themselves (each icon is a variant of a component
+   literally named "Custom Icons", a marketing-only icon family that
+   isn't in that npm package at all) showed the real per-tile choice,
+   read straight off each instance's "Icon" property:
+     Maximum profit, zero fees   -> Sell
+     AI-powered listings         -> Code
+     Your custom product page    -> Customization
+     Automated sales tax         -> Order
+     Sell books, magazines...    -> Book
+     No minimums, ever           -> Rocket
+     Share anywhere              -> Connect
+   None of those are @blurb/codex-react exports, so there's no
+   component to import — extracted each as a real PNG straight from
+   Figma instead (select the icon instance, Export panel, trigger the
+   real "Export Custom Icons" download, which Figma renders at full
+   fidelity), same "use the real asset, not a redraw" rule this file
+   already applies to the three step illustrations. Files live in
+   public/assets/icons/.
+   "Industry-leading quality" (workspace_premium) is still the one
+   exception, and still not an icon problem: that tile doesn't exist
+   in Figma's row at all. Figma's 4th tile there is "Effortless
+   fulfillment" (icon: Printer, now sitting extracted and unused at
+   public/assets/icons/printer.png) with fulfillment/shipping copy,
+   not a quality claim — flagged last pass, still unresolved, still
+   not mine to silently change. Left on Material Symbols until that's
+   settled. */
 const FEATURE_ICONS = {
-  payments: AttachMoneyIcon,
-  auto_awesome: IntegrationInstructionsIcon,
-  storefront: DescriptionIcon,
-  auto_stories: Book5Icon,
-  share: ShareIcon,
+  payments: "sell",
+  auto_awesome: "code",
+  storefront: "customization",
+  receipt_long: "order",
+  auto_stories: "book",
+  all_inclusive: "rocket",
+  share: "connect",
 };
 
 /* Consolidated from two sources (Ana): the SEO team's 10 required
@@ -997,13 +996,19 @@ export default function InstantStoreV2({ onGo }) {
             layout={{ mobile: 1, tablet: 2, desktop: 4 }}
           >
             {FEATURES.map(([icon, title, body]) => {
-              const CodexIcon = FEATURE_ICONS[icon];
+              const realIcon = FEATURE_ICONS[icon];
               return (
                 <Card
                   key={title}
                   icon={
-                    CodexIcon ? (
-                      <CodexIcon aria-hidden style={{ fontSize: 40, color: C.blue600 }} />
+                    realIcon ? (
+                      <img
+                        src={`/assets/icons/${realIcon}.png`}
+                        alt=""
+                        aria-hidden
+                        loading="lazy"
+                        style={{ width: 40, height: 40, objectFit: "contain", display: "block" }}
+                      />
                     ) : (
                       <span className="ms" aria-hidden style={{ fontSize: 40, color: C.blue600 }}>{icon}</span>
                     )

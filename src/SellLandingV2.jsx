@@ -51,12 +51,22 @@ import Faq from "./Faq.jsx";
 
 /* Ana, 2026-09-XX: dropped to 3 cards — Mix & Match removed, Print-on-
    demand renamed/rewritten to lead with "no inventory risk". */
+/* Ana (2026-09-10): "add all the actual icons that are on the figma."
+   Unlike ISV2's grid (a "Custom Icons" marketing component with no
+   npm equivalent), these three are raw Material Symbol vectors traced
+   straight into the Figma frame — checked by drilling into each icon
+   instance and reading its literal layer name off the canvas. Figma's
+   own choices are auto_stories, diamond, and source_environment, not
+   the print/workspace_premium/precision_manufacturing guesses these
+   were before (nobody had actually opened the frame to check); all
+   three are real Material Symbols names, so this is a straight
+   <span className="ms"> swap, no new asset needed. */
 const QUALITY = [
-  ["print", "Print on demand, no inventory",
+  ["auto_stories", "Print on demand, no inventory",
    "No upfront costs and no need to store an inventory. We print and ship only when you make a sale."],
-  ["workspace_premium", "Unmatched quality",
+  ["diamond", "Unmatched quality",
    "Give your audience access to Blurb's superior print quality, vast catalog of formats, and premium paper types."],
-  ["precision_manufacturing", "Powered by RPI Print",
+  ["source_environment", "Powered by RPI Print",
    "Our in-house fulfillment ensures quality control and reliability at scale, trusted by brands like Canva and Minted."],
 ];
 
