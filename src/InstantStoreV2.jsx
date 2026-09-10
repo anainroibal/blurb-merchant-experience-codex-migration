@@ -391,8 +391,18 @@ const STEPS = [
      1.7x, since it charges no commission the way Amazon does. "Seller
      pricing" -> "Instant Store pricing" (Ana), renamed everywhere on
      this page — "you're a seller on retail distro but not getting the
-     price so it's not a good name for it". */
-  ["Set your price", "Upload your book and set your selling price. Our [new Instant Store pricing](?stage=margin) means up to 3x more profit than selling through our other retail distribution channels."],
+     price so it's not a good name for it".
+
+     "our other retail distribution channels" -> named channels
+     (2026-09-10, Ana: this page already says "Blurb retail pricing"
+     elsewhere for the print-cost comparison, and having "retail" modify
+     two unrelated things — a price benchmark and a channel category —
+     within a few lines of each other read as term overload. Option
+     considered: rename the pricing term instead; Ana picked naming the
+     channels here, which is also just more concrete). Same "up to"
+     qualifier as before, so the claim still only has to hold for the
+     best case (Amazon, at 3x) and not uniformly across all three. */
+  ["Set your price", "Upload your book and set your selling price. Our [new Instant Store pricing](?stage=margin) means up to 3x more profit than selling through the Blurb Bookstore, Amazon, or Ingram."],
   ["Create your product page", "Our AI helps you draft your title, description, and keywords. Your customizable product page is ready in minutes."],
   ["Share & sell", "Share your unique link or QR code on your bio, newsletter, or social media. We handle the printing, shipping, and sales tax."],
 ];
@@ -852,9 +862,13 @@ export default function InstantStoreV2({ onGo }) {
                 each other. The standalone "listing price / print cost /
                 profit" card that used to sit beside this text is gone too
                 (Ana: "it should be incorporated in the table") — those
-                three numbers are now rows in the table itself. */}
+                three numbers are now rows in the table itself.
+
+                "other distribution channels" -> named channels
+                (2026-09-10, Ana), same reasoning and same "up to"
+                qualifier as STEPS' own version of this line above. */}
             <p style={{ margin: 0, fontSize: TYPE.base, color: T.textNeutral }}>
-              You set the price, and what's left after your printing cost is yours, up to 3x more profit than selling through other distribution channels.
+              You set the price, and what's left after your printing cost is yours, up to 3x more profit than selling through the Blurb Bookstore, Amazon, or Ingram.
             </p>
           </div>
 
