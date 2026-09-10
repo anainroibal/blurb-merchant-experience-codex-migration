@@ -474,7 +474,17 @@ const STEPS = [
    page, while fulfillment already restates fact also covered in "Blurb
    handles everything after the sale" below — so quality has a natural
    home right where printing itself is described, and nothing gets
-   dropped to make room for it. */
+   dropped to make room for it.
+
+   TITLE UPDATED 2026-09-10 (Ana: "ok but effortless fulfilment doesn't
+   sell it no?") — the quality claim landed in the body text, but a
+   grid of 8 tiles gets scanned by title first, and "Effortless
+   fulfillment" alone doesn't hint that quality is in this one at all.
+   Quality moved into the title itself, leading (it's the stronger,
+   less commodity claim); "effortless" stays as the second half rather
+   than getting cut, so the ease-of-use fact isn't lost. Body drops its
+   own "Backed by Blurb's industry leading quality" clause now that the
+   title says it, rather than stating it twice. */
 const FEATURES = [
   ["payments", "Maximum profit, zero fees",
    "With print costs up to 70% lower than Blurb retail pricing and no subscription or platform fees, you keep more of every sale."],
@@ -482,8 +492,8 @@ const FEATURES = [
    "Our AI drafts your title, description, and keywords, so you're never starting from a blank page."],
   ["storefront", "Your custom product page",
    "Showcase your work with an interactive preview, author bio, and one-tap checkout via Apple Pay, Google Pay, or PayPal, no buyer account needed."],
-  ["local_shipping", "Effortless fulfillment",
-   "Backed by Blurb's industry leading quality, we handle printing, white-label packaging, global shipping, and order tracking directly to your customer."],
+  ["local_shipping", "Industry-leading quality, effortless fulfillment",
+   "We handle printing, white-label packaging, global shipping, and order tracking directly to your customer."],
   ["receipt_long", "Automated sales tax",
    "Sales tax is automatically collected and remitted, so you don't have to manage it."],
   ["auto_stories", "Sell books, magazines & more",
@@ -898,7 +908,16 @@ export default function InstantStoreV2({ onGo }) {
       </section>
 
       {/* ── Keep More of What You Earn ── */}
-      <section id="keep-more" style={{ padding: "clamp(40px, 5vw, 56px) 24px" }}>
+      {/* scrollMarginTop 2026-09-10 (Ana: "make the what you'd earn
+          scroll stop at the top of the section rather than in the
+          middle, like i want to see the title") — the sticky nav+demo
+          bar (App.jsx, --nav-h) was covering this section's own H2 when
+          the anchor scrolled it flush to the viewport top. Same
+          var(--nav-h) + 16px offset SummaryPanel.jsx already uses for
+          its own sticky positioning against this header, so the number
+          stays right if the header's height ever changes (it does, per
+          App.jsx's own note, when the demo bar wraps). */}
+      <section id="keep-more" style={{ padding: "clamp(40px, 5vw, 56px) 24px", scrollMarginTop: "calc(var(--nav-h, 124px) + 16px)" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 24 }}>
           <div style={{ display: "grid", gap: 12 }}>
             <h2 style={{
