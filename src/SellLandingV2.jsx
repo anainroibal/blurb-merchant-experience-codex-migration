@@ -182,17 +182,24 @@ const SELL_PATHS = [
        say 'Reach bookstores and libraries through Ingram's network'")
        — Ingram's trade-distribution reach (libraries and bookstores,
        not just online retailers) wasn't stated anywhere on this card
-       before. */
+       before. Shortened same day to "...through Ingram" (Ana) — "'s
+       network" wasn't adding a fact the rest of the sentence didn't
+       already carry.
+
+       First tick's own text shortened 2026-09-10 (Ana: "shorten... so
+       it fits on 3 lines") — "access" and "list on the" trimmed to
+       "the"; kept the 40,000+ retailers figure and all three real
+       links, since neither was what was making the line run long. */
     ticks: [
       { key: "retail-channels", node: (
         <>
-          Sell on <a href="https://www.amazon.com" target="_blank" rel="noopener noreferrer" style={{ color: C.blue600, textDecoration: "underline" }}>Amazon</a>, access{" "}
-          <a href="https://www.blurb.com/ingram" target="_blank" rel="noopener noreferrer" style={{ color: C.blue600, textDecoration: "underline" }}>Ingram</a>'s 40,000+ retailers, or list on the{" "}
+          Sell on <a href="https://www.amazon.com" target="_blank" rel="noopener noreferrer" style={{ color: C.blue600, textDecoration: "underline" }}>Amazon</a>,{" "}
+          <a href="https://www.blurb.com/ingram" target="_blank" rel="noopener noreferrer" style={{ color: C.blue600, textDecoration: "underline" }}>Ingram</a>'s 40,000+ retailers, or the{" "}
           <a href="https://www.blurb.com/sell-through-blurb" target="_blank" rel="noopener noreferrer" style={{ color: C.blue600, textDecoration: "underline" }}>Blurb Bookstore</a>
         </>
       ) },
       "ISBN support included",
-      "Reach bookstores and libraries through Ingram's network",
+      "Reach bookstores and libraries through Ingram",
     ],
     /* Down from three separate per-retailer CTAs to one (Ana) — now that
        the channels are linked inline in the tick above, three more
