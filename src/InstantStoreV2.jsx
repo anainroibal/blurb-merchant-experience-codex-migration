@@ -281,14 +281,16 @@ const FULFILMENT_POINTS = [
 /* Each card links to its real blurb.com category page (2026-09-10,
    Ana: "have each one link to each of Blurb's category listing pages,
    on both isv2 and selling overview") — confirmed live URLs by reading
-   them off blurb.com's own nav rather than guessing at the slug. */
+   them off blurb.com's own nav rather than guessing at the slug.
+   "Paperback & Hardcover" -> "Paperbacks & Hardcovers" 2026-09-10 (Ana,
+   both pages) — plural to match the other three titles. */
 const SELL_FORMATS = [
   { id: "photo", title: "Photo Books", formats: 3, papers: 7, sizes: 6,
     desc: "Sell photo books, wedding albums, and layflat photo books in premium papers and formats.",
     img: "https://assets.blurb.com/_astro/linen-hardcover-dustjacket-optimized.DNuztDk1.webp",
     alt: "Stack of linen hardcover with dust jacket photo books with a red scooter on the cover and the title “Life in Italy.”",
     href: "https://www.blurb.com/photo-books" },
-  { id: "trade", title: "Paperback & Hardcover", formats: 3, papers: 3, sizes: 3,
+  { id: "trade", title: "Paperbacks & Hardcovers", formats: 3, papers: 3, sizes: 3,
     desc: "Create hardcover and paperback books, novels, cookbooks, children's books, and more.",
     href: "https://www.blurb.com/hardcover-and-paperback-books" },
   { id: "magazine", title: "Magazines", formats: 1, papers: 1, sizes: 1,
@@ -452,25 +454,30 @@ const KEEP_MORE_COLUMNS = ["Instant Store", "Blurb Bookstore", "Amazon", "RPI Pr
    the renamed "Additional fees" row (was "Commission" — Ana: "commission
    should be 'Additional fees'," since Blurb Bookstore and RPI Print
    API charge neither a commission nor any other fee, "$0" reads more
-   honestly than "0%" would for a fee row) both show parenthesized
-   negative dollar amounts now, matching the format Ana specified.
-   Amazon's fee cell states the actual dollar amount first ($13.35),
-   with the $1.35 + 15%-of-listing-price formula alongside it as
-   context (Ana: "amazon commission is $13.35 ($1.35 + 15% of listing
-   price)") rather than the formula alone with no computed total. */
+   honestly than "0%" would for a fee row) both show negative dollar
+   amounts now. Amazon's fee cell states the actual dollar amount first
+   ($13.35), with the $1.35 + 15%-of-listing-price formula alongside it
+   as context (Ana: "amazon commission is $13.35 ($1.35 + 15% of
+   listing price)") rather than the formula alone with no computed
+   total.
+
+   Negative format changed same day, parens -> minus sign (Ana: "i
+   think parentheses aren't as understandable") — "$(27.90)" -> "-
+   $27.90" throughout; same reasoning (these are costs, not additions),
+   different notation. */
 const KEEP_MORE_ROWS = [
   {
     label: <>Listing price<br /><span style={{ fontSize: 11, fontWeight: 400, color: T.textSubtle }}>(you set this)</span></>,
     cells: ["$80.00", "$80.00", "$80.00", "$80.00"],
   },
-  { label: "Print cost", cells: ["$(27.90)", "$(62.78)", "$(62.78)", "$(27.90)"] },
+  { label: "Print cost", cells: ["-$27.90", "-$62.78", "-$62.78", "-$27.90"] },
   {
     label: "Additional fees",
     cells: [
       "$0",
       "$0",
       <>
-        $(13.35)
+        -$13.35
         <br />
         <span style={{ fontSize: 11, fontWeight: 400, color: T.textSubtle }}>$1.35 + 15% of listing price</span>
       </>,
@@ -1195,14 +1202,21 @@ export default function InstantStoreV2({ onGo }) {
               alignItems flex-start -> flex-end (2026-09-10, Ana:
               "calculate your profit, align to the button of the
               subtitle") — the button now sits on the subtitle's own
-              baseline instead of level with the H2 above it. */}
+              baseline instead of level with the H2 above it.
+              "Keep more of what you earn" -> "See how the Blurb Instant
+              Store compares" 2026-09-10 (Ana) — the section's own job is
+              the comparison (the table right below), so the heading
+              names that instead of restating the page's profit pitch a
+              third time. Every other reference to "Keep more of what you
+              earn" in this file's own comments is history, not live
+              copy, and stays as-is. */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 24, flexWrap: "wrap" }}>
             <div style={{ display: "grid", gap: 12, flex: "1 1 480px" }}>
             <h2 style={{
               fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
               lineHeight: 1.25, margin: 0,
             }}>
-              Keep more of what you earn
+              See how the Blurb Instant Store compares
             </h2>
             {/* Two paragraphs collapsed into one (Ana: "lots of words but
                 looks off") — same two facts (you set the price with no
@@ -1228,17 +1242,16 @@ export default function InstantStoreV2({ onGo }) {
                 yours" clause, keep just the claim) — the H2 and the
                 table itself already establish "you set the price," so
                 the lede's only job left is the number.
-                NOTE: the "up to 3x" figure itself is NOT recalculated
-                yet — see the KEEP_MORE_ROWS comment below on the new
-                $27.90 / $62.78 print costs Ana provided. At the
-                table's current $50.00 example price those costs put
-                Blurb Bookstore and Amazon's profit below zero, which
-                this app's own documented rule forbids ("the seller's
-                price floors at their cost, so the ladder can never
-                show negative profit"). Flagging rather than guessing a
-                new list price to paper over it. */}
+
+                RESOLVED 2026-09-10 — the real $80/$27.90/$62.78 figures
+                below made "up to 3x" true against Blurb Bookstore
+                (~3.03x) but a big understatement against Amazon
+                (~13.5x); flagged that split rather than picking a
+                channel myself. Ana's own call: drop "Amazon, or Ingram"
+                and benchmark against Blurb Bookstore alone, the one
+                channel the number actually matches. */}
             <p style={{ margin: 0, fontSize: TYPE.base, color: T.textNeutral }}>
-              Up to 3x more profit than selling through the Blurb Bookstore, Amazon, or Ingram.
+              Up to 3x more profit than selling through the Blurb Bookstore.
             </p>
             </div>
             <Button onClick={() => onGo?.("margin")} style={{ flex: "0 0 auto" }}>Calculate your profit</Button>
@@ -1532,41 +1545,37 @@ export default function InstantStoreV2({ onGo }) {
             headingAlign="center"
             layout={{ mobile: 1, tablet: 2, desktop: 4 }}
           >
-            {/* Whole card links out to its real blurb.com category page
-                (Ana: "have each one link to each of Blurb's category
-                listing pages"). Plain <a> around Card rather than
-                Card's own `link`/`cta` slot: Codex's Link component can
-                only open in a new tab via `openInNewTab`, and that prop
-                is what appends its "open in new" icon (confirmed in
-                Link's own d.ts) — an icon on every one of four cards
-                reads as clutter, and this app has already pulled that
-                icon off other links for the same reason (SellLandingV2
-                "remove the open in a new link icons"). A native anchor
-                gets the new-tab behavior without it. */}
+            {/* Only the image links out to its real blurb.com category
+                page 2026-09-10 (Ana: "make just the images be clickable
+                not the whole card plz") — reverses the same-day whole-
+                card-link pass. Plain <a> around just the image rather
+                than Card's own `link`/`cta` slot: Codex's Link component
+                can only open in a new tab via `openInNewTab`, and that
+                prop is what appends its "open in new" icon (confirmed in
+                Link's own d.ts) — unwanted clutter, and this app has
+                already pulled that icon off other links for the same
+                reason (SellLandingV2 "remove the open in a new link
+                icons"). A native anchor gets the new-tab behavior
+                without it. */}
             {SELL_FORMATS.map(f => {
               const photo = f.img ? f : FORMAT_CARDS.find(c => c.id === f.id);
               return (
-                <a
+                <Card
                   key={f.id}
-                  href={f.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ textDecoration: "none", color: "inherit", display: "block", width: "100%" }}
-                >
-                  <Card
-                    icon={
+                  icon={
+                    <a href={f.href} target="_blank" rel="noopener noreferrer" style={{ display: "block", width: "100%" }}>
                       <img
                         src={photo.img}
                         alt={photo.alt}
                         loading="lazy"
                         style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", display: "block", borderRadius: R.lg }}
                       />
-                    }
-                    eyebrow={`${plural(f.formats, "format")} · ${plural(f.papers, "paper")} · ${plural(f.sizes, "size")}`}
-                    title={f.title}
-                    description={f.desc}
-                  />
-                </a>
+                    </a>
+                  }
+                  eyebrow={`${plural(f.formats, "format")} · ${plural(f.papers, "paper")} · ${plural(f.sizes, "size")}`}
+                  title={f.title}
+                  description={f.desc}
+                />
               );
             })}
           </CardList>

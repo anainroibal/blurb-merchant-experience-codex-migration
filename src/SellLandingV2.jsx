@@ -159,8 +159,13 @@ const SELL_PATHS = [
     bestFor: "Maximum reach",
     /* "Self-publish" added (Ana: "i'm missing the term") — it was
        nowhere in this card despite being Blurb's own name for the
-       whole activity this page is about. */
-    line: "Self-publish and reach new readers by listing your book where they already shop.",
+       whole activity this page is about.
+       REVISED 2026-09-10 (Ana): led with "self-publish" before; now
+       leads with the reader-facing action ("list your book where
+       readers already shop") and names the mechanism ("global book
+       distribution") as the payoff instead — closer to the SEO doc's
+       own phrasing for this card. */
+    line: "List your book where readers already shop and reach new audiences through global book distribution.",
     /* Back to 2 ticks (Ana) — the third ("Get discovered by readers who
        don't know you yet") made this card 3 ticks plus 3 CTAs, more
        than any other card carries.
@@ -171,7 +176,13 @@ const SELL_PATHS = [
        used to carry one-per-line below. A tick object with a `node`
        instead of `text`, since this is the one tick with more than one
        link in it; the render code below falls back to rendering `node`
-       directly when present. */
+       directly when present.
+
+       Back to 3 ticks 2026-09-10 (Ana: "add a new tick under isbn to
+       say 'Reach bookstores and libraries through Ingram's network'")
+       — Ingram's trade-distribution reach (libraries and bookstores,
+       not just online retailers) wasn't stated anywhere on this card
+       before. */
     ticks: [
       { key: "retail-channels", node: (
         <>
@@ -181,6 +192,7 @@ const SELL_PATHS = [
         </>
       ) },
       "ISBN support included",
+      "Reach bookstores and libraries through Ingram's network",
     ],
     /* Down from three separate per-retailer CTAs to one (Ana) — now that
        the channels are linked inline in the tick above, three more
@@ -493,7 +505,10 @@ const GET_STARTED = [
 /* Each card links to its real blurb.com category page (2026-09-10,
    Ana: "have each one link to each of Blurb's category listing pages,
    on both isv2 and selling overview") — confirmed live URLs by reading
-   them off blurb.com's own nav rather than guessing at the slug. */
+   them off blurb.com's own nav rather than guessing at the slug.
+   "Paperback & Hardcover" -> "Paperbacks & Hardcovers" 2026-09-10 (Ana,
+   both pages) — plural to match the other three titles, all of which
+   already read as categories rather than single items. */
 const SELL_FORMATS = [
   { id: "photo", title: "Photo Books", formats: 3, papers: 7, sizes: 6,
     bestFor: "Photographers and visual storytellers building their audience.",
@@ -501,7 +516,7 @@ const SELL_FORMATS = [
     img: "https://assets.blurb.com/_astro/linen-hardcover-dustjacket-optimized.DNuztDk1.webp",
     alt: "Stack of linen hardcover with dust jacket photo books with a red scooter on the cover and the title “Life in Italy.”",
     href: "https://www.blurb.com/photo-books" },
-  { id: "trade", title: "Paperback & Hardcover", formats: 3, papers: 3, sizes: 3,
+  { id: "trade", title: "Paperbacks & Hardcovers", formats: 3, papers: 3, sizes: 3,
     bestFor: "Selling directly to your audience or through retail distribution.",
     desc: "Create hardcover and paperback books, novels, cookbooks, children's books, and more.",
     href: "https://www.blurb.com/hardcover-and-paperback-books" },
@@ -585,11 +600,16 @@ const SHOWCASE = [
    inline with the number ("21 years") now renders on its own line
    below the image, matching how Figma actually stacks them — a
    plain word, not part of the illustration. */
+/* Countries caption revised 2026-09-10 (Ana): "with over 20M unique
+   books and products created and sold" dropped for "with over 1B
+   pages printed" — a new figure of Ana's own, distinct from the "11M+"
+   books-and-products count the third card already states, so the two
+   no longer read as the same fact worded two ways. */
 const STATS = [
   ["/assets/numbers/stat-21.png", "years",
    "Backed by 20 years of in-house expertise and full production control, Blurb ensures consistent quality from start to finish. No outsourcing, no compromises."],
   ["/assets/numbers/stat-140.png", "countries",
-   "Shipped to a global network of buyers and readers, with over 20M unique books and products created and sold."],
+   "Shipped to a global network of buyers and readers, with over 1B pages printed."],
   ["/assets/numbers/stat-11.png", "million",
    "Unique books and products created and sold, and counting."],
 ];
@@ -670,69 +690,21 @@ export default function SellLandingV2({ onGo }) {
           hand-built for now since nothing here needs its slot. */}
       <section className="hero-gradient-seller" style={{ padding: "clamp(56px, 8vw, 96px) 24px", textAlign: "center" }}>
         <div style={{ maxWidth: 860, margin: "0 auto", display: "grid", gap: 20, justifyItems: "center" }}>
+          {/* "You made it. We help you sell it." -> "Sell your book
+              online with Blurb" 2026-09-10 (Ana) — plainer and closer to
+              the SEO doc's own H1 ("Sell your books online with Blurb"),
+              singular "book" per Ana's own wording rather than the doc's
+              plural. */}
           <h1 style={{
             fontFamily: FONT_DISPLAY, fontWeight: 400, letterSpacing: "-0.01em",
             fontSize: "clamp(2rem, 4.6vw, 2.75rem)", lineHeight: 1.2, margin: 0,
           }}>
-            You made it. We help you sell it.
+            Sell your book online with Blurb
           </h1>
           <p style={{ fontSize: TYPE.lg, lineHeight: 1.55, color: T.textSubtle, margin: 0, maxWidth: 640 }}>
             Four ways to reach readers: an Instant Store we build for you, global retail distribution, bulk printing, or your own platform. We print and ship every order, so you can focus on creating.
           </p>
           <Button as="a" href="#paths" style={{ marginTop: 8 }}>Explore our selling tools</Button>
-        </div>
-      </section>
-
-      {/* ── Included with every way you sell ──
-          Was "Built-in quality, flexibility, and support" — a heading
-          that describes itself rather than saying what's in the
-          section (Ana: "I don't know what that means"). These three
-          are the CRO brief's own "Overall benefits applicable to all
-          seller tools", so the heading says exactly that now. Padding
-          cut roughly in half (was clamp(56px,7vw,80px), matching the
-          page's heavier hero-adjacent sections) — this one sits
-          between two dense sections and doesn't need that much air.
-
-          Order reversed a second time 2026-09-10 (Ana: "included with
-          every way you sell needs to go above the selling path table")
-          — back to sitting before "Four ways to sell," reversing the
-          earlier same-day swap that moved it after. That swap was
-          based on a read of Figma's own section order; this reverts to
-          Ana's direct instruction instead of re-litigating which read
-          was right. */}
-      <section style={{ padding: "clamp(32px, 4vw, 48px) 24px" }}>
-        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
-          <CardList
-            heading="Included with every way you sell"
-            headingAlign="center"
-            layout={{ mobile: 1, tablet: 3, desktop: 3 }}
-          >
-            {QUALITY.map(([icon, title, body]) => (
-              <Card
-                key={title}
-                icon={
-                  <span
-                    className="ms"
-                    aria-hidden
-                    style={{
-                      fontSize: 40, color: C.blue600,
-                      /* "diamond" 2026-09-10 (Ana: "the diamond icon
-                         thickness is too thick compared to the rest of
-                         icons on that page," flagged on ISV2's matching
-                         tile) — same glyph, same fix here for
-                         consistency: dial the variable font's wght axis
-                         down for this one icon rather than the row. */
-                      ...(icon === "diamond" ? { fontVariationSettings: "'wght' 300" } : {}),
-                    }}
-                  >
-                    {icon}
-                  </span>
-                }
-                title={title}
-                description={body}
-              />
-            ))}
-          </CardList>
         </div>
       </section>
 
@@ -873,7 +845,76 @@ export default function SellLandingV2({ onGo }) {
               </div>
             ))}
           </CardList>
+        </div>
+      </section>
 
+      {/* ── Included with every way you sell ──
+          Was "Built-in quality, flexibility, and support" — a heading
+          that describes itself rather than saying what's in the
+          section (Ana: "I don't know what that means"). These three
+          are the CRO brief's own "Overall benefits applicable to all
+          seller tools", so the heading says exactly that now. Padding
+          cut roughly in half (was clamp(56px,7vw,80px), matching the
+          page's heavier hero-adjacent sections) — this one sits
+          between two dense sections and doesn't need that much air.
+
+          Order reversed a second time 2026-09-10 (Ana: "included with
+          every way you sell needs to go above the selling path table")
+          — back to sitting before "Four ways to sell," reversing the
+          earlier same-day swap that moved it after. That swap was
+          based on a read of Figma's own section order; this reverts to
+          Ana's direct instruction instead of re-litigating which read
+          was right. */}
+      <section style={{ padding: "clamp(32px, 4vw, 48px) 24px" }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+          <CardList
+            heading="Included with every way you sell"
+            headingAlign="center"
+            layout={{ mobile: 1, tablet: 3, desktop: 3 }}
+          >
+            {QUALITY.map(([icon, title, body]) => (
+              <Card
+                key={title}
+                icon={
+                  <span
+                    className="ms"
+                    aria-hidden
+                    style={{
+                      fontSize: 40, color: C.blue600,
+                      /* "diamond" 2026-09-10 (Ana: "the diamond icon
+                         thickness is too thick compared to the rest of
+                         icons on that page," flagged on ISV2's matching
+                         tile) — same glyph, same fix here for
+                         consistency: dial the variable font's wght axis
+                         down for this one icon rather than the row. */
+                      ...(icon === "diamond" ? { fontVariationSettings: "'wght' 300" } : {}),
+                    }}
+                  >
+                    {icon}
+                  </span>
+                }
+                title={title}
+                description={body}
+              />
+            ))}
+          </CardList>
+        </div>
+      </section>
+
+      {/* ── Which selling path is right for you? ── split out of the
+          combined "Four ways to sell" section 2026-09-10 (Ana: "swap
+          the order: 4 ways to sell your books, then included with
+          every way you sell, then the selling path table") — the
+          cards and the table used to be one section ("the cards and
+          the table are one question asked twice"); that reasoning
+          stands, but Ana wants "Included with every way you sell"
+          physically between them now, which only a real section
+          break can do. The table's own panel (border, white fill,
+          radius) still gives it a defined edge on its own, so this
+          wrapper stays plain rather than re-adding the colored/bordered
+          treatment the combined section used to carry. */}
+      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px" }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
           {/* Own panel, not just a heading dropped on the section's own
               gray50 — the cards above already sit on that background, so
               the table needs a background of its own to read as a
@@ -1016,6 +1057,7 @@ export default function SellLandingV2({ onGo }) {
         </div>
       </section>
 
+
       {/* ── What can you sell ── heading, subheading and "Best for" cards
           revised from a reference mock (Ana); see SELL_FORMATS' own note
           above for the copy and imagery reasoning. Heading also picks up
@@ -1043,29 +1085,23 @@ export default function SellLandingV2({ onGo }) {
                 subtler color on the description so the two read as two
                 different things rather than one paragraph split by a
                 bolded word. */}
-            {/* Whole card links out to its real blurb.com category page
-                (Ana: "have each one link to each of Blurb's category
-                listing pages, on both isv2 and selling overview"). */}
+            {/* Only the image links out to its real blurb.com category
+                page 2026-09-10 (Ana: "make just the images be clickable
+                not the whole card plz") — reverses the same-day whole-
+                card-link pass; title/best-for/description are plain
+                text again. */}
             {SELL_FORMATS.map(f => {
               const photo = f.img ? f : FORMAT_CARDS.find(c => c.id === f.id);
               return (
-                <a
-                  key={f.id}
-                  href={f.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    display: "flex", flexDirection: "column", alignItems: "flex-start",
-                    width: "100%", gap: "var(--codex-spacing-3)",
-                    textDecoration: "none", color: "inherit",
-                  }}
-                >
-                  <img
-                    src={photo.img}
-                    alt={photo.alt}
-                    loading="lazy"
-                    style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", display: "block", borderRadius: R.lg }}
-                  />
+                <div key={f.id} style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", width: "100%", gap: "var(--codex-spacing-3)" }}>
+                  <a href={f.href} target="_blank" rel="noopener noreferrer" style={{ display: "block", width: "100%" }}>
+                    <img
+                      src={photo.img}
+                      alt={photo.alt}
+                      loading="lazy"
+                      style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", display: "block", borderRadius: R.lg }}
+                    />
+                  </a>
                   <p style={{ margin: 0, fontSize: "var(--codex-font-size-xs)", color: "var(--codex-color-semantic-text-subtle)", lineHeight: "var(--codex-font-line-height-snug)" }}>
                     {plural(f.formats, "format")} · {plural(f.papers, "paper")} · {plural(f.sizes, "size")}
                   </p>
@@ -1085,7 +1121,7 @@ export default function SellLandingV2({ onGo }) {
                       {f.desc}
                     </p>
                   </div>
-                </a>
+                </div>
               );
             })}
           </CardList>
@@ -1225,7 +1261,10 @@ export default function SellLandingV2({ onGo }) {
         </div>
       </section>
 
-      <Faq heading={<>Common questions<br />about selling with Blurb</>} items={FAQS} />
+      {/* "Common questions about selling with Blurb" -> "Selling books
+          with Blurb FAQ" 2026-09-10 (Ana) — matches the SEO doc's own
+          H2 for this section exactly. */}
+      <Faq heading="Selling books with Blurb FAQ" items={FAQS} />
 
       {/* ── Close ── */}
       <section
