@@ -484,7 +484,16 @@ const STEPS = [
    less commodity claim); "effortless" stays as the second half rather
    than getting cut, so the ease-of-use fact isn't lost. Body drops its
    own "Backed by Blurb's industry leading quality" clause now that the
-   title says it, rather than stating it twice. */
+   title says it, rather than stating it twice.
+
+   SHORTENED 2026-09-10 (Ana: "that title is 3 lines now, it's too long
+   sorry") — "Industry-leading quality, effortless fulfillment" at 50
+   characters ran nearly double every other title in this grid (the
+   next longest, "Sell books, magazines & more," is 29). Cut back to
+   just "Industry-leading quality": the claim itself is what needed to
+   be visible at a glance, and "effortless" already comes through in
+   the body's own list of everything Blurb handles without a separate
+   word for it. */
 const FEATURES = [
   ["payments", "Maximum profit, zero fees",
    "With print costs up to 70% lower than Blurb retail pricing and no subscription or platform fees, you keep more of every sale."],
@@ -492,7 +501,7 @@ const FEATURES = [
    "Our AI drafts your title, description, and keywords, so you're never starting from a blank page."],
   ["storefront", "Your custom product page",
    "Showcase your work with an interactive preview, author bio, and one-tap checkout via Apple Pay, Google Pay, or PayPal, no buyer account needed."],
-  ["local_shipping", "Industry-leading quality, effortless fulfillment",
+  ["local_shipping", "Industry-leading quality",
    "We handle printing, white-label packaging, global shipping, and order tracking directly to your customer."],
   ["receipt_long", "Automated sales tax",
    "Sales tax is automatically collected and remitted, so you don't have to manage it."],
