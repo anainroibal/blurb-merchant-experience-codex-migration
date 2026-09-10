@@ -144,8 +144,13 @@ const VERSIONS = [
 /* The lean set, in journey order. Anything not listed here is a page the
    minimum-effort version does not touch. `instantstore` (v1) ->
    `instantstorev2` 2026-09-10 along with every other reference to that
-   retired stage — see the instantstorev2 STAGES entry above. */
-const LEAN_STAGES = ["home", "catalog", "product", "pricing", "shipping", "seller", "instantstorev2"];
+   retired stage — see the instantstorev2 STAGES entry above.
+   `sellv2` added 2026-09-10 (Ana: "make sure Sell overview page is
+   linked on both the recommended scope and the minimum scope") —
+   supersedes the note above assuming `seller` (v1) alone covered the
+   minimum-effort Sell page; both are reachable from the demo bar now,
+   in both scopes. */
+const LEAN_STAGES = ["home", "catalog", "product", "pricing", "shipping", "seller", "sellv2", "instantstorev2"];
 
 const stagesFor = version =>
   version === "lean" ? STAGES.filter(s => LEAN_STAGES.includes(s.id)) : STAGES;

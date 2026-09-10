@@ -246,12 +246,15 @@ const WALKTHROUGH = [
    about in sell v2") — Sell v2's own QUALITY array makes this exact
    claim for its "Powered by RPI Print" card; reused verbatim rather
    than redrafted; the "no outsourcing" quality story belongs here as
-   much as it does on the Sell page. */
+   much as it does on the Sell page. Icon was "precision_manufacturing"
+   (a guess, same as Sell v2's own was) — updated to "source_environment"
+   2026-09-10 (Ana: "change the powered by RPI print icon to match the
+   new one on sell v2") once that page's real Figma icon was confirmed. */
 const FULFILMENT_POINTS = [
   ["inventory_2", "Print on demand", "Every order triggers a fresh print run. No inventory to manage, no stock to buy upfront."],
   ["local_shipping", "Ships in days", "Blurb packs and ships every order directly to your buyer. You never touch a box."],
   ["verified", "Tracking on every order", "Buyers get a tracking number automatically, from checkout to delivery."],
-  ["precision_manufacturing", "Powered by RPI Print", "Our in-house fulfillment ensures quality control and reliability at scale, trusted by brands like Canva and Minted."],
+  ["source_environment", "Powered by RPI Print", "Our in-house fulfillment ensures quality control and reliability at scale, trusted by brands like Canva and Minted."],
 ];
 
 /* Revised (Ana, working from a reference mock) — new imagery for Photo

@@ -83,14 +83,22 @@ const ILLUS = "https://assets.blurb.com/_astro/";
 
    Ana later shared a reference mock with a matching illustration for
    all four cards — Instant Store, Retail Distribution, Bulk Printing
-   Services, and RPI Print API — in one consistent style. Only RPI
-   Print API's has a confirmed real source so far: the exact
-   illustration blurb.com/print-api-software already uses ("code editor
-   interface, books, and print mechanics"), added below as `illus`.
-   PathTile renders `illus` in place of the icon when a card has one,
-   so the other three stay icons until their own real illustrations are
-   available — still no fabricated art, same rule as before, just
-   applied per card now instead of icons-for-all as the fallback. */
+   Services, and RPI Print API — in one consistent style. RPI Print
+   API's had a confirmed real source early on: the exact illustration
+   blurb.com/print-api-software already uses ("code editor interface,
+   books, and print mechanics"), added below as `illus`. PathTile
+   rendered `illus` in place of the icon when a card had one, so the
+   other three stayed icons until their own real illustrations were
+   available — no fabricated art in the meantime.
+   All four now have one (2026-09-10, Ana: "add in the illustrations
+   for 'Four ways to sell your books' from the figma"): the other
+   three extracted straight from the Figma frame's own "Category
+   Tiles" nodes — Category Tiles > Card - Categories > Image, one PNG
+   download per card — the same real-asset-over-redraw rule this
+   project applies everywhere else, just satisfied for real this time
+   instead of waiting on it. `icon` stays on each entry as PathTile's
+   fallback if an `illus` path ever 404s, not because any card still
+   needs it day to day. */
 /* Ticks and "Best for" are from the CRO brief's own per-tool "Value"
    sections (New landing pages - CRO Brief.docx), trimmed to short
    scannable phrases rather than the brief's full sentences — Ana's own
@@ -103,6 +111,7 @@ const ILLUS = "https://assets.blurb.com/_astro/";
 const SELL_PATHS = [
   {
     id: "link", name: "Instant Store", icon: "storefront", isNew: true,
+    illus: "/assets/illustrations/way-instant-store.png",
     bestFor: "Getting started fast",
     line: "Sell directly to your audience in minutes with a product page that fully showcases your book. No extra fees, no tech skills required.",
     /* Down to 3 ticks (Ana). First tick turned into a real margin claim
@@ -146,6 +155,7 @@ const SELL_PATHS = [
   },
   {
     id: "retail", name: "Retail Distribution", icon: "public",
+    illus: "/assets/illustrations/way-retail-distribution.png",
     bestFor: "Maximum reach",
     /* "Self-publish" added (Ana: "i'm missing the term") — it was
        nowhere in this card despite being Blurb's own name for the
@@ -183,6 +193,7 @@ const SELL_PATHS = [
   },
   {
     id: "los", name: "Bulk Printing Services", icon: "local_shipping",
+    illus: "/assets/illustrations/way-bulk-printing.png",
     bestFor: "High-touch support",
     line: "Get concierge service and volume discounts for orders of 100+ copies, perfect for events, clients, or resale.",
     /* "Dedicated account team" -> "concierge service" (Ana) — matches
@@ -218,27 +229,57 @@ const SELL_PATHS = [
    style, nothing left to read as inconsistent. "Best for" badge added
    (Ana's own reference mock) — a light outline pill, not a solid chip,
    so it doesn't compete with the solid-blue "New" marker Instant Store
-   already carries. */
+   already carries.
+
+   REVISED 2026-09-10 (Ana): "add in the illustrations for 'Four ways to
+   sell your books' from the figma. make sure the pills don't conflict
+   with the illustration, maybe they need to be above them. respect the
+   sizing of the current figma." All four cards now carry a real
+   illustration (Instant Store, Retail Distribution and Bulk Printing
+   Services extracted fresh from Figma's own "Category Tiles" nodes —
+   same export-a-real-PNG approach already used for ISV2's step
+   illustrations and icons; RPI Print API keeps the illustration it
+   already had, confirmed against the live rpiprint.com/print-api-
+   software page). Two changes fall out of that:
+     - The "Best for" pill used to sit absolute, floated on top of the
+       tile's icon — fine over a plain icon, but a busy illustration
+       under it made the pill hard to read and the pairing look
+       accidental. It's a normal block now, stacked above the
+       illustration instead of layered over it.
+     - The tile's shape was an invented 4:3 — the real "Category Tiles"
+       frame in Figma is a square (302×302), which is what these
+       illustrations were actually drawn against, so the tile is 1:1
+       now instead of guessing a ratio that cropped them oddly.
+   The Instant Store illustration ships its own "NEW" badge baked into
+   the Figma frame; cropped out of the exported asset since this page
+   already marks that card "New" with its own Chip next to the title,
+   and two different NEW markers on one card would read as a mistake,
+   not emphasis. */
 function PathTile({ card }) {
   return (
     <div style={{
-      position: "relative", width: "100%", background: "#f5f0ea", borderRadius: R.lg,
-      aspectRatio: "4 / 3", display: "grid", placeItems: "center", overflow: "hidden",
+      width: "100%", background: "#f5f0ea", borderRadius: R.lg,
+      display: "flex", flexDirection: "column", overflow: "hidden",
     }}>
       {card.bestFor && (
         <span style={{
-          position: "absolute", top: 12, right: 12,
+          alignSelf: "flex-start", margin: 12,
           padding: "4px 10px", borderRadius: 999, fontSize: 11, fontWeight: 600,
           background: "#fff", border: `1px solid ${C.blue600}`, color: C.blue600,
         }}>
           Best for: {card.bestFor}
         </span>
       )}
-      {card.illus ? (
-        <img src={card.illus} alt="" aria-hidden loading="lazy" style={{ width: "60%", height: "auto", display: "block" }} />
-      ) : (
-        <span className="ms" aria-hidden style={{ fontSize: 56, color: C.blue600 }}>{card.icon}</span>
-      )}
+      <div style={{
+        aspectRatio: "1 / 1", display: "grid", placeItems: "center",
+        marginTop: card.bestFor ? -12 : 0,
+      }}>
+        {card.illus ? (
+          <img src={card.illus} alt="" aria-hidden loading="lazy" style={{ width: "80%", height: "80%", objectFit: "contain", display: "block" }} />
+        ) : (
+          <span className="ms" aria-hidden style={{ fontSize: 56, color: C.blue600 }}>{card.icon}</span>
+        )}
+      </div>
     </div>
   );
 }
@@ -495,16 +536,33 @@ const SHOWCASE = [
    inline while the new books card headlines "11M+" for what reads like
    the same fact. Neither figure (21 years, 140 countries, 11M+) is
    sourced or verified against blurb.com; they're Ana's own numbers from
-   the reference. */
+   the reference.
+
+   Back to 3 (2026-09-10, Ana: "can you remove 'Sustainable papers &
+   practices' entirely"). Worth noting: Figma's own version of this
+   section never had it either — checked while pulling the illustrated
+   numbers below, and its "Stats" row only ever carried these three.
+   The fourth card was this file's own addition, not something being
+   walked back from the source.
+
+   Icon name swapped for a real illustrated numeral (same request:
+   "add in the illustrated numbers on the figma for 21 years, 140,
+   11m etc."). These aren't a display font — each one is a literal
+   hand-inked digit graphic (Figma's own "Number_N_md_ink" asset,
+   composed per stat as "21"/"140"/"11"), extracted the same way as
+   every other real Figma asset this session: select the composed
+   group, Export panel, the real download button, not a screenshot.
+   Files live in public/assets/numbers/. The word that used to sit
+   inline with the number ("21 years") now renders on its own line
+   below the image, matching how Figma actually stacks them — a
+   plain word, not part of the illustration. */
 const STATS = [
-  ["verified_user", "21 years",
+  ["/assets/numbers/stat-21.png", "years",
    "Backed by 20 years of in-house expertise and full production control, Blurb ensures consistent quality from start to finish. No outsourcing, no compromises."],
-  ["public", "140 countries",
+  ["/assets/numbers/stat-140.png", "countries",
    "Shipped to a global network of buyers and readers, with over 20M unique books and products created and sold."],
-  ["auto_stories", "11M+",
+  ["/assets/numbers/stat-11.png", "million",
    "Unique books and products created and sold, and counting."],
-  ["eco", "Sustainable papers & practices",
-   "Our photo books are crafted in the US with Forest Stewardship Council-certified papers and printed at the facility nearest you."],
 ];
 
 const TRUSTED_BY = ["Canva", "minted", "Treering", "Storyworth", "We Can Books"];
@@ -699,7 +757,12 @@ export default function SellLandingV2({ onGo }) {
                     check_circle icon repeated on every tick of every
                     card — four cards, up to three ticks each, all in
                     C.blue600 — not the one real link, which reverts to
-                    looking like a link again. */}
+                    looking like a link again.
+                    check_circle -> check (2026-09-10, Ana: "i still
+                    don't like the ticks on the section -- do we have a
+                    tick without a circle, so it's less busy") — same
+                    Material Symbol family, just the bare glyph instead
+                    of the ringed variant. */}
                 <ul style={{ display: "grid", gap: 6, margin: 0, padding: 0, listStyle: "none", width: "100%" }}>
                   {card.ticks.map(tick => {
                     const { text, linkStage, suffix, node, key } =
@@ -707,7 +770,7 @@ export default function SellLandingV2({ onGo }) {
                     return (
                       <li key={key || text} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
                         <span className="ms" aria-hidden style={{ fontSize: 18, color: "var(--codex-color-semantic-text-bold)", flex: "0 0 auto", lineHeight: "var(--codex-font-line-height-snug)" }}>
-                          check_circle
+                          check
                         </span>
                         <span style={{ fontSize: TYPE.sm, color: "var(--codex-color-semantic-text-bold)", lineHeight: 1.4 }}>
                           {node ? node : (
@@ -1004,16 +1067,27 @@ export default function SellLandingV2({ onGo }) {
           reads more like a proof strip on a clean background than a
           tinted callout. Trusted By below picks up the light blue tint
           instead, so the two still contrast with each other rather than
-          both reading as the same washed-out white. */}
+          both reading as the same washed-out white.
+          Back to three cards and a hand-inked number image per card
+          (see the STATS comment above) — the icon-plus-text-headline
+          treatment is gone, replaced by the illustration with its own
+          word underneath, tight against it the way Figma stacks them. */}
       <section style={{ padding: "clamp(40px, 5vw, 56px) 24px", borderTop: `1px solid ${T.border}`, background: T.bgNeutral }}>
         <div style={{
           maxWidth: 1240, margin: "0 auto", display: "grid", gap: 16,
           gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
         }}>
-          {STATS.map(([icon, stat, caption]) => (
-            <div key={stat} style={{ display: "grid", gap: 8 }}>
-              <span className="ms" aria-hidden style={{ fontSize: 28, color: C.blue600 }}>{icon}</span>
-              <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 500, color: T.textNeutral }}>{stat}</div>
+          {STATS.map(([img, word, caption]) => (
+            <div key={word} style={{ display: "grid", gap: 8 }}>
+              <div>
+                <img src={img} alt="" aria-hidden loading="lazy" style={{ height: 44, width: "auto", display: "block" }} />
+                <div style={{
+                  fontFamily: FONT_DISPLAY, fontSize: TYPE["2xl"], fontWeight: 600,
+                  color: T.textNeutral, marginTop: -4,
+                }}>
+                  {word}
+                </div>
+              </div>
               <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle }}>{caption}</p>
             </div>
           ))}
