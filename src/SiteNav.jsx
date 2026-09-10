@@ -339,6 +339,18 @@ const LEAN_NAV = [
 
   { label: "Design Tools", href: "/bookmaking-tools", columns: [
     { heading: "Design Tools", items: [
+      /* Added 2026-09-10 (Ana: "add a link on the Design Tools dropdown
+         on the minimum scope nav called All Design Tools, which links
+         to the bookmaking tools page. this is consistent with 'all
+         selling options'") — same first-in-the-list treatment as "All
+         selling options" below, but pointing at a real blurb.com URL
+         rather than an internal stage, since no bookmaking-tools page
+         is built in this prototype. `MenuLink` (and its mobile-menu
+         counterpart) didn't support a real href before this — every
+         other item's tuple ends at `stage`, so this is the first to use
+         the new 6th slot, `href`, opened in a new tab like every other
+         real external link in this app. */
+      ["All Design Tools", null, null, null, null, "https://www.blurb.com/bookmaking-tools"],
       ["BookWright"],
       ["Adobe Tools"],
       ["PDF to Book"],
@@ -532,15 +544,23 @@ const reachable = (stage, lean) => (lean && LEAN_MISSING.includes(stage) ? null 
 
 function MenuLink({ item, onClose, onGo, lean }) {
   const [hot, setHot] = useState(false);
-  const [label, body, tag, rawStage, arrow] = item;
+  const [label, body, tag, rawStage, arrow, href] = item;
   const stage = reachable(rawStage, lean);
   return (
     <a
-      href="#"
-      /* Items that have a screen behind them go to it. The rest close the
-         menu and stay put, which is honest: this prototype holds five
-         screens, not a site. */
-      onClick={e => { e.preventDefault(); onClose(); if (stage) onGo?.(stage); }}
+      /* Real external destinations (Ana: "All Design Tools... links to
+         the bookmaking tools page") get an actual href and open in a new
+         tab, same as every other real blurb.com link elsewhere in this
+         app — everything else keeps the internal-stage-only behavior
+         this menu had before, since most items here have no screen
+         behind them at all ("this prototype holds five screens, not a
+         site"). */
+      href={href || "#"}
+      {...(href ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+      onClick={e => {
+        if (href) { onClose(); return; }
+        e.preventDefault(); onClose(); if (stage) onGo?.(stage);
+      }}
       onMouseEnter={() => setHot(true)}
       onMouseLeave={() => setHot(false)}
       onFocus={() => setHot(true)}
@@ -892,11 +912,15 @@ function MobileNav({ open, signedIn, onClose, onSignedIn, onGo, lean }) {
                 fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.6, textTransform: "uppercase",
                 color: T.textSubtle, padding: "8px 0 2px",
               }}>{col.heading}</div>
-              {col.items.map(([label, , tag, stage]) => (
+              {col.items.map(([label, , tag, stage, , href]) => (
                 <a
                   key={label}
-                  href="#"
-                  onClick={e => { e.preventDefault(); onClose(); const to = reachable(stage, lean); if (to) onGo?.(to); }}
+                  href={href || "#"}
+                  {...(href ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                  onClick={e => {
+                    if (href) { onClose(); return; }
+                    e.preventDefault(); onClose(); const to = reachable(stage, lean); if (to) onGo?.(to);
+                  }}
                   style={{ padding: "9px 0", textDecoration: "none", color: T.textSubtle, fontSize: TYPE.base }}
                 >
                   {label}<Tag>{tag}</Tag>
