@@ -127,23 +127,27 @@ import { SHIPPING, PRINT_RANGE, shippingFor, money, BULK_MIN, arrivalWindow, for
    grid stays for every quantity including 100+, and the banner now
    renders underneath it as an addition, not a swap. */
 
-function Section({ title, lede, children, id, tinted }) {
+function Section({ title, lede, children, id, tinted, padding = "clamp(48px, 6vw, 80px) 24px" }) {
   return (
     <section id={id} style={{
-      padding: "clamp(48px, 6vw, 80px) 24px",
+      padding,
       background: tinted ? C.gray50 : "transparent",
       borderTop: tinted ? `1px solid ${T.border}` : 0,
     }}>
       <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 28 }}>
-        <div style={{ display: "grid", gap: 12, maxWidth: 720 }}>
-          <h2 style={{
-            fontFamily: FONT_DISPLAY, fontWeight: 500, letterSpacing: "-0.01em",
-            fontSize: "clamp(1.5rem, 3.2vw, 2rem)", lineHeight: 1.25, margin: 0,
-          }}>
-            {title}
-          </h2>
-          {lede && <p style={{ margin: 0, fontSize: TYPE.lg, lineHeight: 1.6, color: T.textSubtle }}>{lede}</p>}
-        </div>
+        {(title || lede) && (
+          <div style={{ display: "grid", gap: 12, maxWidth: 720 }}>
+            {title && (
+              <h2 style={{
+                fontFamily: FONT_DISPLAY, fontWeight: 500, letterSpacing: "-0.01em",
+                fontSize: "clamp(1.5rem, 3.2vw, 2rem)", lineHeight: 1.25, margin: 0,
+              }}>
+                {title}
+              </h2>
+            )}
+            {lede && <p style={{ margin: 0, fontSize: TYPE.lg, lineHeight: 1.6, color: T.textSubtle }}>{lede}</p>}
+          </div>
+        )}
         {children}
       </div>
     </section>
@@ -226,10 +230,14 @@ export default function ShippingPage({ onGo, lean }) {
 
   return (
     <div style={{ fontFamily: FONT_BODY, color: T.textNeutral }}>
-      {/* The hero /pricing, /bookmaking-tools and the Sell page use. */}
+      {/* The hero /pricing, /bookmaking-tools and the Sell page use.
+          Padding cut 2026-09-10 (Ana: "remove padding so it's all above
+          the fold") from clamp(56,8vw,96px) — this page's calculator is
+          the point of the page, so the hero shouldn't push it below a
+          scroll on its own. */}
       <section style={{
         background: "linear-gradient(100deg, #e9ecef 0%, #f6f3ef 45%, #ebebeb 100%)",
-        padding: "clamp(56px, 8vw, 96px) 24px",
+        padding: "clamp(32px, 5vw, 56px) 24px",
       }}>
         <div style={{ maxWidth: 860, margin: "0 auto", textAlign: "center", display: "grid", gap: 20, justifyItems: "center" }}>
           <h1 style={{
@@ -268,86 +276,54 @@ export default function ShippingPage({ onGo, lean }) {
 
           CALENDAR DATE ADDED BACK 2026-09-10 (Ana: "i'd like the
           shipping calculator to work by giving you an ETA too, so it
-          works for people ordering for themselves. can we somehow show
-          both things, a date range and an estimated arrival date (as a
-          range too) if ordered today?"): this page had dropped the
-          calendar date entirely on the grounds that it doesn't know
-          when the order is placed — true for a browsing visitor, but
-          not for someone here today deciding whether to order right
-          now, who has exactly the one order date this page can assume:
-          today. `arrivalWindow` (catalog.js) already does this
-          calculation for ShippingSection.jsx's own postcode calculator;
-          reused here with "if ordered today" stated in the label so the
-          assumption is never silent. The business-day range stays
-          rather than being replaced — that's the shape Ana asked for
-          (both things), and it's also the number that still holds for
-          a visitor who isn't ordering today.
+          works for people ordering for themselves"): this page had
+          dropped the calendar date on the grounds that it doesn't know
+          when the order is placed — true for a browsing visitor, but not
+          for someone here today deciding whether to order right now, who
+          has exactly the one order date this page can assume: today.
+          `arrivalWindow` (catalog.js) already does this calculation for
+          ShippingSection.jsx's own postcode calculator; reused here with
+          "if ordered today" stated in the label. The business-day range
+          stays alongside it (Ana asked for both), since it's also the
+          number that still holds for a visitor who isn't ordering today.
 
-          First pass gave the two facts their own columns (label,
-          business-days, arrival date, price) — four columns fighting
-          for the same row read as clutter (Ana: "it looks a mess").
-          Second pass folded the business-day count into the "Arrives"
-          caption as one long sentence ("Arrives in 11-15 business days,
-          if ordered today") — still cramped (Ana: "it still looks
-          cramped"), because it packed both facts into the same narrow
-          right-aligned block while the wide label column sat empty.
+          LAYOUT, five passes 2026-09-10 as the row kept reading as
+          cluttered under review (Ana: "it looks a mess" -> "it still
+          looks cramped" -> "i really think you need to just rethink the
+          design of that. like maybe it's a table" -> "font sizes &
+          styles are now all over the place and it seems standard is
+          highlighted"): settled on an actual table, one column per fact,
+          plain white rows (no zebra — it singles out the middle of
+          exactly three rows for no reason), typography unified to this
+          app's own table convention (TYPE.sm throughout, FONT_DISPLAY in
+          the header row only) rather than the mix of display-font-price
+          against plain-text-everything-else the table shape had
+          inherited from elsewhere.
 
-          Third pass spread the two facts across the row's own width
-          instead — still too dense (Ana: "arrives if ordered & shipping
-          price is too crammed, i really think you need to just rethink
-          the design of that. like maybe it's a table"). Fourth pass: an
-          actual table, one column per fact instead of stacking facts
-          inside a card per speed.
-
-          FIFTH PASS 2026-09-10 (Ana: "font sizes & styles are now all
-          over the place and it seems standard is highlighted as it's
-          the only grey bg one"): the fourth pass copied this file's own
-          "Keep more of what you earn" table's zebra-row convention
-          without checking whether it still made sense at three rows —
-          it doesn't. Zebra striping reads as structure across a table
-          of many rows; on exactly three, the one striped row (Standard)
-          reads as singled out, which nothing here intends. Dropped it —
-          every row is plain white, separated by rules only. Cell
-          styling also mixed FONT_DISPLAY-at-2xl for price against plain
-          body text for everything else, its own kind of "all over the
-          place" — unified to this app's actual table convention (see
-          Sell v2's own comparison table and this file's Keep More
-          table): TYPE.sm throughout, FONT_DISPLAY reserved for the
-          header row same as those two, row labels at fontWeight 500 to
-          match rather than standing out as bold TYPE.base.
-
-          Also renamed "Arrives if ordered today" to "Estimated date
-          range" (Ana: "business days > Estimated date range").
-
-          SIXTH PASS 2026-09-10 (Ana: "wtf you removed the date
-          range??? and you just kept the estimated arrival date if
-          shipped today??"): the rename above got read, wrongly, as
-          permission to also drop the Business days column entirely —
-          it isn't the same fact as the calendar date. Business days is
-          true regardless of when an order is placed; the calendar date
-          only holds "if ordered today," which is a real assumption
-          this page states but not one that should be the only figure
-          left. Business days restored as its own column, same clean
-          typography as the rest of this pass, sitting beside the
-          calendar date rather than replaced by it.
-
-          SEVENTH PASS 2026-09-10 (Ana, spelling out both header labels
-          this time, prefixed "AGAIN": "Business days > Estimate date
+          HEADERS, two more passes (Ana: "business days > Estimate date
           range" / "Estimated date range > Arrival date if ordered
-          today"): both columns kept their content from the sixth pass
-          exactly — this was headers only. "Business days" (day-count
-          content unchanged) -> "Estimated date range"; the calendar-
-          date column's own former "Estimated date range" header ->
-          "Arrival date if ordered today", naming the "if ordered
-          today" assumption in the header itself rather than only in
-          the sentence above the table.
+          today" — the first attempt at this had wrongly also dropped the
+          Business days column instead of just renaming it, corrected
+          immediately after): "Business days" -> "Estimated date range";
+          the calendar-date column's header -> "Arrival date if ordered
+          today," naming that assumption in the header itself. Content
+          unchanged in both columns throughout.
 
-          Tracking folded into the sentence above the table instead of
-          its own line below it or a fourth column (Ana: "should be part
-          of the previous line ... OR as a column ... i don't like it
-          there") — a column repeating "Included" for every one of three
-          rows states nothing a sentence can't say once. */}
-      <Section title="What it costs, wherever it's going">
+          Tracking folded into the sentence above the table rather than
+          its own line or a fourth column (Ana) — a column repeating
+          "Included" for three identical rows states nothing a sentence
+          can't say once. "Price" -> "Shipping price" (Ana).
+
+          EIGHTH PASS (Ana: "remove What it costs, wherever it's going
+          and remove padding so it's all above the fold"): title dropped
+          entirely (Section now renders no heading block when `title` is
+          falsy) and padding tightened, so the calculator sits right
+          under the hero instead of a full section's worth of white space
+          down. "What it costs, wherever it's going" duplicated what the
+          H1 and hero lede already establish about this page one scroll
+          up; cutting it is what let the padding actually close the gap
+          rather than just shrinking around empty space. */}
+      <Section padding="clamp(16px, 3vw, 32px) 24px 40px">
         <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
           <Select
             label="Product"
