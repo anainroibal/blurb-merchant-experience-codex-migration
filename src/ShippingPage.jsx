@@ -319,13 +319,20 @@ export default function ShippingPage({ onGo, lean }) {
           header row same as those two, row labels at fontWeight 500 to
           match rather than standing out as bold TYPE.base.
 
-          Also merged the two timing columns Ana felt were redundant
-          once real dates existed ("business days > Estimated date
-          range") — business days as its own column is the abstraction
-          the calendar date already replaces, so it's gone, and
-          "Arrives if ordered today" is renamed "Estimated date range"
-          rather than kept as a second column saying nearly the same
-          thing.
+          Also renamed "Arrives if ordered today" to "Estimated date
+          range" (Ana: "business days > Estimated date range").
+
+          SIXTH PASS 2026-09-10 (Ana: "wtf you removed the date
+          range??? and you just kept the estimated arrival date if
+          shipped today??"): the rename above got read, wrongly, as
+          permission to also drop the Business days column entirely —
+          it isn't the same fact as the calendar date. Business days is
+          true regardless of when an order is placed; the calendar date
+          only holds "if ordered today," which is a real assumption
+          this page states but not one that should be the only figure
+          left. Business days restored as its own column, same clean
+          typography as the rest of this pass, sitting beside the
+          calendar date rather than replaced by it.
 
           Tracking folded into the sentence above the table instead of
           its own line below it or a fourth column (Ana: "should be part
@@ -367,16 +374,16 @@ export default function ShippingPage({ onGo, lean }) {
         }}>
           <div style={{
             display: "grid",
-            gridTemplateColumns: "140px repeat(2, minmax(180px, 1fr))",
-            minWidth: 520,
+            gridTemplateColumns: "140px repeat(3, minmax(160px, 1fr))",
+            minWidth: 700,
           }}>
-            {["", "Estimated date range", "Price"].map((col, ci) => (
+            {["", "Business days", "Estimated date range", "Price"].map((col, ci) => (
               <div
                 key={col || "row-label"}
                 style={{
                   position: ci === 0 ? "sticky" : "static", left: 0, zIndex: 2, background: "#fff",
                   borderBottom: `1px solid ${C.charcoal200}`,
-                  borderRight: ci < 2 ? `1px solid ${C.charcoal200}` : "none",
+                  borderRight: ci < 3 ? `1px solid ${C.charcoal200}` : "none",
                   padding: 16, fontFamily: FONT_DISPLAY, fontWeight: 500,
                   fontSize: TYPE.sm, color: T.textNeutral,
                 }}
@@ -401,6 +408,9 @@ export default function ShippingPage({ onGo, lean }) {
                     borderRight: `1px solid ${C.charcoal200}`, fontWeight: 500,
                   }}>
                     {s.label}
+                  </div>
+                  <div style={{ ...cellStyle, borderRight: `1px solid ${C.charcoal200}` }}>
+                    {s.days[0] + PRINT_RANGE[0]}–{s.days[1] + PRINT_RANGE[1]} business days
                   </div>
                   <div style={{ ...cellStyle, borderRight: `1px solid ${C.charcoal200}` }}>
                     {formatDay(w.earliest)} – {formatDay(w.latest)}

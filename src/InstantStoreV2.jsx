@@ -493,7 +493,22 @@ const STEPS = [
    just "Industry-leading quality": the claim itself is what needed to
    be visible at a glance, and "effortless" already comes through in
    the body's own list of everything Blurb handles without a separate
-   word for it. */
+   word for it.
+
+   BODY CORRECTED 2026-09-10 (Ana: "but now the title doesn't match the
+   subtitle - quality is not fulfilment") — shortening the title didn't
+   touch the body, which was still the fulfilment-logistics sentence
+   the title used to justify with its own second half ("...effortless
+   fulfillment"). Once that half was cut, "Industry-leading quality"
+   sat over a sentence about packaging and shipping, not quality.
+   Rewritten to actually be about quality, reusing Sell v2's own
+   "Unmatched quality" card body verbatim (QUALITY array,
+   SellLandingV2.jsx) rather than redrafting — same claim, same words,
+   both pages. Icon swapped from local_shipping (fulfilment) to
+   workspace_premium, matching that same Sell v2 card's icon, since
+   this tile is no longer about shipping at all. The fulfilment facts
+   this body used to carry are still stated properly in "Blurb handles
+   everything after the sale" further down this page, not lost. */
 const FEATURES = [
   ["payments", "Maximum profit, zero fees",
    "With print costs up to 70% lower than Blurb retail pricing and no subscription or platform fees, you keep more of every sale."],
@@ -501,8 +516,8 @@ const FEATURES = [
    "Our AI drafts your title, description, and keywords, so you're never starting from a blank page."],
   ["storefront", "Your custom product page",
    "Showcase your work with an interactive preview, author bio, and one-tap checkout via Apple Pay, Google Pay, or PayPal, no buyer account needed."],
-  ["local_shipping", "Industry-leading quality",
-   "We handle printing, white-label packaging, global shipping, and order tracking directly to your customer."],
+  ["workspace_premium", "Industry-leading quality",
+   "Give your audience access to Blurb's superior print quality, vast catalog of formats, and premium paper types."],
   ["receipt_long", "Automated sales tax",
    "Sales tax is automatically collected and remitted, so you don't have to manage it."],
   ["auto_stories", "Sell books, magazines & more",
@@ -1173,12 +1188,17 @@ export default function InstantStoreV2({ onGo }) {
           clamp(32px,4vw,48px) Sell v2's own "Included with every way
           you sell" section uses for the same reason: it sits between
           two dense sections and doesn't need that much air. */}
+      {/* Subheading picks up "industry-leading quality" 2026-09-10
+          (Ana: "maybe [make] this subtitle a hint to quality?") — same
+          exact phrase as the FEATURES tile above, a second, later
+          reinforcement of the one claim Ana flagged as missing from
+          this page, rather than a new claim invented for this spot. */}
       <section style={{ background: C.gray50, padding: "clamp(28px, 4vw, 40px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <CardList
             className="format-heading-fit"
             heading="Sell photo books, magazines, notebooks & more"
-            subheading="Whatever you create, your Instant Store is ready to sell it."
+            subheading="Whatever you create, your Instant Store is ready to sell it, backed by industry-leading quality."
             headingAlign="center"
             layout={{ mobile: 1, tablet: 2, desktop: 4 }}
           >
