@@ -400,35 +400,49 @@ const KEEP_MORE_COLUMNS = ["Instant Store", "Blurb Bookstore", "Amazon", "RPI Pr
    Print cost updated 2026-09-10 (Ana: "i checked the costs; it's
    $27.90 for Instant Store and RPA, and 62.78 for Bookstore and
    Amazon") — real figures in place of the earlier $17.50/$31.00
-   guesses. NOT YET reflected below in KEEP_MORE_PROFIT/KEEP_MORE_MARGIN
-   or the "up to 3x" lede above: at this row's own $50.00 example
-   listing price, $62.78 print cost puts Blurb Bookstore and Amazon's
-   profit at -$12.78, which breaks this app's own documented rule that
-   the seller's price floors at their cost and can never show a loss.
-   Left the profit numbers on their old figures rather than publish a
-   negative one — needs a listing price to pair with these real costs
-   before that row (and the 3x claim built on it) can be recalculated. */
+   guesses. At that point the row's own listing price was still the old
+   $50.00, which put Blurb Bookstore and Amazon's profit at -$12.78 —
+   this app's own documented rule is that the seller's price floors at
+   their cost and can never show a loss, so the profit/margin figures
+   were deliberately left stale and flagged rather than publishing a
+   negative number.
+
+   RESOLVED same day (Ana: "make the listing price be $80 across all,
+   and recalculate the your profit row accordingly") — $80 clears
+   Amazon's $62.78 print cost plus its own commission with room to
+   spare, so nothing floors at zero any more. Profit = listing price -
+   print cost - commission; Amazon's commission is $1.35 + 15% of the
+   (now $80) list price = $1.35 + $12.00 = $13.35, same formula as
+   before, just recomputed against the new list price:
+     Instant Store / RPI Print API: 80 - 27.90 = $52.10
+     Blurb Bookstore:                80 - 62.78 = $17.22
+     Amazon:                80 - 62.78 - 13.35 = $3.87 */
 const KEEP_MORE_ROWS = [
-  { label: "Your listing price (example)", cells: ["$50.00", "$50.00", "$50.00", "$50.00"] },
+  { label: "Your listing price (example)", cells: ["$80.00", "$80.00", "$80.00", "$80.00"] },
   { label: "Print cost", cells: ["$27.90", "$62.78", "$62.78", "$27.90"] },
   { label: "Commission", cells: ["0%", "0%", "$1.35 + 15% of list price", "0%"] },
 ];
 
-const KEEP_MORE_PROFIT = ["$32.50", "$19.00", "$10.15", "$32.50"];
+const KEEP_MORE_PROFIT = ["$52.10", "$17.22", "$3.87", "$52.10"];
 
 /* Added 2026-09-10 (Ana: "add profit margin as well as profit on the
    earnings table. not sure if as a line or alongside, see what you
    think"). Alongside, in the same "Your profit" pill, rather than a
-   fifth row: a margin row would just be this same $50.00 list price
-   divided into every profit figure already above it, so it repeats
-   the row directly overhead rather than adding a fact. Profit ÷ $50.00
-   list price, rounded to a whole percent: $32.50 -> 65%, $19.00 ->
-   38%, $10.15 -> 20.3% -> 20%. Labelled "profit" rather than "margin"
-   or "profit margin" (Ana: "margin > profit margin or just profit" ->
-   "do you think just profit is fine? like 65% profit") — plainer
-   language than the accounting term, and reads as an extension of the
-   row's own "Your profit" label rather than a second, separate metric. */
-const KEEP_MORE_MARGIN = ["65%", "38%", "20%", "65%"];
+   fifth row: a margin row would just be this same list price divided
+   into every profit figure already above it, so it repeats the row
+   directly overhead rather than adding a fact. Labelled "profit"
+   rather than "margin" or "profit margin" (Ana: "margin > profit
+   margin or just profit" -> "do you think just profit is fine? like
+   65% profit") — plainer language than the accounting term.
+
+   Recalculated 2026-09-10 against the new $80.00 listing price and
+   print costs: profit ÷ $80.00, rounded to a whole percent —
+   $52.10 -> 65.1% -> 65%, $17.22 -> 21.5% -> 22%,
+   $3.87 -> 4.8% -> 5%. Instant Store and RPI Print API's 65% is
+   unchanged from before purely by coincidence (both the list price and
+   their print cost scaled together in a way that landed on the same
+   round number), not because nothing moved. */
+const KEEP_MORE_MARGIN = ["65%", "22%", "5%", "65%"];
 
 const STEPS = [
   /* "70% more of every sale" -> the calculated "3x more profit than
@@ -1014,8 +1028,20 @@ export default function InstantStoreV2({ onGo }) {
       </section>
 
       {/* ── Everything you need — 8-tile feature grid ── */}
+      {/* Wrapper widened to 1440 (2026-09-10, Ana: "make it wider so
+          that they're not so crammed... the section below with the
+          table runs wider so align to that") — Codex's own CardList
+          adds 80px of padding-inline on each side at desktop width
+          (--codex-spacing-20, read from its compiled CSS) inside
+          whatever wrapper it's given, so at the same 1280 every other
+          section here uses, its actual card grid rendered ~160px
+          narrower than the plain-div "Keep more of what you earn"
+          table right below it — not a difference in the two sections'
+          own widths, but CardList quietly eating some of its own. 1440
+          minus that 160px of internal padding lands the visible grid
+          back at 1280, matching the table exactly. */}
       <section style={{ background: C.gray50, padding: "clamp(40px, 5vw, 56px) 24px" }}>
-        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+        <div style={{ maxWidth: 1440, margin: "0 auto" }}>
           <CardList
             heading="Everything you need to sell your book online"
             headingAlign="center"
@@ -1036,7 +1062,27 @@ export default function InstantStoreV2({ onGo }) {
                         style={{ width: 40, height: 40, objectFit: "contain", display: "block" }}
                       />
                     ) : (
-                      <span className="ms" aria-hidden style={{ fontSize: 40, color: C.blue600 }}>{icon}</span>
+                      <span
+                        className="ms"
+                        aria-hidden
+                        style={{
+                          fontSize: 40, color: C.blue600,
+                          /* "diamond" 2026-09-10 (Ana: "the diamond icon
+                             thickness is too thick compared to the rest
+                             of icons on that page") — Material Symbols'
+                             own default-weight diamond glyph is a solid
+                             faceted shape with much less negative space
+                             than this row's other line icons, so it
+                             reads heavier at the same nominal weight.
+                             Dialed the variable font's own wght axis
+                             down (400 -> 300) for this one glyph rather
+                             than the whole row, since every other icon
+                             here already matches at the default. */
+                          ...(icon === "diamond" ? { fontVariationSettings: "'wght' 300" } : {}),
+                        }}
+                      >
+                        {icon}
+                      </span>
                     )
                   }
                   title={title}
@@ -1068,8 +1114,12 @@ export default function InstantStoreV2({ onGo }) {
               That call was reasoned through carefully at the time; this
               one is Ana's own explicit read of the Figma source overriding
               it, not an oversight, so it stands without re-litigating the
-              earlier note — left in place below for the history. */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 24, flexWrap: "wrap" }}>
+              earlier note — left in place below for the history.
+              alignItems flex-start -> flex-end (2026-09-10, Ana:
+              "calculate your profit, align to the button of the
+              subtitle") — the button now sits on the subtitle's own
+              baseline instead of level with the H2 above it. */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 24, flexWrap: "wrap" }}>
             <div style={{ display: "grid", gap: 12, flex: "1 1 480px" }}>
             <h2 style={{
               fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
@@ -1194,6 +1244,23 @@ export default function InstantStoreV2({ onGo }) {
                 </div>
               ))}
 
+              {/* Example label, moved back under the column headers
+                  2026-09-10 (Ana: "example for a ... row, but it below
+                  the titles row") — reverses the previous pass's move
+                  to right-after-"Your listing price"; back to
+                  annotating the table as a whole from the top, before
+                  any numbers start. Spec text unchanged: "Example for a
+                  10×8 Photo Book Standard ImageWrap, Hardcover, 85
+                  pages." Still gray50, not the accent-blue Instant
+                  Store column, since it's about the whole table. */}
+              <div style={{
+                gridColumn: "1 / -1", background: C.gray50,
+                borderBottom: `1px solid ${C.charcoal200}`,
+                padding: "10px 16px", fontSize: TYPE.sm, color: T.textSubtle,
+              }}>
+                Example for a 10×8 Photo Book Standard ImageWrap, Hardcover, 85 pages
+              </div>
+
               {KEEP_MORE_ROWS.map((row, ri) => {
                 /* Print cost stays plain white, not zebra-grey
                    (2026-09-10, Ana: "the print cost row doesn't have
@@ -1224,27 +1291,6 @@ export default function InstantStoreV2({ onGo }) {
                         {cell}
                       </div>
                     ))}
-                    {/* Example label, repositioned 2026-09-10 (Ana: "the
-                        placement of 'Example: 8×10 hardcover, $50 list
-                        price' is odd there") — it sat directly under the
-                        column headers before, reading as a continuation
-                        of them rather than an annotation on the numbers.
-                        Moved to sit right after the row it's actually
-                        annotating (the example listing price itself),
-                        before Print cost. Spec updated to a real one
-                        (Ana): "Example for a 10×8 Photo Book Standard
-                        ImageWrap, Hardcover, 85 pages" — still gray50,
-                        not the accent-blue Instant Store column, since
-                        it's about the whole table, not one column. */}
-                    {ri === 0 && (
-                      <div style={{
-                        gridColumn: "1 / -1", background: C.gray50,
-                        borderBottom: `1px solid ${C.charcoal200}`,
-                        padding: "10px 16px", fontSize: TYPE.sm, color: T.textSubtle,
-                      }}>
-                        Example for a 10×8 Photo Book Standard ImageWrap, Hardcover, 85 pages
-                      </div>
-                    )}
                   </React.Fragment>
                 );
               })}

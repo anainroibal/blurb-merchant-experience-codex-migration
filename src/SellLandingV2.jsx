@@ -947,7 +947,24 @@ export default function SellLandingV2({ onGo }) {
             {QUALITY.map(([icon, title, body]) => (
               <Card
                 key={title}
-                icon={<span className="ms" aria-hidden style={{ fontSize: 40, color: C.blue600 }}>{icon}</span>}
+                icon={
+                  <span
+                    className="ms"
+                    aria-hidden
+                    style={{
+                      fontSize: 40, color: C.blue600,
+                      /* "diamond" 2026-09-10 (Ana: "the diamond icon
+                         thickness is too thick compared to the rest of
+                         icons on that page," flagged on ISV2's matching
+                         tile) — same glyph, same fix here for
+                         consistency: dial the variable font's wght axis
+                         down for this one icon rather than the row. */
+                      ...(icon === "diamond" ? { fontVariationSettings: "'wght' 300" } : {}),
+                    }}
+                  >
+                    {icon}
+                  </span>
+                }
                 title={title}
                 description={body}
               />
