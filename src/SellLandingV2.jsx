@@ -490,23 +490,31 @@ const GET_STARTED = [
    Magazines keep FORMAT_CARDS' own images (matched by id, below) —
    they already match the reference mock's own photography closely
    enough that swapping them would just be work for its own sake. */
+/* Each card links to its real blurb.com category page (2026-09-10,
+   Ana: "have each one link to each of Blurb's category listing pages,
+   on both isv2 and selling overview") — confirmed live URLs by reading
+   them off blurb.com's own nav rather than guessing at the slug. */
 const SELL_FORMATS = [
   { id: "photo", title: "Photo Books", formats: 3, papers: 7, sizes: 6,
     bestFor: "Photographers and visual storytellers building their audience.",
     desc: "Sell photo books, wedding albums, and layflat photo books in premium papers and formats.",
     img: "https://assets.blurb.com/_astro/linen-hardcover-dustjacket-optimized.DNuztDk1.webp",
-    alt: "Stack of linen hardcover with dust jacket photo books with a red scooter on the cover and the title “Life in Italy.”" },
+    alt: "Stack of linen hardcover with dust jacket photo books with a red scooter on the cover and the title “Life in Italy.”",
+    href: "https://www.blurb.com/photo-books" },
   { id: "trade", title: "Paperback & Hardcover", formats: 3, papers: 3, sizes: 3,
     bestFor: "Selling directly to your audience or through retail distribution.",
-    desc: "Create hardcover and paperback books, novels, cookbooks, children's books, and more." },
+    desc: "Create hardcover and paperback books, novels, cookbooks, children's books, and more.",
+    href: "https://www.blurb.com/hardcover-and-paperback-books" },
   { id: "magazine", title: "Magazines", formats: 1, papers: 1, sizes: 1,
     bestFor: "Ongoing series, zines, and one-off editorial projects.",
-    desc: "Sell magazines with newsstand-quality printing, perfect for lookbooks, zines, or serial content." },
+    desc: "Sell magazines with newsstand-quality printing, perfect for lookbooks, zines, or serial content.",
+    href: "https://www.blurb.com/magazines" },
   { id: "notebook", title: "Notebooks & Journals", formats: 4, papers: 1, sizes: 3,
     bestFor: "Creators building a branded product line alongside their books.",
     desc: "Sell notebooks and journals in blank, lined, or dot-grid formats, a natural companion to your books.",
     img: "https://assets.blurb.com/_astro/linen-hardcover-with-dustjacket-notebook-optimized.CQRJ330f.webp",
-    alt: "Open linen hardcover notebook with dust jacket showing travel photography of Greece on one side, and blank lined paper on the other." },
+    alt: "Open linen hardcover notebook with dust jacket showing travel photography of Greece on one side, and blank lined paper on the other.",
+    href: "https://www.blurb.com/custom-notebooks-journals" },
 ];
 
 const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
@@ -1035,10 +1043,23 @@ export default function SellLandingV2({ onGo }) {
                 subtler color on the description so the two read as two
                 different things rather than one paragraph split by a
                 bolded word. */}
+            {/* Whole card links out to its real blurb.com category page
+                (Ana: "have each one link to each of Blurb's category
+                listing pages, on both isv2 and selling overview"). */}
             {SELL_FORMATS.map(f => {
               const photo = f.img ? f : FORMAT_CARDS.find(c => c.id === f.id);
               return (
-                <div key={f.id} style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", width: "100%", gap: "var(--codex-spacing-3)" }}>
+                <a
+                  key={f.id}
+                  href={f.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "flex", flexDirection: "column", alignItems: "flex-start",
+                    width: "100%", gap: "var(--codex-spacing-3)",
+                    textDecoration: "none", color: "inherit",
+                  }}
+                >
                   <img
                     src={photo.img}
                     alt={photo.alt}
@@ -1064,7 +1085,7 @@ export default function SellLandingV2({ onGo }) {
                       {f.desc}
                     </p>
                   </div>
-                </div>
+                </a>
               );
             })}
           </CardList>
@@ -1181,18 +1202,20 @@ export default function SellLandingV2({ onGo }) {
           Minted, Treering, Storyworth, We Can Books — names confirmed
           by Figma comment #63), exported straight off the frame rather
           than reproduced as styled text, so the real marks show up
-          instead of a guess at their wordmarks. Light blue tint now,
-          not white (Ana: "the 20+ years bar needs to be white
-          background, and so the trusted by section needs to be light
-          grey or light blue") — picked blue over grey since Showcase
-          right above Stats already uses gray50, and a second gray here
-          would repeat that tone two sections down rather than
-          contrasting with it.
+          instead of a guess at their wordmarks.
           Padding cut 2026-09-10 (Ana: "trusted by is lower height...
           on the figma which i think looks nicer") — a logo strip
           doesn't carry the same weight as the proof numbers above it,
-          so it shouldn't claim the same amount of vertical space. */}
-      <section style={{ padding: "clamp(24px, 3vw, 32px) 24px", background: T.bgAccentSubtle }}>
+          so it shouldn't claim the same amount of vertical space.
+
+          Blue -> light grey, later the same day (Ana: "the trusted by
+          blue bg is weird, can you revise?"). Blue was picked over
+          grey originally because Showcase right above Stats used
+          gray50 at the time and a second gray two sections down felt
+          repetitive — but Showcase is cream now (a separate change
+          since), so that reasoning no longer holds and grey, the other
+          option Ana offered at the time, is the one left standing. */}
+      <section style={{ padding: "clamp(24px, 3vw, 32px) 24px", background: C.gray50 }}>
         <div style={{ maxWidth: 1280, margin: "0 auto" }}>
           <img
             src="/assets/trusted-by-logos.png"

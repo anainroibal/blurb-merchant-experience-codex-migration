@@ -278,19 +278,27 @@ const FULFILMENT_POINTS = [
    line. Counts are read directly off blurb.com/pricing (2026-09-06),
    not the local catalog matrix — see SellLandingV2.jsx's own note on
    what each count means and why it's sourced from the live page. */
+/* Each card links to its real blurb.com category page (2026-09-10,
+   Ana: "have each one link to each of Blurb's category listing pages,
+   on both isv2 and selling overview") — confirmed live URLs by reading
+   them off blurb.com's own nav rather than guessing at the slug. */
 const SELL_FORMATS = [
   { id: "photo", title: "Photo Books", formats: 3, papers: 7, sizes: 6,
     desc: "Sell photo books, wedding albums, and layflat photo books in premium papers and formats.",
     img: "https://assets.blurb.com/_astro/linen-hardcover-dustjacket-optimized.DNuztDk1.webp",
-    alt: "Stack of linen hardcover with dust jacket photo books with a red scooter on the cover and the title “Life in Italy.”" },
+    alt: "Stack of linen hardcover with dust jacket photo books with a red scooter on the cover and the title “Life in Italy.”",
+    href: "https://www.blurb.com/photo-books" },
   { id: "trade", title: "Paperback & Hardcover", formats: 3, papers: 3, sizes: 3,
-    desc: "Create hardcover and paperback books, novels, cookbooks, children's books, and more." },
+    desc: "Create hardcover and paperback books, novels, cookbooks, children's books, and more.",
+    href: "https://www.blurb.com/hardcover-and-paperback-books" },
   { id: "magazine", title: "Magazines", formats: 1, papers: 1, sizes: 1,
-    desc: "Sell magazines with newsstand-quality printing, perfect for lookbooks, zines, or serial content." },
+    desc: "Sell magazines with newsstand-quality printing, perfect for lookbooks, zines, or serial content.",
+    href: "https://www.blurb.com/magazines" },
   { id: "notebook", title: "Notebooks & Journals", formats: 4, papers: 1, sizes: 3,
     desc: "Sell notebooks and journals in blank, lined, or dot-grid formats, a natural companion to your books.",
     img: "https://assets.blurb.com/_astro/linen-hardcover-with-dustjacket-notebook-optimized.CQRJ330f.webp",
-    alt: "Open linen hardcover notebook with dust jacket showing travel photography of Greece on one side, and blank lined paper on the other." },
+    alt: "Open linen hardcover notebook with dust jacket showing travel photography of Greece on one side, and blank lined paper on the other.",
+    href: "https://www.blurb.com/custom-notebooks-journals" },
 ];
 
 const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
@@ -1524,23 +1532,41 @@ export default function InstantStoreV2({ onGo }) {
             headingAlign="center"
             layout={{ mobile: 1, tablet: 2, desktop: 4 }}
           >
+            {/* Whole card links out to its real blurb.com category page
+                (Ana: "have each one link to each of Blurb's category
+                listing pages"). Plain <a> around Card rather than
+                Card's own `link`/`cta` slot: Codex's Link component can
+                only open in a new tab via `openInNewTab`, and that prop
+                is what appends its "open in new" icon (confirmed in
+                Link's own d.ts) — an icon on every one of four cards
+                reads as clutter, and this app has already pulled that
+                icon off other links for the same reason (SellLandingV2
+                "remove the open in a new link icons"). A native anchor
+                gets the new-tab behavior without it. */}
             {SELL_FORMATS.map(f => {
               const photo = f.img ? f : FORMAT_CARDS.find(c => c.id === f.id);
               return (
-                <Card
+                <a
                   key={f.id}
-                  icon={
-                    <img
-                      src={photo.img}
-                      alt={photo.alt}
-                      loading="lazy"
-                      style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", display: "block", borderRadius: R.lg }}
-                    />
-                  }
-                  eyebrow={`${plural(f.formats, "format")} · ${plural(f.papers, "paper")} · ${plural(f.sizes, "size")}`}
-                  title={f.title}
-                  description={f.desc}
-                />
+                  href={f.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ textDecoration: "none", color: "inherit", display: "block", width: "100%" }}
+                >
+                  <Card
+                    icon={
+                      <img
+                        src={photo.img}
+                        alt={photo.alt}
+                        loading="lazy"
+                        style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", display: "block", borderRadius: R.lg }}
+                      />
+                    }
+                    eyebrow={`${plural(f.formats, "format")} · ${plural(f.papers, "paper")} · ${plural(f.sizes, "size")}`}
+                    title={f.title}
+                    description={f.desc}
+                  />
+                </a>
               );
             })}
           </CardList>
