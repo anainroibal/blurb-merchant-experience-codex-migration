@@ -848,7 +848,7 @@ export default function InstantStoreV2({ onGo }) {
       {/* ── Keep More of What You Earn ── */}
       <section style={{ padding: "clamp(40px, 5vw, 56px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 24 }}>
-          <div style={{ display: "grid", gap: 12, maxWidth: 720 }}>
+          <div style={{ display: "grid", gap: 12 }}>
             <h2 style={{
               fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
               lineHeight: 1.25, margin: 0,
@@ -866,7 +866,13 @@ export default function InstantStoreV2({ onGo }) {
 
                 "other distribution channels" -> named channels
                 (2026-09-10, Ana), same reasoning and same "up to"
-                qualifier as STEPS' own version of this line above. */}
+                qualifier as STEPS' own version of this line above.
+
+                maxWidth:720 dropped from this block 2026-09-10 (Ana:
+                "it's still two lines each so hasn't improved, make it
+                one line each") — that cap, not the CTA's position, was
+                what forced this sentence onto two lines; at this
+                section's full 1240px width it fits on one. */}
             <p style={{ margin: 0, fontSize: TYPE.base, color: T.textNeutral }}>
               You set the price, and what's left after your printing cost is yours, up to 3x more profit than selling through the Blurb Bookstore, Amazon, or Ingram.
             </p>

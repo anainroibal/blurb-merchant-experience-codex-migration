@@ -295,13 +295,21 @@ export default function ShippingPage({ onGo, lean }) {
           cramped"), because it packed both facts into the same narrow
           right-aligned block while the wide label column sat empty.
 
-          Third pass spreads the two facts across the row's own width
-          instead: the business-day range moves under the speed name in
-          the label column (which had the room), and the "Arrives"
-          caption goes back to two words over the bold calendar date,
-          the exact subtle-label/bold-value shape ShippingSection.jsx's
-          own "Arrives" block already uses. Three short blocks reading
-          left to right, not one block carrying two sentences. */}
+          Third pass spread the two facts across the row's own width
+          instead — still too dense (Ana: "arrives if ordered & shipping
+          price is too crammed, i really think you need to just rethink
+          the design of that. like maybe it's a table"). Fourth pass: an
+          actual table, one column per fact (business days, arrival
+          date, price) instead of stacking facts inside a card per
+          speed. Same grid-table visual language as this file's own
+          "Keep more of what you earn" table and Sell v2's comparison
+          table (charcoal rules, zebra rows, sticky label column), just
+          shaped as rows-are-speeds instead of columns-are-options,
+          since three speeds compared on the same three facts is a
+          plainer table than a comparison across products. Also adds the
+          fact those cards never stated (Ana: "say tracking is available
+          on all") as one caption line under the table rather than a
+          fourth column repeating "Included" three times. */}
       <Section title="What it costs, wherever it's going">
         <div style={{ display: "grid", gap: 14, gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))" }}>
           <Select
@@ -331,35 +339,67 @@ export default function ShippingPage({ onGo, lean }) {
           The date ranges below include {PRINT_RANGE[0]}–{PRINT_RANGE[1]} days of production time.
         </span>
 
-        <div style={{ display: "grid", gap: 10 }}>
-          {speeds.map(s => {
-            const quote = shippingFor(ship.country, s.id, qty);
-            const w = arrivalWindow(s);
-            return (
-              <div key={s.id} style={{
-                background: "#fff", border: `1px solid ${C.charcoal200}`, borderRadius: R.md,
-                padding: 16, display: "grid", gap: 10, alignItems: "center",
-                gridTemplateColumns: "minmax(0,1fr) auto auto",
-              }}>
-                <span style={{ display: "grid", gap: 2 }}>
-                  <span style={{ fontSize: TYPE.lg, fontWeight: 700 }}>{s.label}</span>
-                  <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
-                    {s.days[0] + PRINT_RANGE[0]}–{s.days[1] + PRINT_RANGE[1]} business days
-                  </span>
-                </span>
-                <span style={{ display: "grid", gap: 2, justifyItems: "end", whiteSpace: "nowrap" }}>
-                  <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>Arrives if ordered today</span>
-                  <span style={{ fontSize: TYPE.base, fontWeight: 700 }}>
-                    {formatDay(w.earliest)} – {formatDay(w.latest)}
-                  </span>
-                </span>
-                <span style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 700, whiteSpace: "nowrap" }}>
-                  {quote ? money(quote.cost) : "—"}
-                </span>
+        <div style={{
+          overflowX: "auto", WebkitOverflowScrolling: "touch",
+          border: `1px solid ${C.charcoal200}`, borderRadius: R.md,
+        }}>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "140px repeat(3, minmax(160px, 1fr))",
+            minWidth: 640,
+          }}>
+            {["", "Business days", "Arrives if ordered today", "Price"].map((col, ci) => (
+              <div
+                key={col || "row-label"}
+                style={{
+                  position: ci === 0 ? "sticky" : "static", left: 0, zIndex: 2, background: "#fff",
+                  borderBottom: `1px solid ${C.charcoal200}`,
+                  borderRight: ci < 3 ? `1px solid ${C.charcoal200}` : "none",
+                  padding: 16, fontFamily: FONT_DISPLAY, fontWeight: 500,
+                  fontSize: TYPE.sm, color: T.textNeutral,
+                }}
+              >
+                {col}
               </div>
-            );
-          })}
+            ))}
+
+            {speeds.map((s, ri) => {
+              const quote = shippingFor(ship.country, s.id, qty);
+              const w = arrivalWindow(s);
+              const rowBg = ri % 2 === 1 ? C.gray50 : "#fff";
+              const last = ri === speeds.length - 1;
+              const cellStyle = {
+                background: rowBg,
+                borderBottom: last ? "none" : `1px solid ${C.charcoal200}`,
+                padding: 16,
+              };
+              return (
+                <React.Fragment key={s.id}>
+                  <div style={{
+                    ...cellStyle, position: "sticky", left: 0, zIndex: 1,
+                    borderRight: `1px solid ${C.charcoal200}`,
+                    fontSize: TYPE.base, fontWeight: 700, color: T.textNeutral,
+                  }}>
+                    {s.label}
+                  </div>
+                  <div style={{ ...cellStyle, borderRight: `1px solid ${C.charcoal200}`, fontSize: TYPE.sm, color: T.textSubtle }}>
+                    {s.days[0] + PRINT_RANGE[0]}–{s.days[1] + PRINT_RANGE[1]} business days
+                  </div>
+                  <div style={{ ...cellStyle, borderRight: `1px solid ${C.charcoal200}`, fontSize: TYPE.base, fontWeight: 700, color: T.textNeutral }}>
+                    {formatDay(w.earliest)} – {formatDay(w.latest)}
+                  </div>
+                  <div style={{ ...cellStyle, fontFamily: FONT_DISPLAY, fontSize: TYPE["2xl"], fontWeight: 700, color: T.textNeutral }}>
+                    {quote ? money(quote.cost) : "—"}
+                  </div>
+                </React.Fragment>
+              );
+            })}
+          </div>
         </div>
+
+        <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
+          Tracking is included on every order, at every speed.
+        </span>
 
         {qty >= BULK_MIN && <BulkBanner />}
       </Section>
