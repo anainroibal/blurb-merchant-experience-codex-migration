@@ -258,10 +258,18 @@ const SELL_PATHS = [
 
    Tile background flipped cream -> white the same day (Ana: "the bg of
    the four ways to sell illustration needs to be white, as per the
-   figma") — the section around these tiles just went the other
-   direction (gray50 -> cream, see the section's own comment), so the
-   tile now needs to read as a white card lifted off that cream
-   surface rather than blending into it. */
+   figma") — the section around these tiles briefly went cream, then
+   back to white the same day once checked directly against Figma's
+   own Fill property (see the section's own comment). Tile stays white
+   either way; on a white section it now reads as one continuous
+   surface rather than a card with a boundary, which matches what
+   Figma's own "Category Tiles" frame does — no separate card fill
+   behind the image there either.
+
+   Illustration size bumped 80% -> 100% (2026-09-10, Ana: "make them
+   bigger too, like in the figma") — the Image layer inside Figma's own
+   Category Tiles frame fills the tile exactly (302x302 image in a
+   302x302 frame), not 80% of it with a margin around it. */
 function PathTile({ card }) {
   return (
     <div style={{
@@ -269,10 +277,16 @@ function PathTile({ card }) {
       display: "flex", flexDirection: "column", overflow: "hidden",
     }}>
       {card.bestFor && (
+        /* Blue -> charcoal 2026-09-10 (Ana: "have the pills be
+           black-on-white or charcoal-on-white pill to differentiate
+           from hyperlinks and reduce blue treatment") — blue on this
+           page already means "link" (the ticks below, the CTAs); a
+           blue pill on every card competed with that meaning instead
+           of just being a label. */
         <span style={{
           alignSelf: "flex-start", margin: 12,
           padding: "4px 10px", borderRadius: 999, fontSize: 11, fontWeight: 600,
-          background: "#fff", border: `1px solid ${C.blue600}`, color: C.blue600,
+          background: "#fff", border: `1px solid ${C.gray950}`, color: C.gray950,
         }}>
           Best for: {card.bestFor}
         </span>
@@ -282,7 +296,7 @@ function PathTile({ card }) {
         marginTop: card.bestFor ? -12 : 0,
       }}>
         {card.illus ? (
-          <img src={card.illus} alt="" aria-hidden loading="lazy" style={{ width: "80%", height: "80%", objectFit: "contain", display: "block" }} />
+          <img src={card.illus} alt="" aria-hidden loading="lazy" style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }} />
         ) : (
           <span className="ms" aria-hidden style={{ fontSize: 56, color: C.blue600 }}>{card.icon}</span>
         )}
@@ -661,21 +675,85 @@ export default function SellLandingV2({ onGo }) {
         </div>
       </section>
 
+      {/* ── Included with every way you sell ──
+          Was "Built-in quality, flexibility, and support" — a heading
+          that describes itself rather than saying what's in the
+          section (Ana: "I don't know what that means"). These three
+          are the CRO brief's own "Overall benefits applicable to all
+          seller tools", so the heading says exactly that now. Padding
+          cut roughly in half (was clamp(56px,7vw,80px), matching the
+          page's heavier hero-adjacent sections) — this one sits
+          between two dense sections and doesn't need that much air.
+
+          Order reversed a second time 2026-09-10 (Ana: "included with
+          every way you sell needs to go above the selling path table")
+          — back to sitting before "Four ways to sell," reversing the
+          earlier same-day swap that moved it after. That swap was
+          based on a read of Figma's own section order; this reverts to
+          Ana's direct instruction instead of re-litigating which read
+          was right. */}
+      <section style={{ padding: "clamp(32px, 4vw, 48px) 24px" }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+          <CardList
+            heading="Included with every way you sell"
+            headingAlign="center"
+            layout={{ mobile: 1, tablet: 3, desktop: 3 }}
+          >
+            {QUALITY.map(([icon, title, body]) => (
+              <Card
+                key={title}
+                icon={
+                  <span
+                    className="ms"
+                    aria-hidden
+                    style={{
+                      fontSize: 40, color: C.blue600,
+                      /* "diamond" 2026-09-10 (Ana: "the diamond icon
+                         thickness is too thick compared to the rest of
+                         icons on that page," flagged on ISV2's matching
+                         tile) — same glyph, same fix here for
+                         consistency: dial the variable font's wght axis
+                         down for this one icon rather than the row. */
+                      ...(icon === "diamond" ? { fontVariationSettings: "'wght' 300" } : {}),
+                    }}
+                  >
+                    {icon}
+                  </span>
+                }
+                title={title}
+                description={body}
+              />
+            ))}
+          </CardList>
+        </div>
+      </section>
+
       {/* ── Four ways to sell, and the same four side by side ──
           One section, not two — same reasoning SellerLanding's own
           comment gives: the cards and the table are one question asked
           twice, once skimmed and once read across.
-          Background swapped from gray50 to Blurb's own cream/foam tone
-          2026-09-10 (Ana: "on the figma, we're using beige bg rather
-          than the grey") — same #f5f0ea already used for illustration
-          tiles and gradients elsewhere in this codebase (ProductCatalog,
-          Home, SellerLanding), not a new color introduced for this one
-          section. */}
+          Background swapped gray50 -> #f5f0ea -> white, twice in one
+          day. First pass (Ana: "on the figma, we're using beige bg
+          rather than the grey") went off a visual read of the canvas.
+          Reverted same day (Ana: "make the four ways to sell have
+          white bg, like the figma") once checked directly against this
+          section's own Figma node: its Fill is explicitly "Bg/Surface"
+          (#FFFFFF), not beige — the earlier beige read was a mistake,
+          not a change of direction. Lesson for next time: check a
+          layer's actual Fill property, not just how a screenshot looks
+          next to a warm-toned neighbor.
+          Padding cut clamp(56,7vw,80) -> clamp(40,5vw,56) 2026-09-10
+          (Ana: "reduce padding above four ways to sell and all section
+          titles, it's too much, follow the figma") — same reduction
+          applied to every other section on this page still carrying
+          the old heavier value ("Sell photo books..." and "Showcase"),
+          so the page reads as one consistent rhythm rather than this
+          one section standing out. */}
       <section
         id="paths"
         style={{
-          background: "#f5f0ea", borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`,
-          padding: "clamp(56px, 7vw, 80px) 24px", scrollMarginTop: 140,
+          background: "#fff", borderTop: `1px solid ${T.border}`, borderBottom: `1px solid ${T.border}`,
+          padding: "clamp(40px, 5vw, 56px) 24px", scrollMarginTop: 140,
         }}
       >
         <div style={{ maxWidth: 1280, margin: "0 auto", display: "grid", gap: 48 }}>
@@ -928,57 +1006,12 @@ export default function SellLandingV2({ onGo }) {
         </div>
       </section>
 
-      {/* ── Included with every way you sell ──
-          Was "Built-in quality, flexibility, and support" — a heading
-          that describes itself rather than saying what's in the
-          section (Ana: "I don't know what that means"). These three
-          are the CRO brief's own "Overall benefits applicable to all
-          seller tools", so the heading says exactly that now. Padding
-          cut roughly in half (was clamp(56px,7vw,80px), matching the
-          page's heavier hero-adjacent sections) — this one sits
-          between two dense sections and doesn't need that much air. */}
-      <section style={{ padding: "clamp(32px, 4vw, 48px) 24px" }}>
-        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
-          <CardList
-            heading="Included with every way you sell"
-            headingAlign="center"
-            layout={{ mobile: 1, tablet: 3, desktop: 3 }}
-          >
-            {QUALITY.map(([icon, title, body]) => (
-              <Card
-                key={title}
-                icon={
-                  <span
-                    className="ms"
-                    aria-hidden
-                    style={{
-                      fontSize: 40, color: C.blue600,
-                      /* "diamond" 2026-09-10 (Ana: "the diamond icon
-                         thickness is too thick compared to the rest of
-                         icons on that page," flagged on ISV2's matching
-                         tile) — same glyph, same fix here for
-                         consistency: dial the variable font's wght axis
-                         down for this one icon rather than the row. */
-                      ...(icon === "diamond" ? { fontVariationSettings: "'wght' 300" } : {}),
-                    }}
-                  >
-                    {icon}
-                  </span>
-                }
-                title={title}
-                description={body}
-              />
-            ))}
-          </CardList>
-        </div>
-      </section>
-
       {/* ── What can you sell ── heading, subheading and "Best for" cards
           revised from a reference mock (Ana); see SELL_FORMATS' own note
           above for the copy and imagery reasoning. Heading also picks up
           the SEO doc's own general direction (naming "photo books,
           magazines, notebooks" rather than the generic "product"). */}
-      <section style={{ padding: "clamp(56px, 7vw, 80px) 24px" }}>
+      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px" }}>
         <div style={{ maxWidth: 1280, margin: "0 auto" }}>
           <CardList
             className="format-heading-fit"
@@ -1053,8 +1086,12 @@ export default function SellLandingV2({ onGo }) {
           and two of the three stories link straight to a real Bookstore
           product page, so "real books" already checks out); rewrote the
           subhead to name the selling fact directly, with "sold" as a
-          verb rather than "seller" as a label for the people. */}
-      <section style={{ background: C.gray50, padding: "clamp(56px, 7vw, 80px) 24px" }}>
+          verb rather than "seller" as a label for the people.
+
+          gray50 -> #f5f0ea 2026-09-10 (Ana: "Real books by real
+          creators, just like you bg needs to be beige too") — same
+          cream tone this page now uses throughout. */}
+      <section style={{ background: "#f5f0ea", padding: "clamp(40px, 5vw, 56px) 24px" }}>
         <div style={{ maxWidth: 1280, margin: "0 auto", display: "grid", gap: 40 }}>
           <div style={{ display: "grid", gap: 8, textAlign: "center" }}>
             <h2 style={{
@@ -1117,13 +1154,17 @@ export default function SellLandingV2({ onGo }) {
           maxWidth: 1280, margin: "0 auto", display: "grid", gap: 16,
           gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
         }}>
+          {/* marginTop -4 -> 8 (2026-09-10, Ana: "in the figma there's
+              more padding between number and label") — was pulling the
+              word tight against the illustrated number; Figma gives the
+              two real air between them instead of stacking them flush. */}
           {STATS.map(([img, word, caption]) => (
             <div key={word} style={{ display: "grid", gap: 8 }}>
               <div>
                 <img src={img} alt="" aria-hidden loading="lazy" style={{ height: 56, width: "auto", display: "block" }} />
                 <div style={{
                   fontFamily: FONT_DISPLAY, fontSize: TYPE["2xl"], fontWeight: 600,
-                  color: T.textNeutral, marginTop: -4,
+                  color: T.textNeutral, marginTop: 8,
                 }}>
                   {word}
                 </div>

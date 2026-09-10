@@ -249,11 +249,21 @@ const WALKTHROUGH = [
    much as it does on the Sell page. Icon was "precision_manufacturing"
    (a guess, same as Sell v2's own was) — updated to "source_environment"
    2026-09-10 (Ana: "change the powered by RPI print icon to match the
-   new one on sell v2") once that page's real Figma icon was confirmed. */
+   new one on sell v2") once that page's real Figma icon was confirmed.
+
+   The other three icons were guesses too, never checked against this
+   section's own Figma reference until now (Ana: "grab the new icons
+   for the Blurb handles everything after the sale from the figma" —
+   node 21-3585, "they're on the left"). Drilled into each icon
+   instance's own layer name: "Print on demand" is auto_stories (an
+   open book, not inventory_2), "Ships in days" was already right
+   (local_shipping, confirmed rather than assumed this time), and
+   "Tracking on every order" is where_to_vote — a location pin with a
+   checkmark, not the generic "verified" badge shape. */
 const FULFILMENT_POINTS = [
-  ["inventory_2", "Print on demand", "Every order triggers a fresh print run. No inventory to manage, no stock to buy upfront."],
+  ["auto_stories", "Print on demand", "Every order triggers a fresh print run. No inventory to manage, no stock to buy upfront."],
   ["local_shipping", "Ships in days", "Blurb packs and ships every order directly to your buyer. You never touch a box."],
-  ["verified", "Tracking on every order", "Buyers get a tracking number automatically, from checkout to delivery."],
+  ["where_to_vote", "Tracking on every order", "Buyers get a tracking number automatically, from checkout to delivery."],
   ["source_environment", "Powered by RPI Print", "Our in-house fulfillment ensures quality control and reliability at scale, trusted by brands like Canva and Minted."],
 ];
 
@@ -416,11 +426,49 @@ const KEEP_MORE_COLUMNS = ["Instant Store", "Blurb Bookstore", "Amazon", "RPI Pr
    before, just recomputed against the new list price:
      Instant Store / RPI Print API: 80 - 27.90 = $52.10
      Blurb Bookstore:                80 - 62.78 = $17.22
-     Amazon:                80 - 62.78 - 13.35 = $3.87 */
+     Amazon:                80 - 62.78 - 13.35 = $3.87
+
+   Label reworded again 2026-09-10 (Ana: "Your listing price (example)
+   > Listing price (you set this)") — "(example)" already lives in the
+   in-table example row right above; this row's own qualifier now
+   names the actual fact instead (the seller sets this number, nobody
+   else), which is the whole point this table exists to make.
+
+   "(you set this)" moved to its own smaller line 2026-09-10 (Ana:
+   "move (you set this) to next line and make it smaller") — was
+   crowding "Listing price" on one line in the label column's fixed
+   160px width.
+
+   Costs reformatted as negatives 2026-09-10 (Ana: "i think costs need
+   to look like negatives as they're a minus cost") — Print cost and
+   the renamed "Additional fees" row (was "Commission" — Ana: "commission
+   should be 'Additional fees'," since Blurb Bookstore and RPI Print
+   API charge neither a commission nor any other fee, "$0" reads more
+   honestly than "0%" would for a fee row) both show parenthesized
+   negative dollar amounts now, matching the format Ana specified.
+   Amazon's fee cell states the actual dollar amount first ($13.35),
+   with the $1.35 + 15%-of-listing-price formula alongside it as
+   context (Ana: "amazon commission is $13.35 ($1.35 + 15% of listing
+   price)") rather than the formula alone with no computed total. */
 const KEEP_MORE_ROWS = [
-  { label: "Your listing price (example)", cells: ["$80.00", "$80.00", "$80.00", "$80.00"] },
-  { label: "Print cost", cells: ["$27.90", "$62.78", "$62.78", "$27.90"] },
-  { label: "Commission", cells: ["0%", "0%", "$1.35 + 15% of list price", "0%"] },
+  {
+    label: <>Listing price<br /><span style={{ fontSize: 11, fontWeight: 400, color: T.textSubtle }}>(you set this)</span></>,
+    cells: ["$80.00", "$80.00", "$80.00", "$80.00"],
+  },
+  { label: "Print cost", cells: ["$(27.90)", "$(62.78)", "$(62.78)", "$(27.90)"] },
+  {
+    label: "Additional fees",
+    cells: [
+      "$0",
+      "$0",
+      <>
+        $(13.35)
+        <br />
+        <span style={{ fontSize: 11, fontWeight: 400, color: T.textSubtle }}>$1.35 + 15% of listing price</span>
+      </>,
+      "$0",
+    ],
+  },
 ];
 
 const KEEP_MORE_PROFIT = ["$52.10", "$17.22", "$3.87", "$52.10"];
@@ -1052,8 +1100,16 @@ export default function InstantStoreV2({ onGo }) {
           table right below it — not a difference in the two sections'
           own widths, but CardList quietly eating some of its own. 1440
           minus that 160px of internal padding lands the visible grid
-          back at 1280, matching the table exactly. */}
-      <section style={{ background: C.gray50, padding: "clamp(40px, 5vw, 56px) 24px" }}>
+          back at 1280, matching the table exactly.
+
+          gray50 -> #f5f0ea (2026-09-10, Ana: "change the light grey
+          bg... to the beige bg in the figma") — confirmed directly
+          against this section's own real, assembled instance inside
+          ISV2's Figma frame (not a loose reference component): its
+          "Value Props" Card List sits on an explicit cream backdrop
+          there, same tone this codebase already uses everywhere else
+          (ProductCatalog, Home, SellerLanding). */}
+      <section style={{ background: "#f5f0ea", padding: "clamp(40px, 5vw, 56px) 24px" }}>
         <div style={{ maxWidth: 1440, margin: "0 auto" }}>
           <CardList
             heading="Everything you need to sell your book online"
@@ -1285,7 +1341,7 @@ export default function InstantStoreV2({ onGo }) {
                    odd row still gets it. */
                 const rowBg = ri % 2 === 1 && row.label !== "Print cost" ? C.gray50 : "#fff";
                 return (
-                  <React.Fragment key={row.label}>
+                  <React.Fragment key={ri}>
                     <div style={{
                       position: "sticky", left: 0, zIndex: 1, background: rowBg,
                       borderBottom: `1px solid ${C.charcoal200}`, borderRight: `1px solid ${C.charcoal200}`,
@@ -1396,8 +1452,20 @@ export default function InstantStoreV2({ onGo }) {
           its own note below). The top border added earlier to seam this
           section off from "Keep more of what you earn" above (also
           white) is dropped now that a real background difference does
-          that job instead. */}
-      <section style={{ background: C.gray50, padding: "clamp(40px, 5vw, 56px) 24px" }}>
+          that job instead.
+
+          gray50 -> #f5f0ea (2026-09-10, Ana: "change the light grey bg
+          on the Everything you need to sell your book online and
+          Blurb handles everything after the sale to the beige bg in
+          the figma") — same cream already used for the FEATURES grid
+          right above it. Worth a flag: this section's own Figma
+          component (a loose top-level "Card List," not embedded in
+          either page's assembled frame) carries an explicit white
+          "Bg/Surface" fill, not beige — checked directly rather than
+          assumed. Implementing Ana's instruction as given since it's a
+          direct, confident read of the source, but noting the
+          discrepancy rather than claiming false certainty either way. */}
+      <section style={{ background: "#f5f0ea", padding: "clamp(40px, 5vw, 56px) 24px" }}>
         <div style={{ maxWidth: 1160, margin: "0 auto", display: "grid", gap: 32 }}>
           {/* Full stop dropped 2026-09-10, same rule Ana stated for "One
               link, a real product page" just above on this page ("we
