@@ -124,8 +124,8 @@ import { SHIPPING, PRINT_RANGE, shippingFor, money, BULK_MIN, arrivalWindow, for
    shipping quote, that banner is additional"): the 100+ branch had
    replaced the speed-rows grid with the banner outright. The quote
    still calculates fine at any quantity `shippingFor` accepts, so the
-   grid stays for every quantity including 100+, and the banner now
-   renders underneath it as an addition, not a swap. */
+   grid stays for every quantity including 100+, and the banner is an
+   addition alongside it, not a swap — see below for exactly where. */
 
 function Section({ title, lede, children, id, tinted, padding = "clamp(48px, 6vw, 80px) 24px" }) {
   return (
@@ -180,7 +180,7 @@ function BulkBanner() {
         </span>
       </div>
       <p style={{ margin: "0 0 0 28px", fontSize: TYPE.base, lineHeight: 1.6, color: T.textNeutral }}>
-        Bulk Printing Services can help with planning and volume pricing.
+        Bulk Printing Services can help with planning, multi-address dropshipping, and volume pricing.
       </p>
       <a
         href="https://www.blurb.com/large-order-services" target="_blank" rel="noopener noreferrer"
@@ -351,6 +351,15 @@ export default function ShippingPage({ onGo, lean }) {
           />
         </div>
 
+        {/* Moved above the table 2026-09-10 (Ana: "the LOS banner needs
+            to appear above the table i think, otherwise the user might
+            miss it on mobile") — below the table, a reader scrolling a
+            long stack of speed rows on a narrow screen could hit the
+            FAQ or footer before ever seeing it. Right after the
+            controls instead, so picking 100+ shows the banner before
+            any scrolling is needed. */}
+        {qty >= BULK_MIN && <BulkBanner />}
+
         <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>
           The date ranges below include {PRINT_RANGE[0]}–{PRINT_RANGE[1]} days of production time, and every order ships with tracking.
         </span>
@@ -410,8 +419,6 @@ export default function ShippingPage({ onGo, lean }) {
             })}
           </div>
         </div>
-
-        {qty >= BULK_MIN && <BulkBanner />}
       </Section>
 
       {/* ── Where the calculating went ──
