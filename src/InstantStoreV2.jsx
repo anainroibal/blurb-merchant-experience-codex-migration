@@ -857,11 +857,14 @@ export default function InstantStoreV2({ onGo }) {
         }}>
           <div style={{ display: "grid", gap: 24 }}>
             <div style={{ display: "grid", gap: 8 }}>
+              {/* Full stop dropped 2026-09-10 (Ana: "in general, we
+                  don't do full stops in titles, unless there's 2
+                  sentences") — this is one sentence. */}
               <h2 style={{
                 fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
                 lineHeight: 1.25, margin: 0,
               }}>
-                One link, a real product page.
+                One link, a real product page
               </h2>
             </div>
             {WALKTHROUGH.map(([title, body], i) => (
@@ -888,10 +891,18 @@ export default function InstantStoreV2({ onGo }) {
           The seller's view of setting it up, now shown after "What
           buyers see" again (Ana: "i meant the order again") — payoff
           before setup, the page's original order. */}
+      {/* "Instant Store" -> "Blurb Instant Store" 2026-09-10 (Ana: "we
+          want Blurb Instant Store in some places to anchor to brand
+          name"), named example: this heading specifically. Left every
+          other "Instant Store" mention on this page as-is — the brand
+          name has already been established once above the fold (the H1
+          itself says "Your Instant Store"), and repeating "Blurb"
+          before every instance would be a bigger change than the one
+          spot named. */}
       <section style={{ padding: "clamp(40px, 5vw, 56px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <CardList
-            heading="Create your Instant Store in three steps"
+            heading="Create your Blurb Instant Store in three steps"
             headingAlign="center"
             layout={{ mobile: 1, tablet: 3, desktop: 3 }}
           >
@@ -1155,11 +1166,15 @@ export default function InstantStoreV2({ onGo }) {
           `T.border` colour `tinted` sections already put under theirs. */}
       <section style={{ padding: "clamp(40px, 5vw, 56px) 24px", borderTop: `1px solid ${T.border}` }}>
         <div style={{ maxWidth: 1160, margin: "0 auto", display: "grid", gap: 32 }}>
+          {/* Full stop dropped 2026-09-10, same rule Ana stated for "One
+              link, a real product page" just above on this page ("we
+              don't do full stops in titles, unless there's 2
+              sentences") — this is one sentence too. */}
           <h2 style={{
             fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
             lineHeight: 1.25, margin: 0,
           }}>
-            Blurb handles everything after the sale.
+            Blurb handles everything after the sale
           </h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 32 }}>
             {FULFILMENT_POINTS.map(([icon, title, body]) => (
