@@ -76,25 +76,31 @@ const STAGES = [
   { id: "getstarted", short: "Get started",  label: "Get started — the intent router" },
   /* Ways to sell, renamed and given one goal: which route is mine? It is
      where a seller lands, and it ends in the single step that follows. */
-  { id: "seller",     short: "Sell",         label: "/sell — how to print it and how to sell it, Instant Store included" },
+  { id: "seller",     short: "Self-Publish", label: "/sell — how to print it and how to sell it, Instant Store included" },
   /* Figma content-outline rebuild (2026-09-06) — a fourth selling path
      (RPI Print API), a showcase/testimonial section and a trusted-by
      logo strip that v1 doesn't have. Not yet folded into `seller`
      because several of its sections are still marked in-flux by open
      Figma comments — kept as its own stage so it can be reviewed
      side by side with v1 rather than overwriting it. */
-  { id: "sellv2",     short: "Sell v2",      label: "Sell — Figma content-outline rebuild, reviewed alongside v1" },
+  { id: "sellv2",     short: "Sell Overview", label: "Sell — Figma content-outline rebuild, reviewed alongside v1" },
   /* Two pages, not two tabs. The maker's price sits under Pricing; the
      seller's margin sits under Sell & Self-Publish, which is what keeps
      the public pricing pages retail-only. */
   { id: "pricing",    short: "Pricing",      label: "Pricing calculator — under Pricing" },
   { id: "margin",     short: "Profit",       label: "Instant Store profit calculator — under Sell & Self-Publish" },
-  /* Crometrics' page. A placeholder so the links into it can be reviewed. */
-  { id: "instantstore", short: "Instant Store", label: "The Instant Store page — placeholder, built by Crometrics" },
+  /* Crometrics' page. A placeholder so the links into it can be reviewed.
+     Tile renamed 2026-09-10 (Ana asked to rename Sell/Sell v2/Instant
+     Store v2's tiles, and to make Instant Store v2's tile plain "Instant
+     Store") — that plain name was already taken by this stage, so this
+     one picks up "(v1)" to stay distinct rather than two tiles reading
+     identically in the demo bar. Flagged rather than silently dropped:
+     say if this placeholder should read differently. */
+  { id: "instantstore", short: "Instant Store (v1)", label: "The Instant Store page — placeholder, built by Crometrics" },
   /* Figma content-outline rebuild (2026-09-06), same reason as Sell v2:
      kept as its own stage rather than replacing `instantstore` while
      open Figma comments still have parts of it in flux. */
-  { id: "instantstorev2", short: "Instant Store v2", label: "Instant Store — Figma content-outline rebuild, reviewed alongside v1" },
+  { id: "instantstorev2", short: "Instant Store", label: "Instant Store — Figma content-outline rebuild, reviewed alongside v1" },
   /* /shipping, after both calculators, because what it now does is explain
      what they compute — 2026-08-27. */
   { id: "shipping",   short: "Shipping",     label: "/shipping — informational, now that both calculators price delivery" },
