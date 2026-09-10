@@ -545,7 +545,15 @@ const STEP_ILLUSTRATIONS = [
    workspace_premium, matching that same Sell v2 card's icon, since
    this tile is no longer about shipping at all. The fulfilment facts
    this body used to carry are still stated properly in "Blurb handles
-   everything after the sale" further down this page, not lost. */
+   everything after the sale" further down this page, not lost.
+
+   ICON CORRECTED 2026-09-10 (Ana: "Industry-leading quality icon on
+   isv2 can it be the diamond icon plz") — workspace_premium was itself
+   a guess made before Sell v2's own "Unmatched quality" icon was
+   confirmed against Figma (it turned out to be "diamond," not
+   workspace_premium — see QUALITY's own comment in SellLandingV2.jsx).
+   Matched here now that the real one is known, same reasoning as
+   before: same claim, same body, same icon, both pages. */
 const FEATURES = [
   ["payments", "Maximum profit, zero fees",
    "With print costs up to 70% lower than Blurb retail pricing and no subscription or platform fees, you keep more of every sale."],
@@ -553,7 +561,7 @@ const FEATURES = [
    "Our AI drafts your title, description, and keywords, so you're never starting from a blank page."],
   ["storefront", "Your custom product page",
    "Showcase your work with an interactive preview, author bio, and one-tap checkout via Apple Pay, Google Pay, or PayPal, no buyer account needed."],
-  ["workspace_premium", "Industry-leading quality",
+  ["diamond", "Industry-leading quality",
    "Give your audience access to Blurb's superior print quality, vast catalog of formats, and premium paper types."],
   ["receipt_long", "Automated sales tax",
    "Sales tax is automatically collected and remitted, so you don't have to manage it."],
@@ -596,10 +604,11 @@ const FEATURES = [
    fidelity), same "use the real asset, not a redraw" rule this file
    already applies to the three step illustrations. Files live in
    public/assets/icons/.
-   "Industry-leading quality" (workspace_premium) is still the one
-   exception, and still not an icon problem: that tile doesn't exist
-   in Figma's row at all. Figma's 4th tile there is "Effortless
-   fulfillment" (icon: Printer, now sitting extracted and unused at
+   "Industry-leading quality" (icon corrected to "diamond" 2026-09-10,
+   matching Sell v2's own confirmed icon for the equivalent card) is
+   still the one content exception: that tile doesn't exist in Figma's
+   row at all. Figma's 4th tile there is "Effortless fulfillment"
+   (icon: Printer, now sitting extracted and unused at
    public/assets/icons/printer.png) with fulfillment/shipping copy,
    not a quality claim — flagged last pass, still unresolved, still
    not mine to silently change. Left on Material Symbols until that's
