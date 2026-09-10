@@ -230,11 +230,28 @@ const WALKTHROUGH = [
   ["Blurb prints and ships it", "No inventory to buy upfront: every order triggers a fresh print run, and you only pay for what ships. Your buyer gets a tracked delivery, and you never touch a box."],
 ];
 
+/* REVISED 2026-09-10 (Ana). "Tracking on every order"'s body invented a
+   support-email scenario to justify the fact — "it's weird to talk
+   about support emails" — rewritten to just state what tracking does.
+   "No setup required" dropped outright ("i don't know what that
+   means") rather than reworded, since its own three examples
+   (warehouse, carrier accounts, fulfilment integrations) are all
+   things a book seller, unlike a general e-commerce seller, was never
+   going to need in the first place — the claim wasn't wrong, just
+   answering a question nobody here was asking.
+
+   Its slot goes to the fact this section was missing entirely (Ana:
+   "something that's missing in isv2 is the notion of quality; quality
+   is a big differentiator as we have inhouse fulfilment as we talk
+   about in sell v2") — Sell v2's own QUALITY array makes this exact
+   claim for its "Powered by RPI Print" card; reused verbatim rather
+   than redrafted; the "no outsourcing" quality story belongs here as
+   much as it does on the Sell page. */
 const FULFILMENT_POINTS = [
   ["inventory_2", "Print on demand", "Every order triggers a fresh print run. No inventory to manage, no stock to buy upfront."],
   ["local_shipping", "Ships in days", "Blurb packs and ships every order directly to your buyer. You never touch a box."],
-  ["verified", "Tracking on every order", "Buyers get a tracking number automatically, so there's no support email asking where an order is."],
-  ["schedule", "No setup required", "No warehouse, no carrier accounts, no fulfilment integrations. It works the moment you share your link."],
+  ["verified", "Tracking on every order", "Buyers get a tracking number automatically, from checkout to delivery."],
+  ["precision_manufacturing", "Powered by RPI Print", "Our in-house fulfillment ensures quality control and reliability at scale, trusted by brands like Canva and Minted."],
 ];
 
 /* Revised (Ana, working from a reference mock) — new imagery for Photo
@@ -384,7 +401,9 @@ const KEEP_MORE_PROFIT = ["$32.50", "$19.00", "$10.15", "$32.50"];
    divided into every profit figure already above it, so it repeats
    the row directly overhead rather than adding a fact. Profit ÷ $50.00
    list price, rounded to a whole percent: $32.50 -> 65%, $19.00 ->
-   38%, $10.15 -> 20.3% -> 20%. */
+   38%, $10.15 -> 20.3% -> 20%. Labelled "profit margin" in full (Ana:
+   "margin > profit margin or just profit") rather than bare "margin,"
+   which reads as an unexplained fragment next to a dollar figure. */
 const KEEP_MORE_MARGIN = ["65%", "38%", "20%", "65%"];
 
 const STEPS = [
@@ -684,7 +703,17 @@ export default function InstantStoreV2({ onGo }) {
             </p>
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
               <Button>Create your Instant Store</Button>
-              <Button as="a" href="#demo" variant="outlined">See a store in action</Button>
+              {/* Was "See a store in action" -> #demo, the checkerboard
+                  placeholder beside this copy. Ana, following the "how
+                  do we call out max profit" conversation: "See what
+                  you'd earn and scroll down to earnings table" — the
+                  same jump-link idea floated there (option 1 of 2), now
+                  actually placed on the one button here that wasn't
+                  pointing at anything real yet. Points at the "Keep
+                  more of what you earn" table instead of the demo
+                  video, since that's this route's real differentiator,
+                  not a placeholder. */}
+              <Button as="a" href="#keep-more" variant="outlined">See what you'd earn</Button>
             </div>
             {/* The margin story is this route's biggest differentiator,
                 and nothing above the fold said so directly (Ana) — the
@@ -856,7 +885,7 @@ export default function InstantStoreV2({ onGo }) {
       </section>
 
       {/* ── Keep More of What You Earn ── */}
-      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px" }}>
+      <section id="keep-more" style={{ padding: "clamp(40px, 5vw, 56px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gap: 24 }}>
           <div style={{ display: "grid", gap: 12 }}>
             <h2 style={{
@@ -1023,7 +1052,7 @@ export default function InstantStoreV2({ onGo }) {
                         color: strong ? "#166640" : "#8e4412",
                       }}>
                         <span style={{ fontWeight: 700 }}>{value}</span>
-                        <span style={{ fontWeight: 500 }}> ({KEEP_MORE_MARGIN[ci]} margin)</span>
+                        <span style={{ fontWeight: 500 }}> ({KEEP_MORE_MARGIN[ci]} profit margin)</span>
                       </span>
                     ) : (
                       <span style={{ fontSize: TYPE.sm, color: T.textSubtle, fontStyle: "italic" }}>{value}</span>
