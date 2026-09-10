@@ -1171,19 +1171,17 @@ export default function InstantStoreV2({ onGo }) {
           not copied: these four facts are already established elsewhere
           on this page (the FEATURES grid's own fulfillment/tax copy),
           restated here as a standalone strip rather than new claims.
-          Plain background, not gray50 — "What you can sell" right after
-          it already is gray50, and back-to-back would merge the two
-          into one block with no visible seam.
 
-          TOP BORDER ADDED 2026-09-10 (Ana: "'blurb handles everything
-          after the sale' section is also white so it's a bit lost,
-          needs diff bg or a line") — "Keep more of what you earn" right
-          above it is white too, so the same no-seam problem the gray50
-          note above already solved on one side was still open on the
-          other. A background change would have reopened that first
-          problem, so this gets a hairline rule instead, the same
-          `T.border` colour `tinted` sections already put under theirs. */}
-      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px", borderTop: `1px solid ${T.border}` }}>
+          BACKGROUND SWAPPED 2026-09-10 (Ana: "make the sell photo
+          books, magazines... white bg, which means 'Blurb handles
+          everything after the sale' needs to be the light grey
+          instead") — this section takes the gray50 "What you can sell"
+          used to carry, and that section goes white in exchange (see
+          its own note below). The top border added earlier to seam this
+          section off from "Keep more of what you earn" above (also
+          white) is dropped now that a real background difference does
+          that job instead. */}
+      <section style={{ background: C.gray50, padding: "clamp(40px, 5vw, 56px) 24px" }}>
         <div style={{ maxWidth: 1160, margin: "0 auto", display: "grid", gap: 32 }}>
           {/* Full stop dropped 2026-09-10, same rule Ana stated for "One
               link, a real product page" just above on this page ("we
@@ -1226,8 +1224,14 @@ export default function InstantStoreV2({ onGo }) {
           (Ana: "maybe [make] this subtitle a hint to quality?") — same
           exact phrase as the FEATURES tile above, a second, later
           reinforcement of the one claim Ana flagged as missing from
-          this page, rather than a new claim invented for this spot. */}
-      <section style={{ background: C.gray50, padding: "clamp(28px, 4vw, 40px) 24px" }}>
+          this page, rather than a new claim invented for this spot.
+
+          BACKGROUND SWAPPED 2026-09-10 (Ana: "make the sell photo
+          books, magazines... white bg") — gray50 moves to "Blurb
+          handles everything after the sale" right above instead (see
+          its own note), so the two sections still contrast with each
+          other rather than both going white. */}
+      <section style={{ padding: "clamp(28px, 4vw, 40px) 24px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <CardList
             className="format-heading-fit"
