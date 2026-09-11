@@ -720,6 +720,64 @@ export default function SellLandingV2({ onGo }) {
         </div>
       </section>
 
+      {/* ── Included with every way you sell ──
+          Was "Built-in quality, flexibility, and support" — a heading
+          that describes itself rather than saying what's in the
+          section (Ana: "I don't know what that means"). These three
+          are the CRO brief's own "Overall benefits applicable to all
+          seller tools", so the heading says exactly that now. Padding
+          cut roughly in half (was clamp(56px,7vw,80px), matching the
+          page's heavier hero-adjacent sections) — this one sits
+          between two dense sections and doesn't need that much air.
+
+          Order reshuffled three times in one day (2026-09-10), each
+          time on Ana's own direct instruction rather than a re-read of
+          Figma: first after "Four ways to sell" (matching Figma's own
+          section order), then back before it plus above the selling
+          path table (Ana: "included with every way you sell needs to
+          go above the selling path table"), then explicitly after it
+          again once the table was split into its own section (Ana:
+          "swap the order: 4 ways to sell your books, then included
+          with every way you sell, then the selling path table"), and
+          now first again (Ana: "i think we do included with every way
+          you sell first, then 4 ways to sell") — no reasoning given
+          for reversing again, so not re-litigated here either. */}
+      <section style={{ padding: "clamp(32px, 4vw, 48px) 24px" }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+          <CardList
+            heading="Included with every way you sell"
+            headingAlign="center"
+            layout={{ mobile: 1, tablet: 3, desktop: 3 }}
+          >
+            {QUALITY.map(([icon, title, body]) => (
+              <Card
+                key={title}
+                icon={
+                  <span
+                    className="ms"
+                    aria-hidden
+                    style={{
+                      fontSize: 40, color: C.blue600,
+                      /* "diamond" 2026-09-10 (Ana: "the diamond icon
+                         thickness is too thick compared to the rest of
+                         icons on that page," flagged on ISV2's matching
+                         tile) — same glyph, same fix here for
+                         consistency: dial the variable font's wght axis
+                         down for this one icon rather than the row. */
+                      ...(icon === "diamond" ? { fontVariationSettings: "'wght' 300" } : {}),
+                    }}
+                  >
+                    {icon}
+                  </span>
+                }
+                title={title}
+                description={body}
+              />
+            ))}
+          </CardList>
+        </div>
+      </section>
+
       {/* ── Four ways to sell, and the same four side by side ──
           One section, not two — same reasoning SellerLanding's own
           comment gives: the cards and the table are one question asked
@@ -861,71 +919,21 @@ export default function SellLandingV2({ onGo }) {
         </div>
       </section>
 
-      {/* ── Included with every way you sell ──
-          Was "Built-in quality, flexibility, and support" — a heading
-          that describes itself rather than saying what's in the
-          section (Ana: "I don't know what that means"). These three
-          are the CRO brief's own "Overall benefits applicable to all
-          seller tools", so the heading says exactly that now. Padding
-          cut roughly in half (was clamp(56px,7vw,80px), matching the
-          page's heavier hero-adjacent sections) — this one sits
-          between two dense sections and doesn't need that much air.
-
-          Order reversed a second time 2026-09-10 (Ana: "included with
-          every way you sell needs to go above the selling path table")
-          — back to sitting before "Four ways to sell," reversing the
-          earlier same-day swap that moved it after. That swap was
-          based on a read of Figma's own section order; this reverts to
-          Ana's direct instruction instead of re-litigating which read
-          was right. */}
-      <section style={{ padding: "clamp(32px, 4vw, 48px) 24px" }}>
-        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
-          <CardList
-            heading="Included with every way you sell"
-            headingAlign="center"
-            layout={{ mobile: 1, tablet: 3, desktop: 3 }}
-          >
-            {QUALITY.map(([icon, title, body]) => (
-              <Card
-                key={title}
-                icon={
-                  <span
-                    className="ms"
-                    aria-hidden
-                    style={{
-                      fontSize: 40, color: C.blue600,
-                      /* "diamond" 2026-09-10 (Ana: "the diamond icon
-                         thickness is too thick compared to the rest of
-                         icons on that page," flagged on ISV2's matching
-                         tile) — same glyph, same fix here for
-                         consistency: dial the variable font's wght axis
-                         down for this one icon rather than the row. */
-                      ...(icon === "diamond" ? { fontVariationSettings: "'wght' 300" } : {}),
-                    }}
-                  >
-                    {icon}
-                  </span>
-                }
-                title={title}
-                description={body}
-              />
-            ))}
-          </CardList>
-        </div>
-      </section>
-
       {/* ── Which selling path is right for you? ── split out of the
-          combined "Four ways to sell" section 2026-09-10 (Ana: "swap
-          the order: 4 ways to sell your books, then included with
-          every way you sell, then the selling path table") — the
-          cards and the table used to be one section ("the cards and
-          the table are one question asked twice"); that reasoning
-          stands, but Ana wants "Included with every way you sell"
-          physically between them now, which only a real section
-          break can do. The table's own panel (border, white fill,
-          radius) still gives it a defined edge on its own, so this
-          wrapper stays plain rather than re-adding the colored/bordered
-          treatment the combined section used to carry. */}
+          combined "Four ways to sell" section 2026-09-10, once Ana
+          wanted "Included with every way you sell" to sit as its own
+          section rather than folded into this one — the cards and the
+          table used to be one section ("the cards and the table are
+          one question asked twice"); that reasoning still holds for
+          keeping the table right after the cards, only "Included..."
+          moved out from between them. Which of the three sections
+          comes first has changed several times since (see the comment
+          on "Included with every way you sell" above) — this one has
+          stayed last throughout. The table's own panel (border, white
+          fill, radius) still gives it a defined edge on its own, so
+          this wrapper stays plain rather than re-adding the
+          colored/bordered treatment the combined section used to
+          carry. */}
       <section style={{ padding: "clamp(40px, 5vw, 56px) 24px" }}>
         <div style={{ maxWidth: 1280, margin: "0 auto" }}>
           {/* Own panel, not just a heading dropped on the section's own
