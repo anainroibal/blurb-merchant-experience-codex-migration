@@ -29,14 +29,14 @@ import {
 
    WHAT IT ADDS, and it is one line:
 
-       Selling this? See your Instant Store profit →
+       You can sell this: see what you'd earn →
 
    That is the whole intervention. It obeys the Phase 1 rule — the page
    stays retail-only, and no second number appears on it. The line is
-   self-selecting: a maker reads "selling this?" and moves on, having
-   lost nothing, while a seller recognises themselves. And it hands the
-   CONFIGURATION over, not just the destination, so the calculator opens
-   on the book they were looking at rather than an empty form.
+   self-selecting: a maker reads it and moves on, having lost nothing,
+   while a seller recognises themselves. And it hands the CONFIGURATION
+   over, not just the destination, so the calculator opens on the book
+   they were looking at rather than an empty form.
 
    "See your price" -> "See your Instant Store profit" (2026-09-10, Ana:
    "i'm unsure about this 'Selling this? See your price' ... something
@@ -46,6 +46,10 @@ import {
    signals a different pricing basis is behind the link; "profit" is the
    number that basis actually changes, and matches this page's own doorway
    further down that promises a margin, not just a price.
+
+   "Selling this? See your Instant Store profit" -> "You can sell this:
+   see what you'd earn" (2026-09-11, Ana) — states the fact instead of
+   asking a question, and narrows the link to just "see what you'd earn".
 
    It sits UNDER THE PRICE, not under the buttons (Ana, DES-482 #8). Its
    job is to say that the number above it is not a seller's, so it
@@ -341,15 +345,14 @@ export default function ProductPage({ onGo, seed = null, lean = false }) {
 
                 Still deliberately quiet — body-size text, no panel, no icon,
                 no border. Findable by someone who intends to sell, ignorable
-                by everyone else: a maker who reads "selling this?" and moves
-                on has lost nothing.
+                by everyone else: a maker who reads it and moves on has lost
+                nothing.
 
                 It carries the CONFIGURATION, not just the destination, so the
                 calculator opens on this book rather than an empty form. In
                 the lean scope there is no calculator, so the door leads to
                 the Instant Store page and the words change with it: "see
-                your Instant Store profit" promises a number that version
-                cannot show.
+                what you'd earn" promises a number that version cannot show.
 
                 Extra marginTop added 2026-09-10 (Ana: "this feels a
                 little crammed? maybe it should be below the button?") —
@@ -363,9 +366,20 @@ export default function ProductPage({ onGo, seed = null, lean = false }) {
                 between the price and its own fine print, which are one
                 unit; this line gets extra space on top of that because
                 it's a separate idea qualifying both of them, not a third
-                line in the same breath. */}
+                line in the same breath.
+
+                "Selling this? See your Instant Store profit" -> "You can
+                sell this: see what you'd earn" (2026-09-11, Ana) — states
+                the fact rather than asking a question, and narrows the
+                link to just "see what you'd earn" rather than the whole
+                sentence. Ana's own wording used an em dash ("You can sell
+                this — see..."); swapped for a colon per her standing
+                preference to minimize em dashes in rendered copy, not
+                applied literally here. Lean copy ("Open an Instant
+                Store") is unchanged — she didn't ask about it, and it
+                still fits the new prefix fine. */}
             <div style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.6, marginTop: 10 }}>
-              Selling this?{" "}
+              You can sell this:{" "}
               <button
                 onClick={() =>
                   lean
@@ -376,7 +390,7 @@ export default function ProductPage({ onGo, seed = null, lean = false }) {
                   background: "transparent", border: 0, padding: 0, cursor: "pointer",
                 }}
               >
-                {lean ? "Open an Instant Store" : "See your Instant Store profit"}
+                {lean ? "Open an Instant Store" : "see what you'd earn"}
               </button>
             </div>
             {/* The shared create actions — same component the calculators
