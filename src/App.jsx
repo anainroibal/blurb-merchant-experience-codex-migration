@@ -180,8 +180,18 @@ const VERSIONS = [
    "Shipping Calculator" item is gone too (SiteNav.jsx), and
    InstantStoreV2.jsx's FAQ answer that used to link "shipping page" now
    only links it outside lean, since that page is shared by both scopes
-   and was not otherwise scope-checked anywhere it linked out. */
-const LEAN_STAGES = ["home", "catalog", "product", "pricing", "sellv2", "instantstorev2"];
+   and was not otherwise scope-checked anywhere it linked out.
+
+   `pricing` swapped for `margin` the same day too (Ana: "on min scope,
+   pricing menu should still list pricing calculator; but that page isn't
+   redesigned so remove from the pills at the top. and ADD profit
+   calculator page to the pills") — `pricing` in lean renders PricingToday,
+   not a redesigned page, so it's off the stepper now though its nav item
+   stays (see LEAN_MISSING in SiteNav.jsx, which still disables that one
+   link rather than the stepper hiding it twice over). `margin` has no
+   such caveat — same real Estimator in every scope — so it earns the
+   stepper slot `pricing` gave up. */
+const LEAN_STAGES = ["home", "catalog", "product", "margin", "sellv2", "instantstorev2"];
 
 const stagesFor = version =>
   version === "lean" ? STAGES.filter(s => LEAN_STAGES.includes(s.id)) : STAGES;

@@ -332,15 +332,19 @@ const LEAN_NAV = [
 
   { label: "Pricing", href: "/pricing", columns: [
     { heading: "Pricing", items: [
-      /* "Pricing Calculator" removed, "Profit Calculator" added
-         (2026-09-11, Ana: "add Profit calculator from Minimum scope too
-         and remove Pricing page") — the old item pointed at stage
-         `pricing`, which in this scope renders PricingToday, a static
-         price list rather than the calculator the label promised; it
-         was disabled via LEAN_MISSING below rather than fixed, so the
-         link did nothing when clicked. "Profit Calculator" has no such
-         problem: stage `margin` is the exact same interactive Estimator
-         in every scope, so it's a real, working link. */
+      /* "Pricing Calculator" briefly removed and replaced with "Profit
+         Calculator" (2026-09-11) — reversed the same day (Ana: "oh no...
+         pricing menu should still list pricing calculator; but that page
+         isn't redesigned so remove from the pills at the top. and ADD
+         profit calculator page to the pills"): the swap belonged on the
+         demo bar's own stepper (LEAN_STAGES in App.jsx), not this menu.
+         Both items sit here now — "Pricing Calculator" stays disabled
+         via LEAN_MISSING below (stage `pricing` renders PricingToday in
+         this scope, not the calculator the label promises, same as
+         always), while "Profit Calculator" is a real, working link:
+         stage `margin` is the identical interactive Estimator in every
+         scope. */
+      ["Pricing Calculator", null, null, "pricing"],
       ["Profit Calculator", null, null, "margin"],
       /* "Shipping Calculator" removed 2026-09-11 (Ana: "remove shipping
          page from minimum effort") — stage `shipping` dropped from
@@ -564,15 +568,16 @@ const chunk = (arr, size) =>
    "getstarted" has no lean equivalent at all (Home.jsx's own CTA remaps
    it to "catalog" in lean rather than opening it).
 
-   "pricing" and "margin" removed 2026-09-11, once the one nav item citing
-   "pricing" (a "Pricing Calculator" link that this list was disabling)
-   was replaced with "Profit Calculator" pointing at "margin" instead
-   (Ana: "add Profit calculator from Minimum scope too and remove Pricing
-   page"). Nothing in LEAN_NAV points at "pricing" any more, and "margin"
-   never belonged here regardless — Estimator.jsx has no lean/recommended
-   branching, so stage `margin` is the identical real calculator in both
-   scopes. */
-const LEAN_MISSING = ["getstarted"];
+   "pricing" briefly left this list on 2026-09-11 when "Pricing
+   Calculator" was pulled from LEAN_NAV entirely; both reversed the same
+   day (Ana: "pricing menu should still list pricing calculator") — the
+   item is back above, so it needs disabling again, for the same reason
+   as always: stage `pricing` renders PricingToday in this scope, not the
+   calculator the label promises. "margin" was never added here —
+   Estimator.jsx has no lean/recommended branching, so stage `margin` is
+   the identical real calculator in both scopes, and it's now a real
+   LEAN_STAGES stepper entry too (App.jsx). */
+const LEAN_MISSING = ["getstarted", "pricing"];
 const reachable = (stage, lean) => (lean && LEAN_MISSING.includes(stage) ? null : stage);
 
 function MenuLink({ item, onClose, onGo, lean }) {
