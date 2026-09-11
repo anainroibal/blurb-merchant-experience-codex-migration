@@ -1467,6 +1467,34 @@ export default function InstantStoreV2({ onGo }) {
             Costs vary by format, size, and page count. Unlike many print-on-demand companies, none
             of the options above charge extra processing, platform, or subscription fees.
           </p>
+
+          {/* Added 2026-09-10 (Ana: "link the sell overview page from the
+              reduced scope too") — this page is reachable in the reduced
+              ("Minimum effort") scope, but the profit calculator's own
+              "Compare all selling options" doorway to Sell Overview isn't:
+              the reduced scope's PDP line and the two banner instances
+              (PricingToday.jsx, ShippingPage.jsx) all route straight here
+              rather than through the calculator, so a reduced-scope reader
+              could land on this page and never see that link. This table
+              only prices profit, which is also a real reason to point
+              onward: Sell Overview's own table compares setup, fulfillment
+              and packaging too. Same link text as the calculator's, for
+              the same destination. */}
+          {onGo && (
+            <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle }}>
+              This table compares profit only.{" "}
+              <button
+                onClick={() => onGo("sellv2")}
+                style={{
+                  font: "inherit", color: T.textBrand, textDecoration: "underline",
+                  background: "transparent", border: 0, padding: 0, cursor: "pointer",
+                }}
+              >
+                Compare all selling options
+              </button>{" "}
+              to see setup, fulfillment, and packaging too.
+            </p>
+          )}
         </div>
       </section>
 
