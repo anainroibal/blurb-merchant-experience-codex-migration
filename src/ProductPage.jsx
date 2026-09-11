@@ -349,8 +349,22 @@ export default function ProductPage({ onGo, seed = null, lean = false }) {
                 the lean scope there is no calculator, so the door leads to
                 the Instant Store page and the words change with it: "see
                 your Instant Store profit" promises a number that version
-                cannot show. */}
-            <div style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.6 }}>
+                cannot show.
+
+                Extra marginTop added 2026-09-10 (Ana: "this feels a
+                little crammed? maybe it should be below the button?") —
+                the CTA text got longer ("see your Instant Store profit"
+                vs. the old "see your price"), so this line, the price and
+                its fine print read as three tight lines fighting the
+                buttons below. Kept above the buttons rather than moved
+                below: that's still the DES-482 #8 reasoning (it would
+                read as a fourth CTA down there), so the fix is more room,
+                not a new position. The 6px grid gap above stays tight
+                between the price and its own fine print, which are one
+                unit; this line gets extra space on top of that because
+                it's a separate idea qualifying both of them, not a third
+                line in the same breath. */}
+            <div style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.6, marginTop: 10 }}>
               Selling this?{" "}
               <button
                 onClick={() =>
