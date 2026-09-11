@@ -216,7 +216,27 @@ function InlineSelect({ value, options, onChange }) {
    reads as a price anyway. A bulk run is quoted by a person, not priced by
    this page, so the page's job is to name what they're making and get them
    to that person — the way blurb.com/large-order-services itself opens
-   with "Get a Quote", not a calculator. */
+   with "Get a Quote", not a calculator.
+
+   "Large Order Services" -> "Bulk Printing Services" (2026-09-11, Ana:
+   "change this, it's Bulk Printing Services") — matches the name Sell
+   Overview's own card uses (SellLandingV2.jsx's `SELL_PATHS`), which
+   SiteNav.jsx already renamed the same way for its own listings. The
+   destination URL is unchanged (blurb.com's own page is still at
+   /large-order-services) — same pattern as every other rename in this
+   app, copy only.
+
+   Body also reworded per Ana's "review the copy with the value props
+   from the sell overview page and elsewhere": pulled the three ticks
+   Sell Overview's own Bulk Printing Services card uses verbatim
+   ("Concierge service, start to finish", "Dropshipping to multiple
+   addresses", "Custom quotes tailored to your project") rather than the
+   unsourced "gets back to you within two business days" turnaround
+   claim, which isn't stated anywhere else in this app and reads like a
+   number nobody actually confirmed.
+
+   Button: "Get a Quote" -> "Get a custom quote" (Ana), matching Sell
+   Overview's own button label exactly rather than a shortened version. */
 function BulkQuotePanel({ kindLabel, formatLabel }) {
   const what = kindLabel || formatLabel
     ? ` for your ${(kindLabel || formatLabel).toLowerCase()}`
@@ -236,9 +256,9 @@ function BulkQuotePanel({ kindLabel, formatLabel }) {
             Your partner in print
           </div>
           <p style={{ fontSize: TYPE.lg, lineHeight: 1.65, color: T.textNeutral, margin: "10px 0 0", maxWidth: 680 }}>
-            A run of 100 copies or more{what} is quoted by a person, not this calculator. Large Order
-            Services' dedicated team prices the run and arranges delivery in bulk, and gets back to you
-            within two business days.
+            A run of 100 copies or more{what} is priced by Bulk Printing Services, not this calculator.
+            Their dedicated team offers concierge service from quote to delivery, with dropshipping to
+            multiple addresses and a custom quote tailored to your project.
           </p>
         </div>
         <a
@@ -252,7 +272,7 @@ function BulkQuotePanel({ kindLabel, formatLabel }) {
             display: "inline-flex", alignItems: "center", textDecoration: "none",
           }}
         >
-          Get a Quote
+          Get a custom quote
         </a>
       </div>
     </div>
