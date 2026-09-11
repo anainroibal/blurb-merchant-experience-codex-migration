@@ -173,8 +173,15 @@ const VERSIONS = [
    carries. Home.jsx's own Selling tab still named `seller` as its
    destination regardless of scope, so its CTA now remaps to
    `instantstorev2` in lean, the same way its Printing tab already remaps
-   `getstarted` to `catalog`. */
-const LEAN_STAGES = ["home", "catalog", "product", "pricing", "shipping", "sellv2", "instantstorev2"];
+   `getstarted` to `catalog`.
+
+   `shipping` removed the same day (Ana: "remove shipping page from
+   minimum effort"). Same follow-through as `seller`: LEAN_NAV's own
+   "Shipping Calculator" item is gone too (SiteNav.jsx), and
+   InstantStoreV2.jsx's FAQ answer that used to link "shipping page" now
+   only links it outside lean, since that page is shared by both scopes
+   and was not otherwise scope-checked anywhere it linked out. */
+const LEAN_STAGES = ["home", "catalog", "product", "pricing", "sellv2", "instantstorev2"];
 
 const stagesFor = version =>
   version === "lean" ? STAGES.filter(s => LEAN_STAGES.includes(s.id)) : STAGES;
@@ -465,7 +472,7 @@ export default function App() {
         )}
         {stage === "seller"     && <SellerLanding onGo={go} lean={lean} />}
         {stage === "sellv2"     && <SellLandingV2 onGo={go} />}
-        {stage === "instantstorev2" && <InstantStoreV2 onGo={go} />}
+        {stage === "instantstorev2" && <InstantStoreV2 onGo={go} lean={lean} />}
         {/* ── Two versions of this page, chosen by scope ──
             RECOMMENDED replaces /pricing with the calculator. LEAN keeps
             the page as it is today, tables and all, and adds one Instant

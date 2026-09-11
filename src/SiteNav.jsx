@@ -342,7 +342,10 @@ const LEAN_NAV = [
          problem: stage `margin` is the exact same interactive Estimator
          in every scope, so it's a real, working link. */
       ["Profit Calculator", null, null, "margin"],
-      ["Shipping Calculator", null, null, "shipping"],
+      /* "Shipping Calculator" removed 2026-09-11 (Ana: "remove shipping
+         page from minimum effort") — stage `shipping` dropped from
+         App.jsx's LEAN_STAGES the same day, so this item would have kept
+         a working link open to a page this scope no longer offers. */
     ]},
   ]},
 

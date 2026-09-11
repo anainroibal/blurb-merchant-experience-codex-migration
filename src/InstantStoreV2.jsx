@@ -794,8 +794,14 @@ const FEATURE_ICONS = {
    - "Can I turn my Instant Store link off?" dropped too (Ana) — down
      to 13 questions, then 11.
    - "How do I share my Instant Store?" dropped (Ana) — down to 10;
-     "Share anywhere" in the FEATURES grid above already answers it. */
-const FAQS = onGo => [
+     "Share anywhere" in the FEATURES grid above already answers it.
+
+   `lean` added 2026-09-11 once "shipping" left the minimum-effort scope
+   (Ana: "remove shipping page from minimum effort") — this page itself
+   is shared by both scopes, so the international-shipping answer below
+   only links "shipping page" outside lean; in lean it's plain text,
+   since there's nowhere for it to go. */
+const FAQS = (onGo, lean) => [
   ["How do I set up an online store for my book?",
    "Open the Instant Store page from your dashboard, choose the project you want to sell, and set your listing details and price. You can preview your page before it goes live, and there's no separate sign-up."],
   ["How much does Blurb take from each sale?",
@@ -811,9 +817,11 @@ const FAQS = onGo => [
   ["Can I sell books to readers internationally?",
    <>
      Yes. Your Instant Store link works for any buyer, and each order prints at the facility nearest them. See our{" "}
-     <a href="#" onClick={e => { e.preventDefault(); onGo?.("shipping"); }} style={{ color: C.blue600, textDecoration: "underline" }}>
-       shipping page
-     </a>{" "}
+     {lean ? "shipping page" : (
+       <a href="#" onClick={e => { e.preventDefault(); onGo?.("shipping"); }} style={{ color: C.blue600, textDecoration: "underline" }}>
+         shipping page
+       </a>
+     )}{" "}
      for delivery times and rates by country.
    </>],
   ["Is Instant Store pricing also available if I sell through the Blurb Bookstore, Amazon, or Ingram?",
@@ -834,7 +842,7 @@ const FAQS = onGo => [
    "No. Your Instant Store link is for direct-to-consumer sales to your buyers, the ones your listing price and profit are built around. Order copies for yourself separately, at Blurb retail pricing."],
 ];
 
-export default function InstantStoreV2({ onGo }) {
+export default function InstantStoreV2({ onGo, lean }) {
   return (
     <div style={{ fontFamily: FONT_BODY, color: C.gray950 }}>
 
@@ -1625,7 +1633,7 @@ export default function InstantStoreV2({ onGo }) {
         </div>
       </section>
 
-      <Faq heading={<>Your Blurb Instant Store<br />questions, answered</>} items={FAQS(onGo)} />
+      <Faq heading={<>Your Blurb Instant Store<br />questions, answered</>} items={FAQS(onGo, lean)} />
 
       {/* ── Close ── */}
       <section
