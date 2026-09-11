@@ -449,8 +449,19 @@ export const channelBlockedBecause = (channelId, formatId, sel) => {
   return rule && !rule.ok(formatId, sel) ? rule.why : null;
 };
 
-export const ROUTES = ["sell", "keep", "distribute"];
-export const USES = ["keepsake", "display", "gift"];
+/* "gift" promoted from a `use` (a sub-question under "keep") to a route
+   of its own (2026-09-11, Ana: "add 'to gift' to the 'to' dropdown...
+   and remove the 'what for' pills") — the "What for?" chip row under
+   Keep (keepsake / display / gift) is gone from GetStarted.jsx, and
+   "display" isn't offered anywhere else, so it has no path back in
+   right now. `formatsFor` and `seedFor` both already keyed off route and
+   use the same way (`route === "keep" ? use : route`), so a route named
+   "gift" reaches the exact intention filter and INTENT_TUNING entry the
+   old use value did — nothing in either function needed to change to
+   let a fourth route through the same door "sell" and "distribute"
+   already use. */
+export const ROUTES = ["sell", "keep", "gift", "distribute"];
+export const USES = ["keepsake", "gift"];
 
 /* Where the self-serve quantity ladder ends and Large Order Services
    begins — ProductList 2025's last rung reads "100+ Books – blurb.com".

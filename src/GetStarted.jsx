@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import { RadioCard, RadioCardGroup } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.js";
 import Configurator from "./Configurator.jsx";
 import CreateActions from "./CreateActions.jsx";
@@ -37,9 +36,9 @@ import {
    theirs — the guardrail comes free.
    ──────────────────────────────────────────────────────────────── */
 
-/* ── The three routes ──
+/* ── The routes ──
    One question — where do the copies end up, and who pays? — asked once.
-   Three plain labels (Ana, 2026-09-01; the static "to" now lives in the
+   Plain labels (Ana, 2026-09-01; the static "to" now lives in the
    heading itself, not the option), each of which changes what the page
    DOES: which products are offered, what the calculator computes, and
    what the foot of the page hands off to.
@@ -50,22 +49,31 @@ import {
 
    Reordered 2026-09-11 (Ana: "make to keep the default, then to sell,
    then bulk printing") — Keep, Sell, Buy in bulk, matching the order the
-   default itself now follows (see the `route` state below). */
+   default itself now follows (see the `route` state below).
+
+   "Gift" promoted from a `use` (a chip under "to Keep") to a route of
+   its own the same day (Ana: "add 'to gift' to the 'to' dropdown... and
+   remove the 'what for' pills"), placed right under Keep as asked.
+   `formatsFor` and `seedFor` (catalog.js) already treat route and use as
+   the same kind of key when route isn't "sell" or "distribute", so
+   "gift" reaches the exact filter and INTENT_TUNING entry the old use
+   value did — see `intentOf` below. Keep's own hint dropped "or give",
+   now that giving is its own answer rather than a footnote on this one. */
 const ROUTES = [
-  { id: "keep",       label: "Keep",         hint: "For yourself — to hold on to, display or give" },
+  { id: "keep",       label: "Keep",         hint: "For yourself — to hold on to or display" },
+  { id: "gift",       label: "Gift",         hint: "For someone else, picked out as a gift" },
   { id: "sell",       label: "Sell",         hint: "People buy it from you, one copy at a time" },
   { id: "distribute", label: "Buy in bulk",  hint: "Then sell or hand them out yourself" },
 ];
 
-/* ── And, under "to Keep" only, what it is for ──
-   These change what we RECOMMEND — cover, paper — and nothing else, so
-   they sit a level down as chips rather than competing with the routes.
-   Keepsake stays the default, as it is on the live page. */
-const USES = [
-  { id: "keepsake", label: "for a keepsake" },
-  { id: "display",  label: "to display" },
-  { id: "gift",     label: "to give as a gift" },
-];
+/* The intention `formatsFor`/`seedFor` actually key on: "gift" passes
+   straight through as its own intention (same as "sell" and
+   "distribute" always have), "keep" still means the base case,
+   "keepsake", now that there's no chip left to ask anything narrower.
+   Named to match `seedFor`'s own `route === "keep" ? use : route`
+   derivation, since this is that same rule, computed for a route that
+   isn't necessarily the current one yet (see `changeRoute`). */
+const intentOf = route => (route === "keep" ? "keepsake" : route);
 
 /* "Project" is the unset state, exactly as the live page shows it. What
    follows is what you are MAKING, not what we print — see PROJECT_KINDS.
@@ -305,7 +313,11 @@ export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSe
      from "I'm making something" must not re-ask the question in the headline
      with a different answer showing. */
   const [route, setRoute] = useState(initialRoute ?? "keep");
-  const [use, setUse] = useState("keepsake");
+  /* No longer its own state (2026-09-11, Ana: "remove the 'what for'
+     pills") — there's nothing left to set it with, since "gift" is a
+     route of its own now and "display" has nowhere to go. Derived from
+     `route` instead; see `intentOf`. */
+  const use = intentOf(route);
   const [state, setState] = useState(null);
   const [sellPrice, setSellPrice] = useState(24);
   /* What they said they are making. It survives changing the product type,
@@ -326,7 +338,7 @@ export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSe
   /* Choosing a kind seeds a whole specification, not just a format, so the
      calculator shows a real number straight away. Nothing is locked — every
      step below can still be changed. */
-  const changeKind = (id, forRoute = route, forUse = use) => {
+  const changeKind = (id, forRoute = route, forUse = intentOf(forRoute)) => {
     setKind(id);
     if (!id) { setFormat(null); setState(null); setWhy(null); setRecommended(null); return; }
     const seed = seedFor(id, forRoute, forUse);
@@ -357,19 +369,13 @@ export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSe
      handed out in a box. */
   const changeRoute = id => {
     setRoute(id);
-    if (kind) { changeKind(kind, id, use); return; }
+    if (kind) { changeKind(kind, id, intentOf(id)); return; }
     /* Every product leads to the same quote prompt under "Buy in bulk" —
        there's nothing here for a format choice to change — so pick one
        rather than making someone click a card to reach a panel that
        doesn't depend on which one they picked (Anain, 2026-09-01). */
     if (id === "distribute" && !format) { changeFormat("photo"); return; }
-    if (format && !formatsFor(id, use).includes(format)) changeFormat(null);
-  };
-
-  const changeUse = id => {
-    setUse(id);
-    if (kind) { changeKind(kind, route, id); return; }
-    if (format && !formatsFor(route, id).includes(format)) changeFormat(null);
+    if (format && !formatsFor(id, intentOf(id)).includes(format)) changeFormat(null);
   };
 
   /* A product page hands over the WHOLE configuration, not just the family.
@@ -381,10 +387,11 @@ export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSe
   useEffect(() => {
     if (!initialSeed?.formatId) return;
     const id = initialSeed.formatId;
-    if (!formatsFor(initialRoute ?? "keep", use).includes(id)) return;
+    const r = initialRoute ?? "keep";
+    if (!formatsFor(r, intentOf(r)).includes(id)) return;
     const next = { ...defaultSelection(id), ...initialSeed.sel };
     setFormat(id);
-    setState({ ...next, qty: (initialRoute ?? "keep") === "distribute" ? BULK_MIN : next.qty });
+    setState({ ...next, qty: r === "distribute" ? BULK_MIN : next.qty });
     priceFrom(id, next);
   }, []);
 
@@ -415,51 +422,11 @@ export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSe
           <InlineSelect value={route} options={ROUTES} onChange={changeRoute} />
         </h1>
 
-        {/* One level down, one branch only. Chips rather than a second
-            dropdown: this refines the recommendation, it does not change
-            the page, and it should not look like it might. */}
-        {route === "keep" && (
-          <div className="fade-in" style={{
-            display: "flex", justifyContent: "center", alignItems: "center",
-            gap: 8, flexWrap: "wrap", marginTop: 22,
-          }}>
-            <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>What for?</span>
-            <RadioCardGroup
-              value={use}
-              onValueChange={changeUse}
-              aria-label="What for?"
-              style={{ display: "flex", gap: 8, flexWrap: "wrap" }}
-            >
-              {USES.map(u => {
-                const on = use === u.id;
-                return (
-                  <RadioCard
-                    key={u.id}
-                    value={u.id}
-                    style={{
-                      /* RadioCard's own .card is width: 100% by default —
-                         right for a full-width row, wrong for a pill, which
-                         would otherwise fill the flex row and wrap onto its
-                         own line every time. */
-                      width: "auto",
-                      padding: "7px 16px", borderRadius: 999, fontFamily: FONT_BODY, fontSize: TYPE.base,
-                      background: on ? T.bgAccentSubtle : T.bgNeutral,
-                      color: on ? T.textBrand : T.textSubtle,
-                      border: on ? `1px solid ${T.borderBrand}` : `1px solid ${T.border}`,
-                      fontWeight: on ? 700 : 400,
-                      /* Border is fully driven by `on` above, not RadioCard's
-                         own checked state, so its own ring overlay is
-                         switched off rather than doubling up outside it. */
-                      "--codex-color-semantic-border-link-active": "transparent",
-                    }}
-                  >
-                    {u.label}
-                  </RadioCard>
-                );
-              })}
-            </RadioCardGroup>
-          </div>
-        )}
+        {/* The "What for?" chip row under "to Keep" (keepsake / display /
+            gift) is gone (2026-09-11, Ana: "remove the 'what for' pills")
+            — "gift" is a route of its own now (see ROUTES above), so
+            there's nothing left this row would be asking beyond what the
+            heading already answers. */}
       </section>
 
       {/* ── The product, first ──
