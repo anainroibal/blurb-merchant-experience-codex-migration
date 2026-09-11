@@ -113,7 +113,7 @@ const SELL_PATHS = [
     id: "link", name: "Instant Store", icon: "storefront", isNew: true,
     illus: "/assets/illustrations/way-instant-store.png",
     bestFor: "Getting started fast",
-    line: "Sell directly to your audience in minutes with a product page that fully showcases your book. No extra fees, no tech skills required.",
+    line: "Sell directly to your audience in minutes with a product page that fully showcases your book.",
     /* Down to 3 ticks (Ana). First tick turned into a real margin claim
        (Ana: "help turn the 70% lower print cost into a margin claim...
        compare it to amazon"), calculated rather than guessed: same
@@ -138,16 +138,21 @@ const SELL_PATHS = [
        what's clickable.
 
        "than selling through Amazon" -> "than selling through our
-       retail distribution channels" (Ana) broadens the comparison from
-       Amazon specifically to the whole Retail Distribution card
-       (Amazon, Ingram, Blurb Bookstore) — worth flagging that the 3.2x
-       figure above is Amazon's math only. Blurb Bookstore's own numbers
-       in the "Keep more of what you earn" table ($32.50 vs $19.00) work
-       out to about 1.7x, not 3x, since it charges no commission the way
-       Amazon does; Ingram isn't costed anywhere in this app at all. The
-       claim as worded now overstates the Bookstore/Ingram case. */
+       retail distribution channels" (Ana) broadened the comparison from
+       Amazon specifically to the whole Retail Distribution card, then
+       Ana settled the benchmark to the Blurb Bookstore alone (matching
+       the same call made on the ISV2 lede) — its own numbers in the
+       "See how the Blurb Instant Store compares" table ($80 listing,
+       $27.90 print cost, no commission) come out to ~3.03x against
+       Blurb Bookstore, which is where the "up to 3x" figure now points;
+       Amazon's math above is no longer what this line claims. Ana also
+       narrowed the clickable span to just "3x more profit" rather than
+       "Up to 3x more profit" — the shared tick renderer had no slot for
+       plain text before the link (only `text`, linked, then `suffix`,
+       trailing), so it now also takes a `prefix` (plain, before the
+       link) instead of folding this into a one-off `node`. */
     ticks: [
-      { text: "Up to 3x more profit", suffix: " than selling through our retail distribution channels", linkStage: "margin" },
+      { key: "profit", prefix: "Up to ", text: "3x more profit", suffix: " than selling through the Blurb bookstore", linkStage: "margin" },
       "No subscription, no additional fees",
       "One link to share, no store required",
     ],
@@ -817,8 +822,8 @@ export default function SellLandingV2({ onGo }) {
                     of the ringed variant. */}
                 <ul style={{ display: "grid", gap: 6, margin: 0, padding: 0, listStyle: "none", width: "100%" }}>
                   {card.ticks.map(tick => {
-                    const { text, linkStage, suffix, node, key } =
-                      typeof tick === "string" ? { text: tick, linkStage: null, suffix: "", node: null, key: tick } : tick;
+                    const { text, linkStage, prefix, suffix, node, key } =
+                      typeof tick === "string" ? { text: tick, linkStage: null, prefix: "", suffix: "", node: null, key: tick } : tick;
                     return (
                       <li key={key || text} style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
                         <span className="ms" aria-hidden style={{ fontSize: 18, color: "var(--codex-color-semantic-text-bold)", flex: "0 0 auto", lineHeight: "var(--codex-font-line-height-snug)" }}>
@@ -827,6 +832,7 @@ export default function SellLandingV2({ onGo }) {
                         <span style={{ fontSize: TYPE.sm, color: "var(--codex-color-semantic-text-bold)", lineHeight: 1.4 }}>
                           {node ? node : (
                             <>
+                              {prefix}
                               {linkStage ? (
                                 <a
                                   href="#"
