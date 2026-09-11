@@ -332,7 +332,16 @@ const LEAN_NAV = [
 
   { label: "Pricing", href: "/pricing", columns: [
     { heading: "Pricing", items: [
-      ["Pricing Calculator", null, null, "pricing"],
+      /* "Pricing Calculator" removed, "Profit Calculator" added
+         (2026-09-11, Ana: "add Profit calculator from Minimum scope too
+         and remove Pricing page") — the old item pointed at stage
+         `pricing`, which in this scope renders PricingToday, a static
+         price list rather than the calculator the label promised; it
+         was disabled via LEAN_MISSING below rather than fixed, so the
+         link did nothing when clicked. "Profit Calculator" has no such
+         problem: stage `margin` is the exact same interactive Estimator
+         in every scope, so it's a real, working link. */
+      ["Profit Calculator", null, null, "margin"],
       ["Shipping Calculator", null, null, "shipping"],
     ]},
   ]},
@@ -547,8 +556,20 @@ const chunk = (arr, size) =>
    100 copies, and the line under it does. */
 /* The screens the minimum-effort scope does not build. A nav item pointing
    at one of them is still the right nav item — those pages exist on
-   blurb.com — it just has nothing to open here. */
-const LEAN_MISSING = ["getstarted", "pricing", "margin"];
+   blurb.com — it just has nothing to open here.
+
+   "getstarted" has no lean equivalent at all (Home.jsx's own CTA remaps
+   it to "catalog" in lean rather than opening it).
+
+   "pricing" and "margin" removed 2026-09-11, once the one nav item citing
+   "pricing" (a "Pricing Calculator" link that this list was disabling)
+   was replaced with "Profit Calculator" pointing at "margin" instead
+   (Ana: "add Profit calculator from Minimum scope too and remove Pricing
+   page"). Nothing in LEAN_NAV points at "pricing" any more, and "margin"
+   never belonged here regardless — Estimator.jsx has no lean/recommended
+   branching, so stage `margin` is the identical real calculator in both
+   scopes. */
+const LEAN_MISSING = ["getstarted"];
 const reachable = (stage, lean) => (lean && LEAN_MISSING.includes(stage) ? null : stage);
 
 function MenuLink({ item, onClose, onGo, lean }) {
