@@ -46,10 +46,14 @@ import {
 
    "Buy in bulk" is the one that is not self-evident, and it is easily
    misread as a distribution service like Ingram — which is the opposite,
-   and lives under Sell. Hence the gloss. */
+   and lives under Sell. Hence the gloss.
+
+   Reordered 2026-09-11 (Ana: "make to keep the default, then to sell,
+   then bulk printing") — Keep, Sell, Buy in bulk, matching the order the
+   default itself now follows (see the `route` state below). */
 const ROUTES = [
-  { id: "sell",       label: "Sell",         hint: "People buy it from you, one copy at a time" },
   { id: "keep",       label: "Keep",         hint: "For yourself — to hold on to, display or give" },
+  { id: "sell",       label: "Sell",         hint: "People buy it from you, one copy at a time" },
   { id: "distribute", label: "Buy in bulk",  hint: "Then sell or hand them out yourself" },
 ];
 
@@ -290,14 +294,17 @@ export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSe
   const [ship, setShip] = useState({
     country: "US", postal: "", state: "California", speed: "economy", poBox: false, show: false,
   });
-  /* Defaults to Project + to Sell. Note this is a prototype default, chosen so
-     reviewers land on the selling path — not a recommendation for production,
-     where keepsake is the live default and most traffic is makers.
+  /* Defaulted to Project + to Sell, chosen so reviewers landed on the
+     selling path — explicitly NOT a recommendation for production, where
+     keepsake is the live default and most traffic is makers. Switched to
+     "keep" 2026-09-11 (Ana: "make to keep the default, then to sell, then
+     bulk printing"), which brings the prototype's own default in line
+     with that production reality rather than favoring the review.
 
      initialRoute is what a lane on the home page already answered. Arriving
      from "I'm making something" must not re-ask the question in the headline
      with a different answer showing. */
-  const [route, setRoute] = useState(initialRoute ?? "sell");
+  const [route, setRoute] = useState(initialRoute ?? "keep");
   const [use, setUse] = useState("keepsake");
   const [state, setState] = useState(null);
   const [sellPrice, setSellPrice] = useState(24);
@@ -374,10 +381,10 @@ export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSe
   useEffect(() => {
     if (!initialSeed?.formatId) return;
     const id = initialSeed.formatId;
-    if (!formatsFor(initialRoute ?? "sell", use).includes(id)) return;
+    if (!formatsFor(initialRoute ?? "keep", use).includes(id)) return;
     const next = { ...defaultSelection(id), ...initialSeed.sel };
     setFormat(id);
-    setState({ ...next, qty: (initialRoute ?? "sell") === "distribute" ? BULK_MIN : next.qty });
+    setState({ ...next, qty: (initialRoute ?? "keep") === "distribute" ? BULK_MIN : next.qty });
     priceFrom(id, next);
   }, []);
 
