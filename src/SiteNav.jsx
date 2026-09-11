@@ -351,6 +351,15 @@ const LEAN_NAV = [
          the new 6th slot, `href`, opened in a new tab like every other
          real external link in this app. */
       ["All Design Tools", null, null, null, null, "https://www.blurb.com/bookmaking-tools"],
+      /* Added 2026-09-11 (Ana: "Add Online editor to the Design Tools
+         minimum effort nav") — the tool CreateActions.jsx already treats
+         as primary wherever it exists (`hasTool(formatId, "online")`,
+         "Create online"), and the full NAV's own Creation Tools menu
+         already lists it ("Blurb online editor"). No stage here, same
+         as its siblings — no online-editor page is built in this
+         prototype, only the "Create online" action inside the
+         calculators and the PDP. */
+      ["Online Editor"],
       ["BookWright"],
       ["Adobe Tools"],
       ["PDF to Book"],
