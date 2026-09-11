@@ -170,6 +170,12 @@ export default function Home({ onGo, lean }) {
      the live site, it is where "start something" actually begins today, and
      the lean version changes it anyway. */
   const start = lean ? "catalog" : "getstarted";
+  /* Same remap, for the Selling tab's own CTA (2026-09-11, Ana: "remove
+     self-publish page from minimum effort") — `seller` (v1) is gone from
+     that scope's demo bar, so this tab now hands off to the Instant Store
+     page instead when lean, the same doorway the tab's own copy already
+     leads with ("New: sell it yourself with an Instant Store"). */
+  const sell = lean ? "instantstorev2" : "seller";
   /* Selling opens first here. On the live page Book creation does, which is
      the right production default; this prototype is about the seller, and
      the Instant Store is the thing being shown. */
@@ -309,7 +315,11 @@ export default function Home({ onGo, lean }) {
           </p>
 
           {active.stage
-            ? <Button onClick={() => onGo(active.stage === "getstarted" ? start : active.stage)}>{active.cta}</Button>
+            ? <Button onClick={() => onGo(
+                active.stage === "getstarted" ? start :
+                active.stage === "seller" ? sell :
+                active.stage
+              )}>{active.cta}</Button>
             : <Button as="a" href={active.href} target="_blank">{active.cta}</Button>}
 
           <img

@@ -165,9 +165,16 @@ const VERSIONS = [
    `sellv2` added 2026-09-10 (Ana: "make sure Sell overview page is
    linked on both the recommended scope and the minimum scope") —
    supersedes the note above assuming `seller` (v1) alone covered the
-   minimum-effort Sell page; both are reachable from the demo bar now,
-   in both scopes. */
-const LEAN_STAGES = ["home", "catalog", "product", "pricing", "shipping", "seller", "sellv2", "instantstorev2"];
+   minimum-effort Sell page; both were reachable from the demo bar for a
+   day.
+
+   `seller` (v1) removed again 2026-09-11 (Ana: "remove self-publish page
+   from minimum effort") — `sellv2` is now the only Sell page this scope
+   carries. Home.jsx's own Selling tab still named `seller` as its
+   destination regardless of scope, so its CTA now remaps to
+   `instantstorev2` in lean, the same way its Printing tab already remaps
+   `getstarted` to `catalog`. */
+const LEAN_STAGES = ["home", "catalog", "product", "pricing", "shipping", "sellv2", "instantstorev2"];
 
 const stagesFor = version =>
   version === "lean" ? STAGES.filter(s => LEAN_STAGES.includes(s.id)) : STAGES;
