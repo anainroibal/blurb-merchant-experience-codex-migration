@@ -109,6 +109,23 @@ const STAGES = [
   { id: "shipping",   short: "Shipping",     label: "/shipping — informational, now that both calculators price delivery" },
 ];
 
+/* Per-stage <title>/meta-description overrides. Nothing wired this up
+   before (index.html carries one static <title> and no <meta
+   name="description"> at all — there's no router, just `stage` state), so
+   this is the first stage to get one: Ana handed over the exact SEO copy
+   for Sell Overview (the same meta title/description already sitting in
+   "Seller Hub Landing Page SEO Optimized Copy Doc.docx"). Left as a map
+   rather than hardcoding it in SellLandingV2 so the next page that gets
+   real SEO copy just adds an entry. Stages with no entry fall back to
+   index.html's own defaults in the effect below. */
+const PAGE_META = {
+  sellv2: {
+    title: "Sell Books Online | Blurb",
+    description: "Choose print-on-demand selling, global book distribution, or bulk printing to sell your books online with Blurb — no inventory, no upfront cost.",
+  },
+};
+const DEFAULT_TITLE = "Blurb — Merchant Experience";
+
 /* ────────────────────────────────────────────────────────────────
    TWO VERSIONS OF THE SAME PROPOSAL (2026-08-24)
 
@@ -365,6 +382,24 @@ export default function App() {
      more disorienting than simply being there. */
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [stage]);
+
+  /* <title> and meta description, per stage. No router to hang this off
+     of, so it's plain DOM: set/restore the title, and create the <meta
+     name="description"> tag the first time a stage needs one (index.html
+     ships without one) rather than assuming it exists. */
+  useEffect(() => {
+    const meta = PAGE_META[stage];
+    document.title = meta?.title || DEFAULT_TITLE;
+    if (meta?.description) {
+      let tag = document.querySelector('meta[name="description"]');
+      if (!tag) {
+        tag = document.createElement("meta");
+        tag.setAttribute("name", "description");
+        document.head.appendChild(tag);
+      }
+      tag.setAttribute("content", meta.description);
+    }
   }, [stage]);
 
   /* ── How tall the sticky header is, published as --nav-h ──
