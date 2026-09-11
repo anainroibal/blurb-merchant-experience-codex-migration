@@ -531,8 +531,16 @@ const STEPS = [
      considered: rename the pricing term instead; Ana picked naming the
      channels here, which is also just more concrete). Same "up to"
      qualifier as before, so the claim still only has to hold for the
-     best case (Amazon, at 3x) and not uniformly across all three. */
-  ["Set your price", "Upload your book and set your selling price. Our [new Instant Store pricing](?stage=margin) means up to 3x more profit than selling through the Blurb Bookstore, Amazon, or Ingram."],
+     best case (Amazon, at 3x) and not uniformly across all three.
+
+     Amazon and Ingram dropped, Blurb Bookstore only (2026-09-10, Ana) —
+     the same benchmark call already made on this page's own lede and on
+     Sell Overview's matching claim, now applied here too so all three
+     don't disagree with each other. "selling price" -> "listing price"
+     in the same edit, matching the "Listing price (you set this)" label
+     already used in the table below rather than a second term for the
+     same number. */
+  ["Set your price", "Upload your book and set your listing price. Our [new Instant Store pricing](?stage=margin) means up to 3x more profit than selling through the Blurb Bookstore."],
   ["Create your product page", "Our AI helps you draft your title, description, and keywords. Your customizable product page is ready in minutes."],
   ["Share & sell", "Share your unique link or QR code on your bio, newsletter, or social media. We handle the printing, shipping, and sales tax."],
 ];
