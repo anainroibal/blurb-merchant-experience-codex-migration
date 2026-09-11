@@ -100,8 +100,14 @@ const MODES = {
        for the Instant Store, not named here before), and "print and
        ship" as one pair (used everywhere else an order is described).
        Same claim as before — you set it, we print it, what's left is
-       yours — just in the page's now-current words. */
-    lede: "Set your own listing price on a shareable product page. We print and ship each order as it sells, so what's left after your cost is yours to keep.",
+       yours — just in the page's now-current words.
+
+       Ana's own follow-up edit, same day: "after your cost" -> "after
+       the print cost", matching the ladder's own "Print cost" label
+       rather than the more generic "your cost"; and ", no extra fees"
+       added at the end — a claim this page can back up, since the
+       ladder has exactly one cost line and nothing held back from it. */
+    lede: "Set your own listing price on a shareable product page. We print and ship each order as it sells, so what's left after the print cost is yours to keep, no extra fees.",
     other: "make",
     swap: "Just making it for yourself?",
     swapBody: "The pricing calculator gives you the price, your copies, and when it would arrive — no margin, nothing to set up. It's also where you'll see the volume discounts on a bigger print run.",
