@@ -565,19 +565,21 @@ const chunk = (arr, size) =>
    at one of them is still the right nav item — those pages exist on
    blurb.com — it just has nothing to open here.
 
-   "getstarted" has no lean equivalent at all (Home.jsx's own CTA remaps
-   it to "catalog" in lean rather than opening it).
+   "getstarted" removed 2026-09-11 (Ana: "add Get Started page to minimum
+   effort scope also") — it's a real LEAN_STAGES stepper entry now
+   (App.jsx), and Home.jsx no longer remaps its Printing tab away from it
+   in lean, so there's nothing left for this list to be disabling.
 
-   "pricing" briefly left this list on 2026-09-11 when "Pricing
-   Calculator" was pulled from LEAN_NAV entirely; both reversed the same
-   day (Ana: "pricing menu should still list pricing calculator") — the
+   "pricing" briefly left this list the same day when "Pricing
+   Calculator" was pulled from LEAN_NAV entirely; reversed within the
+   hour (Ana: "pricing menu should still list pricing calculator") — the
    item is back above, so it needs disabling again, for the same reason
    as always: stage `pricing` renders PricingToday in this scope, not the
    calculator the label promises. "margin" was never added here —
    Estimator.jsx has no lean/recommended branching, so stage `margin` is
    the identical real calculator in both scopes, and it's now a real
    LEAN_STAGES stepper entry too (App.jsx). */
-const LEAN_MISSING = ["getstarted", "pricing"];
+const LEAN_MISSING = ["pricing"];
 const reachable = (stage, lean) => (lean && LEAN_MISSING.includes(stage) ? null : stage);
 
 function MenuLink({ item, onClose, onGo, lean }) {

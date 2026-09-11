@@ -190,8 +190,15 @@ const VERSIONS = [
    stays (see LEAN_MISSING in SiteNav.jsx, which still disables that one
    link rather than the stepper hiding it twice over). `margin` has no
    such caveat — same real Estimator in every scope — so it earns the
-   stepper slot `pricing` gave up. */
-const LEAN_STAGES = ["home", "catalog", "product", "margin", "sellv2", "instantstorev2"];
+   stepper slot `pricing` gave up.
+
+   `getstarted` added back the same day (Ana: "add Get Started page to
+   minimum effort scope also") — reverses the very first note above.
+   Placed right after "product", matching its position in the full
+   STAGES list. Removed from LEAN_MISSING (SiteNav.jsx) so nav links to
+   it stop being disabled, and Home.jsx's Printing tab no longer remaps
+   it to "catalog" in lean — see Home.jsx's own note. */
+const LEAN_STAGES = ["home", "catalog", "product", "getstarted", "margin", "sellv2", "instantstorev2"];
 
 const stagesFor = version =>
   version === "lean" ? STAGES.filter(s => LEAN_STAGES.includes(s.id)) : STAGES;
@@ -365,18 +372,26 @@ function DemoBar({ stage, onJump, signedIn, onSignedIn, version, onVersion }) {
 
 
 export default function App() {
-  const [stage, setStage] = useState(() => {
-    const q = new URLSearchParams(window.location.search).get("stage");
-    return STAGES.some(s => s.id === q) ? q : "getstarted";
-  });
-
   const [signedIn, setSignedIn] = useState(false);
 
-  /* Which scope is being shown. `?version=lean` so a link can open the
-     minimum-effort set directly — the two are reviewed by different people
-     and each will want their own URL. */
+  /* Which scope is being shown. Defaults to "lean" now (2026-09-11, Ana:
+     "have minimum effort scope be selected by default") — was "full"
+     unless `?version=lean`; now it's the reverse, `?version=full` for a
+     link that needs the recommended set directly. The two are reviewed
+     by different people and each will want their own URL either way. */
   const [version, setVersion] = useState(() =>
-    new URLSearchParams(window.location.search).get("version") === "lean" ? "lean" : "full");
+    new URLSearchParams(window.location.search).get("version") === "full" ? "full" : "lean");
+
+  const [stage, setStage] = useState(() => {
+    const q = new URLSearchParams(window.location.search).get("stage");
+    if (STAGES.some(s => s.id === q)) return q;
+    /* Fallback when there's no ?stage in the URL. "getstarted" was right
+       when "full" was the default scope — it's that scope's own opening
+       stage. It isn't in LEAN_STAGES, so now that "lean" is the default,
+       landing there would show no stepper pill active; "home" is lean's
+       own first stage instead, matching what its pills already open on. */
+    return version === "lean" ? "home" : "getstarted";
+  });
 
   /* Switching to the lean set from a screen it does not include has to land
      somewhere: the home page, which both versions have. */

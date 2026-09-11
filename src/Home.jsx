@@ -97,7 +97,7 @@ const TABS = [
   {
     id: "print", label: "Printing", img: IMG + "hp-printing.DiLqSDVo_ZqlQ0R.webp",
     body: "On-demand printing lets you print the quantity you need whether that’s one book or hundreds. We handle all shipping and distribution, too.",
-    cta: "Start your book", stage: "getstarted",  // remapped in lean, see `start`
+    cta: "Start your book", stage: "getstarted",
   },
   {
     id: "sell", label: "Selling", img: IMG + "hp-selling.Bihm600K_YtSAD.webp",
@@ -165,12 +165,13 @@ function H2({ children, center, style }) {
 }
 
 export default function Home({ onGo, lean }) {
-  /* In the minimum-effort scope /getting-started is untouched, so it is not
-     a screen this prototype can hand over to. The catalogue is: it exists on
-     the live site, it is where "start something" actually begins today, and
-     the lean version changes it anyway. */
-  const start = lean ? "catalog" : "getstarted";
-  /* Same remap, for the Selling tab's own CTA (2026-09-11, Ana: "remove
+  /* `start` (the Printing tab's remap of "getstarted" -> "catalog" in lean)
+     removed 2026-09-11 (Ana: "add Get Started page to minimum effort scope
+     also") — /getting-started is no longer a screen this prototype
+     withholds from that scope, so the tab now hands off to it directly in
+     both, the same as it always did in the recommended one.
+
+     Remap kept for the Selling tab's own CTA (2026-09-11, Ana: "remove
      self-publish page from minimum effort") — `seller` (v1) is gone from
      that scope's demo bar, so this tab now hands off to the Instant Store
      page instead when lean, the same doorway the tab's own copy already
@@ -223,7 +224,7 @@ export default function Home({ onGo, lean }) {
           </div>
 
           {/* Live: /formats. Ours: the page that prices what you pick. */}
-          <Button onClick={() => onGo(start)}>Get started</Button>
+          <Button onClick={() => onGo("getstarted")}>Get started</Button>
 
           <img
             src={HERO_ART}
@@ -316,9 +317,7 @@ export default function Home({ onGo, lean }) {
 
           {active.stage
             ? <Button onClick={() => onGo(
-                active.stage === "getstarted" ? start :
-                active.stage === "seller" ? sell :
-                active.stage
+                active.stage === "seller" ? sell : active.stage
               )}>{active.cta}</Button>
             : <Button as="a" href={active.href} target="_blank">{active.cta}</Button>}
 
@@ -388,7 +387,7 @@ export default function Home({ onGo, lean }) {
         <div style={{ ...PAGE, display: "grid", gap: 40 }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 24, flexWrap: "wrap" }}>
             <H2>Inspiring examples made with Blurb</H2>
-            <Button onClick={() => onGo(start)}>Start a project</Button>
+            <Button onClick={() => onGo("getstarted")}>Start a project</Button>
           </div>
 
           <div style={{ display: "grid", gap: 24, gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }}>
@@ -447,7 +446,7 @@ export default function Home({ onGo, lean }) {
           /getting-started puts it. */}
       <CallToAction
         heading="Ready to get started?"
-        ctas={[{ children: "Start your project", onClick: () => onGo(start) }]}
+        ctas={[{ children: "Start your project", onClick: () => onGo("getstarted") }]}
       />
     </div>
   );
