@@ -351,8 +351,8 @@ export default function ProductPage({ onGo, seed = null, lean = false }) {
                 It carries the CONFIGURATION, not just the destination, so the
                 calculator opens on this book rather than an empty form. In
                 the lean scope there is no calculator, so the door leads to
-                the Instant Store page and the words change with it: "see
-                what you'd earn" promises a number that version cannot show.
+                the Instant Store page instead — same label either way
+                (2026-09-11, see below), only the destination differs.
 
                 Extra marginTop added 2026-09-10 (Ana: "this feels a
                 little crammed? maybe it should be below the button?") —
@@ -375,9 +375,14 @@ export default function ProductPage({ onGo, seed = null, lean = false }) {
                 sentence. Ana's own wording used an em dash ("You can sell
                 this — see..."); swapped for a colon per her standing
                 preference to minimize em dashes in rendered copy, not
-                applied literally here. Lean copy ("Open an Instant
-                Store") is unchanged — she didn't ask about it, and it
-                still fits the new prefix fine. */}
+                applied literally here.
+
+                Lean copy ("Open an Instant Store") brought in line with
+                the same words the same day ("make it 'You can sell this:
+                see what you'd earn' on the PDP for minimum effort scope
+                too!!") — the destination is unchanged (still
+                instantstorev2, not the calculator, since the lean scope
+                has none), only the label now matches. */}
             <div style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.6, marginTop: 10 }}>
               You can sell this:{" "}
               <button
@@ -390,7 +395,7 @@ export default function ProductPage({ onGo, seed = null, lean = false }) {
                   background: "transparent", border: 0, padding: 0, cursor: "pointer",
                 }}
               >
-                {lean ? "Open an Instant Store" : "see what you'd earn"}
+                see what you'd earn
               </button>
             </div>
             {/* The shared create actions — same component the calculators
