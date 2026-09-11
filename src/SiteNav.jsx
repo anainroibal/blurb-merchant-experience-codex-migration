@@ -359,7 +359,7 @@ const LEAN_NAV = [
          as its siblings — no online-editor page is built in this
          prototype, only the "Create online" action inside the
          calculators and the PDP. */
-      ["Online Editor"],
+      ["Blurb Online Editor"],
       ["BookWright"],
       ["Adobe Tools"],
       ["PDF to Book"],
