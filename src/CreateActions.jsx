@@ -137,7 +137,11 @@ function primaryTool(formatId) {
   return { label: "Upload your PDF", hint: "Bring a print-ready file and order it." };
 }
 
-export default function CreateActions({ formatId, sel, onGo, onBuild, showLearnMore = true, heading, hideHint, after }) {
+export default function CreateActions({
+  formatId, sel, onGo, onBuild, showLearnMore = true, heading, hideHint, after,
+  learnMoreLabel = "Learn more about this product",
+  learnMoreGo,
+}) {
   const [toolsOpen, setToolsOpen] = useState(false);
   const primary = primaryTool(formatId);
   const pdp = pdpName(formatId, sel);
@@ -240,15 +244,23 @@ export default function CreateActions({ formatId, sel, onGo, onBuild, showLearnM
         </>
       )}
 
-      {showLearnMore && pdp && (
+      {/* `learnMoreLabel` / `learnMoreGo` let one caller (GetStarted.jsx,
+          selling flow only) point this at the Instant Store page instead
+          of the PDP (2026-09-11, Ana: "Learn more about this product >
+          Learn more about the Blurb Instant Store") — every other caller
+          is unchanged, since "this product" still means the PDP there.
+          `learnMoreGo` also bypasses the `pdp` gate below: whether a PDP
+          exists for this exact format is irrelevant to an Instant Store
+          link, which has nowhere it can't go. */}
+      {showLearnMore && (learnMoreGo || pdp) && (
         <Button
           variant="text"
           size="small"
           iconRight={<ArrowForwardIcon />}
-          onClick={() => onGo("product", { seed: { formatId, sel } })}
+          onClick={() => (learnMoreGo ? learnMoreGo() : onGo("product", { seed: { formatId, sel } }))}
           style={{ justifySelf: "start", padding: 0 }}
         >
-          Learn more about this product
+          {learnMoreLabel}
         </Button>
       )}
     </div>

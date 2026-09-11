@@ -464,12 +464,19 @@ export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSe
             {/* The standing instruction for this section, so it reads as the
                 heading's second line rather than as a note left under the
                 cards. It goes once a format is chosen: by then the row has
-                already done what it describes. */}
+                already done what it describes.
+
+                Selling variant removed 2026-09-11 (Ana: "remove this
+                line: Tell us what you're making at the top and we'll
+                recommend a product, a size and a paper, with what it
+                costs you and what you'd earn. Or pick one yourself.") —
+                no reason given; the plain non-selling line now covers
+                both cases rather than leaving an empty gap where the
+                selling-specific one used to be. */}
             {!format && (
               <p style={{ fontSize: TYPE.lg, color: T.textSubtle, margin: "10px auto 0", maxWidth: 720, lineHeight: 1.6 }}>
-                {selling
-                  ? "Tell us what you're making at the top and we'll recommend a product, a size and a paper, with what it costs you and what you'd earn. Or pick one yourself."
-                  : "Tell us what you're making at the top and we'll recommend a product, a size and a paper. Or pick one yourself."}
+                Tell us what you're making at the top and we'll recommend a product, a size and a paper. Or
+                pick one yourself.
               </p>
             )}
           </div>
@@ -537,6 +544,14 @@ export default function GetStarted({ signedIn, onSignIn, initialRoute, initialSe
                   onGo={onGo}
                   onBuild={() => {}}
                   heading="Ready to make it?"
+                  /* Selling flow only (2026-09-11, Ana: "Learn more about
+                     this product > Learn more about the Blurb Instant
+                     Store") — a seller here is deciding whether to make
+                     an Instant Store, not reading about the physical
+                     product, which the page's own options and summary
+                     panel already show twice over. */
+                  learnMoreLabel={selling ? "Learn more about the Blurb Instant Store" : undefined}
+                  learnMoreGo={selling ? () => onGo("instantstorev2") : undefined}
                   after={selling
                     ? <YourProjects compact signedIn={signedIn} onSignIn={onSignIn} />
                     : null}

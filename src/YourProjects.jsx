@@ -135,10 +135,18 @@ export default function YourProjects({ signedIn, onSignIn, compact = false }) {
           <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>
             Or sell one you have already made
           </span>
+          {/* Signed-out line replaced 2026-09-11 (Ana: "Log in and a
+              finished book keeps the size, paper and cover you chose.
+              All that is left is the price, the link and your payout.
+              >> Log in to create an Instant Store for a book you've
+              already made.") — names the destination (an Instant Store)
+              instead of describing what carries over into it; the
+              signed-in line above keeps its own wording since she didn't
+              ask about that one. */}
           <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>
             {signedIn
               ? "It keeps the size, paper and cover you chose. All that is left is the price, the link and your payout."
-              : "Log in and a finished book keeps the size, paper and cover you chose. All that is left is the price, the link and your payout."}
+              : "Log in to create an Instant Store for a book you've already made."}
           </span>
         </div>
 
