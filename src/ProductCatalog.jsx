@@ -260,7 +260,7 @@ export default function ProductCatalog({ onGo, lean }) {
               fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
               lineHeight: 1.25, margin: 0, color: C.blue950,
             }}>
-              Making it to sell? Open an Instant Store
+              Making it to sell? Create a Blurb Instant Store
             </h2>
 
             {/* ── It says the prices above are not a seller's (Ana, #6/#7) ──
@@ -274,11 +274,23 @@ export default function ProductCatalog({ onGo, lean }) {
                 publishes Blurb's margin with the arithmetic already done.
                 "You are buying a copy / we are your printer" gives a
                 seller the whole of what they need to know here, which is
-                that these are not their numbers and where theirs live. */}
+                that these are not their numbers and where theirs live.
+
+                Copy realigned 2026-09-11 (Ana: "align the copy of the
+                banner at the bottom with the copy elsewhere") — this
+                lane predates the terminology the profit calculator, ISV2
+                and Sell Overview have since settled on: "product page"
+                (not "one link"), "listing price" and "print cost" (not
+                "what your buyer pays" / "it costs you less"), "See what
+                you'd earn" and "Create your Instant Store" as the two
+                doors' exact labels everywhere else they appear. Same
+                claim, same rule (never show retail and fulfilment side
+                by side) — just this page's last holdout in the old
+                words. */}
             <p style={{ margin: 0, fontSize: TYPE.lg, lineHeight: 1.6, color: T.textNeutral }}>
-              {sellableSentence()} can be sold from one link you share, and the prices on this page are not
-              the ones you would pay. They are what a copy costs to buy; when you sell, we are your printer
-              instead, so it costs you less and you set what your buyer pays.
+              {sellableSentence()} can be sold from a shareable product page, and the prices on this page
+              aren't the ones you'd pay to sell. These are retail prices; when you sell, we're your printer
+              instead, so your print cost is lower and you set your own listing price.
             </p>
 
             {/* Two doors in the recommended scope — the number, then the
@@ -287,14 +299,14 @@ export default function ProductCatalog({ onGo, lean }) {
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginTop: 4 }}>
               {!lean && (
                 <Button onClick={() => onGo?.("margin")}>
-                  See what you would keep
+                  See what you'd earn
                 </Button>
               )}
               <Button
                 variant={lean ? "filled" : "outlined"}
                 onClick={() => onGo?.("instantstorev2")}
               >
-                About Instant Stores
+                Create your Instant Store
               </Button>
             </div>
           </div>
