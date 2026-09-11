@@ -542,7 +542,14 @@ const STEPS = [
      same number. */
   ["Set your price", "Upload your book and set your listing price. Our [new Instant Store pricing](?stage=margin) means up to 3x more profit than selling through the Blurb Bookstore."],
   ["Create your product page", "Our AI helps you draft your title, description, and keywords. Your customizable product page is ready in minutes."],
-  ["Share & sell", "Share your unique link or QR code on your bio, newsletter, or social media. We handle the printing, shipping, and sales tax."],
+  /* Proof requirement folded into this step (2026-09-10, Ana) — the
+     first place in these three steps that says a proof is needed at
+     all; it was previously only in this page's own FAQ ("Do I need to
+     order a proof before I can sell through my Instant Store?"), which
+     someone doing the 1-2-3 read might never open. "Once you ordered" ->
+     "Once you've ordered" (grammar). "your bio" -> "your Instagram bio",
+     narrowing the example rather than genericizing it. */
+  ["Share & sell", "Once you've ordered a proof, share your link or QR code on your Instagram bio, newsletter, or social media. We handle the printing, shipping, and sales tax."],
 ];
 
 /* Illustrations added 2026-09-10 (Ana: "can you add these illustrations
