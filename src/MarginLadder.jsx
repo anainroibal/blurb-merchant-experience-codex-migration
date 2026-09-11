@@ -196,7 +196,7 @@ function Row({ label, sub, children, last }) {
 function CostSub({ onGo }) {
   return (
     <>
-      What Blurb charges you for your{" "}
+      Cost when you sell through your{" "}
       {onGo ? (
         <button
           onClick={() => onGo("instantstorev2")}
@@ -208,7 +208,7 @@ function CostSub({ onGo }) {
           Instant Store
         </button>
       ) : "Instant Store"}
-      . Set by your specification.
+      {" "}only.
     </>
   );
 }
@@ -263,7 +263,7 @@ export default function MarginLadder({ cost, price, onPrice, floor, compact, pla
     );
     return (
       <div style={{ fontFamily: FONT_BODY, display: "grid" }}>
-        <Row label="Your cost" sub={<CostSub onGo={onGo} />}>{amount(cost)}</Row>
+        <Row label="Print cost" sub={<CostSub onGo={onGo} />}>{amount(cost)}</Row>
 
         <Row label="Your listing price">
           <Entry value={price} min={floor} onChange={setPrice} compact />
@@ -273,7 +273,7 @@ export default function MarginLadder({ cost, price, onPrice, floor, compact, pla
           <Entry value={profit} min={0} onChange={setProfit} compact />
         </Row>
 
-        <Row label="Your margin" last>
+        <Row label="Your profit margin" last>
           <Entry value={margin} min={0} max={MARGIN_MAX} onChange={setMargin} compact unit="percent" />
         </Row>
       </div>
@@ -287,7 +287,7 @@ export default function MarginLadder({ cost, price, onPrice, floor, compact, pla
         gridTemplateColumns: compact ? "1fr" : "repeat(auto-fit, minmax(190px, 1fr))",
         alignItems: "start",
       }}>
-        <Cell label="Your cost" sub={<CostSub onGo={onGo} />} compact={compact}>
+        <Cell label="Print cost" sub={<CostSub onGo={onGo} />} compact={compact}>
           <Figure value={cost} compact={compact} />
         </Cell>
 
@@ -299,7 +299,7 @@ export default function MarginLadder({ cost, price, onPrice, floor, compact, pla
           <Entry value={profit} min={0} onChange={setProfit} compact={compact} />
         </Cell>
 
-        <Cell label="Your margin" sub="Profit as a share of your price" compact={compact}>
+        <Cell label="Your profit margin" compact={compact}>
           <Entry value={margin} min={0} max={MARGIN_MAX} onChange={setMargin} compact={compact} unit="percent" />
         </Cell>
       </div>

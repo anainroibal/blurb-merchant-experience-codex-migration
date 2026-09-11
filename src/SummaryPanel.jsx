@@ -463,9 +463,6 @@ export default function SummaryPanel({
         {selling ? (
           <>
             <MarginLadder cost={cost} price={sellPrice} onPrice={onSellPrice} floor={floor} compact onGo={onGo} />
-            <p style={{ fontSize: TYPE.sm, color: T.textSubtle, margin: 0, lineHeight: 1.5 }}>
-              Your buyer pays shipping, so your margin is the same wherever they live.
-            </p>
 
             {/* The buyer's total is NOT here. It used to be three lines
                 under this ladder, which put the buyer's money inside the
@@ -484,23 +481,44 @@ export default function SummaryPanel({
                 prototype (BulkQuotePanel, the Sell/Pricing swap banner).
                 Placed above CostExplainer (Anain, 2026-09-01): the fact
                 that the other three routes price differently comes first,
-                the explanation of why second. */}
+                the explanation of why second.
+
+                Copy and both links updated 2026-09-10 (Ana): "each price
+                differently" named as what that pricing actually is —
+                "Blurb retail pricing", the same term this app already
+                uses for the print-cost comparison elsewhere — with the
+                term itself as the door to the Pricing calculator, since
+                that's the page that shows those figures. The button below
+                it now points at Sell Overview rather than the v1 Self-
+                Publish page, matching the rename ("Compare all four
+                routes" -> "Compare all selling options") to that page's
+                own "Which selling path is right for you?" table, which
+                compares four ways to sell, not four routes. */}
             {onGo && (
               <div style={{
                 background: C.blue50, border: `1px solid ${C.blue100}`, borderRadius: R.md,
                 padding: 14, display: "grid", gap: 8,
               }}>
                 <span style={{ fontSize: TYPE.sm, color: T.textNeutral, lineHeight: 1.5 }}>
-                  Amazon, Ingram and the Bookstore each price differently.
+                  Amazon, Ingram and the Bookstore use{" "}
+                  <button
+                    onClick={() => onGo("pricing")}
+                    style={{
+                      font: "inherit", color: "inherit", textDecoration: "underline",
+                      background: "transparent", border: 0, padding: 0, cursor: "pointer",
+                    }}
+                  >
+                    Blurb retail pricing
+                  </button>.
                 </span>
                 <Button
                   variant="text"
                   size="small"
                   iconRight={<ArrowForwardIcon />}
-                  onClick={() => onGo("seller")}
+                  onClick={() => onGo("sellv2")}
                   style={{ justifySelf: "start", padding: 0 }}
                 >
-                  Compare all four routes
+                  Compare all selling options
                 </Button>
               </div>
             )}

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Button, Select } from "@blurb/codex-react";
-import { ArrowForwardIcon } from "@blurb/codex-react/icons";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.js";
 import SummaryPanel from "./SummaryPanel.jsx";
 import ProductOptions from "./ProductOptions.jsx";
@@ -83,12 +82,26 @@ const MODES = {
        price, you print only what sells, and the margin is yours because
        you brought the buyer. Nothing about fees or commission, which is
        the unsourced claim in Crometrics' mock. */
-    h1: "Sell your book with an Instant Store. Keep more of every sale.",
+    /* "Sell your book with an Instant Store. Keep more of every sale." ->
+       "Maximize your profit with a Blurb Instant Store" (2026-09-10, Ana)
+       — leads with the number this whole page is for, the way ISV2's own
+       hero now does ("Sell direct, maximize your profit"). */
+    h1: "Maximize your profit with a Blurb Instant Store",
     /* "The rest of YOUR PRICE", never "the rest of what your buyer pays":
        the buyer pays the price plus delivery, and delivery is not the
        seller's to keep. Shipping stays outside the margin everywhere on
-       this site, and a hero is no place to start blurring it. */
-    lede: "Set your own price in your Instant Store. We print each copy as it sells, you pay us for the printing, and the rest of your price is yours.",
+       this site, and a hero is no place to start blurring it.
+
+       Subtitle rewritten 2026-09-10 (Ana: "suggest a new subtitle based
+       on all the copy changes on isv2") to match the vocabulary those
+       edits settled on rather than this page's older wording: "listing
+       price" (the table on ISV2 and the ladder below both use it, not
+       "your price"), "product page" (ISV2 and Sell Overview's own line
+       for the Instant Store, not named here before), and "print and
+       ship" as one pair (used everywhere else an order is described).
+       Same claim as before — you set it, we print it, what's left is
+       yours — just in the page's now-current words. */
+    lede: "Set your own listing price on a shareable product page. We print and ship each order as it sells, so what's left after your cost is yours to keep.",
     other: "make",
     swap: "Just making it for yourself?",
     swapBody: "The pricing calculator gives you the price, your copies, and when it would arrive — no margin, nothing to set up. It's also where you'll see the volume discounts on a bigger print run.",
@@ -295,26 +308,23 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
               routes follow as where to go next rather than as what this
               page cannot do. Same two sentences, same door; the order is
               the whole change, and it is the order that decides whether a
-              seller meets a scope or a caveat. */}
+              seller meets a scope or a caveat.
+
+              ── REMOVED (2026-09-10, Ana) ──
+              The paragraph above (design review item 21) is CLAUDE.md's own
+              documented reasoning for why this line exists at all — worth
+              flagging plainly since removing it reverses a decision that
+              was deliberate enough to get a comment this long. Ana's call
+              to make regardless: the summary panel below carries its own
+              "Amazon, Ingram and the Bookstore use Blurb retail pricing"
+              doorway to the same comparison (see SummaryPanel.jsx), so the
+              scope-then-door pattern still exists on the page, just once
+              instead of twice. `note` is simply omitted for the selling
+              format now rather than kept and emptied. */}
           <FormatCards
             formatId={formatId}
             onPick={changeFormat}
-            note={selling ? (
-              <>
-                These figures price a sale through your Instant Store: you set
-                the price, and what's left after your cost is yours. The
-                Bookstore, Amazon and Ingram all work on different terms.{" "}
-                <Button
-                  variant="text"
-                  size="small"
-                  iconRight={<ArrowForwardIcon />}
-                  onClick={() => onGo?.("seller")}
-                  style={{ padding: 0, verticalAlign: "baseline" }}
-                >
-                  Compare the routes
-                </Button>
-              </>
-            ) : (
+            note={selling ? null : (
               <>
                 Save more when you print in bulk. Learn about{" "}
                 <span style={{ color: T.textBrand, textDecoration: "underline" }}>volume discounts</span>.
@@ -398,6 +408,7 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
                   sel={state}
                   onGo={onGo}
                   heading={selling ? "Ready to make it?" : "Ready to make it?"}
+                  hideHint={selling}
                 />
               }
             />
@@ -414,15 +425,28 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
 
               Written for a reader who has already priced a sale, so it
               assumes the decision instead of asking about it. Same panel
-              as the catalogue's, different words. */}
+              as the catalogue's, different words.
+
+              Copy revisited 2026-09-10 (Ana: "review this copy with
+              everything you now know") against the vocabulary ISV2 and
+              Sell Overview have settled on since this was written:
+              "product page" is now the lead term for the thing itself
+              (ISV2's own hero — "a shareable product page for your book,
+              live in minutes"), with "one link" demoted to how it's
+              shared rather than what it is. The old body also said "the
+              shop" in the title and "shopfront" in the last sentence,
+              two names for the same idea a few words apart; one of them
+              had to go, and "product page" was already doing that job
+              everywhere else. Same three beats kept (what it is, how you
+              share it, what you don't have to do). */}
           {selling && (
             <InstantStoreLane
-              title="Next, the shop it sells from"
+              title="Next, the product page it sells from"
               onGo={() => onGo?.("instantstorev2")}
             >
-              An Instant Store is one link for this book, set up in minutes. Share it wherever your readers
-              already are, and we print and ship every order as it comes in. Nothing to build, and no
-              shopfront to run.
+              Your Instant Store is a shareable product page, live in minutes. Share it wherever your readers
+              already are — we print and ship every order as it comes in, so there's nothing to build and
+              nothing for you to run.
             </InstantStoreLane>
           )}
 

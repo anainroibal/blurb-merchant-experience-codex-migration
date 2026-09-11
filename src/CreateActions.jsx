@@ -137,7 +137,7 @@ function primaryTool(formatId) {
   return { label: "Upload your PDF", hint: "Bring a print-ready file and order it." };
 }
 
-export default function CreateActions({ formatId, sel, onGo, onBuild, showLearnMore = true, heading, after }) {
+export default function CreateActions({ formatId, sel, onGo, onBuild, showLearnMore = true, heading, hideHint, after }) {
   const [toolsOpen, setToolsOpen] = useState(false);
   const primary = primaryTool(formatId);
   const pdp = pdpName(formatId, sel);
@@ -150,7 +150,15 @@ export default function CreateActions({ formatId, sel, onGo, onBuild, showLearnM
           <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>
             {heading}
           </span>
-          <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>{primary.hint}</span>
+          {/* Hidden on the Instant Store profit calculator only (2026-09-10,
+              Ana: "remove this line 'Design it in your browser. Nothing to
+              download.'"), via `hideHint` rather than deleting the hint from
+              `primaryTool` itself — that hint is shared with the "Ready to
+              make it?" card on the pricing calculator, GetStarted and every
+              product page, none of which she was reviewing here. */}
+          {!hideHint && (
+            <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>{primary.hint}</span>
+          )}
         </div>
       )}
 
