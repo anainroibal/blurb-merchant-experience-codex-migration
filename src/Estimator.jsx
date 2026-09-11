@@ -427,26 +427,28 @@ export default function Estimator({ mode = "make", onGo, seed = null }) {
               assumes the decision instead of asking about it. Same panel
               as the catalogue's, different words.
 
-              Copy revisited 2026-09-10 (Ana: "review this copy with
-              everything you now know") against the vocabulary ISV2 and
-              Sell Overview have settled on since this was written:
-              "product page" is now the lead term for the thing itself
-              (ISV2's own hero — "a shareable product page for your book,
-              live in minutes"), with "one link" demoted to how it's
-              shared rather than what it is. The old body also said "the
-              shop" in the title and "shopfront" in the last sentence,
-              two names for the same idea a few words apart; one of them
-              had to go, and "product page" was already doing that job
-              everywhere else. Same three beats kept (what it is, how you
-              share it, what you don't have to do). */}
+              First rewrite (2026-09-10, "product page" swapped in for
+              "shop"/"shopfront") didn't land — Ana: "i don't like this at
+              all. i don't like nothing for you to run either." Two
+              problems with that pass, not one: the double negative
+              ending ("nothing to build and nothing for you to run") is
+              weak on its own regardless of the "shop" wording, and
+              apparently the rest didn't read right either without her
+              saying more specifically why. Rewritten again positive
+              rather than by negation — what Blurb does (print and ship
+              every order), not a list of what the seller doesn't have to
+              do — since a vague absence claim was the flagged problem
+              both times. Title shortened to match the swap-card pattern
+              below it ("Just making it for yourself?") without echoing
+              its question form, since this card is closing an idea
+              rather than opening one. */}
           {selling && (
             <InstantStoreLane
-              title="Next, the product page it sells from"
+              title="Next: your Instant Store"
               onGo={() => onGo?.("instantstorev2")}
             >
-              Your Instant Store is a shareable product page, live in minutes. Share it wherever your readers
-              already are — we print and ship every order as it comes in, so there's nothing to build and
-              nothing for you to run.
+              Your Instant Store is a shareable product page for this book, live in minutes. Share the link
+              wherever your readers already are, and we print and ship every order as it sells.
             </InstantStoreLane>
           )}
 

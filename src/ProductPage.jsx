@@ -29,7 +29,7 @@ import {
 
    WHAT IT ADDS, and it is one line:
 
-       Selling this? See your price →
+       Selling this? See your Instant Store profit →
 
    That is the whole intervention. It obeys the Phase 1 rule — the page
    stays retail-only, and no second number appears on it. The line is
@@ -37,6 +37,15 @@ import {
    lost nothing, while a seller recognises themselves. And it hands the
    CONFIGURATION over, not just the destination, so the calculator opens
    on the book they were looking at rather than an empty form.
+
+   "See your price" -> "See your Instant Store profit" (2026-09-10, Ana:
+   "i'm unsure about this 'Selling this? See your price' ... something
+   more about your profit but needs to convey it's a diff price") — the
+   retail price is already on screen above this line, so "your price"
+   read as pointing at the same number. Naming "Instant Store" is what
+   signals a different pricing basis is behind the link; "profit" is the
+   number that basis actually changes, and matches this page's own doorway
+   further down that promises a margin, not just a price.
 
    It sits UNDER THE PRICE, not under the buttons (Ana, DES-482 #8). Its
    job is to say that the number above it is not a seller's, so it
@@ -339,7 +348,8 @@ export default function ProductPage({ onGo, seed = null, lean = false }) {
                 calculator opens on this book rather than an empty form. In
                 the lean scope there is no calculator, so the door leads to
                 the Instant Store page and the words change with it: "see
-                your price" promises a number that version cannot show. */}
+                your Instant Store profit" promises a number that version
+                cannot show. */}
             <div style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.6 }}>
               Selling this?{" "}
               <button
@@ -352,7 +362,7 @@ export default function ProductPage({ onGo, seed = null, lean = false }) {
                   background: "transparent", border: 0, padding: 0, cursor: "pointer",
                 }}
               >
-                {lean ? "Open an Instant Store" : "See your price"}
+                {lean ? "Open an Instant Store" : "See your Instant Store profit"}
               </button>
             </div>
             {/* The shared create actions — same component the calculators
