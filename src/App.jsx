@@ -516,7 +516,7 @@ export default function App() {
           ? <PricingToday onGo={go} />
           : <Estimator mode="make" onGo={go} seed={entry?.seed} />)}
         {stage === "margin"     && <Estimator mode="sell" onGo={go} seed={entry?.seed} />}
-        {stage === "shipping"   && <ShippingPage onGo={go} lean={lean} />}
+        {stage === "shipping"   && <ShippingPage onGo={go} />}
       </div>
       <SiteFooter />
     </div>

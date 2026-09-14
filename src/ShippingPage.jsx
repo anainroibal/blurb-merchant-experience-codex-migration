@@ -2,7 +2,6 @@ import React from "react";
 import { Button, Select } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import Faq from "./Faq.jsx";
-import ShippingSection from "./ShippingSection.jsx";
 import InstantStoreLane from "./InstantStoreLane.jsx";
 import { MiniStepper } from "./Configurator.jsx";
 import { FORMAT_CARDS } from "./FormatCards.jsx";
@@ -217,14 +216,15 @@ function Lane({ heading, body, action, onClick }) {
   );
 }
 
-export default function ShippingPage({ onGo, lean }) {
+export default function ShippingPage({ onGo }) {
   const speeds = SHIPPING.speeds;
-  /* The lean page keeps the calculator, so it needs a destination to
-     price against. The recommended page has none: the calculating moved
-     to the two pages that price a book. */
-  const [ship, setShip] = React.useState({
-    country: "US", postal: "", state: "California", speed: "economy", poBox: false,
-  });
+  /* Down to just `country` (2026-09-14) — `postal`, `state`, `speed` and
+     `poBox` were only ever read by the postcode calculator this page
+     carried in the lean scope, removed the same day (Ana: "make it match
+     the one in the recommended scope -- that additional card at the top
+     is not needed"). The one calculator both scopes now share only asks
+     for a product and a country. */
+  const [ship, setShip] = React.useState({ country: "US" });
   const [format, setFormat] = React.useState("photo");
   const [qty, setQty] = React.useState(1);
 
@@ -253,20 +253,18 @@ export default function ShippingPage({ onGo, lean }) {
         </div>
       </section>
 
-      {/* ── The postcode calculator, in the LEAN scope only ──
-          This is the heavier calculator: postcode, quantity and an exact
-          arrival date, the same one /getting-started uses. The recommended
-          scope below (product + country, no postcode, a day range instead
-          of a date) is the lighter version that replaced it on 2026-08-27
-          and was brought back on 2026-09-01 — this block stays lean-only
-          so the two don't stack. */}
-      {lean && (
-        <section style={{ padding: "clamp(40px, 6vw, 72px) 24px 0" }}>
-          <div style={{ maxWidth: 900, margin: "0 auto" }}>
-            <ShippingSection selling={false} ship={ship} setShip={setShip} qty={1} price={0} />
-          </div>
-        </section>
-      )}
+      {/* ── The postcode calculator, lean-only, removed 2026-09-14 ──
+          It used to sit here (postcode, quantity, an exact arrival date,
+          the same calculator /getting-started uses) so the two scopes
+          wouldn't stack it with the lighter one below. Now that Shipping
+          is back in the minimum-effort scope too (Ana: "add shipping page
+          to the reduced scope too"), she asked for the two to read the
+          same page (Ana: "make it match the one in the recommended scope
+          -- that additional card at the top is not needed") rather than
+          reviving this second calculator alongside it. `ship` stays as
+          shared state — the lighter calculator right below still reads
+          and sets it — so only this block and its `ShippingSection`
+          import are gone. */}
 
       {/* ── What it costs, for the book and the country you pick ──
           Was a static region-by-speed table; now a product and a country
