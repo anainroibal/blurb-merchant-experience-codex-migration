@@ -806,7 +806,11 @@ const FEATURE_ICONS = {
    proof..." -> "Do I need to order a book proof...", and the answer
    dropped "either a discounted physical copy or a free PDF": both
    still true (see catalog.js's proof-requirement rules), just no
-   longer spelled out here. */
+   longer spelled out here.
+
+   "Where can I see reporting on my sales?" -> "How do I track my book
+   sales and earnings?" (2026-09-14, Ana) — asks it the way a seller
+   would rather than naming the dashboard pages first. */
 const FAQS = (onGo, lean) => [
   ["How do I set up an online store for my book?",
    "Open the Instant Store page from your dashboard, choose the project you want to sell, and set your listing details and price. You can preview your page before it goes live, and there's no separate sign-up."],
@@ -842,7 +846,7 @@ const FAQS = (onGo, lean) => [
        </a>' existing volume discounts will apply instead.
      </p>
    </>],
-  ["Where can I see reporting on my sales?",
+  ["How do I track my book sales and earnings?",
    "Your dashboard's Earnings and Monthly Profit Reports pages show what you've made from every route, Instant Store included."],
   ["Can I buy my own book through my Instant Store link?",
    "No. Your Instant Store link is for direct-to-consumer sales to your buyers, the ones your listing price and profit are built around. Order copies for yourself separately, at Blurb retail pricing."],
