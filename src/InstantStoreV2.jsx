@@ -816,12 +816,20 @@ const FEATURE_ICONS = {
    any buyer" -> "works for buyers worldwide", "and each order prints"
    -> "with each order printed") — same facts, and per her explicit
    instruction the "shipping page" text stays linked to the shipping
-   stage, which it already was (see the `lean` ternary below; unchanged). */
+   stage, which it already was (see the `lean` ternary below; unchanged).
+
+   "How much does Blurb take from each sale?" rewritten again the same
+   day (Ana) — "book sale" in the question, and the answer now leads
+   with the print-on-demand fact in the seller's own terms ("add your
+   markup and keep 100% of what's left after the print cost") rather
+   than "nothing off the top". Normalized her "set-up fee" to "setup
+   fee" to match this page's own spelling everywhere else, and added
+   "of" to "keep 100% what's left" for the sentence to parse. */
 const FAQS = (onGo, lean) => [
   ["How do I set up an online store for my book?",
    "Open the Instant Store page from your dashboard, choose the project you want to sell, and set your listing details and price. You can preview your page before it goes live, and there's no separate sign-up."],
-  ["How much does Blurb take from each sale?",
-   "Nothing off the top. It's print on demand, so you only pay to print the copies that actually sell, no setup fee and nothing upfront. What's left after that is yours."],
+  ["How much does Blurb take from each book sale?",
+   "Since all books are printed on demand, you only have to pay for the copies that actually sell. Blurb doesn't require you to pay a setup fee, or anything upfront, so add your markup and keep 100% of what's left after the print cost."],
   ["How do I get paid for my sales?",
    "By check or PayPal at the end of each month, once you've reached the $25 minimum payment threshold."],
   ["Who handles sales tax and shipping on each order?",
