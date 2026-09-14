@@ -197,8 +197,16 @@ const VERSIONS = [
    Placed right after "product", matching its position in the full
    STAGES list. Removed from LEAN_MISSING (SiteNav.jsx) so nav links to
    it stop being disabled, and Home.jsx's Printing tab no longer remaps
-   it to "catalog" in lean — see Home.jsx's own note. */
-const LEAN_STAGES = ["home", "catalog", "product", "getstarted", "margin", "sellv2", "instantstorev2"];
+   it to "catalog" in lean — see Home.jsx's own note.
+
+   `shipping` added back 2026-09-14 (Ana: "add shipping page to the
+   reduced scope too") — reverses the second note above. Placed last,
+   matching its position in the full STAGES list. LEAN_NAV's own
+   "Shipping Calculator" item is back too (SiteNav.jsx), and
+   InstantStoreV2.jsx's FAQ "shipping page" link no longer needs its
+   lean-only plain-text fallback, since the page it points to is
+   reachable in both scopes again — see that file's own note. */
+const LEAN_STAGES = ["home", "catalog", "product", "getstarted", "margin", "sellv2", "instantstorev2", "shipping"];
 
 const stagesFor = version =>
   version === "lean" ? STAGES.filter(s => LEAN_STAGES.includes(s.id)) : STAGES;
@@ -497,7 +505,7 @@ export default function App() {
         )}
         {stage === "seller"     && <SellerLanding onGo={go} lean={lean} />}
         {stage === "sellv2"     && <SellLandingV2 onGo={go} />}
-        {stage === "instantstorev2" && <InstantStoreV2 onGo={go} lean={lean} />}
+        {stage === "instantstorev2" && <InstantStoreV2 onGo={go} />}
         {/* ── Two versions of this page, chosen by scope ──
             RECOMMENDED replaces /pricing with the calculator. LEAN keeps
             the page as it is today, tables and all, and adds one Instant

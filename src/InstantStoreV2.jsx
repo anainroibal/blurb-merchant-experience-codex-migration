@@ -799,8 +799,11 @@ const FEATURE_ICONS = {
    `lean` added 2026-09-11 once "shipping" left the minimum-effort scope
    (Ana: "remove shipping page from minimum effort") — this page itself
    is shared by both scopes, so the international-shipping answer below
-   only links "shipping page" outside lean; in lean it's plain text,
-   since there's nowhere for it to go.
+   only linked "shipping page" outside lean; in lean it was plain text,
+   since there was nowhere for it to go. Removed again 2026-09-14 once
+   "shipping" came back to that scope (Ana: "add shipping page to the
+   reduced scope too") — the link is unconditional again, and `lean`
+   is gone from this file's own props/signature along with it.
 
    Proof question trimmed 2026-09-14 (Ana) — "Do I need to order a
    proof..." -> "Do I need to order a book proof...", and the answer
@@ -816,7 +819,7 @@ const FEATURE_ICONS = {
    any buyer" -> "works for buyers worldwide", "and each order prints"
    -> "with each order printed") — same facts, and per her explicit
    instruction the "shipping page" text stays linked to the shipping
-   stage, which it already was (see the `lean` ternary below; unchanged).
+   stage, which it already was.
 
    "How much does Blurb take from each sale?" rewritten again the same
    day (Ana) — "book sale" in the question, and the answer now leads
@@ -825,7 +828,7 @@ const FEATURE_ICONS = {
    than "nothing off the top". Normalized her "set-up fee" to "setup
    fee" to match this page's own spelling everywhere else, and added
    "of" to "keep 100% what's left" for the sentence to parse. */
-const FAQS = (onGo, lean) => [
+const FAQS = onGo => [
   ["How do I set up an online store for my book?",
    "Open the Instant Store page from your dashboard, choose the project you want to sell, and set your listing details and price. You can preview your page before it goes live, and there's no separate sign-up."],
   ["How much does Blurb take from each book sale?",
@@ -841,11 +844,9 @@ const FAQS = (onGo, lean) => [
   ["Can I sell books to readers internationally?",
    <>
      Yes. Your Instant Store link works for buyers worldwide, with each order printed at the facility nearest them. See our{" "}
-     {lean ? "shipping page" : (
-       <a href="#" onClick={e => { e.preventDefault(); onGo?.("shipping"); }} style={{ color: C.blue600, textDecoration: "underline" }}>
-         shipping page
-       </a>
-     )}{" "}
+     <a href="#" onClick={e => { e.preventDefault(); onGo?.("shipping"); }} style={{ color: C.blue600, textDecoration: "underline" }}>
+       shipping page
+     </a>{" "}
      for delivery times and rates by country.
    </>],
   ["Is Instant Store pricing also available if I sell through the Blurb Bookstore, Amazon, or Ingram?",
@@ -866,7 +867,7 @@ const FAQS = (onGo, lean) => [
    "No. Your Instant Store link is for direct-to-consumer sales to your buyers, the ones your listing price and profit are built around. Order copies for yourself separately, at Blurb retail pricing."],
 ];
 
-export default function InstantStoreV2({ onGo, lean }) {
+export default function InstantStoreV2({ onGo }) {
   return (
     <div style={{ fontFamily: FONT_BODY, color: C.gray950 }}>
 
@@ -1657,7 +1658,7 @@ export default function InstantStoreV2({ onGo, lean }) {
         </div>
       </section>
 
-      <Faq heading={<>Your Blurb Instant Store<br />questions, answered</>} items={FAQS(onGo, lean)} />
+      <Faq heading={<>Your Blurb Instant Store<br />questions, answered</>} items={FAQS(onGo)} />
 
       {/* ── Close ── */}
       <section

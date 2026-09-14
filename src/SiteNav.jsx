@@ -346,10 +346,11 @@ const LEAN_NAV = [
          scope. */
       ["Pricing Calculator", null, null, "pricing"],
       ["Profit Calculator", null, null, "margin"],
-      /* "Shipping Calculator" removed 2026-09-11 (Ana: "remove shipping
-         page from minimum effort") — stage `shipping` dropped from
-         App.jsx's LEAN_STAGES the same day, so this item would have kept
-         a working link open to a page this scope no longer offers. */
+      /* "Shipping Calculator" removed 2026-09-11, added back 2026-09-14
+         (Ana: "add shipping page to the reduced scope too") — stage
+         `shipping` is back in App.jsx's LEAN_STAGES the same day, so
+         this link works again. */
+      ["Shipping Calculator", null, null, "shipping"],
     ]},
   ]},
 
