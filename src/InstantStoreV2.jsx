@@ -800,7 +800,13 @@ const FEATURE_ICONS = {
    (Ana: "remove shipping page from minimum effort") — this page itself
    is shared by both scopes, so the international-shipping answer below
    only links "shipping page" outside lean; in lean it's plain text,
-   since there's nowhere for it to go. */
+   since there's nowhere for it to go.
+
+   Proof question trimmed 2026-09-14 (Ana) — "Do I need to order a
+   proof..." -> "Do I need to order a book proof...", and the answer
+   dropped "either a discounted physical copy or a free PDF": both
+   still true (see catalog.js's proof-requirement rules), just no
+   longer spelled out here. */
 const FAQS = (onGo, lean) => [
   ["How do I set up an online store for my book?",
    "Open the Instant Store page from your dashboard, choose the project you want to sell, and set your listing details and price. You can preview your page before it goes live, and there's no separate sign-up."],
@@ -812,8 +818,8 @@ const FAQS = (onGo, lean) => [
    "We calculate and collect sales tax automatically. Your buyer pays shipping at checkout, so it's never taken out of what you keep."],
   ["Is there a minimum order?",
    "No minimum order. Sell one copy or a thousand, whenever you're ready."],
-  ["Do I need to order a proof before I can sell through my Instant Store?",
-   "Yes. Ordering and reviewing a proof, either a discounted physical copy or a free PDF, is required before your Instant Store can go live. It's the same quality check every Blurb book goes through before it's offered for sale."],
+  ["Do I need to order a book proof before I can sell through my Instant Store?",
+   "Yes. Ordering and reviewing a proof is required before your Instant Store can go live. It's the same quality check every Blurb book goes through before it's offered for sale."],
   ["Can I sell books to readers internationally?",
    <>
      Yes. Your Instant Store link works for any buyer, and each order prints at the facility nearest them. See our{" "}
