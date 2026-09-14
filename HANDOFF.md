@@ -1,8 +1,81 @@
 # Handoff — Blurb Merchant Experience
 
-Updated **2026-09-01**, covering the session of 1 September. Start here, then read `CLAUDE.md` for
-conventions and the decision log, and `REVIEW-DES-482.md` for the reasoning
-behind anything Ana asked for.
+## Updated 2026-09-14 — read this first, everything below is from 9/1 and earlier
+
+Ana is handing this back to Anain for the next batch of changes. Quick
+orientation, then a succinct summary of what changed since the 9/1 section
+below (which is otherwise still accurate — nothing in it was reversed,
+just built on).
+
+**Where things actually are now** (supersedes the "Where things are" table
+below, which predates the `codex-migration` branch):
+
+| Where | What |
+|---|---|
+| Repo | `~/Downloads/blurb-merchant-experience-codex-migration`, with a real remote: `github.com/anainroibal/blurb-merchant-experience-codex-migration` |
+| Branch | **`ana/codex-migration-wip`** — not pushed to the remote; this handoff is a zip, not a PR. `codex-migration` is the remote's default branch |
+| Live | **https://ana-test-five.vercel.app** — production, current with this branch as of 9/14. Verified in-browser, not just built |
+| Vercel | project `ana-test`, **blurb1** team. CLI deploys only (`vercel` for preview, `vercel --prod` to promote — see Gotchas below, `--prod` sometimes needs the preview-then-promote workaround) |
+| Local | `npm install`, then `npm run dev` (port 5173) |
+
+**What this branch is**: a rewrite of the whole prototype's UI onto
+`@blurb/codex-react`, Blurb's real component library — see
+`CODEX-MIGRATION.md` for exactly what's migrated and what's deliberately
+still hand-rolled. Layered on top of that: the Sell Overview (`sellv2`) and
+Instant Store v2 (`instantstorev2`) pages were fully built out from the
+Figma content outline, and then iterated on copy-and-layout through many
+rounds of Ana's own review — `CLAUDE.md`'s decision log covers all of it
+and is kept current; read it before assuming any figure or claim is real
+rather than a placeholder.
+
+### The big functional change this stretch: the reduced ("Minimum effort") scope got real
+
+The demo bar's Scope dropdown (**Recommended** / **Minimum effort**) isn't
+cosmetic — the two claim different screens, and **Minimum effort is now
+the default** on a fresh load (`?version=full` for the other one). What's
+in it changed several times as Ana reconsidered it piece by piece:
+
+- **In**: Home, Shop all, Photo book PDP, Get Started, Sell Overview,
+  Profit Calculator, Instant Store, Shipping.
+- **Out**: the v1 Self-Publish/"Sell" page (`seller`) and the maker's
+  Pricing calculator (`pricing`, which renders `PricingToday.jsx` — a
+  static price list — in this scope, not a real calculator). Both still
+  have nav items pointing at them (for IA parity with blurb.com's own
+  nav), but those links are inert — see `LEAN_MISSING` in `SiteNav.jsx`.
+- Get Started's own "to \_\_\_" dropdown gained a fourth route, **Gift**
+  (promoted out from under a "What for?" chip row that used to sit under
+  "Keep" and is now gone entirely — see `GetStarted.jsx`'s `intentOf`
+  helper if the next change touches routes/intentions).
+- The Shipping page is now **identical in both scopes** — the lean-only
+  postcode calculator that used to sit above the lighter one was dropped
+  entirely rather than reintroduced when Shipping came back into scope.
+
+### Copy
+
+Very heavy iteration on ISV2's FAQ (proof requirement, payout, profit
+math, international shipping) and on the profit calculator's own hero/
+subhead/ladder labels — all copy-only, verbatim in the commit messages
+if the reasoning for a specific line is ever in question. The Sell
+Overview page's section order (Included-with-every-way-you-sell vs.
+Four-ways-to-sell vs. the comparison table) moved multiple times on
+direct instruction with no reason given each time — don't read
+significance into whichever order it's currently in.
+
+### Gotchas specific to this stretch
+
+- `vercel --prod` intermittently fails with a bare `"Not authorized"`
+  error even when `vercel whoami` is fine. Workaround: plain `vercel`
+  (preview, reliable) then `vercel promote <preview-url>` (needs `y`
+  piped in for its confirmation prompt).
+- The Claude Browser pane's own viewport can render this app's mobile nav
+  (hamburger menu) even at nominal "desktop" width if the pane itself is
+  narrower than the app's 900px nav breakpoint — don't mistake that for a
+  bug in the app.
+- A `read_console_messages` error can be stale/buffered from earlier in a
+  tab's lifetime rather than a live problem — a fresh tab is the way to
+  confirm before treating one as real.
+
+---
 
 ---
 
