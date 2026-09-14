@@ -810,7 +810,13 @@ const FEATURE_ICONS = {
 
    "Where can I see reporting on my sales?" -> "How do I track my book
    sales and earnings?" (2026-09-14, Ana) — asks it the way a seller
-   would rather than naming the dashboard pages first. */
+   would rather than naming the dashboard pages first.
+
+   International-shipping answer reworded the same day (Ana: "works for
+   any buyer" -> "works for buyers worldwide", "and each order prints"
+   -> "with each order printed") — same facts, and per her explicit
+   instruction the "shipping page" text stays linked to the shipping
+   stage, which it already was (see the `lean` ternary below; unchanged). */
 const FAQS = (onGo, lean) => [
   ["How do I set up an online store for my book?",
    "Open the Instant Store page from your dashboard, choose the project you want to sell, and set your listing details and price. You can preview your page before it goes live, and there's no separate sign-up."],
@@ -826,7 +832,7 @@ const FAQS = (onGo, lean) => [
    "Yes. Ordering and reviewing a proof is required before your Instant Store can go live. It's the same quality check every Blurb book goes through before it's offered for sale."],
   ["Can I sell books to readers internationally?",
    <>
-     Yes. Your Instant Store link works for any buyer, and each order prints at the facility nearest them. See our{" "}
+     Yes. Your Instant Store link works for buyers worldwide, with each order printed at the facility nearest them. See our{" "}
      {lean ? "shipping page" : (
        <a href="#" onClick={e => { e.preventDefault(); onGo?.("shipping"); }} style={{ color: C.blue600, textDecoration: "underline" }}>
          shipping page
