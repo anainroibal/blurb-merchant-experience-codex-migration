@@ -169,7 +169,7 @@ function InlineSelect({ value, options, onChange }) {
                          alignment; this has to as well. */
                       textAlign: "left",
                       fontSize: TYPE.sm, color: T.textSubtle,
-                      fontWeight: 700, letterSpacing: 0.8, textTransform: "uppercase",
+                      fontWeight: 700, letterSpacing: 0, textTransform: "none",
                     }}
                   >
                     {o.group}
@@ -279,7 +279,7 @@ function BulkQuotePanel({ kindLabel, formatLabel }) {
           style={{
             height: BUTTON_HEIGHT, padding: "0 24px", borderRadius: R.md,
             fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 700,
-            letterSpacing: 0.6, textTransform: "uppercase", whiteSpace: "nowrap",
+            letterSpacing: 0, textTransform: "none", whiteSpace: "nowrap",
             background: T.bgBrand, color: T.textInverse, border: "1px solid transparent",
             display: "inline-flex", alignItems: "center", textDecoration: "none",
           }}

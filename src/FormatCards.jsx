@@ -191,7 +191,7 @@ export function FormatRow({ ids, formatId, onPick, badgeFor, hidePrice }) {
       aria-label="Format"
       style={{
         display: "grid", gap: GAP, gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
-        alignItems: "start",
+        alignItems: "start", minWidth: 0,
         maxWidth: ids.length * CARD_MAX + (ids.length - 1) * GAP, margin: "0 auto", width: "100%",
       }}
     >

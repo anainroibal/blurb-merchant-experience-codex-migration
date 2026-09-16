@@ -126,7 +126,7 @@ export default function PriceModal({ open, onClose, onGo }) {
             display: "grid", gap: 4,
           }}>
             <span style={{
-              fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.5, textTransform: "uppercase",
+              fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0, textTransform: "none",
               color: last ? C.blue950 : T.textSubtle,
             }}>
               {last ? "Why" : "Tip"}

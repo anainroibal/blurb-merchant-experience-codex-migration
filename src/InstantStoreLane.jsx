@@ -61,7 +61,7 @@ export default function InstantStoreLane({ title, children, cta = "Learn more ab
           <span style={{
             position: "absolute", top: 16, left: 16, padding: "3px 10px", borderRadius: 999,
             background: C.blue600, color: "#fff", fontFamily: FONT_BODY,
-            fontSize: 13, fontWeight: 700, letterSpacing: 0.5, textTransform: "uppercase",
+            fontSize: 13, fontWeight: 700, letterSpacing: 0, textTransform: "none",
           }}>
             New
           </span>

@@ -251,7 +251,7 @@ export default function ProductCatalog({ onGo, lean }) {
           <div style={{ display: "grid", gap: 16, minWidth: 0 }}>
             <span style={{
               justifySelf: "start", padding: "3px 10px", borderRadius: 999, background: C.blue600, color: "#fff",
-              fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.5, textTransform: "uppercase",
+              fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0, textTransform: "none",
             }}>
               New
             </span>

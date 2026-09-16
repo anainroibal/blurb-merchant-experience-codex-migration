@@ -23,7 +23,7 @@ function Cell({ label, sub, children, compact }) {
   return (
     <div style={{ display: "grid", gap: 4, minWidth: 0, padding: compact ? "2px 0" : 0 }}>
       <span style={{
-        fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase",
+        fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0, textTransform: "none",
         color: T.textSubtle,
       }}>
         {label}

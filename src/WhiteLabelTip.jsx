@@ -84,7 +84,7 @@ export default function WhiteLabelTip() {
             fontFamily: FONT_BODY, textAlign: "left", cursor: "default",
           }}
         >
-          <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>
+          <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0, textTransform: "none" }}>
             White label
           </span>
           <span style={{ fontSize: TYPE.sm, lineHeight: 1.55, color: T.textSubtle, display: "block" }}>

@@ -156,8 +156,21 @@
         to   { opacity: 1; transform: none; }
       }
 
-      /* Switching screen, and any section that arrives after a choice. */
-      .fade-in { animation: fade-in var(--slow) var(--ease) both; }
+      /* Switching screen, and any section that arrives after a choice.
+         Fill is backwards-only, not both: Chromium keeps a *resolved*
+         identity matrix applied for the life of a forward-filled animation
+         even when the authored end keyframe is `transform: none`, and any
+         transform value — identity included — makes the element a
+         containing block for `position: fixed` descendants. With dozens of
+         things using this class, that silently breaks any fixed-position
+         element anywhere underneath one of them (this is how the phone
+         summary sheet ended up sized/positioned against a random ancestor
+         instead of the viewport). Backwards-only still holds the pre-start
+         state so nothing flashes before the animation runs, and once it
+         ends the element simply reverts to its own un-animated style —
+         opacity 1, no transform — which is the same result without the
+         lingering effect. */
+      .fade-in { animation: fade-in var(--slow) var(--ease) backwards; }
       @keyframes fade-in {
         from { opacity: 0; transform: translateY(8px); }
         to   { opacity: 1; transform: none; }
@@ -187,7 +200,12 @@
         .cfg-aside {
           order: -1;
           top: 8px !important;
-          max-height: 40vh; overflow-y: auto;
+          /* No height cap here either — same reasoning as the phone sheet
+             below: a seller's full breakdown runs well past what 40vh
+             holds, so a cap here just traded the phone's problem for a
+             tablet-sized version of it. Still sticky, so it scrolls out of
+             the way with the page like it always did once its content is
+             past. */
           box-shadow: 0 8px 22px rgba(0, 0, 0, .09);
         }
         .cfg-steps { gap: 40px !important; }
@@ -213,11 +231,16 @@
          steps — a nested scroll (the page, then the box) for a number that
          only needs a glance most of the time. So on a phone it collapses to
          a slim bar fixed to the bottom of the viewport (.cfg-bar) showing
-         only the headline figure, and expands into a bottom sheet
-         (.cfg-aside.cfg-aside-open) — the same markup as the desktop panel,
-         just anchored to the bottom of the screen — only when tapped. */
+         only the headline figure, and a tap expands the full panel
+         (.cfg-aside.cfg-aside-open) inline into the page right above that
+         bar — not a capped overlay: a seller's full breakdown runs well
+         past 1000px tall, past one whole viewport on most phones, so
+         anything that caps its height either clips content with no way to
+         reach it or forces a second, nested scrollbar inside the page's
+         own. Letting it take whatever height it needs and scroll with the
+         page — the same way the desktop version already does — is the only
+         way "expanded" actually means everything is reachable. */
       .cfg-bar { display: none; }
-      .cfg-bar-scrim { display: none; }
 
       @media (max-width: 640px) {
         /* The type scale in tokens.js is in rem, so it hangs off the root
@@ -237,25 +260,32 @@
         .cfg-bar {
           display: flex !important;
           position: fixed; left: 0; right: 0; bottom: 0; z-index: 71;
+          /* iOS/Android gesture-bar safe area — a bar flush to the raw
+             viewport edge sits partly under the home-indicator strip on
+             notched phones otherwise. */
+          padding-bottom: max(16px, env(safe-area-inset-bottom)) !important;
           box-shadow: 0 -6px 18px rgba(0, 0, 0, .12);
         }
+        /* Expanded: the bar that opened it steps out of the way — the
+           panel below now carries its own Close row, and a bar sitting
+           fixed on top of content it no longer summarizes just hides the
+           bottom of that content. */
+        .cfg-bar.cfg-bar-hidden { display: none !important; }
         /* Collapsed: out of the flow entirely, replaced by .cfg-bar above.
-           Open: the same panel, now a sheet pinned under the bar's shadow —
+           Open: a normal block again — no fixed position, no height cap,
+           no overflow — so it takes exactly the height its content needs
+           and scrolls with the page like everything else on it.
            .cfg-aside-open beats the plain .cfg-aside rule regardless of
-           source order, being the more specific selector. */
+           source order, being the more specific selector, and also beats
+           the ≤1024px rule above (order/top/max-height/overflow) the same
+           way. */
         .cfg-aside:not(.cfg-aside-open) { display: none !important; }
         .cfg-aside.cfg-aside-open {
-          position: fixed !important; top: auto !important; bottom: 0 !important;
-          left: 0 !important; right: 0 !important;
-          max-height: 82vh !important; overflow-y: auto;
-          border-radius: 16px 16px 0 0 !important;
-          box-shadow: 0 -10px 30px rgba(0, 0, 0, .18) !important;
-          z-index: 72; padding: 16px !important;
-        }
-        .cfg-bar-scrim.open {
-          display: block !important;
-          position: fixed; inset: 0; z-index: 70;
-          background: rgba(13, 47, 68, .35);
+          position: static !important; order: 0 !important;
+          max-height: none !important; overflow: visible !important;
+          border-radius: 16px !important;
+          box-shadow: 0 4px 14px rgba(0, 0, 0, .10) !important;
+          padding: 18px !important; margin-bottom: 8px;
         }
         .demo-bar { justify-content: center !important; }
       }

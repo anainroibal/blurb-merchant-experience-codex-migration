@@ -510,7 +510,7 @@ function Tag({ children }) {
   return (
     <span style={{
       marginLeft: 8, padding: "1px 8px", borderRadius: 999, verticalAlign: "middle",
-      fontSize: 10, fontWeight: 700, letterSpacing: 0.6, textTransform: "uppercase",
+      fontSize: 10, fontWeight: 700, letterSpacing: 0, textTransform: "none",
       border: `1px solid ${T.borderStrong}`, color: T.textSubtle, whiteSpace: "nowrap",
     }}>
       {children}
@@ -713,7 +713,7 @@ function MegaMenu({ group, isOpen, onClose, onGo, lean }) {
             <div key={i}>
               {headed && (
                 <div style={{
-                  fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.6, textTransform: "uppercase",
+                  fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0, textTransform: "none",
                   color: T.textSubtle, padding: "0 16px 6px",
                   /* The heading belongs to the set, not to each column of it,
                      so only the first column of a split set is labelled. */
@@ -748,7 +748,7 @@ function MegaMenu({ group, isOpen, onClose, onGo, lean }) {
       {group.featured && (
         <div style={{ minWidth: 260, maxWidth: 280 }}>
           <div style={{
-            fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.6, textTransform: "uppercase",
+            fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0, textTransform: "none",
             color: T.textSubtle, padding: "0 16px 6px",
           }}>
             {group.featured.heading}
@@ -887,7 +887,7 @@ function LocaleMenu({ open, onToggle, value, onPick }) {
           }}
         >
           <div style={{
-            fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.6, textTransform: "uppercase",
+            fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0, textTransform: "none",
             color: T.textSubtle, padding: "2px 10px 8px",
           }}>
             Region, language and currency
@@ -950,7 +950,7 @@ function MobileNav({ open, signedIn, onClose, onSignedIn, onGo, lean }) {
           {group.columns.map(col => (
             <div key={col.heading} style={{ display: "grid", gap: 1, paddingBottom: 8 }}>
               <div style={{
-                fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.6, textTransform: "uppercase",
+                fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0, textTransform: "none",
                 color: T.textSubtle, padding: "8px 0 2px",
               }}>{col.heading}</div>
               {col.items.map(([label, , tag, stage, , href]) => (

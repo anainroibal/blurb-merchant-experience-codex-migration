@@ -45,7 +45,7 @@ export default function ProductTypes({ format, route, use, onSelect, recommended
     : all;
 
   return (
-    <div style={{ fontFamily: FONT_BODY }}>
+    <div style={{ fontFamily: FONT_BODY, minWidth: 0 }}>
       <FormatRow
         ids={ids}
         formatId={format}

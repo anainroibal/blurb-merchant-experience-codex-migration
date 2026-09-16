@@ -218,7 +218,7 @@ function VersionSwitch({ version, onVersion }) {
   return (
     <span style={{ position: "relative", display: "inline-flex", alignItems: "center", gap: 6 }}>
       <span style={{
-        fontSize: 11, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase",
+        fontSize: 11, fontWeight: 700, letterSpacing: 0, textTransform: "none",
         color: T.textSubtle,
       }}>
         Scope
@@ -331,7 +331,7 @@ function SessionSwitch({ signedIn, onSignedIn }) {
   return (
     <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
       <span style={{
-        fontSize: 11, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase",
+        fontSize: 11, fontWeight: 700, letterSpacing: 0, textTransform: "none",
         color: T.textSubtle,
       }}>
         Session

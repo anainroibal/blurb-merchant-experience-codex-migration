@@ -84,7 +84,7 @@ function ProjectCard({ p }) {
 
       <span style={{
         display: "inline-flex", alignItems: "center", gap: 4, flex: "0 0 auto",
-        fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase",
+        fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0, textTransform: "none",
         color: T.textBrand,
       }}>
         {p.selling ? "Manage" : "Set up"}
@@ -132,7 +132,7 @@ export default function YourProjects({ signedIn, onSignIn, compact = false }) {
     return (
       <div style={{ display: "grid", gap: 10, fontFamily: FONT_BODY, minWidth: 0 }}>
         <div style={{ display: "grid", gap: 4 }}>
-          <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>
+          <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0, textTransform: "none" }}>
             Or sell one you have already made
           </span>
           {/* Signed-out line replaced 2026-09-11 (Ana: "Log in and a
@@ -194,7 +194,7 @@ export default function YourProjects({ signedIn, onSignIn, compact = false }) {
 
   return (
     <div style={{ fontFamily: FONT_BODY }}>
-      <div style={{ fontSize: TYPE.base, fontWeight: 700, letterSpacing: 0.8, textTransform: "uppercase", marginBottom: 14 }}>
+      <div style={{ fontSize: TYPE.base, fontWeight: 700, letterSpacing: 0, textTransform: "none", marginBottom: 14 }}>
         Or sell one you have already made
       </div>
 

@@ -25,7 +25,7 @@ import {
    single checkbox: "Delivery point" over "This is a P.O. Box". */
 function GroupLabel({ children }) {
   return (
-    <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>
+    <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0, textTransform: "none" }}>
       {children}
     </span>
   );
@@ -186,7 +186,7 @@ export default function ShippingSection({ selling, ship, setShip, qty, price }) 
       background: T.bgNeutral, border: `1px solid ${T.border}`, borderRadius: R.lg,
       padding: 24, display: "grid", gap: 16, fontFamily: FONT_BODY,
     }}>
-      <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>
+      <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0, textTransform: "none" }}>
         Shipping{selling ? " — optional" : ""}
       </span>
 
@@ -246,7 +246,7 @@ export default function ShippingSection({ selling, ship, setShip, qty, price }) 
               moment they type. */}
           {hasDestination && (
             <div className="fade-in" style={{ display: "grid", gap: 10, borderTop: `1px solid ${T.border}`, paddingTop: 16 }}>
-              <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>
+              <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0, textTransform: "none" }}>
                 When it would arrive
               </span>
               <DeliveryTable

@@ -151,7 +151,7 @@ export default function CreateActions({
     <div style={{ display: "grid", gap: 14, fontFamily: FONT_BODY, minWidth: 0 }}>
       {heading && (
         <div style={{ display: "grid", gap: 4 }}>
-          <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>
+          <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0, textTransform: "none" }}>
             {heading}
           </span>
           {/* Hidden on the Instant Store profit calculator only (2026-09-10,

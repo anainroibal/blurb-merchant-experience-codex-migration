@@ -27,7 +27,7 @@ export function StepHeading({ n, children }) {
     <div style={{ textAlign: "center", margin: "0 0 24px" }}>
       <div style={{
         fontFamily: FONT_BODY, fontSize: TYPE.xl, fontWeight: 700,
-        letterSpacing: 1, textTransform: "uppercase", color: T.textNeutral,
+        letterSpacing: 0, textTransform: "none", color: T.textNeutral,
       }}>
         Step {n}: {children}
       </div>
@@ -127,7 +127,7 @@ export function OptionCard({ value, title, sub, spec, note, delta, photo, select
         fontSize: thumb ? TYPE.sm : TYPE.base,
         fontWeight: thumb ? 600 : text ? 600 : 700,
         letterSpacing: thumb || text ? 0 : 0.6,
-        textTransform: thumb || text ? "none" : "uppercase",
+        textTransform: "none",
         color: card ? C.gray950 : (selected ? C.blue950 : T.textNeutral), lineHeight: 1.3,
       }}>
         {title}
@@ -178,7 +178,7 @@ export function MiniStepper({ label, hint, value, min, max, step = 1, onChange }
   return (
     <div style={{ display: "grid", gap: 8 }}>
       <span style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
-        <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>{label}</span>
+        <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0, textTransform: "none" }}>{label}</span>
         {hint && <span style={{ fontSize: TYPE.sm, color: T.textSubtle, textAlign: "right" }}>{hint}</span>}
       </span>
 

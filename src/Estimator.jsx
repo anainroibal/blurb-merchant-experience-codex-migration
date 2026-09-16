@@ -165,7 +165,7 @@ function Rung({ label, value, loud }) {
   return (
     <div style={{ display: "grid", gap: 4 }}>
       <span style={{
-        fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase",
+        fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0, textTransform: "none",
         color: loud ? C.blue600 : T.textSubtle,
       }}>{label}</span>
       <span style={{

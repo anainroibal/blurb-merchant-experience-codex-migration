@@ -99,7 +99,7 @@ function Chip({ children }) {
   return (
     <span style={{
       padding: "2px 8px", borderRadius: 999, fontSize: TYPE.sm, fontWeight: 700,
-      letterSpacing: 0.4, textTransform: "uppercase", whiteSpace: "nowrap",
+      letterSpacing: 0, textTransform: "none", whiteSpace: "nowrap",
       background: C.blue600, color: "#fff",
     }}>
       {children}

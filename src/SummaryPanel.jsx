@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Button, Divider } from "@blurb/codex-react";
 import { ArrowForwardIcon } from "@blurb/codex-react/icons";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
@@ -41,7 +41,7 @@ function BulkHandoff({ qty }) {
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
         <span className="ms" style={{ fontSize: 20, color: C.blue600 }}>local_shipping</span>
-        <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase", color: C.blue950 }}>
+        <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0, textTransform: "none", color: C.blue950 }}>
           {qty} copies is a large order
         </span>
       </div>
@@ -79,7 +79,7 @@ function Check({ label, detail, benefit, checked, onChange, info }) {
       <span style={{ display: "grid", gap: 2, minWidth: 0 }}>
         <span style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 8 }}>
           <span style={{ display: "inline-flex", alignItems: "center", gap: 6, minWidth: 0 }}>
-            <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase" }}>{label}</span>
+            <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0, textTransform: "none" }}>{label}</span>
             {info}
           </span>
           <span style={{ fontSize: TYPE.sm, color: T.textSubtle, whiteSpace: "nowrap" }}>{detail}</span>
@@ -207,8 +207,11 @@ function PriceInput({ value, floor, onChange }) {
 /* A step with nothing to pick — a magazine's paper and cover, which come with
    the magazine itself. Same heading, same card, already chosen: the page keeps
    its shape and the spec is read where every other spec is read. */
-/* "Choose your book size" → "BOOK SIZE", "Your paper" → "PAPER". */
-const summaryLabel = label => label.replace(/^(choose your|your)\s+/i, "").toUpperCase();
+/* "Choose your book size" → "Book size", "Your paper" → "Paper". */
+const summaryLabel = label => {
+  const stripped = label.replace(/^(choose your|your)\s+/i, "");
+  return stripped.charAt(0).toUpperCase() + stripped.slice(1);
+};
 
 function Line({ label, value, strong, muted, accent }) {
   return (
@@ -217,7 +220,7 @@ function Line({ label, value, strong, muted, accent }) {
         fontSize: strong ? TYPE.base : TYPE.sm,
         color: accent ? C.blue600 : muted ? T.textSubtle : T.textNeutral,
         fontWeight: strong ? 700 : 400,
-        letterSpacing: strong ? 0.4 : 0, textTransform: strong ? "uppercase" : "none",
+        letterSpacing: 0, textTransform: "none",
       }}>{label}</span>
       <span style={{
         fontSize: strong ? TYPE["4xl"] : TYPE.base, fontWeight: strong ? 700 : 600,
@@ -257,11 +260,27 @@ export default function SummaryPanel({
   const selling = mode === "sell";
   const bulk = mode === "distribute";
   /* ── The phone bar's own state ──
-     Collapsed by default: a bar showing one figure, expanding into this
-     same panel as a bottom sheet only when tapped. Irrelevant above 640px,
-     where CSS never shows the bar and never hides the aside — see
-     index.html. */
+     Collapsed by default — a bar showing one figure, expanded by a tap.
+     What changed from the very first version of this is where the content
+     goes on expanding: not a capped, independently-scrolling sheet (a
+     phone's full breakdown ran past 1000px tall, well over one viewport,
+     so a height cap just clipped the bottom off with no way to reach it),
+     but straight into the page's own flow, full height, no nested scroll —
+     the page scrolls, the same way it would for any other content. The bar
+     stays visible while collapsed so the figure is never just missed, and
+     steps aside once expanded since the panel's own Close row takes over.
+     Irrelevant above 640px, where CSS never shows the bar and never hides
+     the aside — see index.html. */
   const [expanded, setExpanded] = useState(false);
+  /* The panel opens wherever it already sits in the page's own flow — near
+     the top of the configurator, not down by the bar that was tapped. Left
+     alone, that reads as the bar just vanishing: nothing visibly changes
+     where the tap happened. Scrolling the panel into view on open is what
+     makes "expanded" actually visible rather than technically true. */
+  const asideRef = useRef(null);
+  useEffect(() => {
+    if (expanded) asideRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [expanded]);
   const f = CATALOG[formatId];
   const p = priceFor(formatId, state);
   const limit = pageLimit(formatId, state);
@@ -343,40 +362,48 @@ export default function SummaryPanel({
 
       {/* ── The phone bar ──
           Invisible above 640px (see .cfg-bar in index.html). Below it, this
-          replaces the sticky-top panel entirely: a slim strip pinned to the
-          bottom of the viewport, one figure and a tap to open the same
-          panel as a sheet. */}
+          replaces the sticky-top panel entirely while collapsed: a slim
+          strip pinned to the bottom of the viewport, one figure and a tap
+          to expand the same panel into the page below. Solid brand blue
+          rather than a neutral tone — this is the one control on the whole
+          screen whose entire job is to be noticed, not blend into the page
+          the way a card or a field does. Hidden once expanded (the panel
+          below takes over, with its own Close row) so it isn't sitting on
+          top of content it no longer needs to summarize. */}
       <button
-        className="cfg-bar"
+        className={`cfg-bar${expanded ? " cfg-bar-hidden" : ""}`}
         onClick={() => setExpanded(true)}
         aria-expanded={expanded}
         style={{
           width: "100%", alignItems: "center", justifyContent: "space-between",
-          background: T.bgNeutral, border: 0, borderTop: `1px solid ${T.border}`,
-          padding: "14px 20px", cursor: "pointer", font: "inherit", color: "inherit",
+          background: C.blue600, border: 0,
+          padding: "16px 20px", cursor: "pointer", font: "inherit", color: T.textInverse,
         }}
       >
-        <span style={{ fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0.4, textTransform: "uppercase", color: T.textSubtle }}>
+        <span style={{ fontSize: TYPE.base, fontWeight: 700, letterSpacing: 0, textTransform: "none" }}>
           {barLabel}
         </span>
         <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-          <span style={{ fontFamily: FONT_DISPLAY, fontWeight: 700, fontSize: TYPE["2xl"], color: C.blue600 }}>
+          <span style={{ fontFamily: FONT_DISPLAY, fontWeight: 700, fontSize: TYPE["2xl"] }}>
             {money(barValue)}
           </span>
-          <span className="ms" style={{ fontSize: 22, color: T.textSubtle }}>expand_less</span>
+          <span className="ms" style={{ fontSize: 24 }}>expand_less</span>
         </span>
       </button>
 
-      {/* Tapping outside the open sheet closes it, same as tapping its own
-          close row. */}
-      <div className={`cfg-bar-scrim${expanded ? " open" : ""}`} onClick={() => setExpanded(false)} aria-hidden />
-
       <aside
+        ref={asideRef}
         className={`cfg-aside${expanded ? " cfg-aside-open" : ""}`}
         style={{
           background: T.bgNeutral,
           border: `1px solid ${T.border}`, borderRadius: R.lg,
           padding: 22, display: "grid", gap: 14, minWidth: 0,
+          /* Otherwise scrollIntoView lands the panel's top edge exactly at
+             the viewport's top edge — underneath the sticky nav, which
+             covers the Close row and heading right when they're what a
+             tap just asked to see. Same offset the sticky desktop panel
+             already uses above. */
+          scrollMarginTop: "calc(var(--nav-h, 124px) + 16px)",
         }}
       >
         {/* Only rendered as a control on a phone (.show-sm) — the sheet's
@@ -397,7 +424,7 @@ export default function SummaryPanel({
 
         <div style={{
           fontFamily: FONT_BODY, fontSize: TYPE.base, fontWeight: 700,
-          letterSpacing: 0.8, textTransform: "uppercase",
+          letterSpacing: 0, textTransform: "none",
         }}>
           {selling ? "What you'd earn selling through an Instant Store" : bulk ? "What the run costs" : "Pricing summary"}
         </div>
