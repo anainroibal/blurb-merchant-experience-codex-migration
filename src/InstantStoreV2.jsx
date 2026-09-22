@@ -3,7 +3,7 @@ import { Button, CardList, Card, RadioCard, RadioCardGroup } from "@blurb/codex-
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { FORMAT_CARDS } from "./FormatCards.jsx";
 import { CATALOG, defaultSelection, minSellPrice } from "./catalog.js";
-import ProductOptions from "./ProductOptions.jsx";
+import ProductOptions, { Field } from "./ProductOptions.jsx";
 import SummaryPanel from "./SummaryPanel.jsx";
 import CreateActions from "./CreateActions.jsx";
 import Faq from "./Faq.jsx";
@@ -1018,49 +1018,67 @@ export default function InstantStoreV2({ onGo }) {
             Calculate your profit
           </h2>
 
-          {/* Compact product-type row, matching Figma's own "Product"
-              control here (Photo Book / Paperback & Hardcover Books /
-              Magazine / Notebooks & Journals) — not FormatCards' big
-              photo-card picker, which is a different control used
-              elsewhere (the format catalogue, /getting-started). */}
-          <RadioCardGroup
-            value={calcFormatId}
-            onValueChange={changeCalcFormat}
-            aria-label="Product"
-            style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12 }}
-          >
-            {CALCULATOR_FORMATS.map(f => (
-              <RadioCard key={f.id} value={f.id}>{f.label}</RadioCard>
-            ))}
-          </RadioCardGroup>
-
+          {/* RESYNCED (Anain, 2026-09-22) — the section-by-section audit
+              found this calculator was structurally right (real,
+              wired ProductOptions + SummaryPanel) but visually incomplete
+              against Figma: both columns sit in their own bordered white
+              card there (node 104:5039), and the Product row carries the
+              same "label + Details" treatment Book Size/Cover/Paper below
+              it already use. Neither existed here before — ProductOptions
+              and SummaryPanel were dropped in unwrapped, missing the
+              bordered <div> Estimator.jsx itself wraps ProductOptions in.
+              "Details" is left off the Product field (unlike the other
+              three) — there's no format-comparison spec to show in a
+              modal the way Book Size/Cover/Paper each have from the
+              catalog, and a Details link that opens nothing would be
+              worse than none. */}
           <div
             className="fade-in cfg-grid"
             style={{ display: "grid", gap: 40, alignItems: "start", gridTemplateColumns: "minmax(340px, 1.55fr) minmax(310px, 0.85fr)" }}
           >
             <div className="cfg-steps" style={{ minWidth: 0 }}>
-              <ProductOptions formatId={calcFormatId} state={calcSel} onChange={setCalcSel} mode="sell" />
+              <div style={{
+                background: T.bgNeutral, border: `1px solid ${T.border}`, borderRadius: R.lg,
+                padding: 24, display: "grid", gap: 18,
+              }}>
+                <Field label="Product" value={CALCULATOR_FORMATS.find(f => f.id === calcFormatId)?.label}>
+                  <RadioCardGroup
+                    value={calcFormatId}
+                    onValueChange={changeCalcFormat}
+                    aria-label="Product"
+                    style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12 }}
+                  >
+                    {CALCULATOR_FORMATS.map(f => (
+                      <RadioCard key={f.id} value={f.id}>{f.label}</RadioCard>
+                    ))}
+                  </RadioCardGroup>
+                </Field>
+                <ProductOptions formatId={calcFormatId} state={calcSel} onChange={setCalcSel} mode="sell" />
+              </div>
             </div>
-            <SummaryPanel
-              formatId={calcFormatId}
-              state={calcSel}
-              onChange={setCalcSel}
-              mode="sell"
-              sellPrice={calcPrice}
-              onSellPrice={setCalcPrice}
-              ship={calcShip}
-              setShip={setCalcShip}
-              onGo={onGo}
-              actions={
-                <CreateActions
-                  formatId={calcFormatId}
-                  sel={calcSel}
-                  onGo={onGo}
-                  heading="Ready to make it?"
-                  hideHint
-                />
-              }
-            />
+            <div style={{ border: `1px solid ${T.border}`, borderRadius: R.lg, padding: 24 }}>
+              <SummaryPanel
+                formatId={calcFormatId}
+                state={calcSel}
+                onChange={setCalcSel}
+                mode="sell"
+                sellPrice={calcPrice}
+                onSellPrice={setCalcPrice}
+                ship={calcShip}
+                setShip={setCalcShip}
+                onGo={onGo}
+                sticky={false}
+                actions={
+                  <CreateActions
+                    formatId={calcFormatId}
+                    sel={calcSel}
+                    onGo={onGo}
+                    heading="Ready to make it?"
+                    hideHint
+                  />
+                }
+              />
+            </div>
           </div>
         </div>
       </section>
