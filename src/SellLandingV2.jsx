@@ -655,7 +655,21 @@ const STATS = [
    "Unique books and products created and sold."],
 ];
 
-const TRUSTED_BY = ["Canva", "minted", "Treering", "Storyworth", "We Can Books"];
+/* CORRECTED 2026-09-22 (Anain): the flattened trusted-by-logos.png this
+   list used to describe actually carried Storyworth, not Wonderbly —
+   Figma's own "Frame 1171274091" node (checked directly, five children)
+   has Canva, Minted, Wonderbly, Treering, and We Can Books, in that
+   order; Storyworth isn't in it at all. Five real vector logos exported
+   individually from that node instead of one flattened image, so each
+   one gets its own alt text and none of them have to share a single
+   guessed caption again. */
+const TRUSTED_BY = [
+  { name: "Canva", src: "/assets/trusted-by/canva.svg", width: 94 },
+  { name: "Minted", src: "/assets/trusted-by/minted.svg", width: 118 },
+  { name: "Wonderbly", src: "/assets/trusted-by/wonderbly.svg", width: 114 },
+  { name: "Treering", src: "/assets/trusted-by/treering.svg", width: 144 },
+  { name: "We Can Books", src: "/assets/trusted-by/we-can-books.svg", width: 115 },
+];
 
 /* Questions are the outline's own (Accordion Block, 8 sections); it
    carries no answer text (every section is closed, title only), so
@@ -1345,11 +1359,11 @@ export default function SellLandingV2({ onGo }) {
         </div>
       </section>
 
-      {/* ── Trusted by ── the outline's actual logo lockup (Canva,
-          Minted, Treering, Storyworth, We Can Books — names confirmed
-          by Figma comment #63), exported straight off the frame rather
-          than reproduced as styled text, so the real marks show up
-          instead of a guess at their wordmarks.
+      {/* ── Trusted by ── the outline's actual logo lockup, now five
+          real vector marks (see TRUSTED_BY's own note on the Storyworth
+          -> Wonderbly correction) laid out the way Figma's own frame
+          does it — a heading above, logos in a justified row below —
+          rather than one flattened image standing in for both.
           Padding cut 2026-09-10 (Ana: "trusted by is lower height...
           on the figma which i think looks nicer") — a logo strip
           doesn't carry the same weight as the proof numbers above it,
@@ -1362,13 +1376,28 @@ export default function SellLandingV2({ onGo }) {
           repetitive — but Showcase is cream now (a separate change
           since), so that reasoning no longer holds and grey, the other
           option Ana offered at the time, is the one left standing. */}
-      <section style={{ padding: "clamp(24px, 3vw, 32px) 24px", background: C.gray50 }}>
-        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
-          <img
-            src="/assets/trusted-by-logos.png"
-            alt={`Trusted by ${TRUSTED_BY.join(", ")}`}
-            style={{ width: "100%", height: "auto", display: "block" }}
-          />
+      <section style={{ padding: "clamp(32px, 4vw, 48px) 24px", background: C.gray50 }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto", display: "grid", gap: 24 }}>
+          <h3 style={{
+            fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.25rem, 2.4vw, 1.5rem)",
+            lineHeight: 1.2, margin: 0, textAlign: "center",
+          }}>
+            Trusted by
+          </h3>
+          <div style={{
+            display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between",
+            gap: "24px 40px",
+          }}>
+            {TRUSTED_BY.map(logo => (
+              <img
+                key={logo.name}
+                src={logo.src}
+                alt={logo.name}
+                loading="lazy"
+                style={{ height: 40, width: "auto", maxWidth: logo.width, objectFit: "contain", display: "block" }}
+              />
+            ))}
+          </div>
         </div>
       </section>
 
