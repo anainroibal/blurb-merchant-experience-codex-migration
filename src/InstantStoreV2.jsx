@@ -92,8 +92,17 @@ const WALKTHROUGH = [
 const FULFILMENT_POINTS = [
   ["auto_stories", "Print on demand", "Every order triggers a fresh print run, so there's no need to buy books upfront or maintain inventory."],
   ["local_shipping", "Ships in days", "Blurb packs and ships every order directly to your buyer. You never touch a box."],
-  ["where_to_vote", "Tracking on every order", "Buyers can estimate shipping times and will get a tracking number automatically at the checkout."],
-  ["source_environment", "Powered by RPI Print", "Our in-house fulfillment, backed by RPI Print's 45+ years of print experience, ensures quality control and reliability at scale, trusted by brands like Canva and Minted."],
+  /* These two bodies render through a plain <p>{body}</p>, not Card's
+     markdown-aware description (unlike FEATURES/STEPS above), so the
+     Figma-specified links are real JSX anchors here, not [text](url)
+     markdown — that syntax would just print literal brackets in this
+     render path. */
+  ["where_to_vote", "Tracking on every order", <>
+    Buyers can <a href="https://www.blurb.com/shipping" target="_blank" rel="noopener noreferrer" style={{ color: C.blue600, textDecoration: "underline" }}>estimate shipping times</a> and will get a tracking number automatically at the checkout.
+  </>],
+  ["source_environment", "Powered by RPI Print", <>
+    Our in-house fulfillment, backed by <a href="https://www.rpiprint.com/" target="_blank" rel="noopener noreferrer" style={{ color: C.blue600, textDecoration: "underline" }}>RPI Print's 45+ years of print experience</a>, ensures quality control and reliability at scale, trusted by brands like Canva and Minted.
+  </>],
 ];
 
 /* Revised (Ana, working from a reference mock) — new imagery for Photo
@@ -379,7 +388,7 @@ const FEATURES = [
   ["storefront", "Your custom product page",
    "Showcase your work with an interactive preview, author bio, and one-tap checkout via Apple Pay, Google Pay, or PayPal, no buyer account needed."],
   ["diamond", "Industry-leading quality",
-   "Give your audience access to Blurb's superior print quality, vast catalog of formats, and premium paper types."],
+   "Give your audience access to Blurb's superior print quality, [vast catalog of formats](https://www.blurb.com/formats), and [premium paper types](https://support.blurb.com/hc/en-us/sections/201812026-Paper-and-Materials)."],
   ["receipt_long", "Automated sales tax",
    "Sales tax is calculated, collected, and remitted automatically on every sale, so you never have to manage it."],
   ["auto_stories", "Sell books, magazines & more",

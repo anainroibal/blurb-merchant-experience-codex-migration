@@ -471,6 +471,19 @@ export default function App() {
      screen is short and after the content when it is not. */
   return (
     <div style={{ minHeight: "100vh", background: T.bg, display: "flex", flexDirection: "column" }}>
+      {/* ── Promo bar ── ADDED to match Figma (Anain, 2026-09-22; node
+          104:4844, Instant Store Landing Page) — didn't exist anywhere in
+          this codebase before. Scoped to the one stage whose Figma frame
+          was actually audited for one, rather than added to every page —
+          not part of the shared sticky header block below, since Figma
+          shows it scrolling away above a sticky nav, not sticking itself. */}
+      {stage === "instantstorev2" && (
+        <div style={{ background: "#10597c", padding: "12px 24px", textAlign: "center" }}>
+          <span style={{ fontSize: 12, color: "#fff", textDecoration: "underline" }}>
+            25% off all books* through January 15, 2026 | Code: NEWYEARBOOK25 | Details
+          </span>
+        </div>
+      )}
       {/* The demo bar and the site nav stick as one block. Sticking the nav
           alone would need the demo bar's height as an offset, and that height
           changes when the bar wraps on a narrow screen — one sticky wrapper
