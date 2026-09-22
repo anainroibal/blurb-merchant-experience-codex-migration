@@ -13,19 +13,12 @@
     <!-- Blurb's own Typekit kit — futura-pt and proxima-nova. Domain-locked,
          so it may not resolve off blurb.com; tokens.js carries fallbacks. -->
     <link rel="stylesheet" href="https://use.typekit.net/arj3syy.css" />
-    <!-- Real Inter, for InstantStoreV2 only (2026-09-22) — that page's
-         own Figma frame is set in Inter throughout (verified via the
-         Plugin API's actual font bindings, not the codegen's fallback
-         guess), not futura-pt/proxima-nova. "Inter" was already named as
-         a CSS fallback everywhere in tokens.js, but never actually
-         loaded, so it silently rendered as the OS default sans-serif —
-         not really Inter either. Scoped to this one page's own font
-         constants (see InstantStoreV2.jsx), not the shared FONT_DISPLAY/
-         FONT_BODY tokens every other page still uses. -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700&display=swap"
-      rel="stylesheet"
-    />
+    <!-- NOT loading Inter as a real web font (2026-09-22) — Figma's own
+         Instant Store frame is set in Inter, but that's a workaround for
+         Figma-side editing (Proxima Nova isn't something this tooling can
+         modify inside Figma itself), not the intended typeface for the
+         built prototype. The app keeps Blurb's real Codex fonts
+         (futura-pt/proxima-nova) everywhere, including this page. -->
     <style>
       * { box-sizing: border-box; }
       /* smooth-scrolls every in-page #anchor link (ISV2's "See what

@@ -1,20 +1,6 @@
 import React, { useState } from "react";
 import { Button, CardList, Card, RadioCard, RadioCardGroup } from "@blurb/codex-react";
-import { C, T, TYPE, R } from "./tokens.js";
-
-/* This page's own Figma frame (Instant Store Landing Page, node 104:4843)
-   is set in Inter throughout — confirmed via the Plugin API's actual font
-   bindings on the H1 (getStyledTextSegments), not the codegen's fallback
-   guess, which just names Inter as a CSS fallback and proves nothing.
-   Every other page in this app uses tokens.js's own FONT_DISPLAY/FONT_BODY
-   (futura-pt/proxima-nova, Blurb's real brand fonts) — deliberately left
-   alone; this override is scoped to this file only, not a tokens.js
-   change. Real Inter is loaded in index.html (Google Fonts) specifically
-   for this page — it was already named as a fallback everywhere but
-   never actually loaded, so it silently rendered as the OS default sans
-   before this. */
-const FONT_DISPLAY = "Inter, -apple-system, system-ui, sans-serif";
-const FONT_BODY = "Inter, -apple-system, system-ui, sans-serif";
+import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { FORMAT_CARDS } from "./FormatCards.jsx";
 import { CATALOG, defaultSelection, minSellPrice } from "./catalog.js";
 import ProductOptions, { Field } from "./ProductOptions.jsx";
@@ -1094,7 +1080,6 @@ export default function InstantStoreV2({ onGo }) {
                 sticky={false}
                 plainCompareCallout
                 printCostAlign="right"
-                figureFontFamily={FONT_DISPLAY}
                 actions={
                   <CreateActions
                     formatId={calcFormatId}
