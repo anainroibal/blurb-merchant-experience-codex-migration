@@ -223,11 +223,15 @@ function InstantStoreMockup() {
    repeat the same phrase back to back — then trimmed further (Ana) to
    drop the redundant "without leaving": the point is already made by
    "right on the page," so it doesn't need restating. */
+/* RESYNCED to the Cro-Seller-LP Figma canvas (Anain, 2026-09-22) — Figma
+   is now the source of truth for this page's copy. Wording above that
+   had since diverged per the dated decisions in this file's history is
+   overwritten here to match the current desktop frame exactly. */
 const WALKTHROUGH = [
-  ["Showcase your work", "Cover, description, and pricing, plus an interactive preview so buyers can flip through real pages before they buy."],
+  ["Showcase your work", "Cover, description, and price, plus an interactive book preview so buyers can flip through real pages before they buy."],
   ["All your books in one place", "Every other book you sell shows up right on the page, so buyers can find your full catalog."],
-  ["One click to buy", "A single 'Buy now' takes buyers straight to checkout, including Apple Pay, Google Pay, and PayPal. No cart to build, no plugins to configure."],
-  ["Blurb prints and ships it", "No inventory to buy upfront: every order triggers a fresh print run, and you only pay for what ships. Your buyer gets a tracked delivery, and you never touch a box."],
+  ["One click to buy", "A single tap on 'Buy now' takes buyers straight to secure checkout, where they can pay with Apple Pay, Google Pay, and PayPal. You don't need to build or maintain anything yourself."],
+  ["Blurb prints and ships your book", "Don't buy your inventory upfront.  Every order triggers a fresh print run, and you only pay for what ships. Your buyer gets a tracked delivery, and you never touch a box."],
 ];
 
 /* REVISED 2026-09-10 (Ana). "Tracking on every order"'s body invented a
@@ -260,11 +264,12 @@ const WALKTHROUGH = [
    (local_shipping, confirmed rather than assumed this time), and
    "Tracking on every order" is where_to_vote — a location pin with a
    checkmark, not the generic "verified" badge shape. */
+/* RESYNCED to Figma (Anain, 2026-09-22) — see WALKTHROUGH's note above. */
 const FULFILMENT_POINTS = [
-  ["auto_stories", "Print on demand", "Every order triggers a fresh print run. No inventory to manage, no stock to buy upfront."],
+  ["auto_stories", "Print on demand", "Every order triggers a fresh print run, so there's no need to buy books upfront or maintain inventory."],
   ["local_shipping", "Ships in days", "Blurb packs and ships every order directly to your buyer. You never touch a box."],
-  ["where_to_vote", "Tracking on every order", "Buyers get a tracking number automatically, from checkout to delivery."],
-  ["source_environment", "Powered by RPI Print", "Our in-house fulfillment ensures quality control and reliability at scale, trusted by brands like Canva and Minted."],
+  ["where_to_vote", "Tracking on every order", "Buyers can estimate shipping times and will get a tracking number automatically at the checkout."],
+  ["source_environment", "Powered by RPI Print", "Our in-house fulfillment, backed by RPI Print's 45+ years of print experience, ensures quality control and reliability at scale, trusted by brands like Canva and Minted."],
 ];
 
 /* Revised (Ana, working from a reference mock) — new imagery for Photo
@@ -284,20 +289,25 @@ const FULFILMENT_POINTS = [
    them off blurb.com's own nav rather than guessing at the slug.
    "Paperback & Hardcover" -> "Paperbacks & Hardcovers" 2026-09-10 (Ana,
    both pages) — plural to match the other three titles. */
+/* RESYNCED to Figma (Anain, 2026-09-22) — see WALKTHROUGH's note above.
+   "Paperback & Hardcover Books" restored (was "Paperbacks & Hardcovers"),
+   photo book format count restored to 4 (matching blurb.com/pricing, was
+   trimmed to 3), and all four descriptions rewritten to the desktop
+   frame's current copy. */
 const SELL_FORMATS = [
-  { id: "photo", title: "Photo Books", formats: 3, papers: 7, sizes: 6,
-    desc: "Sell photo books, wedding albums, and layflat photo books in premium papers and formats.",
+  { id: "photo", title: "Photo Books", formats: 4, papers: 7, sizes: 6,
+    desc: "Sell photo books online, including travel and portrait photography books and layflat photo books, in premium papers and formats.",
     img: "https://assets.blurb.com/_astro/linen-hardcover-dustjacket-optimized.DNuztDk1.webp",
     alt: "Stack of linen hardcover with dust jacket photo books with a red scooter on the cover and the title “Life in Italy.”",
     href: "https://www.blurb.com/photo-books" },
-  { id: "trade", title: "Paperbacks & Hardcovers", formats: 3, papers: 3, sizes: 3,
-    desc: "Create hardcover and paperback books, novels, cookbooks, children's books, and more.",
+  { id: "trade", title: "Paperback & Hardcover Books", formats: 3, papers: 3, sizes: 3,
+    desc: "Sell paperback and hardcover books online: novels, cookbooks, children's books, poetry, and art books.",
     href: "https://www.blurb.com/hardcover-and-paperback-books" },
   { id: "magazine", title: "Magazines", formats: 1, papers: 1, sizes: 1,
-    desc: "Sell magazines with newsstand-quality printing, perfect for lookbooks, zines, or serial content.",
+    desc: "Sell magazines and zines online with newsstand-quality printing, perfect for lookbooks or serial content.",
     href: "https://www.blurb.com/magazines" },
   { id: "notebook", title: "Notebooks & Journals", formats: 4, papers: 1, sizes: 3,
-    desc: "Sell notebooks and journals in blank, lined, or dot-grid formats, a natural companion to your books.",
+    desc: "Sell notebooks and journals online in blank, lined, or dot-grid formats, a natural companion to your books.",
     img: "https://assets.blurb.com/_astro/linen-hardcover-with-dustjacket-notebook-optimized.CQRJ330f.webp",
     alt: "Open linen hardcover notebook with dust jacket showing travel photography of Greece on one side, and blank lined paper on the other.",
     href: "https://www.blurb.com/custom-notebooks-journals" },
@@ -540,8 +550,12 @@ const STEPS = [
      in the same edit, matching the "Listing price (you set this)" label
      already used in the table below rather than a second term for the
      same number. */
-  ["Set your price", "Upload your book and set your listing price. Our [new Instant Store pricing](?stage=margin) means up to 3x more profit than selling through the Blurb Bookstore."],
-  ["Create your product page", "Our AI helps you draft your title, description, and keywords. Your customizable product page is ready in minutes."],
+  /* RESYNCED to Figma (Anain, 2026-09-22) — restores "set your own
+     price" and the Amazon/Ingram comparison the 2026-09-10 pass above
+     had deliberately narrowed to Blurb Bookstore only; Figma's canvas
+     text is the source of truth again. */
+  ["Set your price", "Upload your book and set your own price. Our [new Instant Store pricing](?stage=margin) means up to 3x more profit than selling through the Blurb Bookstore, Amazon, or Ingram."],
+  ["Create the product page", "Our AI helps you draft your title, description, and keywords. Your customizable product page is ready in minutes."],
   /* Proof requirement folded into this step (2026-09-10, Ana) — the
      first place in these three steps that says a proof is needed at
      all; it was previously only in this page's own FAQ ("Do I need to
@@ -646,9 +660,13 @@ const STEP_ILLUSTRATIONS = [
    workspace_premium — see QUALITY's own comment in SellLandingV2.jsx).
    Matched here now that the real one is known, same reasoning as
    before: same claim, same body, same icon, both pages. */
+/* RESYNCED to Figma (Anain, 2026-09-22) — see WALKTHROUGH's note above.
+   Four of eight bodies rewritten to the desktop frame's current copy
+   ("Your custom product page" and "Industry-leading quality" already
+   matched, so left as-is). */
 const FEATURES = [
   ["payments", "Maximum profit, zero fees",
-   "With print costs up to 70% lower than Blurb retail pricing and no subscription or platform fees, you keep more of every sale."],
+   "With print costs up to 70% lower than Blurb retail pricing and no page setup, subscription, or platform fees, you keep more of every sale."],
   ["auto_awesome", "AI-powered listings",
    "Our AI drafts your title, description, and keywords, so you're never starting from a blank page."],
   ["storefront", "Your custom product page",
@@ -656,21 +674,13 @@ const FEATURES = [
   ["diamond", "Industry-leading quality",
    "Give your audience access to Blurb's superior print quality, vast catalog of formats, and premium paper types."],
   ["receipt_long", "Automated sales tax",
-   "Sales tax is automatically collected and remitted, so you don't have to manage it."],
+   "Sales tax is calculated, collected, and remitted automatically on every sale, so you never have to manage it."],
   ["auto_stories", "Sell books, magazines & more",
-   "Your Instant Store works for photo books, paperback and hardcover books, magazines, notebooks, and journals."],
+   "Your Instant Store is a product page built for authors and creators: profit, simplicity, and reach, all through one direct checkout link."],
   ["all_inclusive", "No minimums, ever",
-   "Sell one copy or a thousand, with no minimums and no volume threshold. [Instant Store pricing](?stage=margin) applies from your very first sale."],
-  /* Was literally "Lorem ipsum dolor sit amet" in the Figma frame
-     itself (kept as-is for a while, same spirit as the Showcase section
-     on Sell v2 staying placeholder) — now drafted, in the same
-     "post it anywhere" language the CRO brief itself uses for this
-     value prop (see SellLandingV2.jsx's own note on the Instant Store
-     card). Names the brief's own mechanism now too (a customizable URL
-     and a QR code — "Create with a URL that you can customize and a
-     QR code"), not just the destinations to post it. */
+   "Sell one book at a time, or a thousand, with no order minimums or print run volume threshold. [Instant Store pricing](?stage=margin) applies from your very first book sale."],
   ["share", "Share anywhere",
-   "Get a shareable URL and QR code to post in a bio, a newsletter, a story, or a DM. However your audience finds you, they can buy there too."],
+   "Get your custom checkout link and QR code to post on your own website or social media, send in a newsletter or DM. However your audience finds you, they can buy your book there too."],
 ];
 
 /* Ana (2026-09-10), round two: "add all the actual icons that are on
@@ -828,43 +838,64 @@ const FEATURE_ICONS = {
    than "nothing off the top". Normalized her "set-up fee" to "setup
    fee" to match this page's own spelling everywhere else, and added
    "of" to "keep 100% what's left" for the sentence to parse. */
+/* RESYNCED to Figma (Anain, 2026-09-22) — the Cro-Seller-LP accordion
+   is now the source of truth for this page's FAQ, so the 10-question
+   list above (itself a careful, documented consolidation of the SEO
+   team's 10 required questions plus a checkout-link FAQ doc — see the
+   file's own history above) is superseded by the 13 questions/answers
+   now on the desktop accordion, in its order. This drops the earlier
+   trim-to-10 pass; if any of those cut questions (refund policy, "how
+   do I share my Instant Store," "how fast does an order ship") need to
+   come back, that's a Figma edit first, then another resync. */
 const FAQS = onGo => [
-  ["How do I set up an online store for my book?",
-   "Open the Instant Store page from your dashboard, choose the project you want to sell, and set your listing details and price. You can preview your page before it goes live, and there's no separate sign-up."],
+  ["How do I set up an online store to sell my book?",
+   "Open the Instant Store page in your Blurb dashboard, choose the project you want to sell, and set your listing details and price. You can preview your page before it goes live. There's no separate sign-up, so you can set up your Blurb Instant Store with the account you already have."],
+  ["Where can I share my Blurb Instant Store link?",
+   "Share it anywhere your readers already are: social media posts and profiles, email newsletters, or your own website. You can also turn your link into a QR code and print it on business cards, bookmarks, event signage, or holiday cards."],
   ["How much does Blurb take from each book sale?",
-   "Since all books are printed on demand, you only have to pay for the copies that actually sell. Blurb doesn't require you to pay a setup fee, or anything upfront, so add your markup and keep 100% of what's left after the print cost."],
-  ["How do I get paid for my sales?",
-   "By check or PayPal at the end of each month, once you've reached the $25 minimum payment threshold."],
-  ["Who handles sales tax and shipping on each order?",
-   "We calculate and collect sales tax automatically. Your buyer pays shipping at checkout, so it's never taken out of what you keep."],
-  ["Is there a minimum order?",
-   "No minimum order. Sell one copy or a thousand, whenever you're ready."],
-  ["Do I need to order a book proof before I can sell through my Instant Store?",
-   "Yes. Ordering and reviewing a proof is required before your Instant Store can go live. It's the same quality check every Blurb book goes through before it's offered for sale."],
-  ["Can I sell books to readers internationally?",
+   "Blurb takes only the print cost of each book. There are no setup, seller, platform, or distribution fees. When a buyer orders through your Instant Store, the print cost comes out of their payment, and you keep 100% of the rest. Because every book is printed on demand, you never pay anything upfront."],
+  ["Is there a minimum print run or book order before I can start selling?",
+   "No. There's no minimum print run or order quantity. Sell one book or a thousand, whenever you're ready."],
+  ["Do I need to order a proof before I can sell through my Instant Store?",
+   "Yes. You need to order and review a printed proof copy of your book before your Instant Store can go live. It's the same quality check every Blurb book goes through, so you'll know exactly what your buyers will receive."],
+  ["What happens after someone buys my book through my Instant Store?",
+   "We print your book, ship it to your buyer, and send them tracking updates along the way. You don't need to handle packing, shipping, or order follow-up."],
+  ["Who helps my buyers if they have questions about their order?",
+   "Blurb customer service answers your buyers' questions about ordering, payment, and shipping. If a question needs your input, we'll reach out to you."],
+  ["Who handles sales tax and shipping on Instant Store orders?",
+   "We handle sales tax, and your buyer pays shipping at checkout. Neither comes out of your earnings."],
+  ["Can I sell books internationally, and how long does delivery take?",
    <>
-     Yes. Your Instant Store link works for buyers worldwide, with each order printed at the facility nearest them. See our{" "}
+     Yes. Your Instant Store link works for buyers worldwide, and each order is printed at the facility nearest to them. Delivery times and rates depend on your buyer's country and the shipping method they choose. See our{" "}
      <a href="#" onClick={e => { e.preventDefault(); onGo?.("shipping"); }} style={{ color: C.blue600, textDecoration: "underline" }}>
        shipping page
      </a>{" "}
      for delivery times and rates by country.
    </>],
-  ["Is Instant Store pricing also available if I sell through the Blurb Bookstore, Amazon, or Ingram?",
+  ["How do I get paid for my Instant Store sales?",
+   "We pay you monthly by check or PayPal once your earnings reach $25. It's the same payout schedule as sales through the Blurb Bookstore."],
+  ["How do I track my book sales and earnings?",
+   "The Earnings and Monthly Profit Reports pages in your dashboard show what you've made from every sales channel, including your Instant Store."],
+  ["Is Instant Store pricing available if I sell through the Blurb Bookstore, Amazon, or Ingram?",
    <>
      <p style={{ margin: "0 0 12px" }}>
-       No. Pricing on the Blurb Bookstore, Amazon, and Ingram is unchanged, and so are orders you place for yourself. Instant Store pricing is a separate, stable print cost available only on orders your buyers place directly through your Instant Store link.
+       No. Instant Store pricing applies only to orders your buyers place through your Instant Store link. Pricing on the Blurb Bookstore, Amazon, and Ingram is unchanged, and so is pricing on orders you place for yourself. The Instant Store pricing is a separate, stable print cost available only on orders your buyers place directly through your Instant Store link.
      </p>
      <p style={{ margin: 0 }}>
-       If you're ordering 100 or more copies for an event, inventory, or your own use,{" "}
+       If you're ordering 100 or more book copies for an event, inventory, or your own use,{" "}
        <a href="https://www.blurb.com/large-order-services" target="_blank" rel="noopener noreferrer" style={{ color: C.blue600, textDecoration: "underline" }}>
-         Bulk Printing Services
-       </a>' existing volume discounts will apply instead.
+         Blurb volume discounts
+       </a>{" "}
+       on bulk book printing apply instead.
      </p>
    </>],
-  ["How do I track my book sales and earnings?",
-   "Your dashboard's Earnings and Monthly Profit Reports pages show what you've made from every route, Instant Store included."],
   ["Can I buy my own book through my Instant Store link?",
-   "No. Your Instant Store link is for direct-to-consumer sales to your buyers, the ones your listing price and profit are built around. Order copies for yourself separately, at Blurb retail pricing."],
+   <>
+     No. Your Instant Store link is for your buyers only. To order copies for yourself, order directly from Blurb at retail pricing. For 100 or more copies, use{" "}
+     <a href="https://www.blurb.com/large-order-services" target="_blank" rel="noopener noreferrer" style={{ color: C.blue600, textDecoration: "underline" }}>
+       Blurb volume discounts
+     </a>.
+   </>],
 ];
 
 export default function InstantStoreV2({ onGo }) {
@@ -926,7 +957,7 @@ export default function InstantStoreV2({ onGo }) {
               fontFamily: FONT_DISPLAY, fontWeight: 400, letterSpacing: "-0.01em",
               fontSize: "clamp(2rem, 4.6vw, 2.75rem)", lineHeight: 1.2, margin: 0,
             }}>
-              Your Instant Store. Sell direct, maximize your profit.
+              Blurb Instant Store. Sell books directly to readers and maximize your profits
             </h1>
             {/* "Set up an online store" oversold it (Ana) — an Instant
                 Store is one product page behind one link, not a
@@ -971,10 +1002,10 @@ export default function InstantStoreV2({ onGo }) {
                 implemented literally; flagging it here rather than
                 silently guessing. */}
             <p style={{ fontSize: TYPE.lg, lineHeight: 1.55, color: T.textSubtle, margin: 0, maxWidth: 520 }}>
-              A shareable product page for your book, live in minutes. No hidden fees, no inventory, and no tech skills needed.
+              A product page for your book, live in minutes, with a direct checkout link to sell to your audience and 0 hidden fees. No website or tech skills needed to start selling direct today.
             </p>
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
-              <Button>Create your Instant Store</Button>
+              <Button>Create Your Instant Store</Button>
               {/* Was "See a store in action" -> #demo, the checkerboard
                   placeholder beside this copy. Ana, following the "how
                   do we call out max profit" conversation: "See what
@@ -1089,7 +1120,7 @@ export default function InstantStoreV2({ onGo }) {
                 fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
                 lineHeight: 1.25, margin: 0,
               }}>
-                One link, a real product page
+                One link, a real product page for your book
               </h2>
             </div>
             {WALKTHROUGH.map(([title, body], i) => (
@@ -1127,7 +1158,7 @@ export default function InstantStoreV2({ onGo }) {
       <section style={{ padding: "clamp(40px, 5vw, 56px) 24px" }}>
         <div style={{ maxWidth: 1280, margin: "0 auto" }}>
           <CardList
-            heading="Create your Blurb Instant Store in three steps"
+            heading="Create your Instant Store in three steps"
             headingAlign="center"
             layout={{ mobile: 1, tablet: 3, desktop: 3 }}
           >
@@ -1175,7 +1206,7 @@ export default function InstantStoreV2({ onGo }) {
       <section style={{ background: "#f5f0ea", padding: "clamp(40px, 5vw, 56px) 24px" }}>
         <div style={{ maxWidth: 1440, margin: "0 auto" }}>
           <CardList
-            heading="Everything you need to sell your book online"
+            heading="Everything you need to sell books directly to your audience"
             headingAlign="center"
             layout={{ mobile: 1, tablet: 2, desktop: 4 }}
           >
@@ -1676,7 +1707,7 @@ export default function InstantStoreV2({ onGo }) {
             Ready to share your work and maximize your profit?
           </h2>
           <p style={{ margin: 0, fontSize: TYPE.lg, color: T.textSubtle, lineHeight: 1.6 }}>
-            It takes just a few minutes to get started.
+            It only takes a few minutes to get started.
           </p>
           {/* Secondary CTA added alongside the primary one (Ana) — a
               reader who isn't ready to commit yet still has somewhere to
