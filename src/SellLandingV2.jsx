@@ -113,7 +113,7 @@ const SELL_PATHS = [
     id: "link", name: "Instant Store", icon: "storefront", isNew: true,
     illus: "/assets/illustrations/way-instant-store.png",
     bestFor: "Getting started fast",
-    line: "Sell directly to your audience in minutes with a product page that fully showcases your book.",
+    line: "Sell your books directly to readers in minutes with a product page that fully showcases your book. No extra fees, no tech skills required.",
     /* Down to 3 ticks (Ana). First tick turned into a real margin claim
        (Ana: "help turn the 70% lower print cost into a margin claim...
        compare it to amazon"), calculated rather than guessed: same
@@ -150,9 +150,18 @@ const SELL_PATHS = [
        "Up to 3x more profit" — the shared tick renderer had no slot for
        plain text before the link (only `text`, linked, then `suffix`,
        trailing), so it now also takes a `prefix` (plain, before the
-       link) instead of folding this into a one-off `node`. */
+       link) instead of folding this into a one-off `node`.
+
+       REVERTED 2026-09-22 (Anain, syncing to the latest Cro-Seller-LP
+       Figma): "the Blurb bookstore" -> "our retail distribution
+       channels" again — the FAQ's own profit answer (node 105:4079,
+       "How much profit can I make selling my book?") states the
+       broader claim verbatim, so Figma itself has moved back off the
+       Bookstore-only benchmark Ana had settled on. The $32.50/$10.15
+       Amazon math above and the ~3.03x Bookstore math are both still
+       true; this suffix just no longer names either specifically. */
     ticks: [
-      { key: "profit", prefix: "Up to ", text: "3x more profit", suffix: " than selling through the Blurb bookstore", linkStage: "margin" },
+      { key: "profit", prefix: "Up to ", text: "3x more profit", suffix: " than selling through our retail distribution channels", linkStage: "margin" },
       "No subscription, no additional fees",
       "One link to share, no store required",
     ],
@@ -216,7 +225,16 @@ const SELL_PATHS = [
     links: [["Explore Retail Distribution", { href: "https://www.blurb.com/self-publish" }]],
   },
   {
-    id: "los", name: "Large Order Services", icon: "local_shipping",
+    /* REVERTED 2026-09-22 (Anain, syncing to the latest Cro-Seller-LP
+       Figma): back to "Bulk Printing Services", the Category Tiles
+       card's own title in that file — the prior React-only rename to
+       "Large Order Services" ran ahead of Figma rather than the other
+       way around. Figma itself isn't consistent on this: the card says
+       "Bulk Printing Services" but the FAQ answers (node 105:4079) say
+       "Bulk Book Printing Services" — each spot below uses its own
+       source verbatim rather than picking one to normalize with. `id`
+       stays "los" either way; nothing reads it as a label. */
+    id: "los", name: "Bulk Printing Services", icon: "local_shipping",
     illus: "/assets/illustrations/way-bulk-printing.png",
     bestFor: "High-touch support",
     line: "Get concierge service and volume discounts for orders of 100+ copies, perfect for events, clients, or resale.",
@@ -372,7 +390,7 @@ function Chip({ children }) {
   );
 }
 
-const COMPARE_COLUMNS = ["Instant Store", "Retail Distribution", "Large Order Services", "RPI Print API"];
+const COMPARE_COLUMNS = ["Instant Store", "Retail Distribution", "Bulk Printing Services", "RPI Print API"];
 
 const COMPARE_ROWS = [
   /* No status on this row (Ana: "remove the green dots on the first
@@ -618,13 +636,23 @@ const SHOWCASE = [
    pages printed" — a new figure of Ana's own, distinct from the "11M+"
    books-and-products count the third card already states, so the two
    no longer read as the same fact worded two ways. */
+/* Numbers + captions synced to Figma's latest ("Value Props" node
+   1:10032, 2026-09-22) — 21/140/11 -> 20+/70/11+, all three composed
+   ink-stamp digit images re-exported from that node rather than reused,
+   since "21" and "140" no longer exist there at all (not a crop or
+   recolor of the old assets). Captions shortened to match too; the
+   longer ones here were this file's own additions on top of Figma's
+   plainer originals (see the older comment below, kept for the
+   now-superseded 21/140/11 history), and "70 countries" now agrees
+   with the FAQ's own "Blurb ships to buyers in over 70 countries"
+   instead of contradicting it. */
 const STATS = [
-  ["/assets/numbers/stat-21.png", "years",
-   "Backed by 20 years of in-house expertise and full production control, Blurb ensures consistent quality from start to finish. No outsourcing, no compromises."],
-  ["/assets/numbers/stat-140.png", "countries",
-   "Shipped to a global network of buyers and readers, with over 1B pages printed."],
+  ["/assets/numbers/stat-20.png", "years",
+   "Empowering sellers with industry-leading print quality."],
+  ["/assets/numbers/stat-70.png", "countries",
+   "Shipped to a global network of buyers and readers."],
   ["/assets/numbers/stat-11.png", "million",
-   "Unique books and products created and sold, and counting."],
+   "Unique books and products created and sold."],
 ];
 
 const TRUSTED_BY = ["Canva", "minted", "Treering", "Storyworth", "We Can Books"];
@@ -649,24 +677,82 @@ const TRUSTED_BY = ["Canva", "minted", "Treering", "Storyworth", "We Can Books"]
    the sentence most likely to get lifted verbatim into an AI Overview or
    chatbot answer") — already true of every answer here, so no rewording
    needed beyond the two question swaps. */
-const FAQS = [
-  ["What are the different ways to sell a self-published book?",
-   "Four: your own Instant Store, Retail Distribution through Blurb's Bookstore, Amazon and Ingram, Large Order Services for large-quantity orders, or the RPI Print API for your own storefront."],
-  ["How do I start selling my book online?",
-   "Pick a project you've already created, then choose a route above and follow its own setup. Most sellers start with an Instant Store, since it's live in minutes with no separate sign-up."],
-  ["Can I sell books without holding inventory or paying anything upfront?",
-   "Yes. Instant Store and Retail Distribution both print a copy only once it's ordered, so there's nothing to buy or store in advance."],
-  ["How does print-on-demand work for authors and creators?",
-   "Your book prints only when a buyer orders it. There's no minimum run, no warehouse, and no upfront printing cost to cover before you make a sale."],
-  ["Do I need an ISBN or barcode to sell my book?",
-   "Only Amazon and Ingram, both under Retail Distribution, require retail listing. Your Instant Store link doesn't need one."],
-  ["What's the difference between selling directly to readers and selling through Amazon or Ingram?",
-   "On your Instant Store, you bring the buyer and set the price, so what's left after your printing cost is yours. Through Amazon or Ingram, the retailer brings the buyer and takes its own cut."],
-  ["Can I sell more than books, like magazines, journals, or notebooks, the same way?",
-   "Yes. Magazines and notebooks & journals are sellable through most of these routes; wall art isn't sellable through any of them yet. Availability varies by channel, so check each route's product page for specifics."],
-  ["How do I decide which of Blurb's selling options is right for me?",
-   "Start with the comparison table above. It lines up best-for, profit, storefront and audience across all four routes so you can compare at a glance."],
-];
+/* EXPANDED 2026-09-22 (Anain, syncing to the latest Cro-Seller-LP
+   Figma, "FAQ Expanded" node 105:4079): 8 rows -> 14. Unlike the
+   trim-to-8 decision the older comment above records, this direction
+   is additive and Figma-sourced — the 6 new rows carry Figma's own
+   drafted answers and real links, not invented copy the way an
+   undrafted section on this page would otherwise require. `onGo` is
+   threaded through so the "Instant Store" mentions Figma marks as
+   internal links can actually route to the `instantstorev2` stage,
+   same as every other Instant Store link on this page; every external
+   href is the exact URL Figma's node carries, except the Terms of
+   Service link, which drops Figma's tracking querystring
+   (?srsltid=...) — a one-off analytics parameter from wherever that
+   link was copied, not a stable URL worth committing. Two mentions of
+   "Instant Store" (in the profit and "which option" answers) are left
+   as plain text rather than linked — Figma's own node doesn't mark
+   those two as links either, unlike every other Instant Store
+   mention here. */
+function faqExternal(href, label) {
+  return (
+    <a href={href} target="_blank" rel="noopener noreferrer" style={{ color: C.blue600, textDecoration: "underline" }}>
+      {label}
+    </a>
+  );
+}
+
+function faqInstantStore(onGo) {
+  return (
+    <a href="#" onClick={e => { e.preventDefault(); onGo?.("instantstorev2"); }} style={{ color: C.blue600, textDecoration: "underline" }}>
+      Instant Store
+    </a>
+  );
+}
+
+function faqItems(onGo) {
+  const isv2 = faqInstantStore(onGo);
+  const amazon = faqExternal("https://www.blurb.com/amazon", "Amazon");
+  const ingram = faqExternal("https://www.blurb.com/ingram", "Ingram");
+  const retail = faqExternal("https://www.blurb.com/self-publish", "Retail Distribution");
+  const bookstore = faqExternal("https://www.blurb.com/sell-through-blurb", "Blurb Bookstore");
+  const los = faqExternal("https://www.blurb.com/large-order-services", "Bulk Book Printing Services");
+  const api = faqExternal("https://www.blurb.com/print-api-software", "RPI Print API");
+  const magazines = faqExternal("https://www.blurb.com/magazines", "Magazines");
+  const notebooks = faqExternal("https://www.blurb.com/custom-notebooks-journals", "notebooks & journals");
+  const terms = faqExternal("https://www.blurb.com/terms", "Terms of Service");
+
+  return [
+    ["What are the different ways to sell a self-published book?",
+     "There are four ways to distribute and sell a self-published book with Blurb: your own Instant Store, Retail Distribution through the Blurb Bookstore, Amazon, and Ingram, Bulk Book Printing Services for large-quantity orders, or the RPI Print API for your own storefront."],
+    ["How do I start selling my book online?",
+     <>Pick a project you've already created, then choose a selling route above and follow its setup. Most sellers start with an {isv2}, since it's live in minutes with no separate sign-up.</>],
+    ["Can I sell books without holding inventory or paying anything upfront?",
+     <>Yes. {isv2}, {retail}, and our {api} are all print-on-demand, so a copy only prints once it's ordered, and there's nothing to buy or store in advance.</>],
+    ["How does print-on-demand work for authors and creators?",
+     "Print-on-demand means your book only prints once a buyer orders it. There's no minimum run, no warehouse, and no upfront printing cost to cover before you make a sale."],
+    ["Do I need an ISBN or barcode to sell my book?",
+     <>Only {amazon} and {ingram}, both under Retail Distribution, require an ISBN for retail listing. Your Instant Store link doesn't need an ISBN or barcode.</>],
+    ["What's the difference between selling directly to readers and selling through Amazon or Ingram?",
+     <>Selling directly to readers through your {isv2} means you bring the buyer and set the price, so what's left after your printing cost is yours. Selling through {amazon} or {ingram} means the retailer brings the buyer and takes its own profit cut.</>],
+    ["Can I sell more than books, like magazines, journals, or notebooks, the same way?",
+     <>Yes. {magazines} and {notebooks} are sellable through most of these routes. Availability varies by channel, so check each route's product page for specifics.</>],
+    ["Can I sell my books to readers internationally?",
+     <>Yes. Blurb ships to buyers in over 70 countries, so your {isv2} and {retail} listings can reach readers well beyond your own market.</>],
+    ["How much profit can I make selling my book?",
+     "Instant Store offers up to 3x more profit than selling through our retail distribution channels, since you set the price and keep everything above your printing cost. Some sellers call this a royalty. Your exact total still depends on your selling price and the route you choose."],
+    ["Can I sell my book without a publisher?",
+     <>Yes. Every selling option through Blurb is built for self-published books: you don't need an agent or a publisher to use {isv2}, {retail}, {los}, or the {api}.</>],
+    ["How long does it take before I can start selling?",
+     <>{isv2} can go live in minutes once you have a print-ready project. Retail Distribution listings typically take longer, since {amazon} and {ingram} review submissions before they go live.</>],
+    ["Can I sell my photo book on Amazon?",
+     <>Yes, but only through {amazon}. {ingram}'s retail listings are limited to trade books (paperback &amp; hardcover books), not photo books. Your {isv2} and the {bookstore} are also open to photo books if you want another retail path.</>],
+    ["Do I keep the rights to my book?",
+     <>Yes. You keep full ownership of your book content; Blurb only takes a non-exclusive license to print and distribute it on your behalf. You, not Blurb, are recognized as the publisher of your book. See our {terms} for full details.</>],
+    ["How do I decide which of Blurb's selling options is right for me?",
+     <>It depends on what matters most to you: Instant Store for the highest profit and full control, {retail} for reach to readers who don't know you yet, {los} for a large event or resale order, or the {api} if you're building your own platform. The comparison table above lines all four side by side if you want the full picture.</>],
+  ];
+}
 
 export default function SellLandingV2({ onGo }) {
   /* The "Which selling path is right for you?" comparison went through
@@ -712,15 +798,22 @@ export default function SellLandingV2({ onGo }) {
               online with Blurb" 2026-09-10 (Ana) — plainer and closer to
               the SEO doc's own H1 ("Sell your books online with Blurb"),
               singular "book" per Ana's own wording rather than the doc's
-              plural. */}
+              plural.
+
+              REVERTED 2026-09-22 (Anain, syncing to the latest
+              Cro-Seller-LP Figma, "Hero - Center" node 1:7429): back to
+              the doc's own plural "books", and the subhead swapped for
+              Figma's current one — its "One platform, four ways..."
+              framing states the count before naming the routes, where
+              this file's own version buried "four" mid-sentence. */}
           <h1 style={{
             fontFamily: FONT_DISPLAY, fontWeight: 400, letterSpacing: "-0.01em",
             fontSize: "clamp(2rem, 4.6vw, 2.75rem)", lineHeight: 1.2, margin: 0,
           }}>
-            Sell your book online with Blurb
+            Sell your books online with Blurb
           </h1>
           <p style={{ fontSize: TYPE.lg, lineHeight: 1.55, color: T.textSubtle, margin: 0, maxWidth: 640 }}>
-            Four ways to reach readers: an Instant Store we build for you, global retail distribution, bulk printing, or your own platform. We print and ship every order, so you can focus on creating.
+            One platform, four ways to sell your books online: build an Instant Store, reach readers through global retail distribution, print in bulk, or connect your own platform. We print and ship every order, so you can focus on creating.
           </p>
           <Button as="a" href="#paths" style={{ marginTop: 8 }}>Explore our selling tools</Button>
         </div>
@@ -832,7 +925,7 @@ export default function SellLandingV2({ onGo }) {
               before. */}
           <CardList
             heading="Four ways to sell your books"
-            subheading="Start with one channel and add more as your business grows. Each option works independently, or together."
+            subheading="Self-publish and sell books online through one channel, or all four, adding more as your business grows. Each option works independently, or together."
             headingAlign="center"
             layout={{ mobile: 1, tablet: 2, desktop: 4 }}
           >
@@ -1282,7 +1375,7 @@ export default function SellLandingV2({ onGo }) {
       {/* "Common questions about selling with Blurb" -> "Selling books
           with Blurb FAQ" 2026-09-10 (Ana) — matches the SEO doc's own
           H2 for this section exactly. */}
-      <Faq heading="Selling books with Blurb FAQ" items={FAQS} />
+      <Faq heading="Selling books with Blurb FAQ" items={faqItems(onGo)} />
 
       {/* ── Close ── */}
       <section
