@@ -1,191 +1,12 @@
-import React from "react";
-import { Button, CardList, Card } from "@blurb/codex-react";
+import React, { useState } from "react";
+import { Button, CardList, Card, RadioCard, RadioCardGroup } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { FORMAT_CARDS } from "./FormatCards.jsx";
+import { CATALOG, defaultSelection, minSellPrice } from "./catalog.js";
+import ProductOptions from "./ProductOptions.jsx";
+import SummaryPanel from "./SummaryPanel.jsx";
+import CreateActions from "./CreateActions.jsx";
 import Faq from "./Faq.jsx";
-
-/* ── InstantStoreMockup ──
-   Originally modeled on a Figma Make POC's own product-page screenshot
-   (260824-POC — Instant Store LP); corrected against the real Instant
-   Store demo's actual PDP once Ana shared a screenshot of it. No format
-   picker — only one format ships at launch, so a Hardcover/Softcover
-   toggle overclaimed. No "Printed and shipped by Blurb" badge either —
-   the real PDP doesn't carry one. Preview added, since it's on the real
-   page and Ana called it out as worth showing. Used once, not twice
-   (Ana: showing it in both the hero and the walkthrough read as the
-   same image repeated) — it lives in the walkthrough section only; the
-   hero goes back to a plain hero with the demo video restored beside
-   it. Real Blurb product photography (FORMAT_CARDS' own photo book
-   image) stands in for the cover; title/author/description are a
-   placeholder in the same spirit as this file's other honest
-   placeholders (the Showcase section, "Share anywhere"'s lorem ipsum).
-   Price is a round $30 (Ana) rather than the margin table's own $50.00 —
-   this mockup is illustrating the page, not the table, so it doesn't
-   need to carry that exact figure. */
-const MOCKUP_COVER = FORMAT_CARDS.find(c => c.id === "photo");
-
-/* Jamie Reyes' other (fictional) books, for the "More by this author"
-   section below — see that section's own comment. `pos` crops the
-   one real cover photo to a different focal point per card so the
-   three don't look like the exact same crop repeated. */
-const MORE_BOOKS = [
-  { title: "Harbor Light", price: "$28.00", pos: "20% 60%" },
-  { title: "Windward", price: "$32.00", pos: "80% 30%" },
-  { title: "Low Tide", price: "$26.00", pos: "50% 80%" },
-];
-
-function InstantStoreMockup() {
-  return (
-    <div style={{
-      borderRadius: R.lg, overflow: "hidden", border: `1px solid ${T.border}`,
-      background: "#fff", boxShadow: "0 24px 60px -24px rgba(13, 47, 68, 0.35)",
-    }}>
-      {/* Browser chrome — signals "this is a real page", not a book cover. */}
-      <div style={{
-        display: "flex", alignItems: "center", gap: 6,
-        padding: "10px 14px", borderBottom: `1px solid ${T.border}`, background: C.gray50,
-      }}>
-        {["#ff5f57", "#febc2e", "#28c840"].map(c => (
-          <span key={c} style={{ width: 10, height: 10, borderRadius: "50%", background: c }} />
-        ))}
-        <div style={{
-          marginLeft: 8, flex: 1, background: "#fff", border: `1px solid ${T.border}`, borderRadius: 6,
-          padding: "3px 10px", fontSize: 11, color: T.textSubtle, fontFamily: "monospace",
-        }}>
-          blurb.com/c/123/coastal-mornings
-        </div>
-      </div>
-
-      <div style={{
-        display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
-        gap: 24, padding: 24,
-      }}>
-        <img
-          src={MOCKUP_COVER.img}
-          alt={MOCKUP_COVER.alt}
-          loading="lazy"
-          style={{ width: "100%", aspectRatio: "4 / 3", objectFit: "cover", borderRadius: R.md, display: "block" }}
-        />
-        <div style={{ display: "grid", gap: 8, alignContent: "start" }}>
-          <h3 style={{ margin: 0, fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "1.25rem", lineHeight: 1.25 }}>
-            Coastal Mornings
-          </h3>
-          <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle }}>by Jamie Reyes</p>
-          <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>
-            A year of early tides and empty beaches, shot along the Pacific coast.
-          </p>
-          <div style={{ fontFamily: FONT_DISPLAY, fontSize: "1.5rem", fontWeight: 500, marginTop: 4 }}>
-            $30.00
-          </div>
-          <Button size="small">Buy now</Button>
-        </div>
-      </div>
-
-      {/* Book preview — the real PDP's own standout feature (Ana), missing
-          from the first pass of this mockup entirely, then an icon
-          placeholder (Ana: "add the preview image too"), then a single
-          reused cover photo (Ana: "use this other screenshot" — a real
-          open two-page spread, not a cropped cover). Rebuilt as an
-          actual spread: two facing pages with placeholder body text (not
-          real book content, same honest-placeholder spirit as this
-          file's other invented copy) and a folded-corner cue on the
-          right page suggesting more pages to turn. "View fullscreen" is
-          now a bordered button with an icon, matching the reference
-          rather than a bare text link. Given more room (Ana: "the
-          preview can be bigger") now that More by Jamie Reyes below is
-          simplified down to make space — a fixed aspect ratio on the
-          spread itself, not just bigger type, so it reads as a real
-          page size rather than a text box that happens to be tall. */}
-      <div style={{ borderTop: `1px solid ${T.border}`, padding: "16px 24px", display: "grid", gap: 12 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-          <div>
-            <div style={{ fontWeight: 700, fontSize: TYPE.lg }}>Book preview</div>
-            <div style={{ fontSize: 11, color: T.textSubtle }}>First 15 pages</div>
-          </div>
-          <button style={{
-            display: "flex", alignItems: "center", gap: 6, padding: "6px 12px",
-            border: `1px solid ${T.border}`, borderRadius: R.md, background: "#fff",
-            fontSize: 11, fontWeight: 600, color: T.textNeutral, cursor: "pointer",
-          }}>
-            <span className="ms" aria-hidden style={{ fontSize: 14 }}>open_in_full</span>
-            View fullscreen
-          </button>
-        </div>
-
-        <div style={{
-          position: "relative", display: "grid", gridTemplateColumns: "1fr 1fr",
-          border: `1px solid ${T.border}`, borderRadius: R.md, overflow: "hidden",
-          boxShadow: "0 12px 30px -18px rgba(13, 47, 68, 0.4)", background: "#fff",
-          aspectRatio: "5 / 3",
-        }}>
-          <div style={{ padding: "28px 24px", borderRight: `1px solid ${T.border}`, display: "grid", gap: 14, justifyItems: "center", alignContent: "start" }}>
-            <div style={{ fontFamily: FONT_DISPLAY, fontSize: "1.4rem", fontWeight: 600 }}>1</div>
-            <p style={{ margin: 0, fontSize: 11, lineHeight: 1.8, color: T.textNeutral, textAlign: "left" }}>
-              The tide had already turned by the time she reached the shoreline, the morning light catching on wet sand still dark from the night before.
-            </p>
-          </div>
-          <div style={{ position: "relative", padding: "28px 24px", display: "grid", gap: 14, alignContent: "start" }}>
-            <p style={{ margin: 0, fontSize: 11, lineHeight: 1.8, color: T.textNeutral, textAlign: "left" }}>
-              She'd made this walk a hundred times, but the quiet never felt routine. Somewhere past the rocks a gull called out, once, then again.
-            </p>
-            {/* Folded corner — a simple diagonal cue that the page turns,
-                not a real interactivity affordance. */}
-            <div style={{
-              position: "absolute", bottom: 0, right: 0, width: 36, height: 36,
-              background: "linear-gradient(135deg, transparent 50%, #f0f0f0 50%)",
-              borderLeft: `1px solid ${T.border}`, borderTop: `1px solid ${T.border}`,
-            }} />
-          </div>
-        </div>
-
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 12, fontSize: 11, color: T.textSubtle }}>
-          <span className="ms" aria-hidden style={{ fontSize: 16 }}>chevron_left</span>
-          Page 1 of 15
-          <span className="ms" aria-hidden style={{ fontSize: 16 }}>chevron_right</span>
-        </div>
-      </div>
-
-      {/* More by this author — the real PDP's own feature, missing from
-          every earlier pass of this mockup (Ana: "we're missing the fact
-          we show other books by the author, like in the original
-          figma"), then a bare row of thumbnails (Ana: "use this image
-          for the more from the author bit" — full cards matching a
-          reference screenshot), then simplified back down (Ana: "very
-          awkward size atm" — this section was competing with Book
-          preview above for visual weight, so both cover and text shrink
-          to make it read as a secondary strip rather than an equal
-          section). Dropped the per-card author line (redundant — the
-          section heading already says whose books these are) and the
-          description line. Three more fictional Jamie Reyes titles,
-          same invented-placeholder spirit as "Coastal Mornings" itself
-          — not real Blurb books. Same cover photo reused per card
-          (cropped to a different focal point each time, same honest-
-          reuse trick as elsewhere in this mockup), since no second
-          placeholder cover exists. */}
-      <div style={{ borderTop: `1px solid ${T.border}`, padding: "16px 24px", display: "grid", gap: 10 }}>
-        <div style={{ fontWeight: 600, fontSize: TYPE.sm }}>More by Jamie Reyes</div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10 }}>
-          {MORE_BOOKS.map(book => (
-            <div key={book.title} style={{ display: "grid", gap: 3 }}>
-              <img
-                src={MOCKUP_COVER.img}
-                alt=""
-                aria-hidden
-                loading="lazy"
-                style={{
-                  width: "100%", aspectRatio: "3 / 4", objectFit: "cover", objectPosition: book.pos,
-                  borderRadius: R.sm, border: `1px solid ${T.border}`, display: "block",
-                }}
-              />
-              <div style={{ fontSize: 11, fontWeight: 600, lineHeight: 1.3 }}>{book.title}</div>
-              <div style={{ fontSize: 10, color: T.textSubtle }}>{book.price}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
 
 /* "Set your own price" dropped (Ana: it's redundant with "Keep more of
    what you earn" below) — its copy moves down to that section instead
@@ -224,14 +45,17 @@ function InstantStoreMockup() {
    drop the redundant "without leaving": the point is already made by
    "right on the page," so it doesn't need restating. */
 /* RESYNCED to the Cro-Seller-LP Figma canvas (Anain, 2026-09-22) — Figma
-   is now the source of truth for this page's copy. Wording above that
-   had since diverged per the dated decisions in this file's history is
-   overwritten here to match the current desktop frame exactly. */
+   is now the source of truth for this page's copy AND layout. This section
+   is Figma's "Switchback" component: four alternating image/text lanes,
+   no numbered badges (hidden in the desktop instance), each image a real
+   PDP screenshot exported straight off the frame (node 250:24548) — not
+   the hand-built InstantStoreMockup/"Coastal Mornings" placeholder this
+   section used to render instead. Order matches WALKTHROUGH 1:1. */
 const WALKTHROUGH = [
-  ["Showcase your work", "Cover, description, and price, plus an interactive book preview so buyers can flip through real pages before they buy."],
-  ["All your books in one place", "Every other book you sell shows up right on the page, so buyers can find your full catalog."],
-  ["One click to buy", "A single tap on 'Buy now' takes buyers straight to secure checkout, where they can pay with Apple Pay, Google Pay, and PayPal. You don't need to build or maintain anything yourself."],
-  ["Blurb prints and ships your book", "Don't buy your inventory upfront.  Every order triggers a fresh print run, and you only pay for what ships. Your buyer gets a tracked delivery, and you never touch a box."],
+  ["Showcase your work", "Cover, description, and price, plus an interactive book preview so buyers can flip through real pages before they buy.", "/assets/switchback-lane1-showcase.png"],
+  ["All your books in one place", "Every other book you sell shows up right on the page, so buyers can find your full catalog.", "/assets/switchback-lane2-morebooks.png"],
+  ["One click to buy", "A single tap on 'Buy now' takes buyers straight to secure checkout, where they can pay with Apple Pay, Google Pay, and PayPal. You don't need to build or maintain anything yourself.", "/assets/switchback-lane3-buynow.png"],
+  ["Blurb prints and ships your book", "Don't buy your inventory upfront.  Every order triggers a fresh print run, and you only pay for what ships. Your buyer gets a tracked delivery, and you never touch a box.", "/assets/switchback-lane4-shipping.png"],
 ];
 
 /* REVISED 2026-09-10 (Ana). "Tracking on every order"'s body invented a
@@ -399,123 +223,6 @@ const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
    "Share anywhere"'s lorem ipsum and the FAQ answers (the outline has
    questions only, no answers — those stay drafted, and are flagged as
    such below). */
-
-/* "Keep more of what you earn" table data — see the file header note
-   above for where every figure comes from. Instant Store and RPI Print
-   API share seller pricing, so they share every cell.
-
-   DROPPED 2026-09-10 (Ana: "Other print-on-demand solutions doesn't
-   quite live there... calling out no other fees that other competitors
-   do have is key but can be done outside the table"): the column
-   couldn't actually be priced — every cell but the listing price itself
-   was "Varies by provider," which is exactly the kind of row-of-
-   identical-nothing the original "Other fees" row (see the file header
-   note) replaced Setup fees for being. Removing the column took the
-   "Other fees" row with it, since without a column that actually
-   charges one, four "None"s in a row proved nothing either — the real
-   point (Blurb doesn't charge a separate processing/platform/
-   subscription fee the way generic print-on-demand platforms do) now
-   lives in a caption under the table instead, where it can say the
-   comparison without needing a whole unpriceable column to hold it. */
-const KEEP_MORE_COLUMNS = ["Instant Store", "Blurb Bookstore", "Amazon", "RPI Print API"];
-
-/* "(example)" dropped from this row's own label 2026-09-10, then
-   restored the same day (Ana: "revert to Your listing price
-   (example)") once the in-table example row moved and got a real
-   product spec of its own instead of repeating "$50 list price" —
-   with the label row itself no longer next to that exact phrase, it
-   reads as a plain instruction rather than an example without its own
-   qualifier back on it.
-
-   Print cost updated 2026-09-10 (Ana: "i checked the costs; it's
-   $27.90 for Instant Store and RPA, and 62.78 for Bookstore and
-   Amazon") — real figures in place of the earlier $17.50/$31.00
-   guesses. At that point the row's own listing price was still the old
-   $50.00, which put Blurb Bookstore and Amazon's profit at -$12.78 —
-   this app's own documented rule is that the seller's price floors at
-   their cost and can never show a loss, so the profit/margin figures
-   were deliberately left stale and flagged rather than publishing a
-   negative number.
-
-   RESOLVED same day (Ana: "make the listing price be $80 across all,
-   and recalculate the your profit row accordingly") — $80 clears
-   Amazon's $62.78 print cost plus its own commission with room to
-   spare, so nothing floors at zero any more. Profit = listing price -
-   print cost - commission; Amazon's commission is $1.35 + 15% of the
-   (now $80) list price = $1.35 + $12.00 = $13.35, same formula as
-   before, just recomputed against the new list price:
-     Instant Store / RPI Print API: 80 - 27.90 = $52.10
-     Blurb Bookstore:                80 - 62.78 = $17.22
-     Amazon:                80 - 62.78 - 13.35 = $3.87
-
-   Label reworded again 2026-09-10 (Ana: "Your listing price (example)
-   > Listing price (you set this)") — "(example)" already lives in the
-   in-table example row right above; this row's own qualifier now
-   names the actual fact instead (the seller sets this number, nobody
-   else), which is the whole point this table exists to make.
-
-   "(you set this)" moved to its own smaller line 2026-09-10 (Ana:
-   "move (you set this) to next line and make it smaller") — was
-   crowding "Listing price" on one line in the label column's fixed
-   160px width.
-
-   Costs reformatted as negatives 2026-09-10 (Ana: "i think costs need
-   to look like negatives as they're a minus cost") — Print cost and
-   the renamed "Additional fees" row (was "Commission" — Ana: "commission
-   should be 'Additional fees'," since Blurb Bookstore and RPI Print
-   API charge neither a commission nor any other fee, "$0" reads more
-   honestly than "0%" would for a fee row) both show negative dollar
-   amounts now. Amazon's fee cell states the actual dollar amount first
-   ($13.35), with the $1.35 + 15%-of-listing-price formula alongside it
-   as context (Ana: "amazon commission is $13.35 ($1.35 + 15% of
-   listing price)") rather than the formula alone with no computed
-   total.
-
-   Negative format changed same day, parens -> minus sign (Ana: "i
-   think parentheses aren't as understandable") — "$(27.90)" -> "-
-   $27.90" throughout; same reasoning (these are costs, not additions),
-   different notation. */
-const KEEP_MORE_ROWS = [
-  {
-    label: <>Listing price<br /><span style={{ fontSize: 11, fontWeight: 400, color: T.textSubtle }}>(you set this)</span></>,
-    cells: ["$80.00", "$80.00", "$80.00", "$80.00"],
-  },
-  { label: "Print cost", cells: ["-$27.90", "-$62.78", "-$62.78", "-$27.90"] },
-  {
-    label: "Additional fees",
-    cells: [
-      "$0",
-      "$0",
-      <>
-        -$13.35
-        <br />
-        <span style={{ fontSize: 11, fontWeight: 400, color: T.textSubtle }}>$1.35 + 15% of listing price</span>
-      </>,
-      "$0",
-    ],
-  },
-];
-
-const KEEP_MORE_PROFIT = ["$52.10", "$17.22", "$3.87", "$52.10"];
-
-/* Added 2026-09-10 (Ana: "add profit margin as well as profit on the
-   earnings table. not sure if as a line or alongside, see what you
-   think"). Alongside, in the same "Your profit" pill, rather than a
-   fifth row: a margin row would just be this same list price divided
-   into every profit figure already above it, so it repeats the row
-   directly overhead rather than adding a fact. Labelled "profit"
-   rather than "margin" or "profit margin" (Ana: "margin > profit
-   margin or just profit" -> "do you think just profit is fine? like
-   65% profit") — plainer language than the accounting term.
-
-   Recalculated 2026-09-10 against the new $80.00 listing price and
-   print costs: profit ÷ $80.00, rounded to a whole percent —
-   $52.10 -> 65.1% -> 65%, $17.22 -> 21.5% -> 22%,
-   $3.87 -> 4.8% -> 5%. Instant Store and RPI Print API's 65% is
-   unchanged from before purely by coincidence (both the list price and
-   their print cost scaled together in a way that landed on the same
-   round number), not because nothing moved. */
-const KEEP_MORE_MARGIN = ["65%", "22%", "5%", "65%"];
 
 const STEPS = [
   /* "70% more of every sale" -> the calculated "3x more profit than
@@ -898,16 +605,47 @@ const FAQS = onGo => [
    </>],
 ];
 
+/* Figma's own "Calculate your profit" product picker (node 104:5039),
+   labelled to match that row exactly rather than reusing each format's
+   internal catalog label (e.g. CATALOG.trade.label is "Trade Books",
+   not "Paperback & Hardcover Books" — the Figma-facing name). */
+const CALCULATOR_FORMATS = [
+  { id: "photo", label: "Photo Book" },
+  { id: "trade", label: "Paperback & Hardcover Books" },
+  { id: "magazine", label: "Magazine" },
+  { id: "notebook", label: "Notebooks & Journals" },
+];
+
 export default function InstantStoreV2({ onGo }) {
+  /* RESYNCED to Figma (Anain, 2026-09-22) — "Calculate your profit" is a
+     live, embedded instance of the same Instant Store profit calculator
+     the ?stage=margin page uses (ProductOptions + SummaryPanel), not the
+     hand-built 4-column KEEP_MORE_* table this section used to render —
+     see that section's own note below for what it replaced. */
+  const [calcFormatId, setCalcFormatId] = useState("photo");
+  /* Figma's own example spec (node 104:5039): 8×10 in, Soft Cover,
+     Premium Lustre — defaultSelection() alone lands on Mini Square
+     instead (the first available combination, not the frame's own
+     example), so the size is pinned to match here. */
+  const [calcSel, setCalcSel] = useState(() => ({ ...defaultSelection("photo"), size: "standard_portrait" }));
+  const [calcPrice, setCalcPrice] = useState(24);
+  const [calcShip, setCalcShip] = useState({ open: false, country: "US", postal: "", speed: "economy" });
+  const changeCalcFormat = id => {
+    setCalcFormatId(id);
+    const sel = id === "photo" ? { ...defaultSelection(id), size: "standard_portrait" } : defaultSelection(id);
+    setCalcSel(sel);
+    setCalcPrice(minSellPrice(id, sel));
+  };
+
   return (
     <div style={{ fontFamily: FONT_BODY, color: C.gray950 }}>
 
-      {/* ── Hero ── the gradient the seller pages share, two columns again
-          (Ana liked the video beside the copy) — but the video demo, not
-          InstantStoreMockup, sits on the right this time, so the mockup
-          still appears exactly once (in "What buyers see" below)
-          rather than being shown twice. */}
-      <section className="hero-gradient-seller" style={{ padding: "clamp(56px, 8vw, 96px) 24px" }}>
+      {/* ── Hero ── RESYNCED to Figma layout, not just copy (Anain,
+          2026-09-22; node 104:4846) — flat #f9f6f3 background, not the
+          hero-gradient-seller class the other seller pages share (this
+          page's own frame uses a plain fill, confirmed against the
+          canvas rather than assumed to match its siblings). */}
+      <section style={{ background: "#f9f6f3", padding: "clamp(56px, 8vw, 96px) 24px" }}>
         <div style={{
           maxWidth: 1160, margin: "0 auto", display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 48, alignItems: "center",
@@ -1054,92 +792,72 @@ export default function InstantStoreV2({ onGo }) {
             </div>
           </div>
 
-          {/* No real demo video exists yet, so this stays an honest
-              checkerboard placeholder rather than a fabricated embed —
-              same treatment as before, just moved back beside the hero
-              copy instead of sitting in its own full-width section. No
-              caption under it any more (Ana) — it wasn't adding anything
-              the CTA above it doesn't already say. */}
+          {/* RESYNCED to Figma (Anain, 2026-09-22) — was an honest
+              checkerboard placeholder ("no real demo video exists yet");
+              Figma's own frame turns out to carry a real poster image (a
+              press photo of a book printing on-press), not a
+              placeholder, so this is no longer invented content —
+              exported straight off node 104:4846. Still just a poster
+              behind a play icon, not an actual video embed, since no
+              video file exists in this codebase to point it at. */}
           <div id="demo" style={{
-            position: "relative", borderRadius: R.lg, overflow: "hidden", aspectRatio: "16 / 9",
-            border: `1px solid ${T.border}`,
-            background: "repeating-conic-gradient(#f2f2f2 0% 25%, #fafafa 0% 50%) 50% / 32px 32px",
+            position: "relative", borderRadius: R.lg, overflow: "hidden", aspectRatio: "707 / 474",
+            border: `1px solid ${T.border}`, display: "grid", placeItems: "center",
           }}>
-            <span
-              className="ms" aria-hidden
-              style={{
-                position: "absolute", top: "50%", left: "50%", transform: "translate(-50%, -50%)",
-                fontSize: 56, color: C.gray400,
-              }}
-            >
-              play_circle
-            </span>
+            <img
+              src="/assets/hero-video-poster-overlay.png"
+              alt="A book printing on a Blurb press"
+              loading="lazy"
+              style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }}
+            />
+            <img
+              src="/assets/hero-play-icon.svg"
+              alt=""
+              aria-hidden
+              style={{ position: "relative", width: 80, height: 80 }}
+            />
           </div>
         </div>
       </section>
 
-      {/* ── What buyers see ──
-          Was "More than a checkout. A whole store in one link." — "a
-          whole store" oversold it the same way "online store"/"online
-          bookstore" did elsewhere on this page (Ana), and "more than a
-          checkout" read as too close to Lulu's own positioning to keep.
-          Rewritten to just describe what the section shows rather than
-          make a comparative claim. Walks a buyer through the product-
-          page mockup with numbered annotations rather than describing it
-          in the abstract — the one place InstantStoreMockup appears
-          (Ana: not duplicated with the hero any more). This is the
-          buyer's view of the page; "Three steps" below is the seller's
-          view of setting it up, complementary, not overlapping.
-
-          Order history: shown first originally, then moved after
-          "Three simple steps" (Ana: "swap the two," reasoning setup
-          before payoff), now moved back here (Ana: "i meant the
-          order again") — back to payoff before setup.
-
-          TIGHTENED 2026-09-10 (Ana: "section paddings are still too
-          large"): this and the next three sections (Three simple steps,
-          Everything you need, Keep more of what you earn) dropped from
-          clamp(56,7,80) to clamp(40,5,56), and the fulfilment band
-          below from clamp(48,6,64) to the same clamp(40,5,56) so nothing
-          mid-page reads bigger than its neighbors. The hero and the
-          closing band are untouched — both share their padding scale
-          with Sell v2 (56,8,96 and 72,9,120/56,7,80), so shrinking them
-          here alone would break that consistency rather than fix a
-          page-specific problem. */}
-      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px" }}>
-        <div style={{
-          maxWidth: 1160, margin: "0 auto", display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 48, alignItems: "center",
-        }}>
-          <div style={{ display: "grid", gap: 24 }}>
-            <div style={{ display: "grid", gap: 8 }}>
-              {/* Full stop dropped 2026-09-10 (Ana: "in general, we
-                  don't do full stops in titles, unless there's 2
-                  sentences") — this is one sentence. */}
-              <h2 style={{
-                fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
-                lineHeight: 1.25, margin: 0,
+      {/* ── Switchback ── RESYNCED to Figma layout, not just copy
+          (Anain, 2026-09-22; node 250:24548) — four alternating
+          image/text lanes, a real PDP screenshot on every lane, no
+          numbered badges (hidden in Figma's own desktop instance). This
+          replaces the numbered-list-plus-InstantStoreMockup layout the
+          section used before, which didn't match the frame's actual
+          design — see WALKTHROUGH's own note above. Lane order
+          alternates image-right/image-left, matching Figma exactly. */}
+      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px", background: "#fff" }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto", display: "grid", gap: "clamp(40px, 5vw, 56px)" }}>
+          <h2 style={{
+            fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.75rem, 3.6vw, 2.75rem)",
+            lineHeight: 1.2, margin: 0, textAlign: "center",
+          }}>
+            One link, a real product page for your book
+          </h2>
+          {WALKTHROUGH.map(([title, body, img], i) => {
+            const imageFirst = i % 2 === 1;
+            const imageEl = (
+              <div style={{
+                flex: "1 1 0", minWidth: 280, border: `1px solid ${T.border}`, borderRadius: R.lg,
+                boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.25)", overflow: "hidden", aspectRatio: "650 / 564",
               }}>
-                One link, a real product page for your book
-              </h2>
-            </div>
-            {WALKTHROUGH.map(([title, body], i) => (
-              <div key={title} style={{ display: "flex", gap: 16 }}>
-                <span style={{
-                  flex: "0 0 auto", width: 28, height: 28, borderRadius: "50%",
-                  background: C.blue600, color: "#fff", display: "grid", placeItems: "center",
-                  fontSize: TYPE.sm, fontWeight: 700,
-                }}>
-                  {i + 1}
-                </span>
-                <div style={{ display: "grid", gap: 4 }}>
-                  <h3 style={{ margin: 0, fontSize: TYPE.lg, fontWeight: 600 }}>{title}</h3>
-                  <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.5 }}>{body}</p>
-                </div>
+                <img src={img} alt="" loading="lazy" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
               </div>
-            ))}
-          </div>
-          <InstantStoreMockup />
+            );
+            const textEl = (
+              <div style={{ flex: "1 1 0", minWidth: 280, display: "grid", gap: 16 }}>
+                <h3 style={{ margin: 0, fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "2rem", lineHeight: 1.2 }}>{title}</h3>
+                <p style={{ margin: 0, fontSize: TYPE.base, color: T.textSubtle, lineHeight: 1.4 }}>{body}</p>
+              </div>
+            );
+            return (
+              <div key={title} style={{ display: "flex", gap: "clamp(24px, 5vw, 80px)", alignItems: "center", flexWrap: "wrap" }}>
+                {imageFirst ? <>{imageEl}{textEl}</> : <>{textEl}{imageEl}</>}
+              </div>
+            );
+          })}
         </div>
       </section>
 
@@ -1267,298 +985,74 @@ export default function InstantStoreV2({ onGo }) {
           its own sticky positioning against this header, so the number
           stays right if the header's height ever changes (it does, per
           App.jsx's own note, when the demo bar wraps). */}
+      {/* ── Calculate your profit ── RESYNCED to Figma layout, not just
+          copy (Anain, 2026-09-22; node 104:5039). Figma's own canvas
+          shows this section as a LIVE embedded instance of the Instant
+          Store profit calculator — the same ProductOptions + SummaryPanel
+          pairing the ?stage=margin page uses (Product/Book Size/Cover/
+          Paper pickers on the left, Print cost + listing-price/profit/
+          margin steppers on the right) — not a static 4-column comparison
+          table. The hand-built KEEP_MORE_* table this section used to
+          render (Instant Store vs Blurb Bookstore vs Amazon vs RPI Print
+          API, with a fixed $80/$27.90/$62.78 example) was a real, heavily
+          -reviewed design in its own right, but it isn't what the current
+          frame shows, so it's replaced here rather than kept alongside a
+          second, different-looking calculator. That comparison still
+          lives on Sell Overview's own table, linked below exactly as
+          before. */}
       <section id="keep-more" style={{ padding: "clamp(40px, 5vw, 56px) 24px", scrollMarginTop: "calc(var(--nav-h, 124px) + 16px)" }}>
         <div style={{ maxWidth: 1280, margin: "0 auto", display: "grid", gap: 24 }}>
-          {/* Button moved back up here and back to filled/blue (2026-09-10,
-              Ana: "'calculate your profit' should be main CTA colour (blue
-              bg) with placement on the top right of the table, like the
-              figma") — reverses the head-of-design placement from the
-              NINTH PASS note below (button at the very bottom, outlined).
-              That call was reasoned through carefully at the time; this
-              one is Ana's own explicit read of the Figma source overriding
-              it, not an oversight, so it stands without re-litigating the
-              earlier note — left in place below for the history.
-              alignItems flex-start -> flex-end (2026-09-10, Ana:
-              "calculate your profit, align to the button of the
-              subtitle") — the button now sits on the subtitle's own
-              baseline instead of level with the H2 above it.
-              "Keep more of what you earn" -> "See how the Blurb Instant
-              Store compares" 2026-09-10 (Ana) — the section's own job is
-              the comparison (the table right below), so the heading
-              names that instead of restating the page's profit pitch a
-              third time. Every other reference to "Keep more of what you
-              earn" in this file's own comments is history, not live
-              copy, and stays as-is. */}
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", gap: 24, flexWrap: "wrap" }}>
-            <div style={{ display: "grid", gap: 12, flex: "1 1 480px" }}>
-            <h2 style={{
-              fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
-              lineHeight: 1.25, margin: 0,
-            }}>
-              See how the Blurb Instant Store compares
-            </h2>
-            {/* Two paragraphs collapsed into one (Ana: "lots of words but
-                looks off") — same two facts (you set the price with no
-                extra fees; that's worth up to 3x more) in one sentence
-                rather than two lines of near-equal visual weight fighting
-                each other. The standalone "listing price / print cost /
-                profit" card that used to sit beside this text is gone too
-                (Ana: "it should be incorporated in the table") — those
-                three numbers are now rows in the table itself.
-
-                "other distribution channels" -> named channels
-                (2026-09-10, Ana), same reasoning and same "up to"
-                qualifier as STEPS' own version of this line above.
-
-                maxWidth:720 dropped from this block 2026-09-10 (Ana:
-                "it's still two lines each so hasn't improved, make it
-                one line each") — that cap, not the CTA's position, was
-                what forced this sentence onto two lines; at this
-                section's full 1240px width it fits on one.
-
-                Trimmed further 2026-09-10 (Ana: drop the leading "You
-                set the price, and what's left after your print cost is
-                yours" clause, keep just the claim) — the H2 and the
-                table itself already establish "you set the price," so
-                the lede's only job left is the number.
-
-                RESOLVED 2026-09-10 — the real $80/$27.90/$62.78 figures
-                below made "up to 3x" true against Blurb Bookstore
-                (~3.03x) but a big understatement against Amazon
-                (~13.5x); flagged that split rather than picking a
-                channel myself. Ana's own call: drop "Amazon, or Ingram"
-                and benchmark against Blurb Bookstore alone, the one
-                channel the number actually matches. */}
-            <p style={{ margin: 0, fontSize: TYPE.base, color: T.textNeutral }}>
-              Up to 3x more profit than selling through the Blurb Bookstore.
-            </p>
-            </div>
-            <Button onClick={() => onGo?.("margin")} style={{ flex: "0 0 auto" }}>Calculate your profit</Button>
-          </div>
-
-          {/* NINTH PASS 2026-09-10 — head of design's review of this whole
-              section, verbatim:
-
-              "Title and subhead stay as-is. Table comes next, no text
-              before it. Let the comparison land at full strength. Add a
-              small in-table label ('Example: 8×10 hardcover, $50 list
-              price') so it's still marked as an example, without a
-              paragraph in front of it... A short note goes below the
-              table, combining the example disclaimer and the fee
-              reassurance — the right moment to reassure, after the
-              number has landed... Button moves to the very bottom, after
-              that note — the last thing on the page. Why: this page's
-              job is to persuade a prospect, not document policy, and
-              this section's job within that is proof. The number needs
-              to land and do its persuasive work first; the caveat and
-              fee reassurance exist to support that persuasion by
-              handling objections after interest is created, not to
-              precede or qualify the claim before it's had a chance to
-              work."
-
-              Reordered top-to-bottom: table immediately after the lede
-              (the button and the "$50.00 list price" caption that used
-              to sit here are both gone from this spot); an in-table
-              example row now carries what that caption said; a single
-              combined note (example caveat + fee reassurance, the two
-              paragraphs that used to bookend this section) sits under
-              the table; the button is last. $50.00 itself is still
-              Ana's own round, memorable number (see the file header
-              note for the full pricing arithmetic) — only where it's
-              stated moved, not the figure itself. */}
-
-          {/* Hand-built, not Codex's ComparisonTable (Ana: "it doesn't
-              sell it, it needs colour, highlights, pills" — see the file
-              header note on why that component can't render one anyway).
-              Same status-dot-table visual language as Sell v2's own
-              comparison table (zebra rows, sticky label column, charcoal
-              rules), but the "dot" language doesn't fit a table that's
-              all numbers — Instant Store gets a highlighted column
-              instead (light blue tint + a "Best value" badge), and the
-              profit row is pills rather than plain text so the one row
-              this table exists to make is the one row that looks
-              different from a plain spec sheet. */}
-          <div style={{
-            overflowX: "auto", WebkitOverflowScrolling: "touch",
-            border: `1px solid ${C.charcoal200}`, borderRadius: R.md,
+          <h2 style={{
+            fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.5rem, 3.2vw, 2rem)",
+            lineHeight: 1.25, margin: 0,
           }}>
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "160px repeat(4, minmax(160px, 1fr))",
-              minWidth: 800,
-            }}>
-              {["", ...KEEP_MORE_COLUMNS].map((col, ci) => (
-                <div
-                  key={col || "row-label"}
-                  style={{
-                    position: ci === 0 ? "sticky" : "static", left: 0, zIndex: 2,
-                    background: ci === 1 ? T.bgAccentSubtle : "#fff",
-                    borderBottom: `1px solid ${C.charcoal200}`,
-                    borderRight: ci < 4 ? `1px solid ${C.charcoal200}` : "none",
-                    padding: 16, fontFamily: FONT_DISPLAY, fontWeight: 500,
-                    fontSize: TYPE.sm, color: T.textNeutral,
-                    display: "flex", alignItems: "center", gap: 8,
-                  }}
-                >
-                  {col}
-                  {ci === 1 && (
-                    <span style={{
-                      padding: "2px 8px", borderRadius: 999, fontSize: 11, fontWeight: 700,
-                      letterSpacing: 0.4, textTransform: "uppercase", whiteSpace: "nowrap",
-                      background: C.blue600, color: "#fff",
-                    }}>
-                      Best value
-                    </span>
-                  )}
-                </div>
-              ))}
+            Calculate your profit
+          </h2>
 
-              {/* Example label, moved back under the column headers
-                  2026-09-10 (Ana: "example for a ... row, but it below
-                  the titles row") — reverses the previous pass's move
-                  to right-after-"Your listing price"; back to
-                  annotating the table as a whole from the top, before
-                  any numbers start. Spec text unchanged: "Example for a
-                  10×8 Photo Book Standard ImageWrap, Hardcover, 85
-                  pages." Still gray50, not the accent-blue Instant
-                  Store column, since it's about the whole table. */}
-              <div style={{
-                gridColumn: "1 / -1", background: C.gray50,
-                borderBottom: `1px solid ${C.charcoal200}`,
-                padding: "10px 16px", fontSize: TYPE.sm, color: T.textSubtle,
-              }}>
-                Example for a 10×8 Photo Book Standard ImageWrap, Hardcover, 85 pages
-              </div>
+          {/* Compact product-type row, matching Figma's own "Product"
+              control here (Photo Book / Paperback & Hardcover Books /
+              Magazine / Notebooks & Journals) — not FormatCards' big
+              photo-card picker, which is a different control used
+              elsewhere (the format catalogue, /getting-started). */}
+          <RadioCardGroup
+            value={calcFormatId}
+            onValueChange={changeCalcFormat}
+            aria-label="Product"
+            style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: 12 }}
+          >
+            {CALCULATOR_FORMATS.map(f => (
+              <RadioCard key={f.id} value={f.id}>{f.label}</RadioCard>
+            ))}
+          </RadioCardGroup>
 
-              {KEEP_MORE_ROWS.map((row, ri) => {
-                /* Print cost stays plain white, not zebra-grey
-                   (2026-09-10, Ana: "the print cost row doesn't have
-                   to be grey") — no reason given beyond the row
-                   reading busier than it needs to; there's no other
-                   row this table singles out for a treatment, so
-                   leaving it off is the simplest way to satisfy that
-                   without inventing a new rule for why every OTHER
-                   odd row still gets it. */
-                const rowBg = ri % 2 === 1 && row.label !== "Print cost" ? C.gray50 : "#fff";
-                return (
-                  <React.Fragment key={ri}>
-                    <div style={{
-                      position: "sticky", left: 0, zIndex: 1, background: rowBg,
-                      borderBottom: `1px solid ${C.charcoal200}`, borderRight: `1px solid ${C.charcoal200}`,
-                      padding: 16, fontSize: TYPE.sm, fontWeight: 500, color: T.textNeutral,
-                    }}>
-                      {row.label}
-                    </div>
-                    {row.cells.map((cell, ci) => (
-                      <div key={ci} style={{
-                        background: ci === 0 ? T.bgAccentSubtle : rowBg,
-                        borderBottom: `1px solid ${C.charcoal200}`,
-                        borderRight: ci < 3 ? `1px solid ${C.charcoal200}` : "none",
-                        padding: 16, fontSize: TYPE.sm, color: T.textNeutral, lineHeight: 1.5,
-                        fontWeight: ci === 0 ? 600 : 400,
-                      }}>
-                        {cell}
-                      </div>
-                    ))}
-                  </React.Fragment>
-                );
-              })}
-
-              {/* COLOR FIXED 2026-09-10 — head of design: "Fix the
-                  profit row colors. In Codex, this type of treatment
-                  are labels and status. Orange signals a warning,
-                  green signals success. Applying that here flags 38%
-                  and 20% profit as errors when they're just lower
-                  numbers. It also styles Blurb Bookstore, our own
-                  channel, as a warning. Suggest: green only for the
-                  winning option(s) (Instant Store, RPI Print API),
-                  neutral gray for the rest." The previous green/amber
-                  split borrowed Codex's real success/warning colors to
-                  mean "high number/low number," which is exactly the
-                  status meaning those colors already carry elsewhere —
-                  Bookstore and Amazon aren't failing at anything, they
-                  just aren't the two routes with 0% commission. Amber
-                  -> neutral gray (C.gray100 / T.textNeutral); green
-                  stays for Instant Store and RPI Print API, the two
-                  actually-winning options. */}
-              <div style={{
-                position: "sticky", left: 0, zIndex: 1, background: "#fff",
-                borderRight: `1px solid ${C.charcoal200}`, padding: 16,
-                fontSize: TYPE.sm, fontWeight: 700, color: T.textNeutral,
-              }}>
-                Your profit
-              </div>
-              {KEEP_MORE_PROFIT.map((value, ci) => {
-                const strong = ci === 0 || ci === 3; // Instant Store, RPI Print API
-                const priced = value !== "Varies";
-                return (
-                  <div key={ci} style={{
-                    background: ci === 0 ? T.bgAccentSubtle : "#fff",
-                    borderRight: ci < 3 ? `1px solid ${C.charcoal200}` : "none",
-                    padding: 16, display: "flex", alignItems: "center",
-                  }}>
-                    {priced ? (
-                      <span style={{
-                        padding: "4px 12px", borderRadius: 999, fontSize: TYPE.sm,
-                        background: strong ? "#d7f4e0" : C.gray100,
-                        color: strong ? "#166640" : T.textNeutral,
-                      }}>
-                        <span style={{ fontWeight: 700 }}>{value}</span>
-                        <span style={{ fontWeight: 500 }}> ({KEEP_MORE_MARGIN[ci]} profit)</span>
-                      </span>
-                    ) : (
-                      <span style={{ fontSize: TYPE.sm, color: T.textSubtle, fontStyle: "italic" }}>{value}</span>
-                    )}
-                  </div>
-                );
-              })}
+          <div
+            className="fade-in cfg-grid"
+            style={{ display: "grid", gap: 40, alignItems: "start", gridTemplateColumns: "minmax(340px, 1.55fr) minmax(310px, 0.85fr)" }}
+          >
+            <div className="cfg-steps" style={{ minWidth: 0 }}>
+              <ProductOptions formatId={calcFormatId} state={calcSel} onChange={setCalcSel} mode="sell" />
             </div>
+            <SummaryPanel
+              formatId={calcFormatId}
+              state={calcSel}
+              onChange={setCalcSel}
+              mode="sell"
+              sellPrice={calcPrice}
+              onSellPrice={setCalcPrice}
+              ship={calcShip}
+              setShip={setCalcShip}
+              onGo={onGo}
+              actions={
+                <CreateActions
+                  formatId={calcFormatId}
+                  sel={calcSel}
+                  onGo={onGo}
+                  heading="Ready to make it?"
+                  hideHint
+                />
+              }
+            />
           </div>
-
-          {/* Combined note, per design's review: "A short note goes
-              below the table, combining the example disclaimer and the
-              fee reassurance — the right moment to reassure, after the
-              number has landed." Two facts that used to bookend this
-              section (the "$50.00 list price" caveat above the table,
-              the "no processing/platform/subscription fee" line below
-              it) now live here as one note, in the order design's own
-              suggested fee line implies: the disclaimer first, then the
-              reassurance. Fee line is design's own wording verbatim.
-              "Actual costs" -> "Costs" (2026-09-10, Ana) — "actual" was
-              doing no work the note doesn't already do by being a
-              caveat in the first place. */}
-          <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle }}>
-            Costs vary by format, size, and page count. Unlike many print-on-demand companies, none
-            of the options above charge extra processing, platform, or subscription fees.
-          </p>
-
-          {/* Added 2026-09-10 (Ana: "link the sell overview page from the
-              reduced scope too") — this page is reachable in the reduced
-              ("Minimum effort") scope, but the profit calculator's own
-              "Compare all selling options" doorway to Sell Overview isn't:
-              the reduced scope's PDP line and the two banner instances
-              (PricingToday.jsx, ShippingPage.jsx) all route straight here
-              rather than through the calculator, so a reduced-scope reader
-              could land on this page and never see that link. This table
-              only prices profit, which is also a real reason to point
-              onward: Sell Overview's own table compares setup, fulfillment
-              and packaging too. Same link text as the calculator's, for
-              the same destination. */}
-          {onGo && (
-            <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle }}>
-              This table compares profit only.{" "}
-              <button
-                onClick={() => onGo("sellv2")}
-                style={{
-                  font: "inherit", color: T.textBrand, textDecoration: "underline",
-                  background: "transparent", border: 0, padding: 0, cursor: "pointer",
-                }}
-              >
-                Compare all selling options
-              </button>{" "}
-              to see setup, fulfillment, and packaging too.
-            </p>
-          )}
         </div>
       </section>
 
@@ -1691,11 +1185,15 @@ export default function InstantStoreV2({ onGo }) {
 
       <Faq heading={<>Your Blurb Instant Store<br />questions, answered</>} items={FAQS(onGo)} />
 
-      {/* ── Close ── */}
+      {/* ── Close ── RESYNCED to Figma (Anain, 2026-09-22; node 284:24960)
+          — solid light-blue fill (#eff9ff), not the gray/beige gradient
+          this section used before; single button only, matching the
+          desktop frame exactly (its own second "Calculate your profit"
+          button exists in the component but is hidden there too). */}
       <section
         className="curve-cta"
         style={{
-          background: "linear-gradient(71deg, #e2e8f0 -0.95%, #f5f0ea 45.34%, #e2e8f0 98.72%)",
+          background: "#eff9ff",
           padding: "clamp(72px, 9vw, 120px) 24px clamp(56px, 7vw, 80px)",
         }}
       >
@@ -1709,15 +1207,7 @@ export default function InstantStoreV2({ onGo }) {
           <p style={{ margin: 0, fontSize: TYPE.lg, color: T.textSubtle, lineHeight: 1.6 }}>
             It only takes a few minutes to get started.
           </p>
-          {/* Secondary CTA added alongside the primary one (Ana) — a
-              reader who isn't ready to commit yet still has somewhere to
-              go rather than a dead end, same "Calculate your profit"
-              destination the hero and "Keep more of what you earn"
-              already point to. */}
-          <div style={{ display: "flex", gap: 12, flexWrap: "wrap", justifyContent: "center" }}>
-            <Button>Create your Instant Store</Button>
-            <Button variant="outlined" onClick={() => onGo?.("margin")}>Calculate your profit</Button>
-          </div>
+          <Button>Create your Instant Store</Button>
         </div>
       </section>
     </div>
