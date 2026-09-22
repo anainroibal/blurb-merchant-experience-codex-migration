@@ -216,7 +216,7 @@ const SELL_PATHS = [
     links: [["Explore Retail Distribution", { href: "https://www.blurb.com/self-publish" }]],
   },
   {
-    id: "los", name: "Bulk Printing Services", icon: "local_shipping",
+    id: "los", name: "Large Order Services", icon: "local_shipping",
     illus: "/assets/illustrations/way-bulk-printing.png",
     bestFor: "High-touch support",
     line: "Get concierge service and volume discounts for orders of 100+ copies, perfect for events, clients, or resale.",
@@ -356,14 +356,6 @@ function PathLink({ label, dest, onGo }) {
   );
 }
 
-/* Codex's own success/warning/danger primitives (read from its compiled
-   CSS), one step lighter than the semantic -text/-icon tokens
-   (#166640/#8e4412/#bd1818). Those are tuned for text-on-white contrast,
-   which makes all three read as similarly dark, low-saturation blobs at
-   dot size — hard to tell apart at a glance. Same ramps, same hues,
-   picked instead for how distinct they read that small. */
-const STATUS_COLOR = { success: "#1e8c55", warning: "#eda113", danger: "#e22c2c" };
-
 /* Same solid-blue "New" marker as SellerLanding.jsx and the nav's own
    Instant Store entries — Badge's fixed 7-color API has no solid-blue
    treatment, so it stays a small custom chip rather than losing that
@@ -380,30 +372,7 @@ function Chip({ children }) {
   );
 }
 
-/* No dot when a row has no status (Ana: "Best for" isn't comparing
-   anything, so a green dot on all four cells implied a judgment that
-   isn't there). First pass kept the dot's reserved space so the row's
-   text lined up with the dot-carrying rows below — wrong call (Ana:
-   "indentation is still there, should be aligned to the start of the
-   bullet points"): she wants this row's text flush with where the
-   dots themselves start, not with where dotted rows' text happens to
-   land once indented past them. Renders nothing at all now, so the
-   cell's flex layout collapses that space and the text starts at the
-   cell's own left edge. */
-function StatusDot({ status }) {
-  if (!status) return null;
-  return (
-    <span
-      aria-hidden
-      style={{
-        display: "inline-block", width: 8, height: 8, borderRadius: "50%",
-        background: STATUS_COLOR[status], margin: "6px 10px 0 0", flex: "0 0 auto",
-      }}
-    />
-  );
-}
-
-const COMPARE_COLUMNS = ["Instant Store", "Retail Distribution", "Bulk Printing Services", "RPI Print API"];
+const COMPARE_COLUMNS = ["Instant Store", "Retail Distribution", "Large Order Services", "RPI Print API"];
 
 const COMPARE_ROWS = [
   /* No status on this row (Ana: "remove the green dots on the first
@@ -434,8 +403,8 @@ const COMPARE_ROWS = [
   ] },
   { label: "Order fulfillment", cells: [
     { status: "success", text: "Automated" },
+    { status: "warning", text: "Retailer's audience" },
     { status: "success", text: "Automated" },
-    { status: "warning", text: "White-glove, project-managed" },
     { status: "success", text: "Automated" },
   ] },
   { label: "Inventory", cells: [
@@ -469,6 +438,38 @@ const COMPARE_ROWS = [
     { status: "danger", text: "Developer resources" },
   ] },
 ];
+
+/* Codex's own success/warning/danger primitives (read from its compiled
+   CSS), one step lighter than the semantic -text/-icon tokens
+   (#166640/#8e4412/#bd1818). Those are tuned for text-on-white contrast,
+   which makes all three read as similarly dark, low-saturation blobs at
+   dot size — hard to tell apart at a glance. Same ramps, same hues,
+   picked instead for how distinct they read that small. */
+const STATUS_COLOR = { success: "#1e8c55", warning: "#eda113", danger: "#e22c2c" };
+const STATUS_ICON = { success: "check_circle", warning: "remove_circle", danger: "cancel" };
+
+/* MOCKUP (2026-09-18): icons back, real Material Symbols glyphs
+   (check_circle / remove_circle / cancel), same reasoning as every
+   earlier icon pass — shape carries the signal, not color alone.
+   `inline`: the legend below the table needs the icon sitting beside
+   its label on one line; every table cell needs it stacked above the
+   sentence instead (this component's default), so the margin direction
+   flips on that one flag rather than duplicating the icon markup. */
+function StatusDot({ status, inline }) {
+  if (!status) return null;
+  return (
+    <span
+      className="ms"
+      aria-hidden
+      style={{
+        fontSize: 18, lineHeight: 1, color: STATUS_COLOR[status],
+        margin: inline ? 0 : "0 0 2px",
+      }}
+    >
+      {STATUS_ICON[status]}
+    </span>
+  );
+}
 
 const GET_STARTED = [
   { stage: "instantstorev2" },
@@ -650,7 +651,7 @@ const TRUSTED_BY = ["Canva", "minted", "Treering", "Storyworth", "We Can Books"]
    needed beyond the two question swaps. */
 const FAQS = [
   ["What are the different ways to sell a self-published book?",
-   "Four: your own Instant Store, Retail Distribution through Blurb's Bookstore, Amazon and Ingram, Bulk Printing Services for large-quantity orders, or the RPI Print API for your own storefront."],
+   "Four: your own Instant Store, Retail Distribution through Blurb's Bookstore, Amazon and Ingram, Large Order Services for large-quantity orders, or the RPI Print API for your own storefront."],
   ["How do I start selling my book online?",
    "Pick a project you've already created, then choose a route above and follow its own setup. Most sellers start with an Instant Store, since it's live in minutes with no separate sign-up."],
   ["Can I sell books without holding inventory or paying anything upfront?",
@@ -668,6 +669,11 @@ const FAQS = [
 ];
 
 export default function SellLandingV2({ onGo }) {
+  /* The "Which selling path is right for you?" comparison went through
+     several restyles (dots, icons, a plan-card layout, an expand
+     toggle) before landing on a smaller table instead — see that
+     section's own comment, right where it's built, for the current
+     reasoning. */
   return (
     <div style={{ fontFamily: FONT_BODY, color: C.gray950 }}>
 
@@ -938,20 +944,23 @@ export default function SellLandingV2({ onGo }) {
           this wrapper stays plain rather than re-adding the
           colored/bordered treatment the combined section used to
           carry. */}
-      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px" }}>
+      {/* MOCKUP (2026-09-18): section background restored — the outer
+          panel removal above dropped the table's white-on-T.bgSubtle
+          contrast along with it, since the earlier code never actually
+          set T.bgSubtle here despite its own comment assuming it had.
+          Matches the wireframe's cream backdrop behind the heading and
+          table now. */}
+      <section style={{ padding: "clamp(40px, 5vw, 56px) 24px", background: T.bgSubtle }}>
         <div style={{ maxWidth: 1280, margin: "0 auto" }}>
-          {/* Own panel, not just a heading dropped on the section's own
-              gray50 — the cards above already sit on that background, so
-              the table needs a background of its own to read as a
-              distinct part of the section rather than a continuation of
-              the same surface (Ana: "needs a diff bg colour to the 4 ways
-              to sell section"). White reads as the lift here since the
-              section itself is T.bgSubtle. */}
-          <div style={{
-            display: "grid", gap: 20, marginTop: 8, background: T.bgNeutral,
-            border: `1px solid ${T.border}`, borderRadius: R.lg,
-            padding: "clamp(24px, 4vw, 40px) clamp(16px, 3vw, 32px)",
-          }}>
+          {/* MOCKUP (2026-09-18): outer panel border removed — Anain's
+              own follow-up, and it also makes the code match what the
+              comment above already argued for and never actually did:
+              the table's own border/white-fill/radius already gives it
+              a defined edge, so boxing the heading too was a second,
+              redundant outline never asked for once that comment was
+              written. Heading now sits directly on the section's own
+              background, matching the reference exactly. */}
+          <div style={{ display: "grid", gap: 20, marginTop: 8 }}>
             <h3 style={{
               fontFamily: FONT_DISPLAY, fontWeight: 500, fontSize: "clamp(1.25rem, 2.4vw, 1.5rem)",
               lineHeight: 1.25, margin: 0, textAlign: "center",
@@ -959,28 +968,18 @@ export default function SellLandingV2({ onGo }) {
               Which selling path is right for you?
             </h3>
 
-            {/* ── Beefed up, Lulu-style (Ana wanted this as inspiration) ──
-                Lulu's own comparison table (lulu.com/sell) uses a status
-                dot per cell — green/yellow/red — plus a legend, across
-                nine features. Same shape here. Cell content is the CRO
-                brief's own value props and FAQ answers for each path, not
-                invented — the one place the brief itself flags as
-                unverified (SKU-based margin comparisons like "30% more
-                than the Bookstore") is left out; "Seller pricing, no
-                additional fees" (now relabeled "Instant Store pricing",
-                see below) and "Same pricing as Instant Store" are both
-                lines the brief states directly, not comparisons.
-
-                Hand-built rather than Codex's ComparisonTable: that
-                component's cells are Markdown strings run through
-                react-markdown + remark-gfm with no rehype-raw plugin
-                (confirmed in its own Markdown.js), so a styled span is
-                impossible inside a cell — an emoji was the only "dot"
-                reachable that way. This grid uses Codex's own semantic
-                status colors instead (--codex-color-semantic-bg-success
-                / -warning / -danger, read from its compiled CSS), same
-                zebra rows / rule color / sticky label column / 16px
-                cells as the tool comparison on /bookmaking-tools. */}
+            {/* MOCKUP (2026-09-18): all eight rows back (Anain's own
+                follow-up to the three-row cut), with icons back too —
+                but stacked above each cell's sentence rather than
+                inline before it this time, so a long sentence wrapping
+                to two lines doesn't leave the icon stranded up against
+                the first line while the row's real height is set by
+                the second. Legend's back underneath, same three terms
+                as every earlier icon pass. Row-label column gets a
+                touch more left padding than the data columns (24px vs
+                16px) so the table doesn't look lopsided against its own
+                right edge now that the label is the only left-aligned
+                text anchor in the row. */}
             <div style={{
               overflowX: "auto", WebkitOverflowScrolling: "touch",
               border: `1px solid ${C.charcoal200}`, borderRadius: R.md,
@@ -988,16 +987,15 @@ export default function SellLandingV2({ onGo }) {
               <div style={{
                 display: "grid",
                 gridTemplateColumns: "160px repeat(4, minmax(180px, 1fr))",
-                minWidth: 860,
               }}>
                 {["", ...COMPARE_COLUMNS].map((col, ci) => (
                   <div
                     key={col || "row-label"}
                     style={{
                       position: ci === 0 ? "sticky" : "static", left: 0, zIndex: 2,
-                      background: "#fff", borderBottom: `1px solid ${C.charcoal200}`,
-                      borderRight: ci < 4 ? `1px solid ${C.charcoal200}` : "none",
-                      padding: 16, fontFamily: FONT_DISPLAY, fontWeight: 500,
+                      background: "#fff",
+                      padding: ci === 0 ? "16px 16px 16px 24px" : 16,
+                      fontFamily: FONT_DISPLAY, fontWeight: 500,
                       fontSize: TYPE.sm, color: T.textNeutral,
                       display: "flex", alignItems: "center", gap: 8,
                     }}
@@ -1007,22 +1005,21 @@ export default function SellLandingV2({ onGo }) {
                   </div>
                 ))}
 
-                {COMPARE_ROWS.map((row, ri) => {
+                {COMPARE_ROWS.filter(row => row.label !== "Best for").map((row, ri) => {
                   const rowBg = ri % 2 === 1 ? C.gray50 : "#fff";
                   return (
                     <React.Fragment key={row.label}>
                       <div style={{
                         position: "sticky", left: 0, zIndex: 1, background: rowBg,
-                        borderBottom: `1px solid ${C.charcoal200}`, borderRight: `1px solid ${C.charcoal200}`,
-                        padding: 16, fontSize: TYPE.sm, fontWeight: 500, color: T.textNeutral,
+                        padding: "16px 16px 16px 24px", fontSize: TYPE.sm, fontWeight: 500, color: T.textNeutral,
+                        display: "flex", alignItems: "center",
                       }}>
                         {row.label}
                       </div>
                       {row.cells.map((cell, ci) => (
                         <div key={ci} style={{
-                          background: rowBg, borderBottom: `1px solid ${C.charcoal200}`,
-                          borderRight: ci < 3 ? `1px solid ${C.charcoal200}` : "none",
-                          padding: 16, display: "flex", alignItems: "flex-start", gap: 0,
+                          background: rowBg,
+                          padding: 16, display: "flex", flexDirection: "column", gap: 4,
                           fontSize: TYPE.sm, color: T.textNeutral, lineHeight: 1.5,
                         }}>
                           <StatusDot status={cell.status} />
@@ -1047,25 +1044,21 @@ export default function SellLandingV2({ onGo }) {
                   );
                 })}
 
-                {/* Same grid as the rows above, so the CTAs land exactly
-                    under their own column — the trick SellerLanding.jsx's
-                    six-route table uses with Markdown links, done here
-                    with real elements since the table is hand-built anyway. */}
-                <div style={{ position: "sticky", left: 0, zIndex: 1, background: "#fff", borderRight: `1px solid ${C.charcoal200}`, padding: 16 }} />
+                <div style={{ position: "sticky", left: 0, zIndex: 1, background: "#fff", padding: "16px 16px 16px 24px" }} />
                 {GET_STARTED.map((item, i) => (
                   <div key={i} style={{
-                    background: "#fff", borderRight: i < 3 ? `1px solid ${C.charcoal200}` : "none",
+                    background: "#fff",
                     padding: 16,
                   }}>
                     {item.stage ? (
                       <Button
-                        variant="text"
+                        variant="filled"
                         onClick={() => onGo?.(item.stage)}
                       >
                         Get started
                       </Button>
                     ) : (
-                      <Button as="a" variant="text" href={item.href} target="_blank" rel="noopener noreferrer">
+                      <Button as="a" variant="filled" href={item.href} target="_blank" rel="noopener noreferrer">
                         Get started
                       </Button>
                     )}
@@ -1074,9 +1067,9 @@ export default function SellLandingV2({ onGo }) {
               </div>
             </div>
             <p style={{ margin: 0, fontSize: TYPE.sm, color: T.textSubtle, textAlign: "center", display: "flex", gap: 20, justifyContent: "center", flexWrap: "wrap" }}>
-              <span style={{ display: "inline-flex", alignItems: "center" }}><StatusDot status="success" /> Included / easy</span>
-              <span style={{ display: "inline-flex", alignItems: "center" }}><StatusDot status="warning" /> Limited / requires extra effort</span>
-              <span style={{ display: "inline-flex", alignItems: "center" }}><StatusDot status="danger" /> Not included</span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><StatusDot status="success" inline /> Included / easy</span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><StatusDot status="warning" inline /> Limited / requires extra effort</span>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}><StatusDot status="danger" inline /> Not included</span>
             </p>
           </div>
         </div>
