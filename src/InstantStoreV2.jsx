@@ -1,6 +1,20 @@
 import React, { useState } from "react";
 import { Button, CardList, Card, RadioCard, RadioCardGroup } from "@blurb/codex-react";
-import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
+import { C, T, TYPE, R } from "./tokens.js";
+
+/* This page's own Figma frame (Instant Store Landing Page, node 104:4843)
+   is set in Inter throughout — confirmed via the Plugin API's actual font
+   bindings on the H1 (getStyledTextSegments), not the codegen's fallback
+   guess, which just names Inter as a CSS fallback and proves nothing.
+   Every other page in this app uses tokens.js's own FONT_DISPLAY/FONT_BODY
+   (futura-pt/proxima-nova, Blurb's real brand fonts) — deliberately left
+   alone; this override is scoped to this file only, not a tokens.js
+   change. Real Inter is loaded in index.html (Google Fonts) specifically
+   for this page — it was already named as a fallback everywhere but
+   never actually loaded, so it silently rendered as the OS default sans
+   before this. */
+const FONT_DISPLAY = "Inter, -apple-system, system-ui, sans-serif";
+const FONT_BODY = "Inter, -apple-system, system-ui, sans-serif";
 import { FORMAT_CARDS } from "./FormatCards.jsx";
 import { CATALOG, defaultSelection, minSellPrice } from "./catalog.js";
 import ProductOptions, { Field } from "./ProductOptions.jsx";
@@ -1038,7 +1052,11 @@ export default function InstantStoreV2({ onGo }) {
           >
             <div className="cfg-steps" style={{ minWidth: 0 }}>
               <div style={{
-                background: T.bgNeutral, border: `1px solid ${T.border}`, borderRadius: R.lg,
+                /* Border color/radius match Figma's real fills (node
+                   104:5098: border-blurb-border-inverse #f5f5f5 = C.gray50,
+                   rounded-xl = 12px, not R.lg's 8px) — confirmed via the
+                   Plugin API, not guessed. */
+                background: T.bgNeutral, border: `1px solid ${C.gray50}`, borderRadius: 12,
                 padding: 24, display: "grid", gap: 18,
               }}>
                 <Field label="Product" value={CALCULATOR_FORMATS.find(f => f.id === calcFormatId)?.label}>
@@ -1053,10 +1071,16 @@ export default function InstantStoreV2({ onGo }) {
                     ))}
                   </RadioCardGroup>
                 </Field>
-                <ProductOptions formatId={calcFormatId} state={calcSel} onChange={setCalcSel} mode="sell" />
+                {/* sizeVariant="text" (Anain, 2026-09-22) — Figma's Book
+                    Size row (node 104:5039) is plain text cards, same
+                    treatment as Cover/Paper, not the shape-swatch variant
+                    ProductOptions defaults to for its other consumers
+                    (GetStarted, Estimator) — added as an opt-in prop
+                    there rather than changed globally. */}
+                <ProductOptions formatId={calcFormatId} state={calcSel} onChange={setCalcSel} mode="sell" sizeVariant="text" />
               </div>
             </div>
-            <div style={{ border: `1px solid ${T.border}`, borderRadius: R.lg, padding: 24 }}>
+            <div style={{ border: `1px solid ${C.gray50}`, borderRadius: 12, padding: 24 }}>
               <SummaryPanel
                 formatId={calcFormatId}
                 state={calcSel}
@@ -1068,6 +1092,9 @@ export default function InstantStoreV2({ onGo }) {
                 setShip={setCalcShip}
                 onGo={onGo}
                 sticky={false}
+                plainCompareCallout
+                printCostAlign="right"
+                figureFontFamily={FONT_DISPLAY}
                 actions={
                   <CreateActions
                     formatId={calcFormatId}

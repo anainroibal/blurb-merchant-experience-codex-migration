@@ -131,7 +131,7 @@ function SizeSwatch({ option, selected, disabled, maxDim, delta }) {
    and gets a text button. */
 export function OptionGroup({
   label, value, options, selected, onPick, available, variant = "text",
-  detailsOpen, onDetails, note, footer, trayNote, deltas,
+  detailsOpen, onDetails, note, footer, trayNote, deltas, titleField = "label",
 }) {
   const thumb = variant === "thumb";
   const chosen = options.find(o => o.id === selected);
@@ -169,7 +169,7 @@ export function OptionGroup({
               key={o.id}
               value={o.id}
               variant="text"
-              title={o.label}
+              title={titleField === "dims" && o.dims ? o.dims.split(" (")[0] : o.label}
               delta={deltas?.[o.id]}
               selected={o.id === selected}
               disabled={available ? !available.has(o.id) : false}
@@ -238,7 +238,7 @@ export function OptionGroup({
 }
 
 /* Every group a format has, in the catalogue's order. */
-export default function ProductOptions({ formatId, state, onChange, mode = "make" }) {
+export default function ProductOptions({ formatId, state, onChange, mode = "make", sizeVariant = "thumb" }) {
   const f = CATALOG[formatId];
   const derived = derivedSteps(formatId, state);
   const [details, setDetails] = useState(() => new Set());
@@ -304,12 +304,13 @@ export default function ProductOptions({ formatId, state, onChange, mode = "make
             selected={state[g.id]}
             onPick={id => set(g.id, id)}
             available={availableFor(formatId, state, g.id)}
-            variant={isSize ? "thumb" : "text"}
+            variant={isSize ? sizeVariant : "text"}
+            titleField={isSize && sizeVariant === "text" ? "dims" : "label"}
             detailsOpen={details.has(g.id)}
             onDetails={() => toggle(g.id)}
             note={g.note}
             deltas={deltasFor(g)}
-            trayNote={isSize
+            trayNote={isSize && sizeVariant === "thumb"
               ? "Select sizes have been rounded for uniformity. Refer to exact dimensions if needed."
               : null}
           />

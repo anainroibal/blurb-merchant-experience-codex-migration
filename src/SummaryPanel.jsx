@@ -256,6 +256,7 @@ export const exactPdpName = (formatId, sel) => PDP_NAME[formatId]?.[sel?.cover] 
 export default function SummaryPanel({
   formatId, state, onChange, mode, sellPrice, onSellPrice,
   sticky = true, ship: shipProp, setShip: setShipProp, actions, onGo,
+  plainCompareCallout = false, printCostAlign = "left", figureFontFamily,
 }) {
   const selling = mode === "sell";
   const bulk = mode === "distribute";
@@ -489,7 +490,10 @@ export default function SummaryPanel({
 
         {selling ? (
           <>
-            <MarginLadder cost={cost} price={sellPrice} onPrice={onSellPrice} floor={floor} compact onGo={onGo} />
+            <MarginLadder
+              cost={cost} price={sellPrice} onPrice={onSellPrice} floor={floor} compact onGo={onGo}
+              printCostAlign={printCostAlign} figureFontFamily={figureFontFamily}
+            />
 
             {/* The buyer's total is NOT here. It used to be three lines
                 under this ladder, which put the buyer's money inside the
@@ -522,10 +526,18 @@ export default function SummaryPanel({
                 own "Which selling path is right for you?" table, which
                 compares four ways to sell, not four routes. */}
             {onGo && (
-              <div style={{
-                background: C.blue50, border: `1px solid ${C.blue100}`, borderRadius: R.md,
-                padding: 14, display: "grid", gap: 8,
-              }}>
+              <div style={
+                /* plainCompareCallout (Anain, 2026-09-22) — Figma's own
+                   Compare Callout frame (node 104:5132, Instant Store LP)
+                   is plain white with no border, confirmed via its actual
+                   fills (not a guess): a solid white fill, empty strokes
+                   array. The blue-tinted box stays the default for this
+                   component's other consumers (GetStarted, Estimator),
+                   where it's an established, separately-approved treatment. */
+                plainCompareCallout
+                  ? { padding: 24, borderRadius: R.lg, display: "grid", gap: 12 }
+                  : { background: C.blue50, border: `1px solid ${C.blue100}`, borderRadius: R.md, padding: 14, display: "grid", gap: 8 }
+              }>
                 <span style={{ fontSize: TYPE.sm, color: T.textNeutral, lineHeight: 1.5 }}>
                   Amazon, Ingram and the Bookstore use{" "}
                   <button

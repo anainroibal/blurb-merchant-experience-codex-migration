@@ -19,26 +19,30 @@ import { money } from "./catalog.js";
    number a seller has already decided on.
    ──────────────────────────────────────────────────────────────── */
 
-function Cell({ label, sub, children, compact }) {
+function Cell({ label, sub, children, compact, align }) {
   return (
-    <div style={{ display: "grid", gap: 4, minWidth: 0, padding: compact ? "2px 0" : 0 }}>
+    <div style={{ display: "grid", gap: 4, minWidth: 0, padding: compact ? "2px 0" : 0, justifyItems: align === "right" ? "end" : "start" }}>
       <span style={{
         fontSize: TYPE.sm, fontWeight: 700, letterSpacing: 0, textTransform: "none",
-        color: T.textSubtle,
+        color: T.textSubtle, textAlign: align === "right" ? "right" : "left",
       }}>
         {label}
       </span>
       {children}
-      <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.4 }}>{sub}</span>
+      <span style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.4, textAlign: align === "right" ? "right" : "left" }}>{sub}</span>
     </div>
   );
 }
 
-/* A number you are reading, not typing. */
-function Figure({ value, loud, compact }) {
+/* A number you are reading, not typing. `fontFamily` defaults to the
+   shared FONT_DISPLAY (futura-pt); InstantStoreV2 overrides it to Inter,
+   matching that page's own Figma frame (node 104:5101, confirmed via the
+   Plugin API's actual font binding) without changing every other
+   consumer of this component (GetStarted, the real /margin page). */
+function Figure({ value, loud, compact, fontFamily = FONT_DISPLAY }) {
   return (
     <span style={{
-      fontFamily: FONT_DISPLAY, fontWeight: 700, lineHeight: 1,
+      fontFamily, fontWeight: 700, lineHeight: 1,
       fontSize: compact ? TYPE["4xl"] : loud ? TYPE["7xl"] : TYPE["5xl"],
       color: loud ? C.blue600 : T.textNeutral,
       display: "flex", alignItems: "baseline", gap: 8,
@@ -219,7 +223,7 @@ function CostSub({ onGo }) {
    would have to be infinite to leave any cost covered. */
 const MARGIN_MAX = 90;
 
-export default function MarginLadder({ cost, price, onPrice, floor, compact, plain, onGo }) {
+export default function MarginLadder({ cost, price, onPrice, floor, compact, plain, onGo, printCostAlign = "left", figureFontFamily }) {
   const [driver, setDriver] = useState("profit");
   const profit = Math.max(0, price - cost);
   const margin = price > 0 ? Math.min(MARGIN_MAX, (profit / price) * 100) : 0;
@@ -287,8 +291,8 @@ export default function MarginLadder({ cost, price, onPrice, floor, compact, pla
         gridTemplateColumns: compact ? "1fr" : "repeat(auto-fit, minmax(190px, 1fr))",
         alignItems: "start",
       }}>
-        <Cell label="Print cost" sub={<CostSub onGo={onGo} />} compact={compact}>
-          <Figure value={cost} compact={compact} />
+        <Cell label="Print cost" sub={<CostSub onGo={onGo} />} compact={compact} align={printCostAlign}>
+          <Figure value={cost} compact={compact} fontFamily={figureFontFamily} />
         </Cell>
 
         <Cell label="Your listing price" compact={compact}>
