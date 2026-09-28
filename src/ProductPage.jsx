@@ -332,58 +332,50 @@ export default function ProductPage({ onGo, seed = null, lean = false }) {
               {pages}-page minimum, +{money(perPage)} for each additional page
             </div>
 
-            {/* ── THE DOORWAY, beside the price it qualifies (Ana, DES-482 #8) ──
-                "Have you considered having the 'selling this?' note by the
-                price, rather than below the CTA? Wonder if that's a more
-                logical place for it."
+            {/* ── Estimate Shipping, where the live page has it (Camilo/Anain,
+                2026-09-28) ── This slot — under the price's fine print,
+                above the buttons — was DES-482 #8's spot for the selling
+                doorway. But the live PDP already puts "Estimate Shipping"
+                here, and stacking the doorway on top of it read as two
+                links arguing for the same line. Anain's call: leave
+                Estimate Shipping where the live page already has it, and
+                move the selling doorway below the buttons instead — see
+                that block's own comment for why that's safe to do now. */}
+            <a
+              href="#shipping"
+              onClick={(e) => { e.preventDefault(); onGo("shipping"); }}
+              style={{ fontSize: TYPE.sm, color: T.textBrand, fontWeight: 600, textDecoration: "underline", marginTop: 10 }}
+            >
+              Estimate Shipping
+            </a>
+            {/* The shared create actions — same component the calculators
+                use, so "Create online" cannot mean one thing here and
+                another there. showLearnMore is off: this IS the product
+                page. */}
+            <CreateActions
+              formatId={formatId}
+              sel={{ cover, size, paper, pages }}
+              onGo={onGo}
+              showLearnMore={false}
+            />
 
-                It is, and for a reason worth stating: this line's job is to
-                tell a seller that the number above is not theirs. Under the
-                buttons it read as a fourth call to action competing with
-                Create now; here it reads as a footnote on the price, which
-                is what it actually is.
+            {/* ── THE DOORWAY, now below the buttons (Camilo/Anain, 2026-09-28,
+                supersedes DES-482 #8) ── Moved down from beside the price
+                because that slot is Estimate Shipping's on the live page;
+                putting both there read as competing links. Below the
+                buttons was rejected in 2026-09-10 for reading as a fourth
+                CTA fighting Create now — but Estimate Shipping occupying
+                the price slot now forces the choice the other way: better
+                a quiet footnote after the actions than two links crowding
+                one line above them. Still deliberately quiet — body-size
+                text, no panel, no icon, no border — so a maker who reads
+                it and moves on has lost nothing.
 
-                Still deliberately quiet — body-size text, no panel, no icon,
-                no border. Findable by someone who intends to sell, ignorable
-                by everyone else: a maker who reads it and moves on has lost
-                nothing.
-
-                It carries the CONFIGURATION, not just the destination, so the
-                calculator opens on this book rather than an empty form. In
-                the lean scope there is no calculator, so the door leads to
-                the Instant Store page instead — same label either way
-                (2026-09-11, see below), only the destination differs.
-
-                Extra marginTop added 2026-09-10 (Ana: "this feels a
-                little crammed? maybe it should be below the button?") —
-                the CTA text got longer ("see your Instant Store profit"
-                vs. the old "see your price"), so this line, the price and
-                its fine print read as three tight lines fighting the
-                buttons below. Kept above the buttons rather than moved
-                below: that's still the DES-482 #8 reasoning (it would
-                read as a fourth CTA down there), so the fix is more room,
-                not a new position. The 6px grid gap above stays tight
-                between the price and its own fine print, which are one
-                unit; this line gets extra space on top of that because
-                it's a separate idea qualifying both of them, not a third
-                line in the same breath.
-
-                "Selling this? See your Instant Store profit" -> "You can
-                sell this: see what you'd earn" (2026-09-11, Ana) — states
-                the fact rather than asking a question, and narrows the
-                link to just "see what you'd earn" rather than the whole
-                sentence. Ana's own wording used an em dash ("You can sell
-                this — see..."); swapped for a colon per her standing
-                preference to minimize em dashes in rendered copy, not
-                applied literally here.
-
-                Lean copy ("Open an Instant Store") brought in line with
-                the same words the same day ("make it 'You can sell this:
-                see what you'd earn' on the PDP for minimum effort scope
-                too!!") — the destination is unchanged (still
-                instantstorev2, not the calculator, since the lean scope
-                has none), only the label now matches. */}
-            <div style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.6, marginTop: 10 }}>
+                It still carries the CONFIGURATION, not just the
+                destination, so the calculator opens on this book rather
+                than an empty form. Lean scope still opens the Instant
+                Store page instead (no calculator there), same label. */}
+            <div style={{ fontSize: TYPE.sm, color: T.textSubtle, lineHeight: 1.6, marginTop: 16 }}>
               You can sell this:{" "}
               <button
                 onClick={() =>
@@ -398,16 +390,6 @@ export default function ProductPage({ onGo, seed = null, lean = false }) {
                 see what you'd earn
               </button>
             </div>
-            {/* The shared create actions — same component the calculators
-                use, so "Create online" cannot mean one thing here and
-                another there. showLearnMore is off: this IS the product
-                page. */}
-            <CreateActions
-              formatId={formatId}
-              sel={{ cover, size, paper, pages }}
-              onGo={onGo}
-              showLearnMore={false}
-            />
 
           </div>
         </div>
