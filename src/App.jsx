@@ -7,7 +7,6 @@ import SiteFooter from "./SiteFooter.jsx";
 import Estimator from "./Estimator.jsx";
 import Home from "./Home.jsx";
 import ProductCatalog from "./ProductCatalog.jsx";
-import PromoBar from "./PromoBar.jsx";
 import SellLandingV2 from "./SellLandingV2.jsx";
 import InstantStoreV2 from "./InstantStoreV2.jsx";
 import ShippingPage from "./ShippingPage.jsx";
@@ -382,7 +381,7 @@ function DemoBar({ stage, onJump, signedIn, onSignedIn, version, onVersion }) {
 
 /* Direct link to the Shop All page: `/?page=formats`. Opens the catalogue in the
    recommended scope with no demo bar (session and stage controls), so it reads
-   as the page rather than as a prototype. The site nav and the promo bar stay. */
+   as the page rather than as a prototype. The site nav stays. */
 /* SHOP_ALL_ONLY — the `shop-all` branch. Every load opens the catalogue, with
    no demo bar, and navigation to any other stage is ignored, so the only thing
    to review is the Shop All page and its layout options (`?option=a|b|c`).
@@ -483,13 +482,6 @@ export default function App() {
      screen is short and after the content when it is not. */
   return (
     <div style={{ minHeight: "100vh", background: T.bg, display: "flex", flexDirection: "column" }}>
-      {/* ── Promo bar ── ADDED to match Figma (Anain, 2026-09-22; node
-          104:4844, Instant Store Landing Page) — didn't exist anywhere in
-          this codebase before. Scoped to the one stage whose Figma frame
-          was actually audited for one, rather than added to every page —
-          not part of the shared sticky header block below, since Figma
-          shows it scrolling away above a sticky nav, not sticking itself. */}
-      {stage === "catalog" && <PromoBar />}
       {stage === "instantstorev2" && (
         <div style={{ background: "#10597c", padding: "12px 24px", textAlign: "center" }}>
           <span style={{ fontSize: 12, color: "#fff", textDecoration: "underline" }}>

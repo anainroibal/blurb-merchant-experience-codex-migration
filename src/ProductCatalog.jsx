@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import { Button, Modal, ModalContent, ModalClose, Breadcrumbs } from "@blurb/codex-react";
 import { CloseIcon } from "@blurb/codex-react/icons";
-import { PROMO } from "./promo.js";
-import PromoModal from "./PromoModal.jsx";
 import PriceModal from "./PriceModal.jsx";
 import { CatalogBrowser, OptionSwitcher, useOption } from "./CatalogOptions.jsx";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
@@ -20,10 +18,10 @@ import { variantFromPrice, money , sellableSentence } from "./catalog.js";
                  → name     futura-pt 24/28.8, weight 600
                  → price    16/24 bold #464646
      h1          futura-pt 44/52.8, weight 400, centred
-     promo tile  spans two columns, cream, image inset
 
    Photography and product names are Blurb's own, served from
-   assets.blurb.com; the live page's own promo tile is kept where it sits.
+   assets.blurb.com. The live page's holiday promo tile and bar were removed
+   (it ended 2026-10-15); in git history if a later offer needs them.
 
    TWO CHANGES, both the ones this project always makes:
 
@@ -61,7 +59,6 @@ const PRODUCTS = [
     img: IMG + "Paperback and Hardcover Books - Paperback-optimized.CxLk4w5d.webp" },
   { cat: "Paperback & Hardcover Books", name: "ImageWrap Hardcover Book", format: "trade", cover: "imagewrap",
     img: IMG + "Paperback and Hardcover Books - ImageWrap Hardcover-optimized.D1sLnZ4y.webp" },
-  { promo: true, ...PROMO },
   { cat: "Paperback & Hardcover Books", name: "Linen Hardcover Book with Dust Jacket", format: "trade", cover: "dustjacket",
     img: IMG + "Paperback and Hardcover Books - Linen Hardcover with Dust Jacket-optimized.B8G8lKem.webp" },
   { cat: "Magazine", name: "Semi-gloss cover Magazine", format: "magazine",
@@ -128,54 +125,6 @@ function Card({ item, onGo, lean }) {
   );
 }
 
-/* The live page's promo (HOLIDAYPREP26), as a row of the grid. Image
-   and message are the live page's: the same three crops (mobile under 768,
-   tablet to 1535, desktop from 1536) and a futura-pt 24/28.8 H3 on the
-   #f9f6f3 panel.
-
-   On blurb.com the code is not on the tile. It lives behind the blue bar at
-   the top of the page, which opens a modal with the headline, the code, the
-   end date and the terms. The tile is not a link there, so a shopper who
-   sees "50% off*" has nowhere to go. Here the whole banner is the button
-   that opens that same modal. */
-function PromoBanner({ item }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <>
-      <button
-        onClick={() => setOpen(true)}
-        aria-haspopup="dialog"
-        style={{
-          display: "flex", flexDirection: "column", gap: 24, width: "100%", textAlign: "left", font: "inherit",
-          background: "#f9f6f3", border: 0, borderRadius: R.lg, cursor: "pointer",
-          padding: "16px clamp(16px, 2vw, 24px)",
-        }}
-      >
-        <picture style={{ display: "block", width: "100%" }}>
-          <source media="(min-width: 1536px)" srcSet={item.img} />
-          <source media="(min-width: 768px)" srcSet={item.imgTablet} />
-          <img
-            src={item.imgMobile}
-            alt={item.alt}
-            loading="lazy"
-            style={{ width: "100%", height: "clamp(295px, 28vw, 360px)", objectFit: "cover", borderRadius: R.sm, display: "block" }}
-          />
-        </picture>
-        <span style={{ display: "grid", gap: 8 }}>
-          <span style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 400, lineHeight: 1.2, color: "#292929" }}>
-            {item.title}
-          </span>
-          <span style={{ fontSize: TYPE.base, color: C.blue600, textDecoration: "underline", width: "fit-content" }}>
-            Code and details
-          </span>
-        </span>
-      </button>
-
-      <PromoModal open={open} onOpenChange={setOpen} />
-    </>
-  );
-}
-
 export default function ProductCatalog({ onGo, lean }) {
   /* The live page opens a modal here rather than leaving for the
      calculator, and that is the right shape: someone asking what moves a
@@ -224,7 +173,7 @@ export default function ProductCatalog({ onGo, lean }) {
           <div style={{ borderTop: `1px solid ${T.border}`, margin: "0 0 24px" }} />
 
           {showSwitcher && <OptionSwitcher option={option} setOption={setOption} />}
-          <CatalogBrowser products={PRODUCTS} Card={Card} onGo={onGo} lean={lean} option={option} promo={<PromoBanner item={PRODUCTS.find(p => p.promo)} />} />
+          <CatalogBrowser products={PRODUCTS} Card={Card} onGo={onGo} lean={lean} option={option} />
         </div>
       </section>
 
