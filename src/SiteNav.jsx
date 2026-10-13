@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Button } from "@blurb/codex-react";
+import { Button, Badge } from "@blurb/codex-react";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY, BUTTON_HEIGHT } from "./tokens.js";
 
 /* ────────────────────────────────────────────────────────────────
@@ -492,28 +492,13 @@ export const NAV_COLUMNS = NAV.map(g => ({
    rather than a selling point. */
 function Tag({ children }) {
   if (!children) return null;
-  /* "New" is a different kind of tag from COMING SOON / CONCEPT — those
-     are a caveat (outline, quiet); this one is a highlight, so it gets
-     the same solid chip SellerLanding.jsx already uses for its own
-     "New" mark rather than reusing the neutral outline treatment. */
-  if (children === "New") {
-    return (
-      <span style={{
-        marginLeft: 8, padding: "1px 8px", borderRadius: 999, verticalAlign: "middle",
-        fontSize: 10, fontWeight: 700, letterSpacing: 0.6, textTransform: "uppercase",
-        background: C.blue600, color: "#fff", whiteSpace: "nowrap",
-      }}>
-        {children}
-      </span>
-    );
-  }
+  /* Both are Codex Badge. "New" is a highlight: the charcoal fill
+     (color="gray", #292929 with inverse text). COMING SOON / CONCEPT are
+     a caveat, so they stay quiet: color="white" with a border. */
+  const isNew = children === "New";
   return (
-    <span style={{
-      marginLeft: 8, padding: "1px 8px", borderRadius: 999, verticalAlign: "middle",
-      fontSize: 10, fontWeight: 700, letterSpacing: 0, textTransform: "none",
-      border: `1px solid ${T.borderStrong}`, color: T.textSubtle, whiteSpace: "nowrap",
-    }}>
-      {children}
+    <span style={{ marginLeft: 8, verticalAlign: "middle", display: "inline-flex" }}>
+      <Badge color={isNew ? "gray" : "white"} border={!isNew} size="small" label={children} />
     </span>
   );
 }

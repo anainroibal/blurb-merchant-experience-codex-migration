@@ -7,6 +7,7 @@ import SiteFooter from "./SiteFooter.jsx";
 import Estimator from "./Estimator.jsx";
 import Home from "./Home.jsx";
 import ProductCatalog from "./ProductCatalog.jsx";
+import PromoBar from "./PromoBar.jsx";
 import SellLandingV2 from "./SellLandingV2.jsx";
 import InstantStoreV2 from "./InstantStoreV2.jsx";
 import ShippingPage from "./ShippingPage.jsx";
@@ -379,6 +380,16 @@ function DemoBar({ stage, onJump, signedIn, onSignedIn, version, onVersion }) {
 
 
 
+/* Direct link to the Shop All page: `/?page=formats`. Opens the catalogue in the
+   recommended scope with no demo bar (session and stage controls), so it reads
+   as the page rather than as a prototype. The site nav and the promo bar stay. */
+/* SHOP_ALL_ONLY — the `shop-all` branch. Every load opens the catalogue, with
+   no demo bar, and navigation to any other stage is ignored, so the only thing
+   to review is the Shop All page and its layout options (`?option=a|b|c`).
+   To merge into the full site, set this to false: `/?page=formats` still works. */
+const SHOP_ALL_ONLY = true;
+const DIRECT_FORMATS = SHOP_ALL_ONLY || (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("page") === "formats");
+
 export default function App() {
   const [signedIn, setSignedIn] = useState(false);
 
@@ -388,9 +399,10 @@ export default function App() {
      link that needs the recommended set directly. The two are reviewed
      by different people and each will want their own URL either way. */
   const [version, setVersion] = useState(() =>
-    new URLSearchParams(window.location.search).get("version") === "full" ? "full" : "lean");
+    new URLSearchParams(window.location.search).get("version") === "full" || DIRECT_FORMATS ? "full" : "lean");
 
   const [stage, setStage] = useState(() => {
+    if (DIRECT_FORMATS) return "catalog";
     const q = new URLSearchParams(window.location.search).get("stage");
     if (STAGES.some(s => s.id === q)) return q;
     /* Fallback when there's no ?stage in the URL. "getstarted" was right
@@ -417,7 +429,7 @@ export default function App() {
      Cleared whenever the stepper is used, because jumping stages from the
      demo bar is not following a link. */
   const [entry, setEntry] = useState(null);
-  const go = (id, opts = null) => { setEntry(opts); setStage(id); };
+  const go = (id, opts = null) => { if (SHOP_ALL_ONLY && id !== "catalog") return; setEntry(opts); setStage(id); };
   const jump = id => { setEntry(null); setStage(id); };
 
   const lean = version === "lean";
@@ -437,7 +449,7 @@ export default function App() {
      ships without one) rather than assuming it exists. */
   useEffect(() => {
     const meta = PAGE_META[stage];
-    document.title = meta?.title || DEFAULT_TITLE;
+    document.title = (DIRECT_FORMATS && stage === "catalog" && "Shop All Products | Blurb") || meta?.title || DEFAULT_TITLE;
     if (meta?.description) {
       let tag = document.querySelector('meta[name="description"]');
       if (!tag) {
@@ -477,6 +489,7 @@ export default function App() {
           was actually audited for one, rather than added to every page —
           not part of the shared sticky header block below, since Figma
           shows it scrolling away above a sticky nav, not sticking itself. */}
+      {stage === "catalog" && <PromoBar />}
       {stage === "instantstorev2" && (
         <div style={{ background: "#10597c", padding: "12px 24px", textAlign: "center" }}>
           <span style={{ fontSize: 12, color: "#fff", textDecoration: "underline" }}>
@@ -490,14 +503,16 @@ export default function App() {
           holds them together at any width. The nav keeps its own relative
           position inside, so the mega-menus still hang off it. */}
       <div ref={headerRef} style={{ position: "sticky", top: 0, zIndex: 40 }}>
-        <DemoBar
-          stage={stage}
-          onJump={jump}
-          signedIn={signedIn}
-          onSignedIn={setSignedIn}
-          version={version}
-          onVersion={changeVersion}
-        />
+        {!DIRECT_FORMATS && (
+          <DemoBar
+            stage={stage}
+            onJump={jump}
+            signedIn={signedIn}
+            onSignedIn={setSignedIn}
+            version={version}
+            onVersion={changeVersion}
+          />
+        )}
         <SiteNav signedIn={signedIn} onSignedIn={setSignedIn} onGo={jump} lean={lean} />
       </div>
       {/* Keyed on the stage so switching screens fades rather than cuts. */}
