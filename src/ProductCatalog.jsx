@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, Modal, ModalContent, ModalClose, Breadcrumbs } from "@blurb/codex-react";
 import { CloseIcon } from "@blurb/codex-react/icons";
 import PriceModal from "./PriceModal.jsx";
-import { CatalogBrowser, OptionSwitcher, useOption } from "./CatalogOptions.jsx";
+import { CatalogBrowser } from "./CatalogOptions.jsx";
 import { C, T, TYPE, R, FONT_DISPLAY, FONT_BODY } from "./tokens.js";
 import { variantFromPrice, money , sellableSentence } from "./catalog.js";
 
@@ -79,6 +79,15 @@ const PRODUCTS = [
 
 const SUBTLE = "#464646";
 
+/* Where a product opens: its own page where we have one, otherwise /getting-started
+   with the product seeded, and in the lean scope (that page untouched) nowhere. The
+   card and the compare table's "View product" share it. */
+const openTarget = (item, lean) => item.stage ?? (lean ? null : "getstarted");
+const openProduct = (item, onGo, lean) => {
+  const to = openTarget(item, lean);
+  if (to) onGo?.(to, { seed: { formatId: item.format, sel: item.cover ? { cover: item.cover } : undefined } });
+};
+
 function Card({ item, onGo, lean }) {
   const price = item.format
     ? variantFromPrice(item.format, { cover: item.cover, paperTest: item.paperTest })
@@ -86,13 +95,11 @@ function Card({ item, onGo, lean }) {
 
   return (
     <button
+      className="shopall-card"
       /* A card opens its product page where we have one; otherwise it opens
          /getting-started with the product seeded — and in the lean scope,
          where that page is untouched, it stays on the catalogue. */
-      onClick={() => {
-        const to = item.stage ?? (lean ? null : "getstarted");
-        if (to) onGo?.(to, { seed: { formatId: item.format, sel: item.cover ? { cover: item.cover } : undefined } });
-      }}
+      onClick={() => openProduct(item, onGo, lean)}
       style={{
         display: "flex", flexDirection: "column", gap: 16, minWidth: 0, textAlign: "left",
         background: "transparent", border: 0, padding: 0, font: "inherit", cursor: "pointer",
@@ -125,19 +132,24 @@ function Card({ item, onGo, lean }) {
   );
 }
 
+/* Hovering or focusing a card zooms its photo a little inside the same square,
+   which is the cue that the card is something you can open. Off for anyone who
+   prefers reduced motion. */
+const CARD_ZOOM_CSS = `
+  .shopall-card img { transition: transform 400ms cubic-bezier(.2,.7,.2,1); will-change: transform; }
+  .shopall-card:hover img, .shopall-card:focus-visible img { transform: scale(1.08); }
+  @media (prefers-reduced-motion: reduce) { .shopall-card img { transition: none; } .shopall-card:hover img, .shopall-card:focus-visible img { transform: none; } }
+`;
+
 export default function ProductCatalog({ onGo, lean }) {
   /* The live page opens a modal here rather than leaving for the
      calculator, and that is the right shape: someone asking what moves a
      price has not finished choosing a product. */
   const [priceOpen, setPriceOpen] = useState(false);
-  const [option, setOption] = useOption();
-  /* The option switcher is prototype scaffolding, but it has to be reachable on
-     the clean direct link (`?page=formats`) too. Add `&bare=1` to hide it. */
-  const qs = new URLSearchParams(window.location.search);
-  const showSwitcher = qs.get("bare") !== "1";
 
   return (
     <div style={{ fontFamily: FONT_BODY, color: C.gray950 }}>
+      <style>{CARD_ZOOM_CSS}</style>
       <PriceModal open={priceOpen} onClose={() => setPriceOpen(false)} onGo={onGo} />
       <section style={{ padding: "0 24px 80px" }}>
         <div style={{ maxWidth: 1280, margin: "0 auto" }}>
@@ -170,10 +182,8 @@ export default function ProductCatalog({ onGo, lean }) {
             </button>
           </div>
 
-          <div style={{ borderTop: `1px solid ${T.border}`, margin: "0 0 24px" }} />
-
-          {showSwitcher && <OptionSwitcher option={option} setOption={setOption} />}
-          <CatalogBrowser products={PRODUCTS} Card={Card} onGo={onGo} lean={lean} option={option} />
+          <CatalogBrowser products={PRODUCTS} Card={Card} onGo={onGo} lean={lean}
+            canOpen={item => !!openTarget(item, lean)} onOpen={item => openProduct(item, onGo, lean)} />
         </div>
       </section>
 

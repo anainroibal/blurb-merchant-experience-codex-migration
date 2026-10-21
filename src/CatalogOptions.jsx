@@ -1,9 +1,11 @@
 import React, { useMemo, useState, useEffect, useRef } from "react";
 import { flushSync } from "react-dom";
-import { Button, Badge, Checkbox, Chip, Select, Tabs, Modal, ModalContent, ModalClose, CallToAction, ComparisonTable } from "@blurb/codex-react";
-import { CheckIcon, CloseIcon, KeyboardArrowDownIcon, KeyboardArrowUpIcon, TuneIcon } from "@blurb/codex-react/icons";
+import { Select as BaseSelect } from "@base-ui/react/select";
+import { Button, Badge, Checkbox, Chip, Select, Modal, ModalContent, ModalClose } from "@blurb/codex-react";
+import { CheckIcon, CloseIcon, KeyboardArrowDownIcon, KeyboardArrowUpIcon } from "@blurb/codex-react/icons";
 import { C, T, TYPE, R, FONT_DISPLAY } from "./tokens.js";
-import { variantFromPrice, money } from "./catalog.js";
+import { variantFromPrice, money, CATALOG, isAvailable } from "./catalog.js";
+import { FormatRow } from "./FormatCards.jsx";
 
 /* ────────────────────────────────────────────────────────────────
    /formats — the catalogue with filters and compare
@@ -22,6 +24,11 @@ import { variantFromPrice, money } from "./catalog.js";
    ──────────────────────────────────────────────────────────────── */
 
 const SUBTLE = "#464646";
+const SWATCH_IMG = { src: "https://assets.blurb.com/_astro/Swatch-Kit.FIDQju5I.png" };
+const GIFT_IMG = {
+  src: "https://assets.blurb.com/_astro/gift-box-promo-tablet-optimized.Dn78f72y.webp",
+  mobile: "https://assets.blurb.com/_astro/gift-box-promo-mobile-optimized.Bdxh3SRF.webp",
+};
 
 const useWidth = () => {
   const [w, setW] = useState(window.innerWidth);
@@ -38,13 +45,13 @@ const USES = [
   "Wedding Album", "Photo Album", "Travel Book", "Photography Book", "Art Book", "Instagram Book",
   "Portfolio", "Cookbook", "Children's Book", "Novel", "Poetry Book", "Comic Book", "Graphic Novel", "Yearbook",
 ];
-const TYPES = ["Photo books", "Books", "Magazines", "Notebooks", "Samples"];
+const TYPES = ["Photo books", "Books", "Magazines", "Notebooks"];
 const BINDINGS = ["Softcover", "Hardcover", "Layflat", "Wire-O"];
 const BUCKETS = ["Under $10", "$10–$30", "$30 and up"];
 const bucketOf = p => (p < 10 ? BUCKETS[0] : p < 30 ? BUCKETS[1] : BUCKETS[2]);
 const TYPE_OF = {
   "Photo Book": "Photo books", "Paperback & Hardcover Books": "Books", "Magazine": "Magazines",
-  "Notebooks & Journals": "Notebooks", "Swatch Kit": "Samples",
+  "Notebooks & Journals": "Notebooks",
 };
 
 const META = {
@@ -92,9 +99,6 @@ const META = {
   "Wire-O Notebook": {
     binding: ["Wire-O"], coverNote: "Wire-O spiral", best: "Notes that need to lie flat", uses: [],
   },
-  "Swatch Kit": {
-    binding: [], coverNote: "Papers and covers to hold", best: "Choosing before you commit", uses: [],
-  },
 };
 
 function prepare(products) {
@@ -123,9 +127,33 @@ const canAnimate = () =>
   typeof document !== "undefined" && !!document.startViewTransition &&
   !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-function useFilters(items, animate = false) {
-  const [f, setFRaw] = useState(EMPTY);
-  const [sort, setSortRaw] = useState("featured");
+/* With `persist`, the filters live in the address (?type=Books&binding=Hardcover
+   &sort=low) so a filtered view can be shared, survives a reload, and is still
+   there when a shopper comes back from a product. Written with replaceState, so
+   filtering does not fill the back button with one entry per click. Values from
+   the address are checked against the real lists; anything else is dropped. */
+const FACET_VALUES = { type: TYPES, use: USES, binding: BINDINGS, price: BUCKETS };
+const SORTS = ["featured", "low", "high"];
+const fromUrl = () => {
+  const q = new URLSearchParams(window.location.search);
+  const f = Object.fromEntries(Object.keys(EMPTY).map(k => [k, q.getAll(k).filter(v => FACET_VALUES[k].includes(v))]));
+  const sort = q.get("sort");
+  return { f, sort: SORTS.includes(sort) ? sort : "featured" };
+};
+const toUrl = (f, sort) => {
+  const u = new URL(window.location.href);
+  Object.keys(EMPTY).forEach(k => u.searchParams.delete(k));
+  u.searchParams.delete("sort");
+  Object.entries(f).forEach(([k, vals]) => vals.forEach(v => u.searchParams.append(k, v)));
+  if (sort !== "featured") u.searchParams.set("sort", sort);
+  window.history.replaceState(window.history.state, "", u);
+};
+
+function useFilters(items, animate = false, persist = false) {
+  const [start] = useState(() => (persist ? fromUrl() : { f: EMPTY, sort: "featured" }));
+  const [f, setFRaw] = useState(start.f);
+  const [sort, setSortRaw] = useState(start.sort);
+  useEffect(() => { if (persist) toUrl(f, sort); }, [persist, f, sort]);
   const vt = fn => {
     if (!animate || !canAnimate()) return fn();
     document.startViewTransition(() => flushSync(fn));
@@ -142,8 +170,15 @@ function useFilters(items, animate = false) {
     return r;
   }, [items, f, sort]);
   const countFor = (k, v) => items.filter(it => matches(it, f, k) && matchFacet(it, k, [v])).length;
+  /* Everything the other filters leave, whatever the type. */
+  const countAll = () => items.filter(it => matches(it, f, "type")).length;
   const active = Object.values(f).reduce((n, a) => n + a.length, 0);
-  return { f, setF, toggle, remove, clear, results, countFor, active, sort, setSort, vt, raw: { setF: setFRaw, setSort: setSortRaw } };
+  /* For an empty result: each applied value that, taken off alone, brings products
+     back, with how many, most first. */
+  const relaxed = () => Object.entries(f)
+    .flatMap(([k, vals]) => vals.map(v => ({ k, v, n: items.filter(it => matches(it, { ...f, [k]: f[k].filter(x => x !== v) })).length })))
+    .filter(r => r.n > 0).sort((a, b) => b.n - a.n).slice(0, 3);
+  return { f, setF, toggle, remove, clear, results, countFor, countAll, relaxed, active, sort, setSort, vt, raw: { setF: setFRaw, setSort: setSortRaw } };
 }
 
 /* ── Shared pieces ── */
@@ -152,11 +187,29 @@ const grid = (min = 300) => ({
   columnGap: 24, rowGap: 48, alignItems: "start",
 });
 
-const Empty = ({ onClear }) => (
+/* `fixes` are the single filters whose removal brings products back
+   (useFilters' `relaxed`), each one click away, with what it would show. */
+const Empty = ({ onClear, fixes = [], onRemove }) => (
   <div style={{ padding: "64px 16px", textAlign: "center", display: "grid", gap: 12, justifyItems: "center" }}>
     <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 600 }}>No products match those filters</div>
-    <div style={{ color: SUBTLE }}>Try removing a filter, or start again.</div>
-    <Button variant="outlined" onClick={onClear}>Clear all filters</Button>
+    {fixes.length > 0 ? (
+      <>
+        <div style={{ color: SUBTLE }}>Take one off to see products again:</div>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
+          {fixes.map(({ k, v, n }) => (
+            <Button key={k + v} variant="outlined" intent="neutral" onClick={() => onRemove(k, v)}>
+              Remove {v} ({n} {n === 1 ? "product" : "products"})
+            </Button>
+          ))}
+        </div>
+        <TextAction onClick={onClear}>Clear all filters</TextAction>
+      </>
+    ) : (
+      <>
+        <div style={{ color: SUBTLE }}>Try removing a filter, or start again.</div>
+        <Button variant="outlined" onClick={onClear}>Clear all filters</Button>
+      </>
+    )}
   </div>
 );
 
@@ -203,7 +256,6 @@ function FilterGroup({ title, k, options, fx, collapsible, touch }) {
 
 const FilterPanel = ({ fx, touch }) => (
   <div style={{ display: "grid", gap: 24 }}>
-    <FilterGroup title="Product type" k="type" options={TYPES} fx={fx} touch={touch} />
     <FilterGroup title="What are you making?" k="use" options={USES} fx={fx} collapsible touch={touch} />
     <FilterGroup title="Binding" k="binding" options={BINDINGS} fx={fx} touch={touch} />
     <FilterGroup title="Starting price" k="price" options={BUCKETS} fx={fx} touch={touch} />
@@ -219,12 +271,14 @@ const SORT_OPTIONS = [
 /* One line of chips that scrolls sideways, so a sticky bar never grows taller
    as filters are added. */
 function AppliedChips({ fx }) {
-  if (!fx.active) return null;
+  /* The category cards already show the chosen product type and keep "Clear all"
+     beside them, so repeating it here is noise. */
+  const entries = Object.entries(fx.f).filter(([k]) => k !== "type");
+  if (!entries.some(([, vals]) => vals.length)) return null;
   return (
     <div style={{ display: "flex", gap: 8, alignItems: "center", overflowX: "auto", whiteSpace: "nowrap", paddingBottom: 2, viewTransitionName: "vt-chips" }}>
-      {Object.entries(fx.f).flatMap(([k, vals]) =>
+      {entries.flatMap(([k, vals]) =>
         vals.map(v => <span key={k + v} style={{ flex: "none" }}><Chip label={v} onDelete={() => fx.remove(k, v)} /></span>))}
-      <TextAction onClick={fx.clear}>Clear all</TextAction>
     </div>
   );
 }
@@ -250,59 +304,11 @@ function Sheet({ onClose, children, footer, title = "Filters & sort" }) {
 }
 
 /* ────────────────────────────────────────────────────────────────
-   Three directions, from the discovery board (Figma: Research & Ideation)
-
-   A  Faceted rail    IKEA / Nike: sticky rail with counts, a Hide filters toggle,
-                      compare, and quick filter pills on mobile.
-   B  Guided shelves  MOO / Apple / Vistaprint: no filter panel. Family shelves under
-                      a sticky tab bar, preset shortcut pills, a free-sample callout.
-   C  Filter bar      Picture chips for product type (IKEA's subcategory chips), then a
-                      sticky bar of dropdown pills for the other filters.
-
-   They share the data, the cards, the counts, the compare tray and the motion.
+   The layout is the filter bar (was option C): category photo cards (the same
+   FormatRow /getting-started opens with), then a sticky bar of dropdown pills.
+   Options A (faceted rail) and B (guided shelves) are archived in
+   src/archive/CatalogOptions.abc.jsx.
    ──────────────────────────────────────────────────────────────── */
-export const OPTIONS = [
-  { id: "a", short: "A · Faceted rail", note: "Sticky filter rail with counts, Hide filters, compare. Mobile: quick pills + sheet." },
-  { id: "b", short: "B · Guided shelves", note: "No filter panel: family shelves, sticky tabs, preset pills, free-sample callout." },
-  { id: "c", short: "C · Filter bar", note: "Picture chips for product type, then a sticky bar of dropdown pills." },
-];
-
-export function useOption() {
-  const [option, setOptionState] = useState(() => {
-    const q = (new URLSearchParams(window.location.search).get("option") || "").toLowerCase();
-    return OPTIONS.some(o => o.id === q) ? q : "a";
-  });
-  const setOption = id => {
-    const go = () => setOptionState(id);
-    if (canAnimate()) document.startViewTransition(() => flushSync(go)); else go();
-    const u = new URL(window.location.href); u.searchParams.set("option", id); window.history.replaceState(null, "", u);
-  };
-  return [option, setOption];
-}
-
-/* Floating switcher. It is prototype scaffolding, so it sits clear of the page
-   and lifts above the compare tray when that is showing. */
-export function OptionSwitcher({ option, setOption }) {
-  const cur = OPTIONS.find(o => o.id === option);
-  const small = useWidth() < 600;
-  return (
-    <div role="group" aria-label="Layout option" style={{
-      position: "fixed", left: 12, bottom: "calc(12px + var(--tray-h, 0px))", zIndex: 45, maxWidth: "calc(100vw - 24px)",
-      background: "#fff", border: "1px solid #d1d1d1", borderRadius: small ? 999 : 16, padding: small ? 4 : 8, display: "grid", gap: 6,
-      boxShadow: "0 8px 24px rgba(0,0,0,.18)", fontSize: TYPE.sm,
-    }}>
-      <div style={{ display: "flex", gap: 4 }}>
-        {OPTIONS.map(o => (
-          <Button key={o.id} size="small" intent="neutral" variant={o.id === option ? "filled" : "text"} aria-pressed={o.id === option}
-            aria-label={o.short} title={o.short} onClick={() => setOption(o.id)}>
-            {small ? o.id.toUpperCase() : o.short}
-          </Button>
-        ))}
-      </div>
-      {!small && <div style={{ padding: "0 8px 4px", color: SUBTLE, maxWidth: 420, lineHeight: 1.4 }}>{cur.note}</div>}
-    </div>
-  );
-}
 
 /* ── Shared: compare ── */
 function useCompare(items) {
@@ -318,7 +324,7 @@ function useCompare(items) {
   return { picked, rows, toggle, clear: () => setPicked([]), open, setOpen };
 }
 
-function CompareUI({ cmp }) {
+function CompareUI({ cmp, canOpen, onOpen }) {
   const { rows, open, setOpen } = cmp;
   return (
     <>
@@ -328,10 +334,21 @@ function CompareUI({ cmp }) {
           boxShadow: "0 -4px 16px rgba(0,0,0,.12)", padding: "12px 16px",
         }}>
           <div style={{ maxWidth: 1280, margin: "0 auto", display: "flex", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-            <strong>{rows.length} selected</strong>
-            <span style={{ color: SUBTLE, flex: "1 1 160px", minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-              {rows.map(r => r.name).join(" · ")}
-            </span>
+            <strong>{rows.length} of 3 selected</strong>
+            {/* A thumbnail each, with an X, so what is chosen is seen at a glance and one tap removes it. */}
+            <div style={{ flex: "1 1 160px", minWidth: 0, display: "flex", gap: 8 }}>
+              {rows.map(r => (
+                <span key={r.name} style={{ position: "relative", flex: "none" }}>
+                  <img src={r.img} alt={r.name} title={r.name} style={{ display: "block", width: 48, height: 48, borderRadius: R.md, objectFit: "cover" }} />
+                  <button type="button" aria-label={`Remove ${r.name}`} onClick={() => cmp.toggle(r.name)} style={{
+                    position: "absolute", top: -6, right: -6, width: 20, height: 20, padding: 0, borderRadius: 999, border: "1px solid #d1d1d1",
+                    background: "#fff", cursor: "pointer", display: "grid", placeItems: "center", color: "#292929",
+                  }}>
+                    <CloseIcon size="sm" aria-hidden />
+                  </button>
+                </span>
+              ))}
+            </div>
             <Button variant="outlined" onClick={cmp.clear}>Clear</Button>
             <Button disabled={rows.length < 2} onClick={() => setOpen(true)}>
               {rows.length < 2 ? "Pick one more" : "Compare"}
@@ -339,7 +356,7 @@ function CompareUI({ cmp }) {
           </div>
         </div>
       )}
-      {open && <CompareSheet rows={rows} onClose={() => setOpen(false)} />}
+      {open && <CompareSheet rows={rows} onClose={() => setOpen(false)} onRemove={cmp.toggle} canOpen={canOpen} onOpen={onOpen} />}
     </>
   );
 }
@@ -366,6 +383,9 @@ const Caret = ({ up }) => (up ? <KeyboardArrowUpIcon size="base" aria-hidden /> 
 const TextAction = ({ onClick, children, intent }) => (
   <span style={{ flex: "none" }}><Button variant="text" size="small" intent={intent} onClick={onClick}>{children}</Button></span>
 );
+
+/* FormatRow card id → the catalogue's product type. */
+const CARD_TYPE = { all: null, photo: "Photo books", trade: "Books", magazine: "Magazines", notebook: "Notebooks" };
 
 const FACETS = [["type", "Type"], ["use", "Use"], ["binding", "Binding"], ["price", "Price"]];
 
@@ -403,14 +423,12 @@ function MobileBar({ fx, openSheet, triggerRef, facets }) {
 }
 
 /* ── A and C: the filtered grid ── */
-function Faceted({ variant, items, Card, onGo, lean, promo }) {
-  const fx = useFilters(items, true);
+function Faceted({ items, Card, onGo, lean, promo, canOpen, onOpen }) {
+  const fx = useFilters(items, true, true);
   const draft = useFilters(items);
   const cmp = useCompare(items);
   const wide = useWidth() >= 960;
-  const bar = variant === "bar";
   const [sheet, setSheet] = useState(false);
-  const [railOpen, setRailOpen] = useState(true);
   const [menu, setMenu] = useState(null);
   const triggerRef = useRef(null);
   const barRef = useRef(null);
@@ -428,10 +446,10 @@ function Faceted({ variant, items, Card, onGo, lean, promo }) {
   };
   const applySheet = () => fx.vt(() => { fx.raw.setF(draft.f); fx.raw.setSort(draft.sort); setSheet(false); });
 
-  /* The bar's dropdowns close on an outside click or Escape. */
+  /* The dropdowns (filters and sort) close on any click outside an open one, or Escape. */
   useEffect(() => {
     if (!menu) return;
-    const out = e => { if (barRef.current && !barRef.current.contains(e.target)) setMenu(null); };
+    const out = e => { if (!(e.target instanceof Element) || !e.target.closest("[data-menu-root]")) setMenu(null); };
     const esc = e => { if (e.key === "Escape") setMenu(null); };
     document.addEventListener("mousedown", out); document.addEventListener("keydown", esc);
     return () => { document.removeEventListener("mousedown", out); document.removeEventListener("keydown", esc); };
@@ -439,69 +457,68 @@ function Faceted({ variant, items, Card, onGo, lean, promo }) {
 
   const cell = it => (
     <RichCard key={it.name} it={it} Card={Card} onGo={onGo} lean={lean} vtName={`vt-${items.indexOf(it)}`} footer={
-      <Checkbox label="Compare" checked={cmp.picked.includes(it.name)}
-        disabled={!cmp.picked.includes(it.name) && cmp.picked.length >= 3} onCheckedChange={() => cmp.toggle(it.name)} />
+      /* A visible toggle rather than a small checkbox. At three, the others say why
+         they are off instead of just going grey. */
+      (() => {
+        const on = cmp.picked.includes(it.name);
+        const full = !on && cmp.picked.length >= 3;
+        return (
+          <div style={{ display: "grid", gap: 4, justifyItems: "start" }}>
+            <Button size="small" variant={on ? "filled" : "outlined"} intent="neutral" aria-pressed={on} disabled={full}
+              iconLeft={on ? <CheckIcon size="base" aria-hidden /> : <span className="ms" aria-hidden style={{ fontSize: 18 }}>add</span>}
+              onClick={() => cmp.toggle(it.name)}>
+              {on ? "Added to compare" : "Compare"}
+            </Button>
+            {full && <span style={{ color: SUBTLE, fontSize: TYPE.sm }}>Compare up to 3. Remove one to add this.</span>}
+          </div>
+        );
+      })()
     } />
   );
 
   const results = fx.results.length ? (
     /* The promo is a row of the grid after the first three products, spanning
        every column. It shows only on the unfiltered list. */
-    <div style={{ ...grid(bar ? 340 : 260), gridAutoFlow: "row dense" }}>
+    <div style={{ ...grid(340), gridAutoFlow: "row dense" }}>
       {fx.results.slice(0, 3).map(cell)}
       {promo && fx.active === 0 && <div key="promo" style={{ gridColumn: "1 / -1", viewTransitionName: "vt-promo" }}>{promo}</div>}
       {fx.results.slice(3).map(cell)}
     </div>
-  ) : <Empty onClear={fx.clear} />;
+  ) : <Empty onClear={fx.clear} fixes={fx.relaxed()} onRemove={fx.remove} />;
 
-  /* ---- A, desktop toolbar: count + Hide filters + chips, Sort at the right ---- */
-  const railToolbar = (
-    <div style={{ position: "sticky", top: NAV_H, zIndex: 20, background: "#fff", padding: "12px 0", marginBottom: 16, borderBottom: `1px solid ${T.border}` }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "stretch", gap: 24 }}>
-        <div style={{ flex: "1 1 0", minWidth: 0, display: "flex", flexDirection: "column", justifyContent: "space-between", alignItems: "flex-start" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
-            <span style={{ fontWeight: 700, whiteSpace: "nowrap", lineHeight: 1.5 }} aria-live="polite">
-              {fx.results.length} {fx.results.length === 1 ? "product" : "products"}
-            </span>
-            <Button variant="text" intent="neutral" size="small" iconLeft={<TuneIcon size="base" aria-hidden />} aria-expanded={railOpen} onClick={() => setRailOpen(o => !o)}>
-              {railOpen ? "Hide filters" : "Show filters"}
-            </Button>
-          </div>
-          <div style={{ width: "100%", minWidth: 0 }}><AppliedChips fx={fx} /></div>
-        </div>
-        <div style={{ minWidth: 200 }}>
-          <Select label="Sort by" options={SORT_OPTIONS} value={fx.sort} onValueChange={v => v && fx.setSort(v)} />
-        </div>
-      </div>
-    </div>
-  );
-
-  /* ---- C: type picture chips, then the dropdown-pill bar ---- */
-  /* IKEA's picture chips, as Codex Chips: filled (with a remove X) when the
-     type is on, dashed "suggestion" when it is off. The label is an inline
-     element so it can carry a thumbnail. */
-  const typeChips = (
-    <div style={{ display: "flex", gap: 12, overflowX: "auto", padding: "4px 0 16px", scrollbarWidth: "none" }} role="group" aria-label="Product type">
-      {TYPES.map(t => {
-        const first = items.find(i => i.type === t);
-        const on = fx.f.type.includes(t);
-        const n = fx.countFor("type", t);
-        const label = (
-          <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
-            <span style={{ width: 28, height: 28, borderRadius: 999, overflow: "hidden", display: "inline-block", background: "#e7e7e7", flex: "none" }}>
-              {first && <img src={first.img} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />}
-            </span>
-            {t} ({n})
-          </span>
-        );
-        return (
-          <span key={t} style={{ flex: "none" }}>
-            {on
-              ? <Chip size="large" label={label} onDelete={() => fx.toggle("type", t)} />
-              : <Chip size="large" variant="suggestion" label={label} disabled={n === 0} onAdd={() => fx.toggle("type", t)} />}
-          </span>
-        );
-      })}
+  /* ---- Category cards ----
+     The same FormatRow /getting-started opens with: the /pricing photo card in a
+     RadioCardGroup, so choosing a category looks and behaves as it does there.
+     A radio group holds one value, so a category is one at a time; the first
+     card, All Products, is the unfiltered list and starts selected. The prices are left off (hidePrice) because the
+     cards below carry them, and no badge is shown since this row filters, it
+     doesn't recommend. `placeholder` swaps the photographs for an "Image needed" tile
+     to flag that category assets are still to come. The Swatch Kit is not a product, so
+     it is not here: it is the banner after the results. */
+  const catType = fx.f.type[0];
+  const catId = catType ? Object.keys(CARD_TYPE).find(id => CARD_TYPE[id] === catType) : "all";
+  const categoryCards = (
+    <div style={{ padding: "0 0 24px" }}>
+      <FormatRow
+        ids={Object.keys(CARD_TYPE)}
+        formatId={catId}
+        onPick={id => fx.vt(() => fx.raw.setF(f => ({ ...f, type: CARD_TYPE[id] ? [CARD_TYPE[id]] : [] })))}
+        badgeFor={() => null}
+        hidePrice
+        /* Each card counts what the lower filters leave in its category, and a
+           category with nothing left is disabled rather than hidden, so the row
+           never shifts. The chosen card is never disabled: its zero is shown and
+           the empty state below offers the way out. */
+        captionFor={id => {
+          const n = CARD_TYPE[id] ? fx.countFor("type", CARD_TYPE[id]) : fx.countAll();
+          return `${n} ${n === 1 ? "product" : "products"}`;
+        }}
+        disabledFor={id => id !== catId && !!CARD_TYPE[id] && fx.countFor("type", CARD_TYPE[id]) === 0}
+        placeholder
+        minCard={wide ? 190 : 148}
+        scroll={!wide}
+      />
+      {fx.active > 0 && <div style={{ display: "flex", justifyContent: "center", marginTop: 12 }}><TextAction onClick={fx.clear}>Clear all</TextAction></div>}
     </div>
   );
 
@@ -517,30 +534,64 @@ function Faceted({ variant, items, Card, onGo, lean, promo }) {
     </div>
   );
 
+  /* A dropdown pill. */
+  const pill = ([k, title, col]) => {
+    const n = fx.f[k].length;
+    return (
+      <div key={k} data-menu-root style={{ position: "relative" }}>
+        <Button variant={n ? "filled" : "outlined"} intent="neutral" size="small" className="cb-pill" aria-haspopup="dialog" aria-expanded={menu === k}
+          iconRight={<Caret up={menu === k} />} onClick={() => setMenu(menu === k ? null : k)}>
+          {title}{n ? ` (${n})` : ""}
+        </Button>
+        {menu === k && menuPanel(k, title, col)}
+      </div>
+    );
+  };
+
   const filterBar = (
     <div ref={barRef} style={{ position: "sticky", top: NAV_H, zIndex: 25, background: "#fff", padding: "12px 0", marginBottom: 16, borderBottom: `1px solid ${T.border}`, display: "grid", gap: 10 }}>
-      <div style={{ display: "flex", alignItems: "flex-end", gap: 16, justifyContent: "space-between" }}>
-        <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", paddingBottom: 1 }}>
-          {[["use", "What are you making?", true], ["binding", "Binding", false], ["price", "Starting price", false]].map(([k, title, col]) => {
-            const n = fx.f[k].length;
-            return (
-              <div key={k} style={{ position: "relative" }}>
-                <Button variant={n ? "filled" : "outlined"} intent="neutral" size="small" aria-haspopup="dialog" aria-expanded={menu === k}
-                  iconRight={<Caret up={menu === k} />} onClick={() => setMenu(menu === k ? null : k)}>
-                  {title}{n ? ` (${n})` : ""}
-                </Button>
-                {menu === k && menuPanel(k, title, col)}
-              </div>
-            );
-          })}
-          {fx.active > 0 && <TextAction onClick={fx.clear}>Clear all</TextAction>}
+      <style>{`
+        button.cb-pill { min-height: 42px; padding-inline: 16px; }
+        .cb-sort-positioner { z-index: 500; min-width: 240px; overflow: hidden; background-color: var(--codex-color-semantic-bg-surface-raised); border-radius: var(--codex-radius-sm); box-shadow: var(--codex-shadow-raised); }
+        .cb-sort-popup { box-sizing: border-box; width: 100%; padding: var(--codex-spacing-2); }
+        .cb-sort-list { display: flex; flex-direction: column; }
+        .cb-sort-item { display: flex; align-items: center; justify-content: space-between; gap: var(--codex-spacing-2); padding: var(--codex-spacing-2); border-radius: var(--codex-radius-lg); cursor: pointer; user-select: none; outline: none; font-family: var(--codex-font-family-sans); font-weight: var(--codex-font-weight-normal); font-size: var(--codex-font-size-base); line-height: var(--codex-font-line-height-normal); }
+        .cb-sort-item[data-selected] { font-weight: var(--codex-font-weight-semibold); background-color: var(--codex-color-semantic-bg-neutral-active); }
+        .cb-sort-item[data-highlighted] { background-color: var(--codex-color-semantic-bg-input-hover); }
+        .cb-sort-label { flex: 1 0 0; min-width: 0; }
+        .cb-sort-check { display: flex; flex-shrink: 0; color: var(--codex-color-semantic-icon-bold); }
+      `}</style>
+      <div style={{ display: "flex", alignItems: "center", gap: 16, justifyContent: "space-between" }}>
+        <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+          {[["use", "What are you making?", true], ["binding", "Binding", false], ["price", "Starting price", false]].map(pill)}
         </div>
-        <div style={{ display: "flex", alignItems: "flex-end", gap: 20 }}>
-          <span style={{ fontWeight: 700, whiteSpace: "nowrap", lineHeight: "42px" }} aria-live="polite">{fx.results.length} {fx.results.length === 1 ? "product" : "products"}</span>
-          <div style={{ minWidth: 200 }}>
-            <Select label="Sort by" options={SORT_OPTIONS} value={fx.sort} onValueChange={v => v && fx.setSort(v)} />
-          </div>
-        </div>
+        {/* Sort is an icon and a label. The list is Codex's Select pattern (a single
+            choice, check on the chosen row, same popup surface) built on the Base UI
+            primitive Codex's Select uses, because Codex's own Select has a text field
+            for a trigger and no icon-button form. Keyboard, Escape and outside click
+            come from the primitive. */}
+        <BaseSelect.Root items={SORT_OPTIONS} value={fx.sort} onValueChange={v => v && fx.setSort(v)}>
+          <BaseSelect.Trigger aria-label="Sort by" render={
+            <Button variant={fx.sort !== "featured" ? "filled" : "outlined"} intent="neutral" size="small" className="cb-pill"
+              iconLeft={<span className="ms" aria-hidden style={{ fontSize: 20 }}>swap_vert</span>} />
+          }>
+            Sort
+          </BaseSelect.Trigger>
+          <BaseSelect.Portal>
+            <BaseSelect.Positioner className="cb-sort-positioner" side="bottom" align="end" sideOffset={4} alignItemWithTrigger={false}>
+              <BaseSelect.Popup className="cb-sort-popup">
+                <BaseSelect.List className="cb-sort-list">
+                  {SORT_OPTIONS.map(o => (
+                    <BaseSelect.Item key={o.value} value={o.value} label={o.label} className="cb-sort-item">
+                      <BaseSelect.ItemText className="cb-sort-label">{o.label}</BaseSelect.ItemText>
+                      <BaseSelect.ItemIndicator className="cb-sort-check"><CheckIcon size="3xl" aria-hidden /></BaseSelect.ItemIndicator>
+                    </BaseSelect.Item>
+                  ))}
+                </BaseSelect.List>
+              </BaseSelect.Popup>
+            </BaseSelect.Positioner>
+          </BaseSelect.Portal>
+        </BaseSelect.Root>
       </div>
       <AppliedChips fx={fx} />
     </div>
@@ -549,22 +600,41 @@ function Faceted({ variant, items, Card, onGo, lean, promo }) {
   return (
     <div style={{ paddingBottom: cmp.rows.length ? 88 : 0 }}>
       <MotionCss items={items} />
-      {bar && typeChips}
-      {!bar && wide ? (
-        <div style={{ display: "grid", gridTemplateColumns: railOpen ? "260px 1fr" : "minmax(0, 1fr)", columnGap: 48, alignItems: "start", minHeight: `calc(100vh - ${NAV_H})` }}>
-          {railOpen && (
-            <aside aria-label="Filters" style={{ position: "sticky", top: NAV_H, maxHeight: `calc(100vh - ${NAV_H})`, overflowY: "auto", padding: "12px 0 16px" }}>
-              <FilterPanel fx={fx} />
-            </aside>
-          )}
-          <div style={{ minWidth: 0 }}>{railToolbar}{results}</div>
-        </div>
-      ) : (
-        <div style={{ minWidth: 0 }}>
-          {wide ? filterBar : <MobileBar fx={fx} openSheet={openSheet} triggerRef={triggerRef} facets={bar ? FACETS.filter(([k]) => k !== "type") : FACETS} />}
-          {results}
-        </div>
-      )}
+      {categoryCards}
+      <div style={{ minWidth: 0 }}>
+        {wide ? filterBar : <MobileBar fx={fx} openSheet={openSheet} triggerRef={triggerRef} facets={FACETS.filter(([k]) => k !== "type")} />}
+        {/* On desktop the count sits right above the cards it counts, not in the bar. */}
+        {wide && <div style={{ fontWeight: 700, margin: "0 0 16px" }} aria-live="polite">{fx.results.length} {fx.results.length === 1 ? "product" : "products"}<span style={{ fontWeight: 400, color: SUBTLE }}> · Select up to 3 to compare</span></div>}
+        {results}
+      </div>
+
+      {/* ── The ad row ── two quiet tiles side by side: the live page's gift box
+          promo (words and photographs lifted from it, as it has no button or
+          link there, none is invented) and the Swatch Kit.
+          The Swatch Kit is samples of the products, not a product: no binding,
+          use or price to filter by. So it is a decision aid after the results,
+          always shown whatever the filters leave, and never counted.
+          Both tiles are light grey with the button outlined, so the Instant Store
+          band below stays the one big closing moment. */}
+      <div style={{ margin: "56px 0 0", display: "grid", gap: 24, gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 360px), 1fr))" }}>
+        <AdTile
+          eyebrow="New"
+          heading="A gift box for your photo book"
+          text="Add it at checkout for a keepsake presentation, no wrapping needed."
+          img={GIFT_IMG}
+          placeholder
+          alt="Four white Blurb gift boxes arranged at angles on a dark wood table"
+        />
+        <AdTile
+          eyebrow="Free"
+          heading="Not sure about the paper or cover?"
+          text="The Swatch Kit is free: hold our papers and covers before you commit."
+          img={SWATCH_IMG}
+          placeholder
+          alt="Overlapping Premium Matte and Premium Lustre paper samples featuring a vibrant bird photo, showcasing differences in paper finish."
+          cta={{ label: "Get the free Swatch Kit", href: "https://www.blurb.com/swatch-kit" }}
+        />
+      </div>
 
       {!wide && sheet && (
         <Sheet
@@ -582,97 +652,51 @@ function Faceted({ variant, items, Card, onGo, lean, promo }) {
           </div>
         </Sheet>
       )}
-      <CompareUI cmp={cmp} />
+      <CompareUI cmp={cmp} canOpen={canOpen} onOpen={onOpen} />
     </div>
   );
 }
 
-/* ── B: guided shelves ── */
-const SHELF_COPY = {
-  "Photo books": "Pictures first. Pick a cover and paper to suit how you'll show them.",
-  "Books": "Text-led books for novels, poetry, cookbooks, and children's stories.",
-  "Magazines": "A periodical-style format for portfolios, zines, and yearbooks.",
-  "Notebooks": "Pages to write and sketch in, with your own cover.",
-};
-const PRESETS = [
-  { id: "soft", label: "Softcover", k: "binding", v: "Softcover" },
-  { id: "hard", label: "Hardcover", k: "binding", v: "Hardcover" },
-  { id: "lay", label: "Layflat", k: "binding", v: "Layflat" },
-  { id: "u10", label: "Under $10", k: "price", v: "Under $10" },
-];
+export function CatalogBrowser({ products, Card, onGo, lean, promo, canOpen, onOpen }) {
+  /* The Swatch Kit is not a product (see the banner in Faceted), so it never joins the list. */
+  const items = useMemo(() => prepare(products.filter(p => p.cat !== "Swatch Kit")), [products]);
+  return <Faceted items={items} Card={Card} onGo={onGo} lean={lean} promo={promo} canOpen={canOpen} onOpen={onOpen} />;
+}
 
-function Shelves({ items, Card, onGo, lean, promo }) {
-  const fx = useFilters(items, true);
-  const wide = useWidth() >= 960;
-  const [tab, setTab] = useState("all");
-  const shelves = TYPES.filter(t => t !== "Samples").map(t => ({ t, list: fx.results.filter(i => i.type === t) })).filter(s => s.list.length);
-  const sample = items.find(i => i.type === "Samples");
-  const jump = t => {
-    setTab(t);
-    if (t === "all") window.scrollTo({ top: 0, behavior: "smooth" });
-    else document.getElementById("shelf-" + t)?.scrollIntoView({ behavior: "smooth", block: "start" });
-  };
-  const tabs = [{ value: "all", label: `All (${fx.results.filter(i => i.type !== "Samples").length})` },
-    ...TYPES.filter(t => t !== "Samples").map(t => ({ value: t, label: `${t} (${fx.results.filter(i => i.type === t).length})`, disabled: !fx.results.some(i => i.type === t) }))];
-  const cell = it => <RichCard key={it.name} it={it} Card={Card} onGo={onGo} lean={lean} vtName={`vt-${items.indexOf(it)}`} />;
-
+/* One tile of the ad row: photograph, tag, heading, a line, and (optionally) an
+   outlined button pinned to the foot so tiles of unequal text still line up. */
+function AdTile({ eyebrow, heading, text, img, alt, cta, placeholder }) {
   return (
-    <div>
-      <MotionCss items={items} />
-      {/* Preset shortcuts, like Vistaprint's hero pills: each is a filter in disguise. */}
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center", marginBottom: 24 }} role="group" aria-label="Quick picks">
-        <span style={{ fontWeight: 700, marginRight: 4 }}>Quick picks</span>
-        {PRESETS.map(p => {
-          const on = fx.f[p.k].includes(p.v);
-          return (
-            <span key={p.id}>
-              {on
-                ? <Chip size="large" label={p.label} onDelete={() => fx.toggle(p.k, p.v)} />
-                : <Chip size="large" variant="suggestion" label={p.label} onAdd={() => fx.toggle(p.k, p.v)} />}
-            </span>
-          );
-        })}
-        {fx.active > 0 && <TextAction onClick={fx.clear}>Clear</TextAction>}
-      </div>
-
-      {/* Sticky tabs jump between shelves (MOO's bar). */}
-      <div style={{ position: "sticky", top: NAV_H, zIndex: 20, background: "#fff", margin: "0 0 40px", borderBottom: `1px solid ${T.border}`, overflowX: "auto" }}>
-        <Tabs aria-label="Product families" items={tabs} value={tab} onValueChange={jump} />
-      </div>
-
-      {shelves.length === 0 && <Empty onClear={fx.clear} />}
-      {shelves.map(({ t, list }, i) => (
-        <React.Fragment key={t}>
-          <section id={"shelf-" + t} style={{ scrollMarginTop: `calc(${NAV_H} + 64px)`, marginBottom: 72 }}>
-            <div style={{ display: "grid", gap: 8, marginBottom: 28 }}>
-              <H2>{t}</H2>
-              <p style={{ margin: 0, color: SUBTLE, fontSize: TYPE.lg }}>{SHELF_COPY[t]}</p>
-            </div>
-            <div style={{ ...grid(340), gridAutoFlow: "row dense" }}>{list.map(cell)}</div>
-          </section>
-          {i === 0 && promo && fx.active === 0 && <div style={{ marginBottom: 72, viewTransitionName: "vt-promo" }}>{promo}</div>}
-        </React.Fragment>
-      ))}
-
-      {/* MOO's free sample pack: the Swatch Kit, said as a decision aid. Codex
-          CallToAction, the closest pattern (it has no image slot). */}
-      {sample && fx.active === 0 && (
-        <section aria-label="Free swatch kit" style={{ marginBottom: 40 }}>
-          <CallToAction
-            heading="Not sure about the paper or cover?"
-            subheading={`Hold them before you commit. The Swatch Kit is free: ${sample.note.replace(/^Free — /, "")}.`}
-            ctas={[{ children: "Get the free Swatch Kit" }]}
-          />
-        </section>
+    <section aria-label={heading} style={{
+      background: "var(--codex-color-primitive-light-gray-50)", borderRadius: 10, overflow: "hidden", display: "flex", flexDirection: "column",
+    }}>
+      {placeholder ? (
+        /* The category cards' "Image needed" tile, flagging that this photograph is still to come. */
+        <div style={{
+          display: "grid", placeItems: "center", alignContent: "center", gap: 8, width: "100%", aspectRatio: "4 / 3",
+          background: "var(--codex-color-primitive-light-gray-100)",
+        }}>
+          <span className="ms" aria-hidden style={{ fontSize: 56, color: C.gray400 }}>image</span>
+          <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>Image needed</span>
+        </div>
+      ) : (
+        <picture>
+          {img.mobile && <source media="(max-width: 767px)" srcSet={img.mobile} />}
+          <img src={img.src} alt={alt} loading="lazy" style={{ display: "block", width: "100%", aspectRatio: "4 / 3", objectFit: "cover" }} />
+        </picture>
       )}
-    </div>
+      <div style={{ display: "grid", gap: 12, justifyItems: "start", alignContent: "start", padding: 24, flex: 1 }}>
+        <span style={{ padding: "3px 10px", borderRadius: 999, background: C.blue600, color: "#fff", fontSize: TYPE.sm, fontWeight: 700 }}>{eyebrow}</span>
+        <h2 style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE["3xl"], fontWeight: 600, lineHeight: 1.2, margin: 0, color: C.gray950 }}>{heading}</h2>
+        <p style={{ margin: 0, color: SUBTLE, lineHeight: 1.5 }}>{text}</p>
+        {cta && (
+          <div style={{ marginTop: "auto", paddingTop: 4 }}>
+            <Button as="a" href={cta.href} target="_blank" rel="noopener noreferrer" variant="outlined">{cta.label}</Button>
+          </div>
+        )}
+      </div>
+    </section>
   );
-}
-
-export function CatalogBrowser({ products, Card, onGo, lean, promo, option = "a" }) {
-  const items = useMemo(() => prepare(products), [products]);
-  if (option === "b") return <Shelves items={items} Card={Card} onGo={onGo} lean={lean} promo={promo} />;
-  return <Faceted key={option} variant={option === "c" ? "bar" : "rail"} items={items} Card={Card} onGo={onGo} lean={lean} promo={promo} />;
 }
 
 /* ── Light D: the spec lines under a card ── */
@@ -693,12 +717,70 @@ function RichCard({ it, Card, onGo, lean, footer, vtName }) {
   );
 }
 
-/* ── D · richer cards + compare ── */
-function CompareSheet({ rows, onClose }) {
+/* ── Compare ── */
+
+/* What the comparison reads off the real price matrix rather than the draft
+   copy: the sizes, papers and page ceiling a product can actually be built in,
+   given its cover (and, for layflat, its paper). Same availability test the
+   "starting at" price uses, so a product never lists a size it cannot be made
+   in. */
+function specsOf(it) {
+  const f = CATALOG[it.format];
+  if (!f) return null;
+  if (f.flat) {
+    const o = f.groups[0].options[0];
+    return {
+      sizes: o.dims.replace(/ in .*/, " in"), papers: o.derived?.find(d => d.id === "paper")?.option.label ?? "—",
+      pages: `${f.basePages}–${o.maxPages}`, layflat: "No",
+    };
+  }
+  const opts = id => f.groups.find(g => g.id === id).options;
+  const sizes = new Map(), papers = new Map();
+  let max = 0;
+  for (const c of opts("cover")) {
+    if (it.cover && c.id !== it.cover) continue;
+    for (const sz of opts("size")) for (const pp of opts("paper")) {
+      if (it.paperTest && !it.paperTest(pp.id)) continue;
+      if (!isAvailable(it.format, { cover: c.id, size: sz.id, paper: pp.id })) continue;
+      sizes.set(sz.id, sz.dims.replace(/ in .*/, "")); papers.set(pp.id, pp);
+      max = Math.max(max, pp.maxPages ?? 0);
+    }
+  }
+  const flat = [...papers.keys()].filter(id => id.includes("layflat")).length;
+  return {
+    sizes: `${sizes.size} ${sizes.size === 1 ? "size" : "sizes"}: ${[...sizes.values()].join(", ")} in`,
+    papers: [...new Set([...papers.values()].map(pp => pp.label))].join(", "),
+    pages: `${f.basePages}–${max}`,
+    layflat: flat === 0 ? "No" : flat === papers.size ? "Yes" : "Some papers",
+  };
+}
+
+const CELL = { padding: 16, textAlign: "left", verticalAlign: "top", borderTop: `1px solid ${C.charcoal200}`, borderLeft: `1px solid ${C.charcoal200}`, lineHeight: 1.5 };
+
+/* The table is built by hand rather than with Codex's ComparisonTable, which takes
+   plain text only and so cannot hold a photograph, a link or a Remove button in a
+   column header. It follows the site's own comparison pattern: zebra rows, a #d1d1d1
+   rule under each row and between columns, 16px cells, a sticky label column. */
+function CompareSheet({ rows, onClose, onRemove, canOpen, onOpen }) {
+  const [diffOnly, setDiffOnly] = useState(false);
+  const specs = rows.map(specsOf);
   const fields = [
-    ["Type", r => r.type], ["Binding", r => r.binding.join(", ") || "—"], ["Cover", r => r.coverNote],
-    ["Starting at", r => (r.price ? money(r.price) : "Free")], ["Best for", r => r.best],
-  ];
+    ["Type", r => r.type],
+    ["Binding", r => r.binding.join(", ") || "—"],
+    ["Cover", r => r.coverNote],
+    ["Lies flat", (r, sp) => sp?.layflat ?? "—"],
+    ["Sizes", (r, sp) => sp?.sizes ?? "—"],
+    ["Paper", (r, sp) => sp?.papers ?? "—"],
+    ["Pages", (r, sp) => sp?.pages ?? "—"],
+    ["Starting at", r => (r.price ? money(r.price) : "Free")],
+    ["Best for", r => r.best],
+  ].map(([label, get]) => {
+    const cells = rows.map((r, i) => get(r, specs[i]));
+    return { label, cells, differs: new Set(cells).size > 1 };
+  });
+  const shown = diffOnly ? fields.filter(f => f.differs) : fields;
+  const zebra = i => (i % 2 ? "#f5f5f5" : "#fff");
+
   return (
     <Modal open onOpenChange={o => !o && onClose()}>
       <ModalContent title={`Compare (${rows.length})`} size="large">
@@ -709,12 +791,40 @@ function CompareSheet({ rows, onClose }) {
         >
           <CloseIcon size="lg" aria-hidden />
         </ModalClose>
-        <div data-compare-modal>
-          <ComparisonTable
-            cellSize="small"
-            columnHeaders={["Format", ...rows.map(r => r.name)]}
-            rows={fields.map(([label, get]) => ({ header: label, cells: rows.map(get) }))}
-          />
+        <div data-compare-modal style={{ display: "grid", gap: 16 }}>
+          <Checkbox label="Show only differences" checked={diffOnly} onCheckedChange={() => setDiffOnly(d => !d)} />
+          <div style={{ overflow: "auto", maxHeight: "calc(100dvh - 280px)", border: `1px solid ${C.charcoal200}`, borderLeft: 0, borderTop: 0 }}>
+            <table style={{ borderCollapse: "separate", borderSpacing: 0, width: "100%", minWidth: 130 + rows.length * 220, fontSize: TYPE.base }}>
+              <thead>
+                <tr>
+                  <th scope="col" style={{ ...CELL, borderLeft: 0, borderTop: 0, position: "sticky", left: 0, top: 0, zIndex: 3, background: "#fff", width: 130 }} />
+                  {rows.map(r => (
+                    <th key={r.name} scope="col" style={{ ...CELL, borderTop: 0, position: "sticky", top: 0, zIndex: 2, background: "#fff", fontWeight: 400 }}>
+                      <div style={{ display: "grid", gap: 10, justifyItems: "start" }}>
+                        <img src={r.img} alt="" style={{ display: "block", width: "100%", maxWidth: 140, aspectRatio: "1 / 1", objectFit: "cover", borderRadius: R.lg }} />
+                        <div style={{ fontFamily: FONT_DISPLAY, fontSize: TYPE.lg, fontWeight: 600, lineHeight: 1.2, color: C.gray950 }}>{r.name}</div>
+                        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                          {canOpen(r) && <Button size="small" variant="outlined" onClick={() => onOpen(r)}>View product</Button>}
+                          <Button size="small" variant="text" intent="neutral" onClick={() => onRemove(r.name)}>Remove</Button>
+                        </div>
+                      </div>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {shown.map((f, i) => (
+                  <tr key={f.label}>
+                    <th scope="row" style={{ ...CELL, borderLeft: 0, position: "sticky", left: 0, zIndex: 1, background: zebra(i), fontWeight: 700 }}>{f.label}</th>
+                    {f.cells.map((c, j) => <td key={j} style={{ ...CELL, background: zebra(i) }}>{c}</td>)}
+                  </tr>
+                ))}
+                {shown.length === 0 && (
+                  <tr><td colSpan={rows.length + 1} style={{ ...CELL, borderLeft: 0, color: SUBTLE }}>These products match on every row we compare.</td></tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </ModalContent>
     </Modal>

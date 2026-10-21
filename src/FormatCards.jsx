@@ -71,6 +71,12 @@ const STANDIN = { pdf: "tablet_mac" };
    FORMAT_CARDS itself so it can never be enumerated back into a row that
    deliberately excludes it. */
 const OTHER_CARDS = [
+  /* The Shop All catalogue's "no category" card: every product, unfiltered.
+     It borrows the Photo Book photograph until there is one of its own. */
+  { id: "all", title: "All Products",
+    desc: "Every format we print, in one list.",
+    img: IMG + "photo-book.GsE6vVn8.png",
+    alt: "Stack of two ImageWrap hardcover photo books with a scene of Paris on the front cover." },
   { id: "wallart", title: "Wall Art",
     desc: "Gallery-quality wall décor, featuring your favorite photos or custom designs.",
     img: "https://www.blurb.com/pages/ad-hoc-assets/newnewwall/03c1_Material_448x376_v1-Metal01-dfe422eb19340f856829299342ebb84a9cb7624782ad89e707a0ed2a7e7a7b6f.jpg",
@@ -86,7 +92,7 @@ export const cardFor = id => {
 
 /* `badge` overrides the card's own — step one uses it for the
    recommendation, /pricing for "Most Popular". Same chip either way. */
-export function FormatCard({ id, selected, badge, icon, hidePrice }) {
+export function FormatCard({ id, selected, badge, icon, hidePrice, placeholder, caption, disabled, compact }) {
   const card = cardFor(id);
   if (!card) return null;
   const from = fromPrice(id);
@@ -96,9 +102,12 @@ export function FormatCard({ id, selected, badge, icon, hidePrice }) {
   return (
     <RadioCard
       value={id}
+      disabled={disabled}
       className="radiocard-flush"
       style={{
-        textAlign: "left", font: "inherit", cursor: "pointer", minWidth: 0,
+        textAlign: "left", font: "inherit", cursor: disabled ? "not-allowed" : "pointer", minWidth: 0,
+        opacity: disabled ? 0.5 : 1,
+        ...(compact ? { scrollSnapAlign: "start" } : {}),
         overflow: "hidden", borderRadius: 10, display: "block",
         /* Same as OptionCard's image variant: overflow: hidden (needed to
            clip the photo's corners) breaks RadioCard's own ::before ring
@@ -109,7 +118,7 @@ export function FormatCard({ id, selected, badge, icon, hidePrice }) {
       }}
     >
       <span style={{ position: "relative", display: "block" }}>
-        {card.img ? (
+        {card.img && !placeholder ? (
           /* aspectRatio + overflow: hidden + objectFit: cover crop every
              photo to the same square regardless of its own file's aspect
              ratio — width:"100%" height:"auto" alone (the previous rule)
@@ -128,12 +137,13 @@ export function FormatCard({ id, selected, badge, icon, hidePrice }) {
           </span>
         ) : (
           <span style={{
-            display: "grid", placeItems: "center",
-            width: "100%", aspectRatio: "1 / 1", background: C.gray100,
+            display: "grid", placeItems: "center", alignContent: "center", gap: 8,
+            width: "100%", aspectRatio: "1 / 1", background: placeholder ? "var(--codex-color-primitive-light-gray-100)" : C.gray100,
           }}>
             <span className="ms" style={{ fontSize: 56, color: C.gray400 }}>
-              {icon ?? STANDIN[id] ?? "menu_book"}
+              {placeholder ? "image" : icon ?? STANDIN[id] ?? "menu_book"}
             </span>
+            {placeholder && <span style={{ fontSize: TYPE.sm, color: T.textSubtle }}>Image needed</span>}
           </span>
         )}
         {chip && (
@@ -147,19 +157,28 @@ export function FormatCard({ id, selected, badge, icon, hidePrice }) {
         )}
       </span>
 
-      <span style={{ display: "block", padding: "18px 12px 20px" }}>
+      <span style={{ display: "block", padding: compact ? "12px 10px 14px" : "18px 12px 20px" }}>
         <span style={{
           display: "block", fontFamily: FONT_DISPLAY,
-          fontSize: TYPE["3xl"], fontWeight: 600, lineHeight: 1.2, color: C.gray950,
+          fontSize: compact ? TYPE.lg : TYPE["3xl"], fontWeight: 600, lineHeight: 1.2, color: C.gray950,
         }}>
           {card.title}
         </span>
-        <span style={{
-          display: "block", marginTop: 10, fontSize: TYPE.sm,
-          color: T.textSubtle, lineHeight: 1.5,
-        }}>
-          {card.desc}
-        </span>
+        {!compact && (
+          <span style={{
+            display: "block", marginTop: 10, fontSize: TYPE.sm,
+            color: T.textSubtle, lineHeight: 1.5,
+          }}>
+            {card.desc}
+          </span>
+        )}
+        {caption && (
+          <span style={{
+            display: "block", marginTop: 12, fontSize: TYPE.sm, fontWeight: 700, color: C.gray950,
+          }}>
+            {caption}
+          </span>
+        )}
         {!hidePrice && (
           <span style={{
             display: "block", marginTop: 12, fontSize: TYPE.sm, fontWeight: 700, color: C.gray950,
@@ -183,14 +202,19 @@ const GAP = 28;
    simply centres a shorter row. */
 const CARD_MAX = 232;
 
-export function FormatRow({ ids, formatId, onPick, badgeFor, hidePrice }) {
+export function FormatRow({ ids, formatId, onPick, badgeFor, hidePrice, minCard = 190, placeholder, captionFor, disabledFor, scroll }) {
   return (
     <RadioCardGroup
       value={formatId}
       onValueChange={onPick}
       aria-label="Format"
-      style={{
-        display: "grid", gap: GAP, gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))",
+      style={scroll ? {
+        /* One short row that scrolls sideways, so the products start higher on a
+           phone. The cards drop their descriptions (compact) to keep it short. */
+        display: "grid", gridAutoFlow: "column", gridAutoColumns: `${minCard}px`, gap: 16, alignItems: "start",
+        overflowX: "auto", scrollSnapType: "x proximity", scrollbarWidth: "none", minWidth: 0, width: "100%", paddingBottom: 4,
+      } : {
+        display: "grid", gap: GAP, gridTemplateColumns: `repeat(auto-fit, minmax(${minCard}px, 1fr))`,
         alignItems: "start", minWidth: 0,
         maxWidth: ids.length * CARD_MAX + (ids.length - 1) * GAP, margin: "0 auto", width: "100%",
       }}
@@ -202,6 +226,10 @@ export function FormatRow({ ids, formatId, onPick, badgeFor, hidePrice }) {
           selected={id === formatId}
           badge={badgeFor ? badgeFor(id) : undefined}
           hidePrice={hidePrice}
+          placeholder={placeholder}
+          caption={captionFor ? captionFor(id) : undefined}
+          disabled={disabledFor ? disabledFor(id) : undefined}
+          compact={scroll}
         />
       ))}
     </RadioCardGroup>
