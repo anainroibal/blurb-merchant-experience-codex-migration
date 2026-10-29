@@ -215,6 +215,7 @@
           box-shadow: 0 8px 22px rgba(0, 0, 0, .09);
         }
         .cfg-steps { gap: 40px !important; }
+        .cfg-aside.cfg-aside-always { order: 0; box-shadow: none !important; }
       }
 
       @media (max-width: 900px) {
@@ -292,6 +293,10 @@
           border-radius: 16px !important;
           box-shadow: 0 4px 14px rgba(0, 0, 0, .10) !important;
           padding: 18px !important; margin-bottom: 8px;
+        }
+        .cfg-aside.cfg-aside-open.cfg-aside-always {
+          padding: 24px !important; border-radius: 8px !important;
+          box-shadow: none !important; margin-bottom: 0;
         }
         .demo-bar { justify-content: center !important; }
       }

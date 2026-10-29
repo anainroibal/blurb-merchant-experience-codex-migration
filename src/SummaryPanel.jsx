@@ -256,7 +256,7 @@ export const exactPdpName = (formatId, sel) => PDP_NAME[formatId]?.[sel?.cover] 
 export default function SummaryPanel({
   formatId, state, onChange, mode, sellPrice, onSellPrice,
   sticky = true, ship: shipProp, setShip: setShipProp, actions, onGo,
-  plainCompareCallout = false, printCostAlign = "left", figureFontFamily,
+  plainCompareCallout = false, printCostAlign = "left", figureFontFamily, padding = 22, alwaysOpen = false, borderColor = T.border,
 }) {
   const selling = mode === "sell";
   const bulk = mode === "distribute";
@@ -272,7 +272,10 @@ export default function SummaryPanel({
      steps aside once expanded since the panel's own Close row takes over.
      Irrelevant above 640px, where CSS never shows the bar and never hides
      the aside — see index.html. */
-  const [expanded, setExpanded] = useState(false);
+  /* alwaysOpen: never collapse to the phone bar — the panel stays in the
+     page at every width (Instant Store calculator). */
+  const [expandedState, setExpanded] = useState(false);
+  const expanded = alwaysOpen || expandedState;
   /* The panel opens wherever it already sits in the page's own flow — near
      the top of the configurator, not down by the bar that was tapped. Left
      alone, that reads as the bar just vanishing: nothing visibly changes
@@ -280,8 +283,8 @@ export default function SummaryPanel({
      makes "expanded" actually visible rather than technically true. */
   const asideRef = useRef(null);
   useEffect(() => {
-    if (expanded) asideRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, [expanded]);
+    if (expandedState && !alwaysOpen) asideRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [expandedState, alwaysOpen]);
   const f = CATALOG[formatId];
   const p = priceFor(formatId, state);
   const limit = pageLimit(formatId, state);
@@ -394,11 +397,11 @@ export default function SummaryPanel({
 
       <aside
         ref={asideRef}
-        className={`cfg-aside${expanded ? " cfg-aside-open" : ""}`}
+        className={`cfg-aside${expanded ? " cfg-aside-open" : ""}${alwaysOpen ? " cfg-aside-always" : ""}`}
         style={{
           background: T.bgNeutral,
-          border: `1px solid ${T.border}`, borderRadius: R.lg,
-          padding: 22, display: "grid", gap: 14, minWidth: 0,
+          border: `1px solid ${borderColor}`, borderRadius: R.lg,
+          padding, display: "grid", gap: 14, minWidth: 0,
           /* Otherwise scrollIntoView lands the panel's top edge exactly at
              the viewport's top edge — underneath the sticky nav, which
              covers the Close row and heading right when they're what a
@@ -410,7 +413,8 @@ export default function SummaryPanel({
         {/* Only rendered as a control on a phone (.show-sm) — the sheet's
             own way to close, since there is no outside click on a bar. */}
         <button
-          className="show-sm"
+          className={alwaysOpen ? undefined : "show-sm"}
+          hidden={alwaysOpen}
           onClick={() => setExpanded(false)}
           aria-label="Close"
           style={{
@@ -604,7 +608,7 @@ export default function SummaryPanel({
             is a placeholder: dropping it to make room for a button would
             have been the wrong trade. */}
         {actions && (
-          <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 16 }}>
+          <div style={{ borderTop: "1px solid var(--codex-color-semantic-border-faint)", paddingTop: 16 }}>
             {actions}
           </div>
         )}

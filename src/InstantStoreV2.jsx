@@ -1034,15 +1034,14 @@ export default function InstantStoreV2({ onGo }) {
               worse than none. */}
           <div
             className="fade-in cfg-grid"
-            style={{ display: "grid", gap: 40, alignItems: "start", gridTemplateColumns: "minmax(340px, 1.55fr) minmax(310px, 0.85fr)" }}
+            style={{ display: "grid", gap: 24, alignItems: "start", gridTemplateColumns: "minmax(340px, 1.55fr) minmax(310px, 0.85fr)" }}
           >
             <div className="cfg-steps" style={{ minWidth: 0 }}>
               <div style={{
-                /* Border color/radius match Figma's real fills (node
-                   104:5098: border-blurb-border-inverse #f5f5f5 = C.gray50,
-                   rounded-xl = 12px, not R.lg's 8px) — confirmed via the
-                   Plugin API, not guessed. */
-                background: T.bgNeutral, border: `1px solid ${C.gray50}`, borderRadius: 12,
+                /* Same outline and padding as the earnings panel's own card
+                   (Codex border-faint, 24px via SummaryPanel's padding prop) so the two columns
+                   read as a pair (Anain, 2026-10-29). */
+                background: T.bgNeutral, border: "1px solid var(--codex-color-semantic-border-faint)", borderRadius: R.lg,
                 padding: 24, display: "grid", gap: 18,
               }}>
                 <Field label="Product" value={CALCULATOR_FORMATS.find(f => f.id === calcFormatId)?.label}>
@@ -1066,7 +1065,7 @@ export default function InstantStoreV2({ onGo }) {
                 <ProductOptions formatId={calcFormatId} state={calcSel} onChange={setCalcSel} mode="sell" sizeVariant="text" />
               </div>
             </div>
-            <div style={{ border: `1px solid ${C.gray50}`, borderRadius: 12, padding: 24 }}>
+            <div>
               <SummaryPanel
                 formatId={calcFormatId}
                 state={calcSel}
@@ -1079,6 +1078,9 @@ export default function InstantStoreV2({ onGo }) {
                 onGo={onGo}
                 sticky={false}
                 plainCompareCallout
+                padding={24}
+                alwaysOpen
+                borderColor="var(--codex-color-semantic-border-faint)"
                 printCostAlign="right"
                 actions={
                   <CreateActions
